@@ -1,0 +1,7 @@
+.idea/
+assembly/
+release/
+target/
+
+*.iml
+*.exe
