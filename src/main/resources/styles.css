@@ -1,3 +1,7 @@
+.bg-white {
+    -fx-background-color: #fff;
+}
+
 .grid-header-label {
     -fx-font-weight: bold
 }

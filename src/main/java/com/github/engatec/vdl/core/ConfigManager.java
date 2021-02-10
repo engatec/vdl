@@ -21,7 +21,7 @@ public class ConfigManager {
     }
 
     public void saveConfig() {
-        Path servicePath = ApplicationContext.APP_SERVICE_PATH;
+        Path servicePath = ApplicationContext.CONFIG_PATH;
         try {
             Files.createDirectories(servicePath);
             try (var fw = new FileWriter(servicePath.resolve(CONFIG_FILENAME).toFile())) {
@@ -34,7 +34,7 @@ public class ConfigManager {
 
     public void loadConfig() {
         properties = new Properties();
-        try (var fr = new FileReader(ApplicationContext.APP_SERVICE_PATH.resolve(CONFIG_FILENAME).toFile())) {
+        try (var fr = new FileReader(ApplicationContext.CONFIG_PATH.resolve(CONFIG_FILENAME).toFile())) {
             properties.load(fr);
         } catch (IOException e) {
             // Окей, не нашли файл настроек. Не страшно, используем значения по умолчанию :)

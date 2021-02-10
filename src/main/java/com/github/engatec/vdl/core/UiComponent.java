@@ -6,7 +6,8 @@ public enum UiComponent {
     PREFERENCES("/fxml/preferences.fxml"),
     VIDEO_DOWNLOAD_GRID("/fxml/video-download-grid.fxml"),
     AUTIO_DOWNLOAD_GRID("/fxml/audio-download-grid.fxml"),
-    DOWNLOADING_PROGRESS("/fxml/downloading-progress.fxml");
+    DOWNLOADING_PROGRESS("/fxml/downloading-progress.fxml"),
+    DIALOG_PROGRESS("/fxml/dialog/progress-dialog.fxml");
 
     private final String fxml;
 
