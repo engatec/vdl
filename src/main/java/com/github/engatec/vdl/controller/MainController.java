@@ -31,7 +31,10 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
@@ -40,6 +43,8 @@ public class MainController implements StageAware {
 
     private ApplicationContext appCtx;
     private Stage stage;
+
+    @FXML private VBox rootControlVBox;
 
     @FXML private TabPane videoAudioTabPane;
     @FXML private Tab videoTab;
@@ -72,6 +77,8 @@ public class MainController implements StageAware {
 
         langEnMenuItem.setOnAction(event -> handleLanguageChange(event, Language.ENGLISH));
         langRuMenuItem.setOnAction(event -> handleLanguageChange(event, Language.RUSSIAN));
+
+        setDragAndDrop();
     }
 
     @Override
@@ -163,5 +170,24 @@ public class MainController implements StageAware {
         searchProgressIndicator.visibleProperty().bind(task.runningProperty());
         appCtx.runTaskAsync(task);
         event.consume();
+    }
+
+    private void setDragAndDrop() {
+        rootControlVBox.setOnDragOver(e -> {
+            if (e.getDragboard().hasString()) {
+                e.acceptTransferModes(TransferMode.COPY);
+            }
+            e.consume();
+        });
+
+        rootControlVBox.setOnDragDropped(e -> {
+            Dragboard dragboard = e.getDragboard();
+            if (e.getTransferMode() == TransferMode.COPY && dragboard.hasString()) {
+                videoUrlTextField.setText(dragboard.getString());
+                e.setDropCompleted(true);
+                searchBtn.fire();
+            }
+            e.consume();
+        });
     }
 }
