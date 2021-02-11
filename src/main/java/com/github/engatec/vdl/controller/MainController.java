@@ -1,15 +1,14 @@
 package com.github.engatec.vdl.controller;
 
-import java.io.UncheckedIOException;
 import java.util.List;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.ConfigManager;
-import com.github.engatec.vdl.core.ConfigProperty;
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.UpdateManager;
+import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.model.Audio;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Video;
@@ -138,10 +137,8 @@ public class MainController implements StageAware {
 
     private void handlePreferencesClick(ActionEvent event) {
         Stage prefStage = UiManager.loadStage(UiComponent.PREFERENCES);
-        prefStage.setResizable(false);
         prefStage.initModality(Modality.APPLICATION_MODAL);
         prefStage.initOwner(this.stage);
-        prefStage.setTitle(appCtx.getResourceBundle().getString("preferences.title"));
         prefStage.showAndWait();
         event.consume();
     }
@@ -149,11 +146,6 @@ public class MainController implements StageAware {
     private void handleLanguageChange(ActionEvent event, Language language) {
         appCtx.setLanguage(language);
         ConfigManager.INSTANCE.setValue(ConfigProperty.LANGUAGE, language.getLocaleLanguage());
-        try {
-            ConfigManager.INSTANCE.saveConfig();
-        } catch (UncheckedIOException ignored) {
-            // Не смогли язык сохранить :( Что ж, в следующий раз загрузится с дефолтным :)
-        }
         event.consume();
     }
 

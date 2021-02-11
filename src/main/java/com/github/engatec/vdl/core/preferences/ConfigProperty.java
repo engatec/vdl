@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.core;
+package com.github.engatec.vdl.core.preferences;
 
 import java.nio.file.Paths;
 import java.util.Locale;
@@ -11,7 +11,8 @@ public enum ConfigProperty {
 
     DOWNLOAD_PATH("download.path", Paths.get(SystemUtils.getUserHome().getAbsolutePath(), "Downloads").toString()),
     DOWNLOAD_ALWAYS_ASK_PATH("download.alwaysAskPath", "false"),
-    LANGUAGE("language", Objects.requireNonNullElse(Locale.getDefault().getLanguage(), Language.ENGLISH.getLocaleLanguage()));
+    LANGUAGE("language", Objects.requireNonNullElse(Locale.getDefault().getLanguage(), Language.ENGLISH.getLocaleLanguage())),
+    NO_M_TIME("youtubedl.noMTime", "true");
 
     private final String key;
     private final String defaultValue;

@@ -6,12 +6,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="8.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.PreferencesController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="8.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.preferences.GeneralPreferencesController">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
             <RadioButton fx:id="downloadPathRadioBtn" mnemonicParsing="false" text="%preferences.label.download.path" />
-            <TextField fx:id="downloadPathTextField" minWidth="-Infinity" prefWidth="200.0" editable="false" />
+            <TextField fx:id="downloadPathTextField" editable="false" minWidth="-Infinity" prefWidth="200.0" />
             <Button fx:id="chooseDownloadPathBtn" mnemonicParsing="false" text="%preferences.btn.download.choose" />
          </children>
       </HBox>
@@ -19,15 +19,6 @@
          <children>
             <RadioButton fx:id="askPathRadioBtn" mnemonicParsing="false" text="%preferences.label.download.askpath" />
          </children>
-      </HBox>
-      <HBox alignment="CENTER_RIGHT" spacing="8.0">
-         <children>
-            <Button fx:id="okBtn" mnemonicParsing="false" text="%preferences.ok" />
-            <Button fx:id="cancelBtn" mnemonicParsing="false" text="%preferences.cancel" />
-         </children>
-         <VBox.margin>
-            <Insets top="16.0" />
-         </VBox.margin>
       </HBox>
    </children>
    <padding>

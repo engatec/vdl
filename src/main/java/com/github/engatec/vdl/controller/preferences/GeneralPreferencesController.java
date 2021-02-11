@@ -1,16 +1,10 @@
-package com.github.engatec.vdl.controller;
+package com.github.engatec.vdl.controller.preferences;
 
 import java.io.File;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.ConfigManager;
-import com.github.engatec.vdl.core.ConfigProperty;
-import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.core.preferences.ConfigProperty;
+import com.github.engatec.vdl.core.preferences.propertyholder.GeneralPropertyHolder;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -21,9 +15,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-public class PreferencesController implements StageAware {
+public class GeneralPreferencesController {
 
-    private Stage stage;
+    private final Stage stage;
 
     private final ToggleGroup downloadRadioGroup = new ToggleGroup();
 
@@ -32,21 +26,20 @@ public class PreferencesController implements StageAware {
     @FXML private TextField downloadPathTextField;
     @FXML private Button chooseDownloadPathBtn;
 
-    @FXML private Button okBtn;
-    @FXML private Button cancelBtn;
+    private final GeneralPropertyHolder propertyHolder;
+
+    public GeneralPreferencesController(Stage stage, GeneralPropertyHolder propertyHolder) {
+        this.stage = stage;
+        this.propertyHolder = propertyHolder;
+    }
 
     @FXML
     public void initialize() {
-        okBtn.setOnAction(this::handleOkBtnClick);
-        cancelBtn.setOnAction(this::handleCancelBtnClick);
         chooseDownloadPathBtn.setOnAction(this::handleDownloadPathChoose);
-
         initDownloadRadioGroup();
-    }
 
-    @Override
-    public void setStage(Stage stage) {
-        this.stage = stage;
+        askPathRadioBtn.selectedProperty().bindBidirectional(propertyHolder.alwaysAskPathProperty());
+        downloadPathTextField.textProperty().bindBidirectional(propertyHolder.downloadPathProperty());
     }
 
     private void initDownloadRadioGroup() {
@@ -75,28 +68,6 @@ public class PreferencesController implements StageAware {
     private void toggleDownloadPathControls(boolean disabled) {
         downloadPathTextField.setDisable(disabled);
         chooseDownloadPathBtn.setDisable(disabled);
-    }
-
-    private void handleCancelBtnClick(ActionEvent event) {
-        stage.close();
-        event.consume();
-    }
-
-    private void handleOkBtnClick(ActionEvent event) {
-        ConfigManager config = ConfigManager.INSTANCE;
-        Map<ConfigProperty, String> initialConfig = Arrays.stream(ConfigProperty.values()).collect(Collectors.toMap(Function.identity(), config::getValue));
-        config.setValue(ConfigProperty.DOWNLOAD_ALWAYS_ASK_PATH, String.valueOf(askPathRadioBtn.isSelected()));
-        config.setValue(ConfigProperty.DOWNLOAD_PATH, downloadPathTextField.getText());
-        try {
-            config.saveConfig();
-        } catch (UncheckedIOException e) {
-            Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("preferences.save.error"));
-            for (var entry : initialConfig.entrySet()) {
-                config.setValue(entry.getKey(), entry.getValue());
-            }
-        }
-        stage.close();
-        event.consume();
     }
 
     private void handleDownloadPathChoose(ActionEvent event) {

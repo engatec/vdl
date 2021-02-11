@@ -88,4 +88,9 @@ public class YoutubeDlCommandBuilder {
         commandList.add("-U");
         return this;
     }
+
+    public YoutubeDlCommandBuilder noMTime() {
+        commandList.add("--no-mtime");
+        return this;
+    }
 }

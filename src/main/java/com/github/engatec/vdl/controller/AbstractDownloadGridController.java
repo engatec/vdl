@@ -6,11 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.ConfigManager;
-import com.github.engatec.vdl.core.ConfigProperty;
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
+import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.model.Downloadable;
 import com.github.engatec.vdl.ui.Dialogs;
 import javafx.scene.control.Button;

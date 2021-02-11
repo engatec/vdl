@@ -1,10 +1,11 @@
 package com.github.engatec.vdl;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.ConfigManager;
-import com.github.engatec.vdl.core.ConfigProperty;
+import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
+import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.model.Language;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -24,13 +25,9 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        loadConfig();
+        Janitor.cleanUpPropetiesFile();
         setLanguage();
         launch(args);
-    }
-
-    private static void loadConfig() {
-        ConfigManager.INSTANCE.loadConfig();
     }
 
     private static void setLanguage() {
