@@ -21,12 +21,16 @@ import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsFirst;
 
 public class FetchDownloadableDataTask extends Task<DownloadableData> {
+
+    private static final Logger LOGGER = LogManager.getLogger(FetchDownloadableDataTask.class);
 
     private static final int MIN_CONTENT_LENGTH = 307200; // 300kb
     private static final int MAX_TIMEOUT_SECONDS = 30;
@@ -97,7 +101,10 @@ public class FetchDownloadableDataTask extends Task<DownloadableData> {
         List<CompletableFuture<Void>> cf = new ArrayList<>();
         for (Format format : formats) {
             if (format.getFilesize() == null) {
-                cf.add(tryResolveFileSizeAsync(format).exceptionally(t -> null));
+                cf.add(tryResolveFileSizeAsync(format).exceptionally(t -> {
+                    LOGGER.warn(t.getMessage(), t);
+                    return null;
+                }));
             }
         }
 

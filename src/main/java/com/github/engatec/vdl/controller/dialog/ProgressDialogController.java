@@ -8,8 +8,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ProgressDialogController implements StageAware {
+
+    private static final Logger LOGGER = LogManager.getLogger(ProgressDialogController.class);
 
     private Stage stage;
     private String title;
@@ -39,7 +43,10 @@ public class ProgressDialogController implements StageAware {
 
     private void runTask() {
         task.setOnSucceeded(this::close);
-        task.setOnFailed(this::close);
+        task.setOnFailed(it -> {
+            Throwable ex = it.getSource().getException();
+            LOGGER.error(ex.getMessage(), ex);
+        });
         task.setOnCancelled(this::close);
         dialogProgressCancelButton.setOnAction(e -> {
             task.cancel();

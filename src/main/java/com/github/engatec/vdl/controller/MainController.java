@@ -39,8 +39,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MainController implements StageAware {
+
+    private static final Logger LOGGER = LogManager.getLogger(MainController.class);
 
     private ApplicationContext appCtx;
     private Stage stage;
@@ -173,7 +177,11 @@ public class MainController implements StageAware {
                 audioTabScrollPane.setContent(audioComponent);
             }
         });
-        task.setOnFailed(it -> Dialogs.info(appCtx.getResourceBundle().getString("video.search.error")));
+        task.setOnFailed(it -> {
+            Throwable ex = it.getSource().getException();
+            LOGGER.error(ex.getMessage(), ex);
+            Dialogs.info(appCtx.getResourceBundle().getString("video.search.error"));
+        });
         searchProgressIndicator.visibleProperty().bind(task.runningProperty());
         appCtx.runTaskAsync(task);
         event.consume();
