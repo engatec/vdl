@@ -139,6 +139,9 @@ public class MainController implements StageAware {
         Stage prefStage = UiManager.loadStage(UiComponent.PREFERENCES);
         prefStage.initModality(Modality.APPLICATION_MODAL);
         prefStage.initOwner(this.stage);
+        // Убрать хардкод в проперти
+        prefStage.setMinWidth(500);
+        prefStage.setMinHeight(400);
         prefStage.showAndWait();
         event.consume();
     }

@@ -4,11 +4,11 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="8.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.preferences.YoutubedlPreferencesController">
+<VBox spacing="8.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.preferences.YoutubedlPreferencesController">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
-            <CheckBox fx:id="noMTimeCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nomtime.label" />
+            <CheckBox fx:id="noMTimeCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nomtime.label" wrapText="true" />
          </children>
       </HBox>
    </children>

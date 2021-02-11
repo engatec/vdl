@@ -12,12 +12,12 @@
    <children>
       <SplitPane dividerPositions="0.2" VBox.vgrow="ALWAYS">
          <items>
-            <ScrollPane fitToHeight="true" fitToWidth="true">
+            <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="200.0" minWidth="100.0">
                <content>
                   <TreeView fx:id="preferencesCategoryTreeView" />
                </content>
             </ScrollPane>
-            <ScrollPane fx:id="preferencesScrollPane" />
+            <ScrollPane fx:id="preferencesScrollPane" fitToHeight="true" fitToWidth="true" />
          </items>
       </SplitPane>
       <AnchorPane>
