@@ -29,9 +29,10 @@ public class DownloadManager {
             throw new IllegalArgumentException("url must not be blank");
         }
 
-        List<String> command = YoutubeDlCommandBuilder.newInstance(url)
+        List<String> command = YoutubeDlCommandBuilder.newInstance()
                 .noDebug()
                 .dumpJson()
+                .url(url)
                 .buildAsList();
 
         VideoInfo videoInfo;
@@ -43,10 +44,12 @@ public class DownloadManager {
     }
 
     public Process download(Downloadable downloadable, Path outputPath) throws IOException {
-        List<String> command = YoutubeDlCommandBuilder.newInstance(downloadable.getBaseUrl())
+        List<String> command = YoutubeDlCommandBuilder.newInstance()
                 .noDebug()
                 .formatId(downloadable.getFormatId())
                 .outputPath(outputPath)
+                .ffmpegLocation(ApplicationContext.APP_DIR)
+                .url(downloadable.getBaseUrl())
                 .buildAsList();
 
         return runCommand(command);

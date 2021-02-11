@@ -11,19 +11,13 @@ import static com.github.engatec.vdl.core.ApplicationContext.YOUTUBE_DL_APP_NAME
 
 public class YoutubeDlCommandBuilder {
 
-    private String url;
     private List<String> commandList;
 
     private YoutubeDlCommandBuilder() {
     }
 
     public static YoutubeDlCommandBuilder newInstance() {
-        return newInstance(null);
-    }
-
-    public static YoutubeDlCommandBuilder newInstance(String url) {
         var o = new YoutubeDlCommandBuilder();
-        o.url = url;
         o.commandList = new ArrayList<>();
         o.commandList.add(StringUtils.defaultIfBlank(APP_DIR, StringUtils.EMPTY) + YOUTUBE_DL_APP_NAME);
         return o;
@@ -34,15 +28,26 @@ public class YoutubeDlCommandBuilder {
     }
 
     public List<String> buildAsList() {
-        if (StringUtils.isNotBlank(url)) {
-            if (StringUtils.isNotBlank(APP_DIR)) {
-                commandList.add("--ffmpeg-location");
-                commandList.add(APP_DIR);
-            }
-            commandList.add(url);
-        }
-
         return List.copyOf(commandList);
+    }
+
+    /**
+     * If present - must be the latest before .build()
+     */
+    public YoutubeDlCommandBuilder url(String url) {
+        if (StringUtils.isBlank(url)) {
+            throw new IllegalArgumentException("url must not be blank");
+        }
+        commandList.add(url);
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder ffmpegLocation(String location) {
+        if (StringUtils.isNotBlank(location)) {
+            commandList.add("--ffmpeg-location");
+            commandList.add(location);
+        }
+        return this;
     }
 
     public YoutubeDlCommandBuilder noDebug() {
