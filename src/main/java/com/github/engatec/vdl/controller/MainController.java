@@ -9,12 +9,12 @@ import com.github.engatec.vdl.core.ConfigProperty;
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
+import com.github.engatec.vdl.core.UpdateManager;
 import com.github.engatec.vdl.model.Audio;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Video;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.worker.FetchDownloadableDataTask;
-import com.github.engatec.vdl.worker.UpdateBinariesTask;
 import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -74,7 +74,10 @@ public class MainController implements StageAware {
         initSearchHandlers();
         setTabBindings();
 
-        checkUpdatesMenuItem.setOnAction(e -> Dialogs.progress(appCtx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress"), stage, new UpdateBinariesTask()));
+        checkUpdatesMenuItem.setOnAction(e -> {
+            UpdateManager.updateYoutubeDl(stage);
+            e.consume();
+        });
         preferencesMenuItem.setOnAction(this::handlePreferencesClick);
         exitMenuItem.setOnAction(this::handleExitClick);
 
