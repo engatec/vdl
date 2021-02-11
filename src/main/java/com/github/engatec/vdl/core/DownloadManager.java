@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.model.Downloadable;
 import com.github.engatec.vdl.model.VideoInfo;
+import org.apache.commons.lang3.StringUtils;
 
 public class DownloadManager {
 
@@ -24,6 +25,10 @@ public class DownloadManager {
     }
 
     public VideoInfo fetchVideoInfo(String url) throws IOException {
+        if (StringUtils.isBlank(url)) {
+            throw new IllegalArgumentException("url must not be blank");
+        }
+
         List<String> command = YoutubeDlCommandBuilder.newInstance(url)
                 .noDebug()
                 .dumpJson()
@@ -45,5 +50,10 @@ public class DownloadManager {
                 .buildAsList();
 
         return runCommand(command);
+    }
+
+    public void checkYoutubeDlUpdates() throws IOException, InterruptedException {
+        runCommand(YoutubeDlCommandBuilder.newInstance().removeCache().buildAsList()).waitFor();
+        runCommand(YoutubeDlCommandBuilder.newInstance().update().buildAsList()).waitFor();
     }
 }

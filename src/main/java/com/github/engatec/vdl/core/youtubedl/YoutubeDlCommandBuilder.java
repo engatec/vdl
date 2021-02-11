@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class YoutubeDlCommandBuilder {
+import static com.github.engatec.vdl.core.ApplicationContext.APP_DIR;
+import static com.github.engatec.vdl.core.ApplicationContext.YOUTUBE_DL_APP_NAME;
 
-    private static final String APP_DIR = System.getProperty("app.dir");
-    private static final String YOUTUBE_DL_APP_NAME = "youtube-dl";
+public class YoutubeDlCommandBuilder {
 
     private String url;
     private List<String> commandList;
@@ -17,10 +17,11 @@ public class YoutubeDlCommandBuilder {
     private YoutubeDlCommandBuilder() {
     }
 
+    public static YoutubeDlCommandBuilder newInstance() {
+        return newInstance(null);
+    }
+
     public static YoutubeDlCommandBuilder newInstance(String url) {
-        if (StringUtils.isBlank(url)) {
-            throw new IllegalArgumentException("url must not be blank");
-        }
         var o = new YoutubeDlCommandBuilder();
         o.url = url;
         o.commandList = new ArrayList<>();
@@ -33,11 +34,14 @@ public class YoutubeDlCommandBuilder {
     }
 
     public List<String> buildAsList() {
-        if (StringUtils.isNotBlank(APP_DIR)) {
-            commandList.add("--ffmpeg-location");
-            commandList.add(APP_DIR);
+        if (StringUtils.isNotBlank(url)) {
+            if (StringUtils.isNotBlank(APP_DIR)) {
+                commandList.add("--ffmpeg-location");
+                commandList.add(APP_DIR);
+            }
+            commandList.add(url);
         }
-        commandList.add(url);
+
         return List.copyOf(commandList);
     }
 
@@ -67,6 +71,16 @@ public class YoutubeDlCommandBuilder {
 
         commandList.add("-o");
         commandList.add(path.resolve("%(title)s.%(ext)s").toString());
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder removeCache() {
+        commandList.add("--rm-cache-dir");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder update() {
+        commandList.add("-U");
         return this;
     }
 }

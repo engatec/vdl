@@ -19,6 +19,7 @@
       <menus>
         <Menu fx:id="fileMenu" mnemonicParsing="false" text="%menu.file">
           <items>
+                  <MenuItem fx:id="checkUpdatesMenuItem" mnemonicParsing="false" text="%menu.file.checkupdates" />
             <MenuItem fx:id="preferencesMenuItem" mnemonicParsing="false" text="%menu.file.preferences" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" text="%menu.file.exit" />
@@ -27,6 +28,7 @@
         <Menu fx:id="languageMenu" mnemonicParsing="false" text="%menu.language">
           <items>
             <MenuItem fx:id="langEnMenuItem" mnemonicParsing="false" text="%menu.language.en" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="langRuMenuItem" mnemonicParsing="false" text="%menu.language.ru" />
           </items>
         </Menu>

@@ -16,7 +16,10 @@ public class ApplicationContext {
 
     public static final ApplicationContext INSTANCE = new ApplicationContext();
 
-    public static final Path APP_SERVICE_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
+    public static final String APP_DIR = System.getProperty("app.dir");
+    public static final String YOUTUBE_DL_APP_NAME = "youtube-dl";
+
+    public static final Path CONFIG_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
 
     ExecutorService executorService;
     private final ObjectProperty<ResourceBundle> resourceBundleProperty = new SimpleObjectProperty<>();

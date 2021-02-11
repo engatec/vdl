@@ -14,6 +14,7 @@ import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Video;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.worker.FetchDownloadableDataTask;
+import com.github.engatec.vdl.worker.UpdateBinariesTask;
 import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -53,6 +54,7 @@ public class MainController implements StageAware {
     @FXML private ScrollPane audioTabScrollPane;
 
     @FXML private Menu fileMenu;
+    @FXML private MenuItem checkUpdatesMenuItem;
     @FXML private MenuItem preferencesMenuItem;
     @FXML private MenuItem exitMenuItem;
 
@@ -72,6 +74,7 @@ public class MainController implements StageAware {
         initSearchHandlers();
         setTabBindings();
 
+        checkUpdatesMenuItem.setOnAction(e -> Dialogs.progress(appCtx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress"), stage, new UpdateBinariesTask()));
         preferencesMenuItem.setOnAction(this::handlePreferencesClick);
         exitMenuItem.setOnAction(this::handleExitClick);
 
@@ -88,6 +91,7 @@ public class MainController implements StageAware {
 
     private void setLocaleBindings() {
         I18n.bindLocaleProperty(fileMenu.textProperty(), "menu.file");
+        I18n.bindLocaleProperty(checkUpdatesMenuItem.textProperty(), "menu.file.checkupdates");
         I18n.bindLocaleProperty(preferencesMenuItem.textProperty(), "menu.file.preferences");
         I18n.bindLocaleProperty(exitMenuItem.textProperty(), "menu.file.exit");
         I18n.bindLocaleProperty(languageMenu.textProperty(), "menu.language");
