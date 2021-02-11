@@ -8,7 +8,10 @@ public class YoutubedlPreferencesController {
 
     @FXML private CheckBox noMTimeCheckBox;
 
-    private final YoutubedlPropertyHolder propertyHolder;
+    private YoutubedlPropertyHolder propertyHolder;
+
+    private YoutubedlPreferencesController() {
+    }
 
     public YoutubedlPreferencesController(YoutubedlPropertyHolder propertyHolder) {
         this.propertyHolder = propertyHolder;

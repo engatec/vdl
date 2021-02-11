@@ -17,7 +17,8 @@ import javafx.stage.Stage;
 
 public class GeneralPreferencesController {
 
-    private final Stage stage;
+    private Stage stage;
+    private GeneralPropertyHolder propertyHolder;
 
     private final ToggleGroup downloadRadioGroup = new ToggleGroup();
 
@@ -26,7 +27,8 @@ public class GeneralPreferencesController {
     @FXML private TextField downloadPathTextField;
     @FXML private Button chooseDownloadPathBtn;
 
-    private final GeneralPropertyHolder propertyHolder;
+    private GeneralPreferencesController() {
+    }
 
     public GeneralPreferencesController(Stage stage, GeneralPropertyHolder propertyHolder) {
         this.stage = stage;
