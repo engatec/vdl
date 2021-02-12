@@ -5,7 +5,7 @@
                      filePattern="${sys:user.home}/.vdl/log/vdl.log.%i">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="2MB"/>
+                <SizeBasedTriggeringPolicy size="5MB"/>
             </Policies>
             <DefaultRolloverStrategy max="2"/>
         </RollingFile>

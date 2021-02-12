@@ -1,7 +1,10 @@
 package com.github.engatec.vdl.core;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -11,8 +14,12 @@ import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.model.Downloadable;
 import com.github.engatec.vdl.model.VideoInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DownloadManager {
+
+    private static final Logger LOGGER = LogManager.getLogger(DownloadManager.class);
 
     public static final DownloadManager INSTANCE = new DownloadManager();
 
@@ -35,12 +42,28 @@ public class DownloadManager {
                 .url(url)
                 .buildAsList();
 
-        VideoInfo videoInfo;
-        Process process = runCommand(command);
+        Process process = new ProcessBuilder(command).start();
         try (InputStream is = process.getInputStream()) {
-            videoInfo = objectMapper.readValue(is, VideoInfo.class);
+            return objectMapper.readValue(is, VideoInfo.class);
+        } catch (Exception e) {
+            try (InputStream errorStream = process.getErrorStream()) {
+                logError(errorStream);
+            }
+            LOGGER.error("Failed command: '{}'", String.join(StringUtils.SPACE, command));
+            throw e;
         }
-        return videoInfo;
+    }
+
+    private void logError(InputStream errorStream) {
+        try {
+            if (errorStream.available() <= 0) {
+                return;
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        new BufferedReader(new InputStreamReader(errorStream)).lines().forEach(LOGGER::error);
     }
 
     public Process download(Downloadable downloadable, Path outputPath) throws IOException {

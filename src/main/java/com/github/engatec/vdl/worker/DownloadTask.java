@@ -31,30 +31,31 @@ public class DownloadTask extends Task<Void> {
     @Override
     protected Void call() throws Exception {
         Process process = DownloadManager.INSTANCE.download(downloadable, downloadPath);
-        Stream<String> lines = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding())).lines();
-        lines.filter(StringUtils::isNotBlank).forEach(it -> {
-            if (isCancelled()) {
-                process.destroy();
-                return;
-            }
-            // Намеренно не использую здесь updateMessage, чтобы не пропустить ни одного сообщения от youtube-dl
-            if (DOWNLOAD_PROGRESS_PATTERN.matcher(it).matches()) {
-                Platform.runLater(() -> {
-                    int startPosition = downloadTextArea.getCaretPosition();
-                    downloadTextArea.replaceText(startPosition, downloadTextArea.getLength(), it + StringUtils.LF);
-                    downloadTextArea.positionCaret(startPosition);
-                });
-            } else {
-                Platform.runLater(() -> {
-                    int startPosition = downloadTextArea.getCaretPosition();
-                    int endPosition = downloadTextArea.getLength();
-                    if (startPosition < endPosition) {
-                        downloadTextArea.positionCaret(endPosition);
-                    }
-                    downloadTextArea.appendText(it + StringUtils.LF);
-                });
-            }
-        });
+        try (Stream<String> lines = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding())).lines()) {
+            lines.filter(StringUtils::isNotBlank).forEach(it -> {
+                if (isCancelled()) {
+                    process.destroy();
+                    return;
+                }
+                // Намеренно не использую здесь updateMessage, чтобы не пропустить ни одного сообщения от youtube-dl
+                if (DOWNLOAD_PROGRESS_PATTERN.matcher(it).matches()) {
+                    Platform.runLater(() -> {
+                        int startPosition = downloadTextArea.getCaretPosition();
+                        downloadTextArea.replaceText(startPosition, downloadTextArea.getLength(), it + StringUtils.LF);
+                        downloadTextArea.positionCaret(startPosition);
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        int startPosition = downloadTextArea.getCaretPosition();
+                        int endPosition = downloadTextArea.getLength();
+                        if (startPosition < endPosition) {
+                            downloadTextArea.positionCaret(endPosition);
+                        }
+                        downloadTextArea.appendText(it + StringUtils.LF);
+                    });
+                }
+            });
+        }
         return null;
     }
 }
