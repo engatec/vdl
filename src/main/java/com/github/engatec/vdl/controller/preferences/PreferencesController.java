@@ -3,7 +3,7 @@ package com.github.engatec.vdl.controller.preferences;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.github.engatec.vdl.controller.StageAware;
+import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.category.Category;
 import com.github.engatec.vdl.core.preferences.category.GeneralCategory;
@@ -18,9 +18,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
 
-public class PreferencesController implements StageAware {
-
-    private Stage stage;
+public class PreferencesController extends StageAwareController {
 
     private final ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
 
@@ -30,11 +28,17 @@ public class PreferencesController implements StageAware {
     @FXML private Button okBtn;
     @FXML private Button cancelBtn;
 
-    public PreferencesController() {
+    private PreferencesController() {
+    }
+
+    public PreferencesController(Stage stage) {
+        super(stage);
     }
 
     @FXML
     public void initialize() {
+        this.stage.setTitle(resourceBundle.getString("preferences.title"));
+
         okBtn.setOnAction(this::handleOkBtnClick);
         cancelBtn.setOnAction(this::handleCancelBtnClick);
 
@@ -51,12 +55,6 @@ public class PreferencesController implements StageAware {
             preferencesScrollPane.setContent(categoryUi);
         });
         selectionModel.select(0);
-    }
-
-    @Override
-    public void setStage(Stage stage) {
-        this.stage = stage;
-        this.stage.setTitle(resourceBundle.getString("preferences.title"));
     }
 
     private TreeItem<Category> createRoot() {

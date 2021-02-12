@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import com.github.engatec.vdl.controller.preferences.PreferencesController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.UiComponent;
@@ -142,7 +143,8 @@ public class MainController extends StageAwareController {
     }
 
     private void handlePreferencesClick(ActionEvent event) {
-        Stage prefStage = UiManager.loadStage(UiComponent.PREFERENCES);
+        Stage prefStage = new Stage();
+        UiManager.loadStage(UiComponent.PREFERENCES, prefStage, param -> new PreferencesController(prefStage));
         prefStage.initModality(Modality.APPLICATION_MODAL);
         prefStage.initOwner(this.stage);
         // Убрать хардкод в проперти

@@ -28,7 +28,8 @@ public class Dialogs {
     }
 
     public static void progress(String title, Stage parent, Task<?> task) {
-        Stage stage = UiManager.loadStage(UiComponent.DIALOG_PROGRESS, new Stage(), param -> new ProgressDialogController(title, task));
+        Stage stage = new Stage();
+        UiManager.loadStage(UiComponent.DIALOG_PROGRESS, stage, param -> new ProgressDialogController(stage, title, task));
         stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.initOwner(parent);

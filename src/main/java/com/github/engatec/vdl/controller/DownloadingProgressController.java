@@ -14,9 +14,7 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
-public class DownloadingProgressController implements StageAware {
-
-    private Stage stage;
+public class DownloadingProgressController extends StageAwareController {
 
     private Downloadable downloadable;
     private Path downloadPath;
@@ -29,7 +27,8 @@ public class DownloadingProgressController implements StageAware {
     private DownloadingProgressController() {
     }
 
-    public DownloadingProgressController(Downloadable downloadable, Path downloadPath) {
+    public DownloadingProgressController(Stage stage, Downloadable downloadable, Path downloadPath) {
+        super(stage);
         this.downloadable = downloadable;
         this.downloadPath = downloadPath;
     }
@@ -38,11 +37,6 @@ public class DownloadingProgressController implements StageAware {
     public void initialize() {
         downloadingProgressLabel.setText(ApplicationContext.INSTANCE.getResourceBundle().getString("download.progress.label.inprogress"));
         startDownloading();
-    }
-
-    @Override
-    public void setStage(Stage stage) {
-        this.stage = stage;
     }
 
     private void startDownloading() {

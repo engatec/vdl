@@ -36,7 +36,8 @@ public abstract class AbstractDownloadGridController extends GridPane {
                 return;
             }
 
-            Stage stage = UiManager.loadStage(UiComponent.DOWNLOADING_PROGRESS, new Stage(), param -> new DownloadingProgressController(downloadable, downloadPath));
+            Stage stage = new Stage();
+            UiManager.loadStage(UiComponent.DOWNLOADING_PROGRESS, stage, param -> new DownloadingProgressController(stage, downloadable, downloadPath));
             stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(parentStage);
