@@ -10,6 +10,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.model.Downloadable;
 import com.github.engatec.vdl.model.VideoInfo;
@@ -67,11 +69,19 @@ public class DownloadManager {
     }
 
     public Process download(Downloadable downloadable, Path outputPath) throws IOException {
-        List<String> command = YoutubeDlCommandBuilder.newInstance()
+        YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
+
+        commandBuilder
                 .noDebug()
                 .formatId(downloadable.getFormatId())
                 .outputPath(outputPath)
-                .ffmpegLocation(ApplicationContext.APP_DIR)
+                .ffmpegLocation(ApplicationContext.APP_DIR);
+
+        if (Boolean.parseBoolean(ConfigManager.INSTANCE.getValue(ConfigProperty.NO_M_TIME))) {
+            commandBuilder.noMTime();
+        }
+
+        List<String> command = commandBuilder
                 .url(downloadable.getBaseUrl())
                 .buildAsList();
 
