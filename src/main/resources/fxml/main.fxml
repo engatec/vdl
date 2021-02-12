@@ -19,7 +19,6 @@
       <menus>
         <Menu fx:id="fileMenu" mnemonicParsing="false" text="%menu.file">
           <items>
-                  <MenuItem fx:id="checkUpdatesMenuItem" mnemonicParsing="false" text="%menu.file.checkupdates" />
             <MenuItem fx:id="preferencesMenuItem" mnemonicParsing="false" text="%menu.file.preferences" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" text="%menu.file.exit" />
@@ -32,6 +31,11 @@
                   <MenuItem fx:id="langRuMenuItem" mnemonicParsing="false" text="%menu.language.ru" />
           </items>
         </Menu>
+            <Menu mnemonicParsing="false" text="%menu.updates">
+              <items>
+                  <MenuItem fx:id="checkUpdatesMenuItem" mnemonicParsing="false" text="%menu.updates.youtubedl" />
+              </items>
+            </Menu>
       </menus>
     </MenuBar>
       <VBox prefHeight="331.0" prefWidth="610.0" spacing="8.0" VBox.vgrow="ALWAYS">

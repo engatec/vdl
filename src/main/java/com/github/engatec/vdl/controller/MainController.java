@@ -97,7 +97,7 @@ public class MainController implements StageAware {
 
     private void setLocaleBindings() {
         I18n.bindLocaleProperty(fileMenu.textProperty(), "menu.file");
-        I18n.bindLocaleProperty(checkUpdatesMenuItem.textProperty(), "menu.file.checkupdates");
+        I18n.bindLocaleProperty(checkUpdatesMenuItem.textProperty(), "menu.updates.youtubedl");
         I18n.bindLocaleProperty(preferencesMenuItem.textProperty(), "menu.file.preferences");
         I18n.bindLocaleProperty(exitMenuItem.textProperty(), "menu.file.exit");
         I18n.bindLocaleProperty(languageMenu.textProperty(), "menu.language");
