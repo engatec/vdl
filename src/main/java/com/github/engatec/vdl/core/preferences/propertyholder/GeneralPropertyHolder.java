@@ -9,6 +9,7 @@ public class GeneralPropertyHolder {
 
     private final BooleanProperty alwaysAskPath = new SimpleBooleanProperty();
     private final StringProperty downloadPath = new SimpleStringProperty();
+    private final BooleanProperty autoSearchFromClipboard = new SimpleBooleanProperty();
 
     public boolean isAlwaysAskPath() {
         return alwaysAskPath.get();
@@ -32,5 +33,17 @@ public class GeneralPropertyHolder {
 
     public void setDownloadPath(String downloadPath) {
         this.downloadPath.set(downloadPath);
+    }
+
+    public boolean isAutoSearchFromClipboard() {
+        return autoSearchFromClipboard.get();
+    }
+
+    public BooleanProperty autoSearchFromClipboardProperty() {
+        return autoSearchFromClipboard;
+    }
+
+    public void setAutoSearchFromClipboard(boolean autoSearchFromClipboard) {
+        this.autoSearchFromClipboard.set(autoSearchFromClipboard);
     }
 }

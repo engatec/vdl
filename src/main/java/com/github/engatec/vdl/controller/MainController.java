@@ -1,5 +1,7 @@
 package com.github.engatec.vdl.controller;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -31,6 +33,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
@@ -38,15 +41,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class MainController implements StageAware {
+public class MainController extends StageAwareController {
 
     private static final Logger LOGGER = LogManager.getLogger(MainController.class);
 
     private ApplicationContext appCtx;
-    private Stage stage;
 
     @FXML private VBox rootControlVBox;
 
@@ -69,6 +72,13 @@ public class MainController implements StageAware {
     @FXML private Button searchBtn;
     @FXML private ProgressIndicator searchProgressIndicator;
 
+    private MainController() {
+    }
+
+    public MainController(Stage stage) {
+        super(stage);
+    }
+
     @FXML
     public void initialize() {
         appCtx = ApplicationContext.INSTANCE;
@@ -88,11 +98,7 @@ public class MainController implements StageAware {
         langRuMenuItem.setOnAction(event -> handleLanguageChange(event, Language.RUSSIAN));
 
         setDragAndDrop();
-    }
-
-    @Override
-    public void setStage(Stage stage) {
-        this.stage = stage;
+        setAutoSearchFromClipboardOnFocusListener();
     }
 
     private void setLocaleBindings() {
@@ -140,7 +146,7 @@ public class MainController implements StageAware {
         prefStage.initModality(Modality.APPLICATION_MODAL);
         prefStage.initOwner(this.stage);
         // Убрать хардкод в проперти
-        prefStage.setMinWidth(500);
+        prefStage.setMinWidth(600);
         prefStage.setMinHeight(400);
         prefStage.showAndWait();
         event.consume();
@@ -194,10 +200,36 @@ public class MainController implements StageAware {
             Dragboard dragboard = e.getDragboard();
             if (e.getTransferMode() == TransferMode.COPY && dragboard.hasString()) {
                 videoUrlTextField.setText(dragboard.getString());
-                e.setDropCompleted(true);
                 searchBtn.fire();
+                e.setDropCompleted(true);
             }
             e.consume();
+        });
+    }
+
+    private void setAutoSearchFromClipboardOnFocusListener() {
+        Clipboard systemClipboard = Clipboard.getSystemClipboard();
+        stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                return;
+            }
+
+            if (!Boolean.parseBoolean(ConfigManager.INSTANCE.getValue(ConfigProperty.AUTO_SEARCH_FROM_CLIPBOARD))) {
+                return;
+            }
+
+            try {
+                String clipboardText = systemClipboard.getString();
+                String currentUrlText = videoUrlTextField.getText();
+                if (StringUtils.isBlank(clipboardText) || clipboardText.equals(currentUrlText)) {
+                    return;
+                }
+
+                URL url = new URL(clipboardText);
+                videoUrlTextField.setText(url.toString());
+                searchBtn.fire();
+            } catch (MalformedURLException ignored) {
+            }
         });
     }
 }

@@ -32,6 +32,7 @@ public class GeneralCategory extends Category {
         propertyHolder = new GeneralPropertyHolder();
         propertyHolder.setAlwaysAskPath(Boolean.parseBoolean(config.getValue(ConfigProperty.DOWNLOAD_ALWAYS_ASK_PATH)));
         propertyHolder.setDownloadPath(config.getValue(ConfigProperty.DOWNLOAD_PATH));
+        propertyHolder.setAutoSearchFromClipboard(Boolean.parseBoolean(config.getValue(ConfigProperty.AUTO_SEARCH_FROM_CLIPBOARD)));
     }
 
     @Override
@@ -43,5 +44,6 @@ public class GeneralCategory extends Category {
         ConfigManager config = ConfigManager.INSTANCE;
         config.setValue(ConfigProperty.DOWNLOAD_ALWAYS_ASK_PATH, String.valueOf(propertyHolder.isAlwaysAskPath()));
         config.setValue(ConfigProperty.DOWNLOAD_PATH, propertyHolder.getDownloadPath());
+        config.setValue(ConfigProperty.AUTO_SEARCH_FROM_CLIPBOARD, String.valueOf(propertyHolder.isAutoSearchFromClipboard()));
     }
 }

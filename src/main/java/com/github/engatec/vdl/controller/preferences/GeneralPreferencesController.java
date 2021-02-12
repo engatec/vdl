@@ -8,6 +8,7 @@ import com.github.engatec.vdl.core.preferences.propertyholder.GeneralPropertyHol
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -26,6 +27,7 @@ public class GeneralPreferencesController {
     @FXML private RadioButton askPathRadioBtn;
     @FXML private TextField downloadPathTextField;
     @FXML private Button chooseDownloadPathBtn;
+    @FXML private CheckBox autoSearchFromClipboardCheckBox;
 
     private GeneralPreferencesController() {
     }
@@ -42,6 +44,7 @@ public class GeneralPreferencesController {
 
         askPathRadioBtn.selectedProperty().bindBidirectional(propertyHolder.alwaysAskPathProperty());
         downloadPathTextField.textProperty().bindBidirectional(propertyHolder.downloadPathProperty());
+        autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(propertyHolder.autoSearchFromClipboardProperty());
     }
 
     private void initDownloadRadioGroup() {

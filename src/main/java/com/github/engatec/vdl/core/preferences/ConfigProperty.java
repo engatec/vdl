@@ -12,6 +12,7 @@ public enum ConfigProperty {
     DOWNLOAD_PATH("download.path", Paths.get(SystemUtils.getUserHome().getAbsolutePath(), "Downloads").toString()),
     DOWNLOAD_ALWAYS_ASK_PATH("download.alwaysAskPath", "false"),
     LANGUAGE("language", Objects.requireNonNullElse(Locale.getDefault().getLanguage(), Language.ENGLISH.getLocaleLanguage())),
+    AUTO_SEARCH_FROM_CLIPBOARD("general.autosearchfromclipboard", "false"),
     NO_M_TIME("youtubedl.noMTime", "true");
 
     private final String key;

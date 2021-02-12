@@ -1,5 +1,6 @@
 package com.github.engatec.vdl;
 
+import com.github.engatec.vdl.controller.MainController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.UiComponent;
@@ -14,7 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        UiManager.loadStage(UiComponent.MAIN, stage);
+        UiManager.loadStage(UiComponent.MAIN, stage, param -> new MainController(stage));
         stage.setTitle("VDL - Video downloader");
         stage.show();
     }
