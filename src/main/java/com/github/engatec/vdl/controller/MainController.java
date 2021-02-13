@@ -1,7 +1,5 @@
 package com.github.engatec.vdl.controller;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import com.github.engatec.vdl.controller.preferences.PreferencesController;
@@ -12,6 +10,7 @@ import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.UpdateManager;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.ConfigProperty;
+import com.github.engatec.vdl.core.preferences.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.Audio;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Video;
@@ -34,7 +33,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.input.Clipboard;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
@@ -42,7 +40,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -99,7 +96,7 @@ public class MainController extends StageAwareController {
         langRuMenuItem.setOnAction(event -> handleLanguageChange(event, Language.RUSSIAN));
 
         setDragAndDrop();
-        setAutoSearchFromClipboardOnFocusListener();
+        stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(videoUrlTextField, searchBtn));
     }
 
     private void setLocaleBindings() {
@@ -206,32 +203,6 @@ public class MainController extends StageAwareController {
                 e.setDropCompleted(true);
             }
             e.consume();
-        });
-    }
-
-    private void setAutoSearchFromClipboardOnFocusListener() {
-        Clipboard systemClipboard = Clipboard.getSystemClipboard();
-        stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                return;
-            }
-
-            if (!Boolean.parseBoolean(ConfigManager.INSTANCE.getValue(ConfigProperty.AUTO_SEARCH_FROM_CLIPBOARD))) {
-                return;
-            }
-
-            try {
-                String clipboardText = systemClipboard.getString();
-                String currentUrlText = videoUrlTextField.getText();
-                if (StringUtils.isBlank(clipboardText) || clipboardText.equals(currentUrlText)) {
-                    return;
-                }
-
-                URL url = new URL(clipboardText);
-                videoUrlTextField.setText(url.toString());
-                searchBtn.fire();
-            } catch (MalformedURLException ignored) {
-            }
         });
     }
 }
