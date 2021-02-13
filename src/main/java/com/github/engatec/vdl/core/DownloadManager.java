@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,6 +71,8 @@ public class DownloadManager {
     }
 
     public Process download(Downloadable downloadable, Path outputPath) throws IOException {
+        ConfigManager cfg = ConfigManager.INSTANCE;
+
         YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
 
         commandBuilder
@@ -77,8 +81,17 @@ public class DownloadManager {
                 .outputPath(outputPath)
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
-        if (Boolean.parseBoolean(ConfigManager.INSTANCE.getValue(ConfigProperty.NO_M_TIME))) {
+        if (Boolean.parseBoolean(cfg.getValue(ConfigProperty.NO_M_TIME))) {
             commandBuilder.noMTime();
+        }
+
+        if (Boolean.parseBoolean(cfg.getValue(ConfigProperty.USE_CUSTOM_ARGUMENTS))) {
+            String customArgumentsString = cfg.getValue(ConfigProperty.CUSTOM_ARGUMENTS);
+            List<String> customArguments = Arrays.stream(customArgumentsString.split("\\s+"))
+                    .map(StringUtils::strip)
+                    .filter(StringUtils::isNotBlank)
+                    .collect(Collectors.toList());
+            commandBuilder.addCustomArguments(customArguments);
         }
 
         List<String> command = commandBuilder

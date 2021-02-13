@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import static com.github.engatec.vdl.core.ApplicationContext.APP_DIR;
@@ -31,6 +32,15 @@ public class YoutubeDlCommandBuilder {
         return List.copyOf(commandList);
     }
 
+    public YoutubeDlCommandBuilder addCustomArguments(List<String> args) {
+        if (CollectionUtils.isEmpty(args)) {
+            return this;
+        }
+
+        commandList.addAll(args);
+        return this;
+    }
+
     /**
      * If present - must be the latest before .build()
      */
@@ -43,10 +53,12 @@ public class YoutubeDlCommandBuilder {
     }
 
     public YoutubeDlCommandBuilder ffmpegLocation(String location) {
-        if (StringUtils.isNotBlank(location)) {
-            commandList.add("--ffmpeg-location");
-            commandList.add(location);
+        if (StringUtils.isBlank(location)) {
+            return this;
         }
+
+        commandList.add("--ffmpeg-location");
+        commandList.add(location);
         return this;
     }
 

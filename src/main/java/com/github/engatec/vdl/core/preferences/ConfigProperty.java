@@ -17,7 +17,9 @@ public enum ConfigProperty {
     AUTO_DOWNLOAD("general.autodownload", "false"),
     AUTO_DOWNLOAD_USE_CUSTOM_FORMAT("general.autodownloadUseCustomFormat", "false"),
     AUTO_DOWNLOAD_CUSTOM_FORMAT("general.autodownloadCustomFormat", StringUtils.EMPTY),
-    NO_M_TIME("youtubedl.noMTime", "true");
+    NO_M_TIME("youtubedl.noMTime", "true"),
+    USE_CUSTOM_ARGUMENTS("youtubedl.useCustomArguments", "false"),
+    CUSTOM_ARGUMENTS("youtubedl.customArguments", StringUtils.EMPTY);
 
     private final String key;
     private final String defaultValue;

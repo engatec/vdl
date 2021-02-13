@@ -31,6 +31,8 @@ public class YoutubeDlCategory extends Category {
         ConfigManager config = ConfigManager.INSTANCE;
         propertyHolder = new YoutubedlPropertyHolder();
         propertyHolder.setNoMTime(Boolean.parseBoolean(config.getValue(ConfigProperty.NO_M_TIME)));
+        propertyHolder.setUseCustomArguments(Boolean.parseBoolean(config.getValue(ConfigProperty.USE_CUSTOM_ARGUMENTS)));
+        propertyHolder.setCustomArguments(config.getValue(ConfigProperty.CUSTOM_ARGUMENTS));
     }
 
     @Override
@@ -41,5 +43,7 @@ public class YoutubeDlCategory extends Category {
 
         ConfigManager config = ConfigManager.INSTANCE;
         config.setValue(ConfigProperty.NO_M_TIME, String.valueOf(propertyHolder.isNoMTime()));
+        config.setValue(ConfigProperty.USE_CUSTOM_ARGUMENTS, String.valueOf(propertyHolder.isUseCustomArguments()));
+        config.setValue(ConfigProperty.CUSTOM_ARGUMENTS, propertyHolder.getCustomArguments());
     }
 }
