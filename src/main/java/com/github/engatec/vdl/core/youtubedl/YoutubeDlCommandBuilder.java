@@ -62,7 +62,7 @@ public class YoutubeDlCommandBuilder {
 
     public YoutubeDlCommandBuilder formatId(String formatId) {
         if (StringUtils.isBlank(formatId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("formatId must not be blank");
         }
         commandList.add("-f");
         commandList.add(formatId);
@@ -71,7 +71,7 @@ public class YoutubeDlCommandBuilder {
 
     public YoutubeDlCommandBuilder outputPath(Path path) {
         if (path == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("path must not be null");
         }
 
         commandList.add("-o");

@@ -13,8 +13,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DownloadingProgressController extends StageAwareController {
+
+    private static final Logger LOGGER = LogManager.getLogger(DownloadingProgressController.class);
 
     private Downloadable downloadable;
     private Path downloadPath;
@@ -48,7 +52,9 @@ public class DownloadingProgressController extends StageAwareController {
         });
 
         task.setOnFailed(event -> {
-            setDownloadingResult("download.progress.label.finished");
+            Throwable ex = event.getSource().getException();
+            LOGGER.error(ex.getMessage(), ex);
+            setDownloadingResult("download.progress.label.error");
             event.consume();
         });
 

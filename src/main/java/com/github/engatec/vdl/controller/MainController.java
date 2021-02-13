@@ -8,10 +8,12 @@ import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.UpdateManager;
+import com.github.engatec.vdl.core.action.DownloadAction;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.core.preferences.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.Audio;
+import com.github.engatec.vdl.model.Downloadable;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Video;
 import com.github.engatec.vdl.ui.Dialogs;
@@ -161,6 +163,36 @@ public class MainController extends StageAwareController {
         videoTabScrollPane.setContent(null);
         audioTabScrollPane.setContent(null);
 
+        boolean autodownloadEnabled = Boolean.parseBoolean(ConfigManager.INSTANCE.getValue(ConfigProperty.AUTO_DOWNLOAD));
+        if (autodownloadEnabled) {
+            performAutoDownload();
+        } else {
+            searchDownloadables();
+        }
+
+        event.consume();
+    }
+
+    private void performAutoDownload() {
+        ConfigManager cfg = ConfigManager.INSTANCE;
+
+        boolean useCustomFormat = Boolean.parseBoolean(cfg.getValue(ConfigProperty.AUTO_DOWNLOAD_USE_CUSTOM_FORMAT));
+        final String format = useCustomFormat ? cfg.getValue(ConfigProperty.AUTO_DOWNLOAD_CUSTOM_FORMAT) : "bestvideo+bestaudio/best";
+        Downloadable downloadable = new Downloadable() {
+            @Override
+            public String getBaseUrl() {
+                return videoUrlTextField.getText();
+            }
+
+            @Override
+            public String getFormatId() {
+                return format;
+            }
+        };
+        new DownloadAction(stage, downloadable).perform();
+    }
+
+    private void searchDownloadables() {
         Task<DownloadableData> task = new FetchDownloadableDataTask(videoUrlTextField.getText());
         task.setOnSucceeded(it -> {
             DownloadableData downloadableData = (DownloadableData) it.getSource().getValue();
@@ -184,7 +216,6 @@ public class MainController extends StageAwareController {
         });
         searchProgressIndicator.visibleProperty().bind(task.runningProperty());
         appCtx.runTaskAsync(task);
-        event.consume();
     }
 
     private void setDragAndDrop() {

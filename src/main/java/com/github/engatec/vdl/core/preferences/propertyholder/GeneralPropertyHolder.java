@@ -13,8 +13,8 @@ public class GeneralPropertyHolder {
     private final BooleanProperty autoSearchFromClipboard = new SimpleBooleanProperty();
 
     private final BooleanProperty autoDownload = new SimpleBooleanProperty();
-    private final BooleanProperty autodownloadUseCustomSettings = new SimpleBooleanProperty();
-    private final StringProperty autodownloadCustomSettings = new SimpleStringProperty();
+    private final BooleanProperty autodownloadUseCustomFormat = new SimpleBooleanProperty();
+    private final StringProperty autodownloadCustomFormat = new SimpleStringProperty();
 
     public boolean isAlwaysAskPath() {
         return alwaysAskPath.get();
@@ -64,27 +64,27 @@ public class GeneralPropertyHolder {
         this.autoDownload.set(autoDownload);
     }
 
-    public boolean isAutodownloadUseCustomSettings() {
-        return autodownloadUseCustomSettings.get();
+    public boolean isAutodownloadUseCustomFormat() {
+        return autodownloadUseCustomFormat.get();
     }
 
-    public BooleanProperty autodownloadUseCustomSettingsProperty() {
-        return autodownloadUseCustomSettings;
+    public BooleanProperty autodownloadUseCustomFormatProperty() {
+        return autodownloadUseCustomFormat;
     }
 
-    public void setAutodownloadUseCustomSettings(boolean autodownloadUseCustomSettings) {
-        this.autodownloadUseCustomSettings.set(autodownloadUseCustomSettings);
+    public void setAutodownloadUseCustomFormat(boolean autodownloadUseCustomFormat) {
+        this.autodownloadUseCustomFormat.set(autodownloadUseCustomFormat);
     }
 
-    public String getAutodownloadCustomSettings() {
-        return autodownloadCustomSettings.get();
+    public String getAutodownloadCustomFormat() {
+        return autodownloadCustomFormat.get();
     }
 
-    public StringProperty autodownloadCustomSettingsProperty() {
-        return autodownloadCustomSettings;
+    public StringProperty autodownloadCustomFormatProperty() {
+        return autodownloadCustomFormat;
     }
 
-    public void setAutodownloadCustomSettings(String autodownloadCustomSettings) {
-        this.autodownloadCustomSettings.set(autodownloadCustomSettings);
+    public void setAutodownloadCustomFormat(String autodownloadCustomFormat) {
+        this.autodownloadCustomFormat.set(autodownloadCustomFormat);
     }
 }

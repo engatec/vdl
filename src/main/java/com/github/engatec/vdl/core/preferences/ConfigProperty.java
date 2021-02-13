@@ -15,8 +15,8 @@ public enum ConfigProperty {
     LANGUAGE("language", Objects.requireNonNullElse(Locale.getDefault().getLanguage(), Language.ENGLISH.getLocaleLanguage())),
     AUTO_SEARCH_FROM_CLIPBOARD("general.autosearchfromclipboard", "false"),
     AUTO_DOWNLOAD("general.autodownload", "false"),
-    AUTO_DOWNLOAD_USE_CUSTOM_SETTINGS("general.autodownloadUseCustomSettings", "false"),
-    AUTO_DOWNLOAD_CUSTOM_SETTINGS("general.autodownloadCustomSettings", StringUtils.EMPTY),
+    AUTO_DOWNLOAD_USE_CUSTOM_FORMAT("general.autodownloadUseCustomFormat", "false"),
+    AUTO_DOWNLOAD_CUSTOM_FORMAT("general.autodownloadCustomFormat", StringUtils.EMPTY),
     NO_M_TIME("youtubedl.noMTime", "true");
 
     private final String key;

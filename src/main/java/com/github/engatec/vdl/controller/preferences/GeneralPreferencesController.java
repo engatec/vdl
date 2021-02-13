@@ -32,8 +32,8 @@ public class GeneralPreferencesController {
     @FXML private CheckBox autodownloadCheckBox;
     @FXML private VBox autodownloadSettingsWrapperVBox;
     @FXML private RadioButton autodownloadBestQualityRadioBtn;
-    @FXML private RadioButton autodownloadCustomSettingsRadioBtn;
-    @FXML private TextField autodownloadCustomSettingsTextField;
+    @FXML private RadioButton autodownloadCustomFormatRadioBtn;
+    @FXML private TextField autodownloadCustomFormatTextField;
 
     private GeneralPreferencesController() {
     }
@@ -58,8 +58,8 @@ public class GeneralPreferencesController {
         autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(propertyHolder.autoSearchFromClipboardProperty());
 
         autodownloadCheckBox.selectedProperty().bindBidirectional(propertyHolder.autoDownloadProperty());
-        autodownloadCustomSettingsRadioBtn.selectedProperty().bindBidirectional(propertyHolder.autodownloadUseCustomSettingsProperty());
-        autodownloadCustomSettingsTextField.textProperty().bindBidirectional(propertyHolder.autodownloadCustomSettingsProperty());
+        autodownloadCustomFormatRadioBtn.selectedProperty().bindBidirectional(propertyHolder.autodownloadUseCustomFormatProperty());
+        autodownloadCustomFormatTextField.textProperty().bindBidirectional(propertyHolder.autodownloadCustomFormatProperty());
     }
 
     private void handleDownloadPathChoose(ActionEvent event) {
@@ -86,8 +86,8 @@ public class GeneralPreferencesController {
     private void initAutodownloadSettings() {
         autodownloadSettingsWrapperVBox.disableProperty().bind(autodownloadCheckBox.selectedProperty().not());
         autodownloadBestQualityRadioBtn.setToggleGroup(autodownloadRadioGroup);
-        autodownloadCustomSettingsRadioBtn.setToggleGroup(autodownloadRadioGroup);
-        autodownloadCustomSettingsTextField.disableProperty().bind(autodownloadCustomSettingsRadioBtn.selectedProperty().not());
+        autodownloadCustomFormatRadioBtn.setToggleGroup(autodownloadRadioGroup);
+        autodownloadCustomFormatTextField.disableProperty().bind(autodownloadCustomFormatRadioBtn.selectedProperty().not());
         autodownloadBestQualityRadioBtn.setSelected(true); // Set default value to trigger ToggleGroup. It will be overriden during PropertyHolder binding
     }
 }

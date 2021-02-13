@@ -37,8 +37,8 @@
                   <RadioButton fx:id="autodownloadBestQualityRadioBtn" mnemonicParsing="false" text="%preferences.general.autodownload.bestquality" />
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
-                        <RadioButton fx:id="autodownloadCustomSettingsRadioBtn" mnemonicParsing="false" text="%preferences.general.autodownload.customsettings" />
-                        <TextField fx:id="autodownloadCustomSettingsTextField" HBox.hgrow="ALWAYS" />
+                        <RadioButton fx:id="autodownloadCustomFormatRadioBtn" mnemonicParsing="false" text="%preferences.general.autodownload.customformat" />
+                        <TextField fx:id="autodownloadCustomFormatTextField" HBox.hgrow="ALWAYS" />
                      </children>
                      <VBox.margin>
                         <Insets />
