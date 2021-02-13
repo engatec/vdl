@@ -9,19 +9,51 @@
 <?import javafx.scene.layout.VBox?>
 <VBox spacing="8.0" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.preferences.GeneralPreferencesController">
    <children>
-      <HBox alignment="CENTER_LEFT" spacing="8.0">
+      <VBox spacing="8.0">
          <children>
-            <RadioButton fx:id="downloadPathRadioBtn" mnemonicParsing="false" text="%preferences.label.download.path" wrapText="true" />
-            <TextField fx:id="downloadPathTextField" editable="false" minWidth="150.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="chooseDownloadPathBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%preferences.btn.download.choose" />
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+               <children>
+                  <RadioButton fx:id="downloadPathRadioBtn" mnemonicParsing="false" text="%preferences.label.download.path" wrapText="true" />
+                  <TextField fx:id="downloadPathTextField" editable="false" minWidth="150.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="chooseDownloadPathBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%preferences.btn.download.choose" />
+               </children>
+            </HBox>
+            <RadioButton fx:id="askPathRadioBtn" mnemonicParsing="false" text="%preferences.label.download.askpath" />
          </children>
-      </HBox>
-      <RadioButton fx:id="askPathRadioBtn" mnemonicParsing="false" text="%preferences.label.download.askpath" />
+         <VBox.margin>
+            <Insets bottom="8.0" />
+         </VBox.margin>
+      </VBox>
       <CheckBox fx:id="autoSearchFromClipboardCheckBox" mnemonicParsing="false" text="%preferences.general.autosearchfromclipboard.label" wrapText="true">
          <VBox.margin>
-            <Insets top="12.0" />
+            <Insets bottom="8.0" top="8.0" />
          </VBox.margin>
       </CheckBox>
+      <VBox spacing="8.0">
+         <children>
+            <CheckBox fx:id="autodownloadCheckBox" mnemonicParsing="false" text="%preferences.general.autodownload.label" />
+            <VBox fx:id="autodownloadSettingsWrapperVBox" spacing="8.0">
+               <children>
+                  <RadioButton fx:id="autodownloadBestQualityRadioBtn" mnemonicParsing="false" text="%preferences.general.autodownload.bestquality" />
+                  <HBox alignment="CENTER_LEFT" spacing="8.0">
+                     <children>
+                        <RadioButton fx:id="autodownloadCustomSettingsRadioBtn" mnemonicParsing="false" text="%preferences.general.autodownload.customsettings" />
+                        <TextField fx:id="autodownloadCustomSettingsTextField" HBox.hgrow="ALWAYS" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+               <VBox.margin>
+                  <Insets left="16.0" top="4.0" />
+               </VBox.margin>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets bottom="8.0" top="8.0" />
+         </VBox.margin>
+      </VBox>
    </children>
    <padding>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

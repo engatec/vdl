@@ -9,7 +9,12 @@ public class GeneralPropertyHolder {
 
     private final BooleanProperty alwaysAskPath = new SimpleBooleanProperty();
     private final StringProperty downloadPath = new SimpleStringProperty();
+
     private final BooleanProperty autoSearchFromClipboard = new SimpleBooleanProperty();
+
+    private final BooleanProperty autoDownload = new SimpleBooleanProperty();
+    private final BooleanProperty autodownloadUseCustomSettings = new SimpleBooleanProperty();
+    private final StringProperty autodownloadCustomSettings = new SimpleStringProperty();
 
     public boolean isAlwaysAskPath() {
         return alwaysAskPath.get();
@@ -45,5 +50,41 @@ public class GeneralPropertyHolder {
 
     public void setAutoSearchFromClipboard(boolean autoSearchFromClipboard) {
         this.autoSearchFromClipboard.set(autoSearchFromClipboard);
+    }
+
+    public boolean isAutoDownload() {
+        return autoDownload.get();
+    }
+
+    public BooleanProperty autoDownloadProperty() {
+        return autoDownload;
+    }
+
+    public void setAutoDownload(boolean autoDownload) {
+        this.autoDownload.set(autoDownload);
+    }
+
+    public boolean isAutodownloadUseCustomSettings() {
+        return autodownloadUseCustomSettings.get();
+    }
+
+    public BooleanProperty autodownloadUseCustomSettingsProperty() {
+        return autodownloadUseCustomSettings;
+    }
+
+    public void setAutodownloadUseCustomSettings(boolean autodownloadUseCustomSettings) {
+        this.autodownloadUseCustomSettings.set(autodownloadUseCustomSettings);
+    }
+
+    public String getAutodownloadCustomSettings() {
+        return autodownloadCustomSettings.get();
+    }
+
+    public StringProperty autodownloadCustomSettingsProperty() {
+        return autodownloadCustomSettings;
+    }
+
+    public void setAutodownloadCustomSettings(String autodownloadCustomSettings) {
+        this.autodownloadCustomSettings.set(autodownloadCustomSettings);
     }
 }

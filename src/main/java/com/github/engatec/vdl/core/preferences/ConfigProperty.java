@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import com.github.engatec.vdl.model.Language;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 public enum ConfigProperty {
@@ -13,6 +14,9 @@ public enum ConfigProperty {
     DOWNLOAD_ALWAYS_ASK_PATH("download.alwaysAskPath", "false"),
     LANGUAGE("language", Objects.requireNonNullElse(Locale.getDefault().getLanguage(), Language.ENGLISH.getLocaleLanguage())),
     AUTO_SEARCH_FROM_CLIPBOARD("general.autosearchfromclipboard", "false"),
+    AUTO_DOWNLOAD("general.autodownload", "false"),
+    AUTO_DOWNLOAD_USE_CUSTOM_SETTINGS("general.autodownloadUseCustomSettings", "false"),
+    AUTO_DOWNLOAD_CUSTOM_SETTINGS("general.autodownloadCustomSettings", StringUtils.EMPTY),
     NO_M_TIME("youtubedl.noMTime", "true");
 
     private final String key;

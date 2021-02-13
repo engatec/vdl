@@ -2,17 +2,16 @@ package com.github.engatec.vdl.controller.preferences;
 
 import java.io.File;
 
-import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.core.preferences.propertyholder.GeneralPropertyHolder;
+import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -21,13 +20,20 @@ public class GeneralPreferencesController {
     private Stage stage;
     private GeneralPropertyHolder propertyHolder;
 
-    private final ToggleGroup downloadRadioGroup = new ToggleGroup();
-
+    private final ToggleGroup downloadPathRadioGroup = new ToggleGroup();
     @FXML private RadioButton downloadPathRadioBtn;
     @FXML private RadioButton askPathRadioBtn;
     @FXML private TextField downloadPathTextField;
     @FXML private Button chooseDownloadPathBtn;
+
     @FXML private CheckBox autoSearchFromClipboardCheckBox;
+
+    private final ToggleGroup autodownloadRadioGroup = new ToggleGroup();
+    @FXML private CheckBox autodownloadCheckBox;
+    @FXML private VBox autodownloadSettingsWrapperVBox;
+    @FXML private RadioButton autodownloadBestQualityRadioBtn;
+    @FXML private RadioButton autodownloadCustomSettingsRadioBtn;
+    @FXML private TextField autodownloadCustomSettingsTextField;
 
     private GeneralPreferencesController() {
     }
@@ -39,40 +45,21 @@ public class GeneralPreferencesController {
 
     @FXML
     public void initialize() {
-        chooseDownloadPathBtn.setOnAction(this::handleDownloadPathChoose);
-        initDownloadRadioGroup();
+        initDownloadPathSettings();
+        initAutodownloadSettings();
 
+        bindPropertyHolder();
+    }
+
+    private void bindPropertyHolder() {
         askPathRadioBtn.selectedProperty().bindBidirectional(propertyHolder.alwaysAskPathProperty());
         downloadPathTextField.textProperty().bindBidirectional(propertyHolder.downloadPathProperty());
+
         autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(propertyHolder.autoSearchFromClipboardProperty());
-    }
 
-    private void initDownloadRadioGroup() {
-        downloadPathRadioBtn.setToggleGroup(downloadRadioGroup);
-        askPathRadioBtn.setToggleGroup(downloadRadioGroup);
-        downloadRadioGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            Toggle selected = observable.getValue();
-            if (selected == downloadPathRadioBtn) {
-                toggleDownloadPathControls(false);
-            } else if (selected == askPathRadioBtn) {
-                toggleDownloadPathControls(true);
-            }
-        });
-
-        String downloadPath = ConfigManager.INSTANCE.getValue(ConfigProperty.DOWNLOAD_PATH);
-        downloadPathTextField.setText(downloadPath);
-
-        boolean askDownloadPath = Boolean.parseBoolean(ConfigManager.INSTANCE.getValue(ConfigProperty.DOWNLOAD_ALWAYS_ASK_PATH));
-        if (askDownloadPath) {
-            askPathRadioBtn.setSelected(true);
-        } else {
-            downloadPathRadioBtn.setSelected(true);
-        }
-    }
-
-    private void toggleDownloadPathControls(boolean disabled) {
-        downloadPathTextField.setDisable(disabled);
-        chooseDownloadPathBtn.setDisable(disabled);
+        autodownloadCheckBox.selectedProperty().bindBidirectional(propertyHolder.autoDownloadProperty());
+        autodownloadCustomSettingsRadioBtn.selectedProperty().bindBidirectional(propertyHolder.autodownloadUseCustomSettingsProperty());
+        autodownloadCustomSettingsTextField.textProperty().bindBidirectional(propertyHolder.autodownloadCustomSettingsProperty());
     }
 
     private void handleDownloadPathChoose(ActionEvent event) {
@@ -83,5 +70,24 @@ public class GeneralPreferencesController {
             downloadPathTextField.setText(path);
         }
         event.consume();
+    }
+
+    private void initDownloadPathSettings() {
+        chooseDownloadPathBtn.setOnAction(this::handleDownloadPathChoose);
+
+        downloadPathRadioBtn.setToggleGroup(downloadPathRadioGroup);
+        askPathRadioBtn.setToggleGroup(downloadPathRadioGroup);
+        BooleanProperty downloadPathRadioBtnSelectedProperty = downloadPathRadioBtn.selectedProperty();
+        downloadPathTextField.disableProperty().bind(downloadPathRadioBtnSelectedProperty.not());
+        chooseDownloadPathBtn.disableProperty().bind(downloadPathRadioBtnSelectedProperty.not());
+        downloadPathRadioBtn.setSelected(true); // Set default value to trigger ToggleGroup. It will be overriden during PropertyHolder binding
+    }
+
+    private void initAutodownloadSettings() {
+        autodownloadSettingsWrapperVBox.disableProperty().bind(autodownloadCheckBox.selectedProperty().not());
+        autodownloadBestQualityRadioBtn.setToggleGroup(autodownloadRadioGroup);
+        autodownloadCustomSettingsRadioBtn.setToggleGroup(autodownloadRadioGroup);
+        autodownloadCustomSettingsTextField.disableProperty().bind(autodownloadCustomSettingsRadioBtn.selectedProperty().not());
+        autodownloadBestQualityRadioBtn.setSelected(true); // Set default value to trigger ToggleGroup. It will be overriden during PropertyHolder binding
     }
 }
