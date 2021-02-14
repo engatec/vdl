@@ -14,6 +14,7 @@ public enum ConfigProperty {
     DOWNLOAD_ALWAYS_ASK_PATH("download.alwaysAskPath", "false"),
     LANGUAGE("language", Objects.requireNonNullElse(Locale.getDefault().getLanguage(), Language.ENGLISH.getLocaleLanguage())),
     AUTO_SEARCH_FROM_CLIPBOARD("general.autosearchfromclipboard", "false"),
+    //----------------------------------
     AUTO_DOWNLOAD("general.autodownload", "false"),
     AUTO_DOWNLOAD_USE_CUSTOM_FORMAT("general.autodownloadUseCustomFormat", "false"),
     AUTO_DOWNLOAD_CUSTOM_FORMAT("general.autodownloadCustomFormat", StringUtils.EMPTY),
