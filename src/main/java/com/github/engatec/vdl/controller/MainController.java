@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.controller;
 
+import java.nio.file.Files;
 import java.util.List;
 
 import com.github.engatec.vdl.controller.preferences.PreferencesController;
@@ -90,7 +91,11 @@ public class MainController extends StageAwareController {
         setTabBindings();
 
         checkYoutubedlUpdatesMenuItem.setOnAction(e -> {
-            UpdateManager.updateYoutubeDl(stage);
+            if (Files.isWritable(appCtx.getYoutubeDlPath())) {
+                UpdateManager.updateYoutubeDl(stage);
+            } else {
+                Dialogs.error(appCtx.getResourceBundle().getString("update.youtubedl.nopermissions"));
+            }
             e.consume();
         });
         preferencesMenuItem.setOnAction(this::handlePreferencesClick);

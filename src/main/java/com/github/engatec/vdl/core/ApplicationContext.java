@@ -17,7 +17,7 @@ public class ApplicationContext {
     public static final ApplicationContext INSTANCE = new ApplicationContext();
 
     public static final String APP_DIR = System.getProperty("app.dir");
-    public static final String YOUTUBE_DL_APP_NAME = "youtube-dl";
+    public static final String YOUTUBE_DL_APP_NAME = SystemUtils.IS_OS_WINDOWS ? "youtube-dl.exe" : "youtube-dl"; // FIXME: перенести в проперти
 
     public static final Path CONFIG_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
 
@@ -46,6 +46,10 @@ public class ApplicationContext {
 
     public <T> void runTaskAsync(Task<T> task) {
         executorService.submit(task);
+    }
+
+    public Path getYoutubeDlPath() {
+        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), YOUTUBE_DL_APP_NAME);
     }
 
     public void cleanUp() {
