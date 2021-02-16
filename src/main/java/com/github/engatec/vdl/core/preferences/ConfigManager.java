@@ -23,7 +23,15 @@ public class ConfigManager {
         configItem.setValue(preferences, value);
     }
 
+    public String getValue(String key) {
+        return preferences.get(key, null);
+    }
+
     public void setValue(String key, String value) {
         preferences.put(key, value);
+    }
+
+    public void remove(String key) {
+        preferences.remove(key);
     }
 }

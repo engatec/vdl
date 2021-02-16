@@ -26,7 +26,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        Janitor.cleanUpPropetiesFile();
+        Janitor.cleanUp();
         setLanguage();
         launch(args);
     }
