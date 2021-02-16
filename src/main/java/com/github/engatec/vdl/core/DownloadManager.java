@@ -13,10 +13,12 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.model.Downloadable;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.model.preferences.youtubedl.CustomArgumentsConfigItem;
+import com.github.engatec.vdl.model.preferences.youtubedl.NoMTimeConfigItem;
+import com.github.engatec.vdl.model.preferences.youtubedl.UseCustomArgumentsConfigItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,12 +83,12 @@ public class DownloadManager {
                 .outputPath(outputPath)
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
-        if (Boolean.parseBoolean(cfg.getValue(ConfigProperty.NO_M_TIME))) {
+        if (cfg.getValue(new NoMTimeConfigItem())) {
             commandBuilder.noMTime();
         }
 
-        if (Boolean.parseBoolean(cfg.getValue(ConfigProperty.USE_CUSTOM_ARGUMENTS))) {
-            String customArgumentsString = cfg.getValue(ConfigProperty.CUSTOM_ARGUMENTS);
+        if (cfg.getValue(new UseCustomArgumentsConfigItem())) {
+            String customArgumentsString = cfg.getValue(new CustomArgumentsConfigItem());
             List<String> customArguments = Arrays.stream(customArgumentsString.split("\\s+"))
                     .map(StringUtils::strip)
                     .filter(StringUtils::isNotBlank)

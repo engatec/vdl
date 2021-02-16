@@ -10,8 +10,9 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.model.Downloadable;
+import com.github.engatec.vdl.model.preferences.general.AlwaysAskDownloadPathConfigItem;
+import com.github.engatec.vdl.model.preferences.general.DownloadPathConfigItem;
 import com.github.engatec.vdl.ui.Dialogs;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
@@ -48,8 +49,9 @@ public class DownloadAction {
     }
 
     private Path getDownloadPath(Stage parentStage) {
-        Path downloadPath = Paths.get(ConfigManager.INSTANCE.getValue(ConfigProperty.DOWNLOAD_PATH));
-        boolean askPath = Boolean.parseBoolean(ConfigManager.INSTANCE.getValue(ConfigProperty.DOWNLOAD_ALWAYS_ASK_PATH));
+        ConfigManager cfg = ConfigManager.INSTANCE;
+        Path downloadPath = Paths.get(cfg.getValue(new DownloadPathConfigItem()));
+        boolean askPath = cfg.getValue(new AlwaysAskDownloadPathConfigItem());
         if (askPath) {
             var directoryChooser = new DirectoryChooser();
             File selectedDirectory = directoryChooser.showDialog(parentStage);

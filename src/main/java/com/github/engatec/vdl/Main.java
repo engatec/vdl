@@ -6,8 +6,8 @@ import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.model.Language;
+import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -26,13 +26,13 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        Janitor.cleanUpPropetiesFile();
+        Janitor.cleanUp();
         setLanguage();
         launch(args);
     }
 
     private static void setLanguage() {
-        Language language = Language.getByLocaleLanguage(ConfigManager.INSTANCE.getValue(ConfigProperty.LANGUAGE));
+        Language language = Language.getByLocaleLanguage(ConfigManager.INSTANCE.getValue(new LanguageConfigItem()));
         ApplicationContext.INSTANCE.setLanguage(language);
     }
 }
