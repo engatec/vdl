@@ -4,7 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.core.preferences.ConfigProperty;
+import com.github.engatec.vdl.model.preferences.general.AutoSearchFromClipboardConfigItem;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
@@ -30,7 +30,7 @@ public class CopyUrlFromClipboardOnFocusChangeListener implements ChangeListener
             return;
         }
 
-        if (!Boolean.parseBoolean(ConfigManager.INSTANCE.getValue(ConfigProperty.AUTO_SEARCH_FROM_CLIPBOARD))) {
+        if (!ConfigManager.INSTANCE.getValue(new AutoSearchFromClipboardConfigItem())) {
             return;
         }
 

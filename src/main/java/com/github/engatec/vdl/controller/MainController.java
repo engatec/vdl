@@ -10,12 +10,15 @@ import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.UpdateManager;
 import com.github.engatec.vdl.core.action.DownloadAction;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.core.preferences.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.Audio;
 import com.github.engatec.vdl.model.Downloadable;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Video;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadCustomFormatConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadUseCustomFormatConfigItem;
+import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.worker.FetchDownloadableDataTask;
 import com.github.engatec.vdl.worker.data.DownloadableData;
@@ -158,7 +161,7 @@ public class MainController extends StageAwareController {
 
     private void handleLanguageChange(ActionEvent event, Language language) {
         appCtx.setLanguage(language);
-        ConfigManager.INSTANCE.setValue(ConfigProperty.LANGUAGE, language.getLocaleLanguage());
+        ConfigManager.INSTANCE.setValue(new LanguageConfigItem(), language.getLocaleLanguage());
         event.consume();
     }
 
@@ -166,7 +169,7 @@ public class MainController extends StageAwareController {
         videoTabScrollPane.setContent(null);
         audioTabScrollPane.setContent(null);
 
-        boolean autodownloadEnabled = Boolean.parseBoolean(ConfigManager.INSTANCE.getValue(ConfigProperty.AUTO_DOWNLOAD));
+        boolean autodownloadEnabled = ConfigManager.INSTANCE.getValue(new AutoDownloadConfigItem());
         if (autodownloadEnabled) {
             performAutoDownload();
         } else {
@@ -179,8 +182,8 @@ public class MainController extends StageAwareController {
     private void performAutoDownload() {
         ConfigManager cfg = ConfigManager.INSTANCE;
 
-        boolean useCustomFormat = Boolean.parseBoolean(cfg.getValue(ConfigProperty.AUTO_DOWNLOAD_USE_CUSTOM_FORMAT));
-        final String format = useCustomFormat ? cfg.getValue(ConfigProperty.AUTO_DOWNLOAD_CUSTOM_FORMAT) : "bestvideo+bestaudio/best";
+        boolean useCustomFormat = cfg.getValue(new AutoDownloadUseCustomFormatConfigItem());
+        final String format = useCustomFormat ? cfg.getValue(new AutoDownloadCustomFormatConfigItem()) : "bestvideo+bestaudio/best";
         Downloadable downloadable = new Downloadable() {
             @Override
             public String getBaseUrl() {

@@ -2,11 +2,11 @@ package com.github.engatec.vdl.model.preferences.general;
 
 import java.util.prefs.Preferences;
 
-public class AlwaysAskDownloadPathConfigItem extends GeneralConfigItem<Boolean> {
+public class AutoDownloadConfigItem extends GeneralConfigItem<Boolean> {
 
     @Override
     protected String getName() {
-        return "alwaysAskDownloadPath";
+        return "autodownload";
     }
 
     @Override

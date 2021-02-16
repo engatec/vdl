@@ -1,17 +1,17 @@
-package com.github.engatec.vdl.model.preferences.general;
+package com.github.engatec.vdl.model.preferences.youtubedl;
 
 import java.util.prefs.Preferences;
 
-public class AlwaysAskDownloadPathConfigItem extends GeneralConfigItem<Boolean> {
+public class NoMTimeConfigItem extends YoutubeDlConfigItem<Boolean> {
 
     @Override
     protected String getName() {
-        return "alwaysAskDownloadPath";
+        return "noMTime";
     }
 
     @Override
     public Boolean getValue(Preferences prefs) {
-        return prefs.getBoolean(getKey(), false);
+        return prefs.getBoolean(getKey(), true);
     }
 
     @Override

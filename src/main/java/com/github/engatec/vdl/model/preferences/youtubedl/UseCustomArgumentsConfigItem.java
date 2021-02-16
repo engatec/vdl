@@ -1,12 +1,12 @@
-package com.github.engatec.vdl.model.preferences.general;
+package com.github.engatec.vdl.model.preferences.youtubedl;
 
 import java.util.prefs.Preferences;
 
-public class AlwaysAskDownloadPathConfigItem extends GeneralConfigItem<Boolean> {
+public class UseCustomArgumentsConfigItem extends YoutubeDlConfigItem<Boolean> {
 
     @Override
     protected String getName() {
-        return "alwaysAskDownloadPath";
+        return "useCustomArguments";
     }
 
     @Override

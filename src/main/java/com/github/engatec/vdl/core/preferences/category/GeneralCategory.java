@@ -4,8 +4,13 @@ import com.github.engatec.vdl.controller.preferences.GeneralPreferencesControlle
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.core.preferences.ConfigProperty;
 import com.github.engatec.vdl.core.preferences.propertyholder.GeneralPropertyHolder;
+import com.github.engatec.vdl.model.preferences.general.AlwaysAskDownloadPathConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadCustomFormatConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadUseCustomFormatConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoSearchFromClipboardConfigItem;
+import com.github.engatec.vdl.model.preferences.general.DownloadPathConfigItem;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 
@@ -30,12 +35,12 @@ public class GeneralCategory extends Category {
     public void readPreferences() {
         ConfigManager config = ConfigManager.INSTANCE;
         propertyHolder = new GeneralPropertyHolder();
-        propertyHolder.setAlwaysAskPath(Boolean.parseBoolean(config.getValue(ConfigProperty.DOWNLOAD_ALWAYS_ASK_PATH)));
-        propertyHolder.setDownloadPath(config.getValue(ConfigProperty.DOWNLOAD_PATH));
-        propertyHolder.setAutoSearchFromClipboard(Boolean.parseBoolean(config.getValue(ConfigProperty.AUTO_SEARCH_FROM_CLIPBOARD)));
-        propertyHolder.setAutoDownload(Boolean.parseBoolean(config.getValue(ConfigProperty.AUTO_DOWNLOAD)));
-        propertyHolder.setAutodownloadUseCustomFormat(Boolean.parseBoolean(config.getValue(ConfigProperty.AUTO_DOWNLOAD_USE_CUSTOM_FORMAT)));
-        propertyHolder.setAutodownloadCustomFormat(config.getValue(ConfigProperty.AUTO_DOWNLOAD_CUSTOM_FORMAT));
+        propertyHolder.setAlwaysAskPath(config.getValue(new AlwaysAskDownloadPathConfigItem()));
+        propertyHolder.setDownloadPath(config.getValue(new DownloadPathConfigItem()));
+        propertyHolder.setAutoSearchFromClipboard(config.getValue(new AutoSearchFromClipboardConfigItem()));
+        propertyHolder.setAutoDownload(config.getValue(new AutoDownloadConfigItem()));
+        propertyHolder.setAutodownloadUseCustomFormat(config.getValue(new AutoDownloadUseCustomFormatConfigItem()));
+        propertyHolder.setAutodownloadCustomFormat(config.getValue(new AutoDownloadCustomFormatConfigItem()));
     }
 
     @Override
@@ -45,11 +50,11 @@ public class GeneralCategory extends Category {
         }
 
         ConfigManager config = ConfigManager.INSTANCE;
-        config.setValue(ConfigProperty.DOWNLOAD_ALWAYS_ASK_PATH, String.valueOf(propertyHolder.isAlwaysAskPath()));
-        config.setValue(ConfigProperty.DOWNLOAD_PATH, propertyHolder.getDownloadPath());
-        config.setValue(ConfigProperty.AUTO_SEARCH_FROM_CLIPBOARD, String.valueOf(propertyHolder.isAutoSearchFromClipboard()));
-        config.setValue(ConfigProperty.AUTO_DOWNLOAD, String.valueOf(propertyHolder.isAutoDownload()));
-        config.setValue(ConfigProperty.AUTO_DOWNLOAD_USE_CUSTOM_FORMAT, String.valueOf(propertyHolder.isAutodownloadUseCustomFormat()));
-        config.setValue(ConfigProperty.AUTO_DOWNLOAD_CUSTOM_FORMAT, propertyHolder.getAutodownloadCustomFormat());
+        config.setValue(new AlwaysAskDownloadPathConfigItem(), propertyHolder.isAlwaysAskPath());
+        config.setValue(new DownloadPathConfigItem(), propertyHolder.getDownloadPath());
+        config.setValue(new AutoSearchFromClipboardConfigItem(), propertyHolder.isAutoSearchFromClipboard());
+        config.setValue(new AutoDownloadConfigItem(), propertyHolder.isAutoDownload());
+        config.setValue(new AutoDownloadUseCustomFormatConfigItem(), propertyHolder.isAutodownloadUseCustomFormat());
+        config.setValue(new AutoDownloadCustomFormatConfigItem(), propertyHolder.getAutodownloadCustomFormat());
     }
 }

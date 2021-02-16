@@ -2,15 +2,7 @@ package com.github.engatec.vdl.model.preferences.general;
 
 import java.util.prefs.Preferences;
 
-import com.github.engatec.vdl.model.preferences.BaseConfigItem;
-import com.github.engatec.vdl.model.preferences.ConfigCategory;
-
-public class AutoSearchFromClipboardConfigItem extends BaseConfigItem<Boolean> {
-
-    @Override
-    protected ConfigCategory getCategory() {
-        return ConfigCategory.GENERAL;
-    }
+public class AutoSearchFromClipboardConfigItem extends GeneralConfigItem<Boolean> {
 
     @Override
     protected String getName() {

@@ -1,23 +1,19 @@
 package com.github.engatec.vdl.model.preferences.general;
 
-import java.util.Locale;
 import java.util.prefs.Preferences;
 
-import com.github.engatec.vdl.model.Language;
 import org.apache.commons.lang3.StringUtils;
 
-public class LanguageConfigItem extends GeneralConfigItem<String> {
-
-    private static final String DEFAULT = StringUtils.defaultIfBlank(Locale.getDefault().getLanguage(), Language.ENGLISH.getLocaleLanguage());
+public class AutoDownloadCustomFormatConfigItem extends GeneralConfigItem<String> {
 
     @Override
     protected String getName() {
-        return "language";
+        return "autodownloadCustomFormat";
     }
 
     @Override
     public String getValue(Preferences prefs) {
-        return prefs.get(getKey(), DEFAULT);
+        return prefs.get(getKey(), StringUtils.EMPTY);
     }
 
     @Override
