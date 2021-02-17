@@ -34,7 +34,7 @@
         </Menu>
             <Menu fx:id="helpMenu" mnemonicParsing="false" text="%menu.help">
               <items>
-                  <MenuItem fx:id="checkYoutubedlUpdatesMenuItem" mnemonicParsing="false" text="%menu.help.update.youtubedl" />
+                  <MenuItem fx:id="checkYoutubeDlUpdatesMenuItem" mnemonicParsing="false" text="%menu.help.update.youtubedl" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="%menu.help.about" />
               </items>

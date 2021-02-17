@@ -21,6 +21,7 @@ import com.github.engatec.vdl.model.preferences.general.AutoDownloadCustomFormat
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadUseCustomFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.Stages;
 import com.github.engatec.vdl.worker.FetchDownloadableDataTask;
 import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.application.Platform;
@@ -43,7 +44,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -73,7 +73,7 @@ public class MainController extends StageAwareController {
     @FXML private MenuItem langRuMenuItem;
 
     @FXML private Menu helpMenu;
-    @FXML private MenuItem checkYoutubedlUpdatesMenuItem;
+    @FXML private MenuItem checkYoutubeDlUpdatesMenuItem;
     @FXML private MenuItem aboutMenuItem;
 
     @FXML private TextField videoUrlTextField;
@@ -91,43 +91,30 @@ public class MainController extends StageAwareController {
     public void initialize() {
         appCtx = ApplicationContext.INSTANCE;
 
-        setLocaleBindings();
-        initSearchHandlers();
-        setTabBindings();
+        initLocaleBindings();
+        initSearchBindings();
+        initTabBindings();
+        initMenuItems();
+        initDragAndDrop();
 
-        checkYoutubedlUpdatesMenuItem.setOnAction(e -> {
-            if (Files.isWritable(appCtx.getYoutubeDlPath())) {
-                UpdateManager.updateYoutubeDl(stage);
-            } else {
-                Dialogs.error(appCtx.getResourceBundle().getString("update.youtubedl.nopermissions"));
-            }
-            e.consume();
-        });
-        preferencesMenuItem.setOnAction(this::handlePreferencesClick);
-        exitMenuItem.setOnAction(this::handleExitClick);
-
-        langEnMenuItem.setOnAction(event -> handleLanguageChange(event, Language.ENGLISH));
-        langRuMenuItem.setOnAction(event -> handleLanguageChange(event, Language.RUSSIAN));
-
-        setDragAndDrop();
         stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(videoUrlTextField, searchBtn));
     }
 
-    private void setLocaleBindings() {
+    private void initLocaleBindings() {
         I18n.bindLocaleProperty(fileMenu.textProperty(), "menu.file");
         I18n.bindLocaleProperty(downloadQueueMenuItem.textProperty(), "menu.file.queue");
         I18n.bindLocaleProperty(preferencesMenuItem.textProperty(), "menu.file.preferences");
         I18n.bindLocaleProperty(exitMenuItem.textProperty(), "menu.file.exit");
         I18n.bindLocaleProperty(languageMenu.textProperty(), "menu.language");
         I18n.bindLocaleProperty(helpMenu.textProperty(), "menu.help");
-        I18n.bindLocaleProperty(checkYoutubedlUpdatesMenuItem.textProperty(), "menu.help.update.youtubedl");
+        I18n.bindLocaleProperty(checkYoutubeDlUpdatesMenuItem.textProperty(), "menu.help.update.youtubedl");
         I18n.bindLocaleProperty(aboutMenuItem.textProperty(), "menu.help.about");
         I18n.bindLocaleProperty(searchBtn.textProperty(), "search");
         I18n.bindLocaleProperty(videoTab.textProperty(), "video");
         I18n.bindLocaleProperty(audioTab.textProperty(), "audio");
     }
 
-    private void initSearchHandlers() {
+    private void initSearchBindings() {
         searchBtn.managedProperty().bind(searchProgressIndicator.visibleProperty().not());
         searchBtn.visibleProperty().bind(searchProgressIndicator.visibleProperty().not());
         searchProgressIndicator.prefHeightProperty().bind(searchBtn.heightProperty());
@@ -142,7 +129,7 @@ public class MainController extends StageAwareController {
         });
     }
 
-    private void setTabBindings() {
+    private void initTabBindings() {
         BooleanBinding hasVideoBinding = videoTabScrollPane.contentProperty().isNotNull();
         BooleanBinding hasAudioBinding = audioTabScrollPane.contentProperty().isNotNull();
         BooleanBinding hasVideoOrAudioBinding = Bindings.or(hasVideoBinding, hasAudioBinding);
@@ -151,16 +138,23 @@ public class MainController extends StageAwareController {
         videoAudioTabPane.visibleProperty().bind(hasVideoOrAudioBinding);
     }
 
-    private void handleExitClick(ActionEvent event) {
+    private void initMenuItems() {
+        exitMenuItem.setOnAction(this::handleExitMenuItemClick);
+        preferencesMenuItem.setOnAction(this::handlePreferencesMenuItemClick);
+        checkYoutubeDlUpdatesMenuItem.setOnAction(this::handleYoutubeDlUpdatesMenuItemClick);
+        downloadQueueMenuItem.setOnAction(this::handleDownloadQueueMenuItemClick);
+
+        langEnMenuItem.setOnAction(event -> handleLanguageChange(event, Language.ENGLISH));
+        langRuMenuItem.setOnAction(event -> handleLanguageChange(event, Language.RUSSIAN));
+    }
+
+    private void handleExitMenuItemClick(ActionEvent event) {
         event.consume();
         Platform.exit();
     }
 
-    private void handlePreferencesClick(ActionEvent event) {
-        Stage prefStage = new Stage();
-        UiManager.loadStage(UiComponent.PREFERENCES, prefStage, param -> new PreferencesController(prefStage));
-        prefStage.initModality(Modality.APPLICATION_MODAL);
-        prefStage.initOwner(this.stage);
+    private void handlePreferencesMenuItemClick(ActionEvent event) {
+        Stage prefStage = Stages.newModalStage(UiComponent.PREFERENCES, PreferencesController::new, this.stage);
         // Убрать хардкод в проперти
         prefStage.setMinWidth(600);
         prefStage.setMinHeight(400);
@@ -171,6 +165,20 @@ public class MainController extends StageAwareController {
     private void handleLanguageChange(ActionEvent event, Language language) {
         appCtx.setLanguage(language);
         ConfigManager.INSTANCE.setValue(new LanguageConfigItem(), language.getLocaleLanguage());
+        event.consume();
+    }
+
+    private void handleYoutubeDlUpdatesMenuItemClick(ActionEvent event) {
+        if (Files.isWritable(appCtx.getYoutubeDlPath())) {
+            UpdateManager.updateYoutubeDl(stage);
+        } else {
+            Dialogs.error(appCtx.getResourceBundle().getString("update.youtubedl.nopermissions"));
+        }
+        event.consume();
+    }
+
+    private void handleDownloadQueueMenuItemClick(ActionEvent event) {
+        Stages.newModalStage(UiComponent.QUEUE, QueueController::new, this.stage).showAndWait();
         event.consume();
     }
 
@@ -233,7 +241,7 @@ public class MainController extends StageAwareController {
         appCtx.runTaskAsync(task);
     }
 
-    private void setDragAndDrop() {
+    private void initDragAndDrop() {
         rootControlVBox.setOnDragOver(e -> {
             if (e.getDragboard().hasString()) {
                 e.acceptTransferModes(TransferMode.COPY);
