@@ -64,6 +64,7 @@ public class MainController extends StageAwareController {
     @FXML private ScrollPane audioTabScrollPane;
 
     @FXML private Menu fileMenu;
+    @FXML private MenuItem downloadQueueMenuItem;
     @FXML private MenuItem preferencesMenuItem;
     @FXML private MenuItem exitMenuItem;
 
@@ -71,8 +72,9 @@ public class MainController extends StageAwareController {
     @FXML private MenuItem langEnMenuItem;
     @FXML private MenuItem langRuMenuItem;
 
-    @FXML private Menu updatesMenu;
+    @FXML private Menu helpMenu;
     @FXML private MenuItem checkYoutubedlUpdatesMenuItem;
+    @FXML private MenuItem aboutMenuItem;
 
     @FXML private TextField videoUrlTextField;
     @FXML private Button searchBtn;
@@ -113,11 +115,13 @@ public class MainController extends StageAwareController {
 
     private void setLocaleBindings() {
         I18n.bindLocaleProperty(fileMenu.textProperty(), "menu.file");
+        I18n.bindLocaleProperty(downloadQueueMenuItem.textProperty(), "menu.file.queue");
         I18n.bindLocaleProperty(preferencesMenuItem.textProperty(), "menu.file.preferences");
         I18n.bindLocaleProperty(exitMenuItem.textProperty(), "menu.file.exit");
         I18n.bindLocaleProperty(languageMenu.textProperty(), "menu.language");
-        I18n.bindLocaleProperty(updatesMenu.textProperty(), "menu.help");
+        I18n.bindLocaleProperty(helpMenu.textProperty(), "menu.help");
         I18n.bindLocaleProperty(checkYoutubedlUpdatesMenuItem.textProperty(), "menu.help.update.youtubedl");
+        I18n.bindLocaleProperty(aboutMenuItem.textProperty(), "menu.help.about");
         I18n.bindLocaleProperty(searchBtn.textProperty(), "search");
         I18n.bindLocaleProperty(videoTab.textProperty(), "video");
         I18n.bindLocaleProperty(audioTab.textProperty(), "audio");

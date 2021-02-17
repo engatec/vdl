@@ -3,6 +3,7 @@ package com.github.engatec.vdl.core;
 public enum UiComponent {
 
     MAIN("/fxml/main.fxml"),
+    QUEUE("/fxml/queue/queue.fxml"),
     PREFERENCES("/fxml/preferences/preferences.fxml"),
     PREFERENCES_GENERAL("/fxml/preferences/preferences-general.fxml"),
     PREFERENCES_YOUTUBE_DL("/fxml/preferences/preferences-youtubedl.fxml"),
