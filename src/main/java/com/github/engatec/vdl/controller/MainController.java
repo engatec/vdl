@@ -116,8 +116,8 @@ public class MainController extends StageAwareController {
         I18n.bindLocaleProperty(preferencesMenuItem.textProperty(), "menu.file.preferences");
         I18n.bindLocaleProperty(exitMenuItem.textProperty(), "menu.file.exit");
         I18n.bindLocaleProperty(languageMenu.textProperty(), "menu.language");
-        I18n.bindLocaleProperty(updatesMenu.textProperty(), "menu.updates");
-        I18n.bindLocaleProperty(checkYoutubedlUpdatesMenuItem.textProperty(), "menu.updates.youtubedl");
+        I18n.bindLocaleProperty(updatesMenu.textProperty(), "menu.help");
+        I18n.bindLocaleProperty(checkYoutubedlUpdatesMenuItem.textProperty(), "menu.help.update.youtubedl");
         I18n.bindLocaleProperty(searchBtn.textProperty(), "search");
         I18n.bindLocaleProperty(videoTab.textProperty(), "video");
         I18n.bindLocaleProperty(audioTab.textProperty(), "audio");

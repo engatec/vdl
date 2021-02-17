@@ -31,9 +31,9 @@
                   <MenuItem fx:id="langRuMenuItem" mnemonicParsing="false" text="%menu.language.ru" />
           </items>
         </Menu>
-            <Menu fx:id="updatesMenu" mnemonicParsing="false" text="%menu.updates">
+            <Menu fx:id="updatesMenu" mnemonicParsing="false" text="%menu.help">
               <items>
-                  <MenuItem fx:id="checkYoutubedlUpdatesMenuItem" mnemonicParsing="false" text="%menu.updates.youtubedl" />
+                  <MenuItem fx:id="checkYoutubedlUpdatesMenuItem" mnemonicParsing="false" text="%menu.help.update.youtubedl" />
               </items>
             </Menu>
       </menus>
