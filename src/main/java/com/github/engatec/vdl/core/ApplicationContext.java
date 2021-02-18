@@ -17,7 +17,7 @@ public class ApplicationContext {
     public static final ApplicationContext INSTANCE = new ApplicationContext();
 
     public static final String APP_DIR = System.getProperty("app.dir");
-    public static final String YOUTUBE_DL_APP_NAME = System.getProperty("app.youtubedl");
+    private static final String YOUTUBE_DL_APP_NAME = System.getProperty("app.youtubedl");
 
     public static final Path CONFIG_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
 

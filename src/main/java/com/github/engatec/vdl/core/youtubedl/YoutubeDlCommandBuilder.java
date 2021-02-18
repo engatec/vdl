@@ -4,11 +4,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.engatec.vdl.core.ApplicationContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import static com.github.engatec.vdl.core.ApplicationContext.APP_DIR;
-import static com.github.engatec.vdl.core.ApplicationContext.YOUTUBE_DL_APP_NAME;
 
 public class YoutubeDlCommandBuilder {
 
@@ -20,7 +18,7 @@ public class YoutubeDlCommandBuilder {
     public static YoutubeDlCommandBuilder newInstance() {
         var o = new YoutubeDlCommandBuilder();
         o.commandList = new ArrayList<>();
-        o.commandList.add(StringUtils.defaultIfBlank(APP_DIR, StringUtils.EMPTY) + YOUTUBE_DL_APP_NAME);
+        o.commandList.add(ApplicationContext.INSTANCE.getYoutubeDlPath().toString());
         return o;
     }
 
