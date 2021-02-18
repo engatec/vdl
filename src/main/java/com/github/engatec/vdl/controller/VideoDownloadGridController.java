@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
-import com.github.engatec.vdl.model.Audio;
-import com.github.engatec.vdl.model.Video;
+import com.github.engatec.vdl.model.downloadable.Audio;
+import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.util.LabelUtils;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -73,7 +73,8 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
                 createCodecLabel(video),
                 createExtensionLabel(video),
                 video.getAudio() != null || audioObservableList.isEmpty() ? createAudioUnmodifiableComboBox() : createAudioComboBox(video, audioObservableList),
-                super.createDownloadButton(parent, video)
+                super.createDownloadButton(parent, video),
+                super.createAddToQueueButton(parent, video)
         };
         rootGridPane.addRow(rootGridPane.getRowCount(), nodes);
     }

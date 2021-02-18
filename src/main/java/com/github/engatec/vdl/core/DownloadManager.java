@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,8 +13,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
-import com.github.engatec.vdl.model.Downloadable;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.youtubedl.CustomArgumentsConfigItem;
 import com.github.engatec.vdl.model.preferences.youtubedl.NoMTimeConfigItem;
 import com.github.engatec.vdl.model.preferences.youtubedl.UseCustomArgumentsConfigItem;
@@ -72,7 +71,7 @@ public class DownloadManager {
         new BufferedReader(new InputStreamReader(errorStream)).lines().forEach(LOGGER::error);
     }
 
-    public Process download(Downloadable downloadable, Path outputPath) throws IOException {
+    public Process download(Downloadable downloadable) throws IOException {
         ConfigManager cfg = ConfigManager.INSTANCE;
 
         YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
@@ -80,7 +79,7 @@ public class DownloadManager {
         commandBuilder
                 .noDebug()
                 .formatId(downloadable.getFormatId())
-                .outputPath(outputPath)
+                .outputPath(downloadable.getDownloadPath())
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
         if (cfg.getValue(new NoMTimeConfigItem())) {

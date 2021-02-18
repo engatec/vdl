@@ -2,13 +2,12 @@ package com.github.engatec.vdl.worker;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.DownloadManager;
-import com.github.engatec.vdl.model.Downloadable;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.TextArea;
@@ -19,18 +18,16 @@ public class DownloadTask extends Task<Void> {
     private static final Pattern DOWNLOAD_PROGRESS_PATTERN = Pattern.compile("\\s*\\[download]\\s*\\d+\\.?\\d*%.*");
 
     private final TextArea downloadTextArea;
-    private final Path downloadPath;
     private final Downloadable downloadable;
 
-    public DownloadTask(Downloadable downloadable, Path downloadPath, TextArea downloadTextArea) {
+    public DownloadTask(Downloadable downloadable, TextArea downloadTextArea) {
         this.downloadTextArea = downloadTextArea;
-        this.downloadPath = downloadPath;
         this.downloadable =  downloadable;
     }
 
     @Override
     protected Void call() throws Exception {
-        Process process = DownloadManager.INSTANCE.download(downloadable, downloadPath);
+        Process process = DownloadManager.INSTANCE.download(downloadable);
         try (Stream<String> lines = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding())).lines()) {
             lines.filter(StringUtils::isNotBlank).forEach(it -> {
                 if (isCancelled()) {

@@ -1,12 +1,16 @@
-package com.github.engatec.vdl.model;
+package com.github.engatec.vdl.model.downloadable;
 
+import java.nio.file.Path;
 import java.util.Objects;
 
+import com.github.engatec.vdl.model.Format;
 import org.apache.commons.lang3.ObjectUtils;
 
 public class Video implements Downloadable {
 
     private final String baseUrl;
+    private Path downloadPath;
+
     private final Format format;
     private Audio audio;
 
@@ -23,6 +27,16 @@ public class Video implements Downloadable {
     @Override
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    @Override
+    public Path getDownloadPath() {
+        return downloadPath;
+    }
+
+    @Override
+    public void setDownloadPath(Path downloadPath) {
+        this.downloadPath = downloadPath;
     }
 
     @Override

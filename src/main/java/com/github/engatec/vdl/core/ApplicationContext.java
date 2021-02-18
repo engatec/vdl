@@ -21,7 +21,7 @@ public class ApplicationContext {
 
     public static final Path CONFIG_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
 
-    ExecutorService executorService;
+    private final ExecutorService executorService;
     private final ObjectProperty<ResourceBundle> resourceBundleProperty = new SimpleObjectProperty<>();
 
     public ApplicationContext() {

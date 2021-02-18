@@ -3,7 +3,7 @@ package com.github.engatec.vdl.controller;
 import java.util.List;
 
 import com.github.engatec.vdl.core.I18n;
-import com.github.engatec.vdl.model.Audio;
+import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.util.LabelUtils;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -59,7 +59,8 @@ public class AudioDownloadGridController extends AbstractDownloadGridController 
                 createSizeLabel(audio),
                 createCodecLabel(audio),
                 createExtensionLabel(audio),
-                super.createDownloadButton(parent, audio)
+                super.createDownloadButton(parent, audio),
+                super.createAddToQueueButton(parent, audio)
         };
         rootGridPane.addRow(rootGridPane.getRowCount(), nodes);
     }

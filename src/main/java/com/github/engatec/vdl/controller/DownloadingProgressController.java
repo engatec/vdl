@@ -1,10 +1,8 @@
 package com.github.engatec.vdl.controller;
 
 
-import java.nio.file.Path;
-
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.model.Downloadable;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.worker.DownloadTask;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.fxml.FXML;
@@ -21,7 +19,6 @@ public class DownloadingProgressController extends StageAwareController {
     private static final Logger LOGGER = LogManager.getLogger(DownloadingProgressController.class);
 
     private Downloadable downloadable;
-    private Path downloadPath;
 
     @FXML private Label downloadingProgressLabel;
     @FXML private TextArea downloadTextArea;
@@ -31,10 +28,9 @@ public class DownloadingProgressController extends StageAwareController {
     private DownloadingProgressController() {
     }
 
-    public DownloadingProgressController(Stage stage, Downloadable downloadable, Path downloadPath) {
+    public DownloadingProgressController(Stage stage, Downloadable downloadable) {
         super(stage);
         this.downloadable = downloadable;
-        this.downloadPath = downloadPath;
     }
 
     @FXML
@@ -44,7 +40,7 @@ public class DownloadingProgressController extends StageAwareController {
     }
 
     private void startDownloading() {
-        DownloadTask task = new DownloadTask(downloadable, downloadPath, downloadTextArea);
+        DownloadTask task = new DownloadTask(downloadable, downloadTextArea);
 
         task.setOnSucceeded(event -> {
             setDownloadingResult("download.progress.label.finished");

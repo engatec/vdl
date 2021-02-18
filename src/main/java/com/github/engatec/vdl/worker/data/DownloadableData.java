@@ -2,8 +2,8 @@ package com.github.engatec.vdl.worker.data;
 
 import java.util.List;
 
-import com.github.engatec.vdl.model.Audio;
-import com.github.engatec.vdl.model.Video;
+import com.github.engatec.vdl.model.downloadable.Audio;
+import com.github.engatec.vdl.model.downloadable.Video;
 
 public class DownloadableData {
 

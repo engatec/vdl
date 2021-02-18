@@ -12,16 +12,18 @@ import com.github.engatec.vdl.core.UpdateManager;
 import com.github.engatec.vdl.core.action.DownloadAction;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.handler.CopyUrlFromClipboardOnFocusChangeListener;
-import com.github.engatec.vdl.model.Audio;
-import com.github.engatec.vdl.model.Downloadable;
 import com.github.engatec.vdl.model.Language;
-import com.github.engatec.vdl.model.Video;
+import com.github.engatec.vdl.model.downloadable.Audio;
+import com.github.engatec.vdl.model.downloadable.BasicDownloadable;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadCustomFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadUseCustomFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.Stages;
+import com.github.engatec.vdl.util.ActionUtils;
 import com.github.engatec.vdl.worker.FetchDownloadableDataTask;
 import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.application.Platform;
@@ -201,18 +203,8 @@ public class MainController extends StageAwareController {
 
         boolean useCustomFormat = cfg.getValue(new AutoDownloadUseCustomFormatConfigItem());
         final String format = useCustomFormat ? cfg.getValue(new AutoDownloadCustomFormatConfigItem()) : "bestvideo+bestaudio/best";
-        Downloadable downloadable = new Downloadable() {
-            @Override
-            public String getBaseUrl() {
-                return videoUrlTextField.getText();
-            }
-
-            @Override
-            public String getFormatId() {
-                return format;
-            }
-        };
-        new DownloadAction(stage, downloadable).perform();
+        Downloadable downloadable = new BasicDownloadable(videoUrlTextField.getText(), format);
+        ActionUtils.performActionResolvingPath(stage, new DownloadAction(stage, downloadable), downloadable::setDownloadPath);
     }
 
     private void searchDownloadables() {
