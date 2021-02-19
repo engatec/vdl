@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +69,14 @@ public class DownloadManager {
             throw new UncheckedIOException(e);
         }
 
-        new BufferedReader(new InputStreamReader(errorStream)).lines().forEach(LOGGER::error);
+        InputStreamReader is;
+        try {
+            is = new InputStreamReader(errorStream, ApplicationContext.INSTANCE.getSystemEncoding());
+        } catch (UnsupportedEncodingException e) {
+            is = new InputStreamReader(errorStream);
+            LOGGER.warn(e.getMessage(), e);
+        }
+        new BufferedReader(is).lines().forEach(LOGGER::error);
     }
 
     public Process download(Downloadable downloadable) throws IOException {

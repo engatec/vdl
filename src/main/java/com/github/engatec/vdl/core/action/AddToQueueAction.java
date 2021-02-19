@@ -1,5 +1,7 @@
 package com.github.engatec.vdl.core.action;
 
+import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 
 public class AddToQueueAction implements Action {
@@ -12,6 +14,10 @@ public class AddToQueueAction implements Action {
 
     @Override
     public void perform() {
-
+        var item = new QueueItem();
+        item.setUrl(downloadable.getBaseUrl());
+        item.setFormatId(downloadable.getFormatId());
+        item.setDownloadPath(downloadable.getDownloadPath());
+        QueueManager.INSTANCE.addItem(item);
     }
 }

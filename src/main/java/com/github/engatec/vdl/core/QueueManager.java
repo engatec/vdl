@@ -1,15 +1,16 @@
 package com.github.engatec.vdl.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 import com.github.engatec.vdl.model.QueueItem;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class QueueManager {
 
     public static final QueueManager INSTANCE = new QueueManager();
 
-    private final List<QueueItem> queueItems = new ArrayList<>();
+    private final ObservableList<QueueItem> queueItems = FXCollections.observableList(new LinkedList<>());
 
     private QueueManager() {
     }
@@ -18,7 +19,7 @@ public class QueueManager {
         queueItems.add(item);
     }
 
-    public List<QueueItem> getQueueItems() {
+    public ObservableList<QueueItem> getQueueItems() {
         return queueItems;
     }
 }
