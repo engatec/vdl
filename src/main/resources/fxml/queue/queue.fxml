@@ -7,21 +7,21 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="8.0" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.QueueController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" spacing="8.0" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.QueueController">
    <children>
       <TableView fx:id="downloadQueueTableView" VBox.vgrow="ALWAYS">
         <columns>
-          <TableColumn fx:id="statusTableColumn" prefWidth="75.0" text="%stage.queue.table.column.status" />
-            <TableColumn fx:id="progressTableColumn" prefWidth="75.0" text="%stage.queue.table.column.progress" />
-          <TableColumn fx:id="urlTableColumn" prefWidth="75.0" text="%stage.queue.table.column.url" />
+          <TableColumn fx:id="statusTableColumn" prefWidth="100.0" text="%stage.queue.table.column.status" />
+            <TableColumn fx:id="progressTableColumn" prefWidth="120.0" text="%stage.queue.table.column.progress" />
+          <TableColumn fx:id="urlTableColumn" prefWidth="250.0" text="%stage.queue.table.column.url" />
             <TableColumn fx:id="sizeTableColumn" prefWidth="75.0" text="%stage.queue.table.column.size" />
             <TableColumn fx:id="throughputTableColumn" prefWidth="75.0" text="%stage.queue.table.column.throughput" />
-            <TableColumn fx:id="downloadPathTableColumn" prefWidth="75.0" text="%stage.queue.table.column.downloadpath" />
+            <TableColumn fx:id="downloadPathTableColumn" prefWidth="170.0" text="%stage.queue.table.column.downloadpath" />
         </columns>
       </TableView>
       <HBox spacing="8.0">
          <children>
-            <Button fx:id="startDownloadBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.startdownload" />
+            <Button fx:id="startDownloadBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.downloadall" />
             <Button fx:id="cleanupBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%stage.queue.btn.cleanup" />
             <AnchorPane HBox.hgrow="ALWAYS">
                <children>
