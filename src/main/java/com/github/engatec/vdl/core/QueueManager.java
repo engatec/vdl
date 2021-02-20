@@ -16,6 +16,8 @@ public class QueueManager {
     }
 
     public void addItem(QueueItem item) {
+        // Add most recent item rather then allow to have multiple same items in the queue
+        queueItems.remove(item);
         queueItems.add(item);
     }
 

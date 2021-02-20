@@ -1,6 +1,7 @@
 package com.github.engatec.vdl.model;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import javafx.beans.property.DoubleProperty;
@@ -102,5 +103,22 @@ public class QueueItem implements Downloadable {
     @Override
     public String getBaseUrl() {
         return url;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        QueueItem queueItem = (QueueItem) o;
+        return url.equals(queueItem.url);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(url);
     }
 }
