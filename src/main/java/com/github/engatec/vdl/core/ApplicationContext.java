@@ -25,7 +25,7 @@ public class ApplicationContext {
     private final ObjectProperty<ResourceBundle> resourceBundleProperty = new SimpleObjectProperty<>();
 
     public ApplicationContext() {
-        executorService = Executors.newSingleThreadExecutor();
+        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
     }
 
     public void setLanguage(Language language) {
@@ -46,6 +46,10 @@ public class ApplicationContext {
 
     public <T> void runTaskAsync(Task<T> task) {
         executorService.submit(task);
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
     }
 
     public Path getYoutubeDlPath() {

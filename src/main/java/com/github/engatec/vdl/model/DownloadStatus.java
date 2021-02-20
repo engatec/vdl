@@ -5,6 +5,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 public enum DownloadStatus {
 
     READY("stage.queue.status.ready"),
+    SCHEDULED("stage.queue.status.scheduled"),
     IN_PROGRESS("stage.queue.status.inprogress"),
     CANCELLED("stage.queue.status.cancelled"),
     FAILED("stage.queue.status.failed"),

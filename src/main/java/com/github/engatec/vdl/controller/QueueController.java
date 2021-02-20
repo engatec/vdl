@@ -127,7 +127,10 @@ public class QueueController extends StageAwareController {
             }
 
             runNowMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.READY, newValue.statusProperty()));
-            cancelMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.IN_PROGRESS, newValue.statusProperty()));
+            cancelMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+                    newValue.getStatus() == DownloadStatus.IN_PROGRESS || newValue.getStatus() == DownloadStatus.SCHEDULED,
+                    newValue.statusProperty())
+            );
             resumeMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.CANCELLED, newValue.statusProperty()));
             deleteMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() != DownloadStatus.IN_PROGRESS, newValue.statusProperty()));
         });

@@ -37,6 +37,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
 
     public QueueItemDownloadService(QueueItem queueItem) {
         this.queueItem = queueItem;
+        setExecutor(ApplicationContext.INSTANCE.getExecutorService());
     }
 
     @Override
@@ -47,6 +48,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
             LOGGER.error(msg);
             throw new IllegalStateException(msg);
         }
+        queueItem.setStatus(DownloadStatus.SCHEDULED);
 
         bindValueProperty();
         super.start();
@@ -124,8 +126,8 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                         Matcher matcher = DOWNLOAD_PROGRESS_PATTERN.matcher(it);
                         if (matcher.matches()) {
                             double progress = Double.parseDouble(matcher.group(GROUP_PROGRESS));
-                            // TODO: Прогресс скачивания аудио просирается
-                            if (Double.compare(progress, progressData.getProgress()) == 1) {
+                            int progressComparisonResult = Double.compare(progress, progressData.getProgress());
+                            if (progressComparisonResult == 1 || progressComparisonResult == -1) {
                                 var pd = new QueueItemDownloadProgressData(progress, matcher.group(GROUP_SIZE), matcher.group(GROUP_THROUGHPUT));
                                 progressData.setProgress(pd.getProgress());
                                 progressData.setSize(pd.getSize());
