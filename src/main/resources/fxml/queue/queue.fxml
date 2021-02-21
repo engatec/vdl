@@ -14,9 +14,9 @@
           <TableColumn fx:id="statusTableColumn" prefWidth="100.0" text="%stage.queue.table.column.status" />
             <TableColumn fx:id="progressTableColumn" prefWidth="120.0" text="%stage.queue.table.column.progress" />
           <TableColumn fx:id="urlTableColumn" prefWidth="250.0" text="%stage.queue.table.column.url" />
-            <TableColumn fx:id="sizeTableColumn" prefWidth="75.0" text="%stage.queue.table.column.size" />
-            <TableColumn fx:id="throughputTableColumn" prefWidth="75.0" text="%stage.queue.table.column.throughput" />
-            <TableColumn fx:id="downloadPathTableColumn" prefWidth="170.0" text="%stage.queue.table.column.downloadpath" />
+            <TableColumn fx:id="sizeTableColumn" prefWidth="130.0" text="%stage.queue.table.column.size" />
+            <TableColumn fx:id="throughputTableColumn" text="%stage.queue.table.column.throughput" />
+            <TableColumn fx:id="downloadPathTableColumn" prefWidth="180.0" text="%stage.queue.table.column.downloadpath" />
         </columns>
       </TableView>
       <HBox spacing="8.0">

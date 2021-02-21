@@ -79,7 +79,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
 
     @Override
     protected void succeeded() {
-        updateQueueItem(DownloadStatus.FINISHED, StringUtils.EMPTY, StringUtils.EMPTY);
+        updateQueueItem(DownloadStatus.FINISHED, null, StringUtils.EMPTY);
         updateProgress(1);
     }
 
@@ -136,15 +136,18 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                             double currentProgress = Double.parseDouble(matcher.group(GROUP_PROGRESS));
                             int progressComparisonResult = Double.compare(currentProgress, progressData.getProgress());
                             if (progressComparisonResult == 1) {
-                                var pd = new QueueItemDownloadProgressData(currentProgress, matcher.group(GROUP_SIZE), matcher.group(GROUP_THROUGHPUT));
+                                progressData.setProgress(currentProgress);
+                                progressData.setThroughput(matcher.group(GROUP_THROUGHPUT));
+                                if (StringUtils.isEmpty(progressData.getSize())) {
+                                    progressData.setSize(matcher.group(GROUP_SIZE));
+                                }
+
                                 updateProgress(currentProgress + progressModificator, maxOverallProgress);
-                                progressData.setProgress(pd.getProgress());
-                                progressData.setSize(pd.getSize());
-                                progressData.setThroughput(pd.getThroughput());
-                                updateValue(pd);
+                                updateValue(new QueueItemDownloadProgressData(progressData.getProgress(), progressData.getSize(), progressData.getThroughput()));
                             } else if (progressComparisonResult == -1) {
                                 progressModificator += MAX_PROGRESS_PER_ITEM;
-                                progressData.setProgress(currentProgress);
+                                progressData.setProgress(0);
+                                progressData.setSize(progressData.getSize() + " / " + matcher.group(GROUP_SIZE));
                             }
                         }
                     });
