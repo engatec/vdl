@@ -44,7 +44,8 @@ public class QueueController extends StageAwareController {
     @FXML private TableColumn<QueueItem, Path> downloadPathTableColumn;
 
     @FXML private Button startDownloadBtn;
-    @FXML private Button cleanupBtn;
+    @FXML private Button removeFinishedBtn;
+    @FXML private Button removeAllBtn;
     @FXML private Button closeBtn;
 
     private QueueController() {
@@ -69,7 +70,8 @@ public class QueueController extends StageAwareController {
         downloadQueueTableView.setItems(data);
 
         startDownloadBtn.setOnAction(this::handleStartDownloadButtonClick);
-        cleanupBtn.setOnAction(this::handleCleanupButtonClick);
+        removeFinishedBtn.setOnAction(this::handleRemoveFinishedButtonClick);
+        removeAllBtn.setOnAction(this::handleRemoveAllButtonClick);
         closeBtn.setOnAction(this::handleCloseButtonClick);
 
         downloadQueueTableView.setRowFactory(tableView -> {
@@ -148,8 +150,13 @@ public class QueueController extends StageAwareController {
         event.consume();
     }
 
-    private void handleCleanupButtonClick(ActionEvent event) {
+    private void handleRemoveFinishedButtonClick(ActionEvent event) {
         data.removeIf(item -> item.getStatus() == DownloadStatus.FINISHED);
+        event.consume();
+    }
+
+    private void handleRemoveAllButtonClick(ActionEvent event) {
+        data.clear();
         event.consume();
     }
 

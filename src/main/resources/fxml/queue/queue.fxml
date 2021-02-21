@@ -22,7 +22,8 @@
       <HBox spacing="8.0">
          <children>
             <Button fx:id="startDownloadBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.downloadall" />
-            <Button fx:id="cleanupBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%stage.queue.btn.cleanup" />
+            <Button fx:id="removeFinishedBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.removefinished" />
+            <Button fx:id="removeAllBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.removeall" />
             <AnchorPane HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="closeBtn" mnemonicParsing="false" styleClass="control-btn" text="%stage.queue.btn.close" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
