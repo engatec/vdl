@@ -34,9 +34,13 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     );
 
     private final QueueItem queueItem;
+    private static final int MAX_PROGRESS_PER_ITEM = 100;
+    private final int maxOverallProgress;
+    private int progressModificator = 0;
 
     public QueueItemDownloadService(QueueItem queueItem) {
         this.queueItem = queueItem;
+        maxOverallProgress = MAX_PROGRESS_PER_ITEM * (StringUtils.countMatches(queueItem.getFormatId(), '+') + 1);
         setExecutor(ApplicationContext.INSTANCE.getExecutorService());
     }
 
@@ -50,6 +54,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
         }
         queueItem.setStatus(DownloadStatus.SCHEDULED);
 
+        queueItem.progressProperty().bind(progressProperty());
         bindValueProperty();
         super.start();
     }
@@ -74,26 +79,28 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
 
     @Override
     protected void succeeded() {
-        updateQueueItem(DownloadStatus.FINISHED, 1, StringUtils.EMPTY, StringUtils.EMPTY);
+        updateQueueItem(DownloadStatus.FINISHED, StringUtils.EMPTY, StringUtils.EMPTY);
+        updateProgress(1);
     }
 
     @Override
     protected void cancelled() {
-        updateQueueItem(DownloadStatus.CANCELLED, Double.NaN, StringUtils.EMPTY, StringUtils.EMPTY);
+        updateQueueItem(DownloadStatus.CANCELLED, StringUtils.EMPTY, StringUtils.EMPTY);
     }
 
     @Override
     protected void failed() {
-        updateQueueItem(DownloadStatus.FAILED, 0, null, StringUtils.EMPTY);
+        updateQueueItem(DownloadStatus.FAILED, null, StringUtils.EMPTY);
+        updateProgress(0);
         Throwable ex = getException();
         LOGGER.error(ex.getMessage(), ex);
     }
 
     private void bindValueProperty() {
-        valueProperty().addListener((observable, oldValue, newValue) -> updateQueueItem(null, newValue.getProgress() / 100, newValue.getSize(), newValue.getThroughput()));
+        valueProperty().addListener((observable, oldValue, newValue) -> updateQueueItem(null, newValue.getSize(), newValue.getThroughput()));
     }
 
-    private void updateQueueItem(DownloadStatus status, double progress, String size, String throughput) {
+    private void updateQueueItem(DownloadStatus status, String size, String throughput) {
         if (status != null) {
             queueItem.setStatus(status);
         }
@@ -102,11 +109,12 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
             queueItem.setSize(size);
         }
 
-        if (!Double.isNaN(progress)) {
-            queueItem.setProgress(progress);
-        }
-
         queueItem.setThroughput(throughput);
+    }
+
+    private void updateProgress(double value) {
+        queueItem.progressProperty().unbind();
+        queueItem.setProgress(value);
     }
 
     @Override
@@ -125,14 +133,18 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
 
                         Matcher matcher = DOWNLOAD_PROGRESS_PATTERN.matcher(it);
                         if (matcher.matches()) {
-                            double progress = Double.parseDouble(matcher.group(GROUP_PROGRESS));
-                            int progressComparisonResult = Double.compare(progress, progressData.getProgress());
-                            if (progressComparisonResult == 1 || progressComparisonResult == -1) {
-                                var pd = new QueueItemDownloadProgressData(progress, matcher.group(GROUP_SIZE), matcher.group(GROUP_THROUGHPUT));
+                            double currentProgress = Double.parseDouble(matcher.group(GROUP_PROGRESS));
+                            int progressComparisonResult = Double.compare(currentProgress, progressData.getProgress());
+                            if (progressComparisonResult == 1) {
+                                var pd = new QueueItemDownloadProgressData(currentProgress, matcher.group(GROUP_SIZE), matcher.group(GROUP_THROUGHPUT));
+                                updateProgress(currentProgress + progressModificator, maxOverallProgress);
                                 progressData.setProgress(pd.getProgress());
                                 progressData.setSize(pd.getSize());
                                 progressData.setThroughput(pd.getThroughput());
                                 updateValue(pd);
+                            } else if (progressComparisonResult == -1) {
+                                progressModificator += MAX_PROGRESS_PER_ITEM;
+                                progressData.setProgress(currentProgress);
                             }
                         }
                     });
