@@ -59,7 +59,7 @@ public class QueueController extends StageAwareController {
         downloadQueueTableView.setPlaceholder(new Label(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.queue.table.placeholder")));
 
         statusTableColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-        urlTableColumn.setCellValueFactory(new PropertyValueFactory<>("url"));
+        urlTableColumn.setCellValueFactory(new PropertyValueFactory<>("baseUrl"));
         sizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("size"));
         throughputTableColumn.setCellValueFactory(new PropertyValueFactory<>("throughput"));
         downloadPathTableColumn.setCellValueFactory(new PropertyValueFactory<>("downloadPath"));

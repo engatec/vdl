@@ -17,11 +17,6 @@ public enum DownloadStatus {
         this.msgKey = msgKey;
     }
 
-    public String getMsgKey() {
-        return msgKey;
-    }
-
-
     @Override
     public String toString() {
         return ApplicationContext.INSTANCE.getResourceBundle().getString(msgKey);

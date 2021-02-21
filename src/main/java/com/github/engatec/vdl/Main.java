@@ -3,6 +3,7 @@ package com.github.engatec.vdl;
 import com.github.engatec.vdl.controller.MainController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.Janitor;
+import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
@@ -22,12 +23,14 @@ public class Main extends Application {
 
     @Override
     public void stop() {
+        QueueManager.INSTANCE.persistQueue();
         ApplicationContext.INSTANCE.cleanUp();
     }
 
     public static void main(String[] args) {
         Janitor.cleanUp();
         setLanguage();
+        QueueManager.INSTANCE.restoreQueue();
         launch(args);
     }
 

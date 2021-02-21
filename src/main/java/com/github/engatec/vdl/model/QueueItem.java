@@ -18,7 +18,7 @@ public class QueueItem implements Downloadable {
     private final StringProperty size = new SimpleStringProperty();
     private final StringProperty throughput = new SimpleStringProperty();
 
-    private String url;
+    private String baseUrl;
     private Path downloadPath;
     private String formatId;
 
@@ -73,14 +73,6 @@ public class QueueItem implements Downloadable {
         this.throughput.set(throughput);
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     @Override
     public Path getDownloadPath() {
         return downloadPath;
@@ -102,7 +94,11 @@ public class QueueItem implements Downloadable {
 
     @Override
     public String getBaseUrl() {
-        return url;
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     @Override
@@ -114,11 +110,11 @@ public class QueueItem implements Downloadable {
             return false;
         }
         QueueItem queueItem = (QueueItem) o;
-        return url.equals(queueItem.url);
+        return baseUrl.equals(queueItem.baseUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url);
+        return Objects.hash(baseUrl);
     }
 }

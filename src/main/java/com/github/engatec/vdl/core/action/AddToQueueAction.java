@@ -15,7 +15,7 @@ public class AddToQueueAction implements Action {
     @Override
     public void perform() {
         var item = new QueueItem();
-        item.setUrl(downloadable.getBaseUrl());
+        item.setBaseUrl(downloadable.getBaseUrl());
         item.setFormatId(downloadable.getFormatId());
         item.setDownloadPath(downloadable.getDownloadPath());
         QueueManager.INSTANCE.addItem(item);
