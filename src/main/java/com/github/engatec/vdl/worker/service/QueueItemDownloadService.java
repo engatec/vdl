@@ -2,6 +2,7 @@ package com.github.engatec.vdl.worker.service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -20,6 +21,8 @@ import org.apache.logging.log4j.Logger;
 public class QueueItemDownloadService extends Service<QueueItemDownloadProgressData> {
 
     private static final Logger LOGGER = LogManager.getLogger(QueueItemDownloadService.class);
+
+    private static final String SIZE_SEPARATOR = " / ";
 
     private static final String GROUP_PROGRESS = "progress";
     private static final String GROUP_SIZE = "size";
@@ -138,16 +141,14 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                             if (progressComparisonResult == 1) {
                                 progressData.setProgress(currentProgress);
                                 progressData.setThroughput(matcher.group(GROUP_THROUGHPUT));
-                                if (StringUtils.isEmpty(progressData.getSize())) {
-                                    progressData.setSize(matcher.group(GROUP_SIZE));
-                                }
+                                progressData.setSize(calculateSizeString(progressData.getSize(), matcher.group(GROUP_SIZE)));
 
                                 updateProgress(currentProgress + progressModificator, maxOverallProgress);
                                 updateValue(new QueueItemDownloadProgressData(progressData.getProgress(), progressData.getSize(), progressData.getThroughput()));
                             } else if (progressComparisonResult == -1) {
                                 progressModificator += MAX_PROGRESS_PER_ITEM;
                                 progressData.setProgress(0);
-                                progressData.setSize(progressData.getSize() + " / " + matcher.group(GROUP_SIZE));
+                                progressData.setSize(progressData.getSize() + SIZE_SEPARATOR + matcher.group(GROUP_SIZE));
                             }
                         }
                     });
@@ -155,5 +156,17 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                 return progressData;
             }
         };
+    }
+
+    /**
+     * Method updates latest not finished item size
+     */
+    private String calculateSizeString(String currentlyDisplayed, String youtubeDlParsed) {
+        String finishedItemsSize = StringUtils.substringBeforeLast(currentlyDisplayed, SIZE_SEPARATOR);
+        if (Objects.equals(currentlyDisplayed, finishedItemsSize)) { // There's no yet finished item
+            return youtubeDlParsed;
+        } else {
+            return finishedItemsSize + SIZE_SEPARATOR + youtubeDlParsed;
+        }
     }
 }
