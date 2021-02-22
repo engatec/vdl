@@ -9,3 +9,12 @@
 .grid-header-label {
     -fx-font-weight: bold
 }
+
+.img-btn {
+    -fx-min-height: 22;
+    -fx-min-width: 34;
+    -fx-pref-height: 22;
+    -fx-pref-width: 34;
+    -fx-max-height: 22;
+    -fx-max-width: 34;
+}

@@ -18,6 +18,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -73,8 +74,7 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
                 createCodecLabel(video),
                 createExtensionLabel(video),
                 video.getAudio() != null || audioObservableList.isEmpty() ? createAudioUnmodifiableComboBox() : createAudioComboBox(video, audioObservableList),
-                super.createDownloadButton(parent, video),
-                super.createAddToQueueButton(parent, video)
+                createButtonPane(video)
         };
         rootGridPane.addRow(rootGridPane.getRowCount(), nodes);
     }
@@ -157,5 +157,12 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
         video.setAudio(selectionModel.getSelectedItem());
 
         return comboBox;
+    }
+
+    private HBox createButtonPane(Video video) {
+        return super.createButtonPane(
+                super.createDownloadButton(parent, video),
+                super.createAddToQueueButton(parent, video)
+        );
     }
 }

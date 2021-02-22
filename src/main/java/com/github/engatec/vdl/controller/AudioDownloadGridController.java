@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.ListUtils;
 
@@ -59,8 +60,7 @@ public class AudioDownloadGridController extends AbstractDownloadGridController 
                 createSizeLabel(audio),
                 createCodecLabel(audio),
                 createExtensionLabel(audio),
-                super.createDownloadButton(parent, audio),
-                super.createAddToQueueButton(parent, audio)
+                createButtonPane(audio)
         };
         rootGridPane.addRow(rootGridPane.getRowCount(), nodes);
     }
@@ -93,5 +93,12 @@ public class AudioDownloadGridController extends AbstractDownloadGridController 
         Label label = new Label();
         label.setText(audio.getExtension());
         return label;
+    }
+
+    private HBox createButtonPane(Audio audio) {
+        return super.createButtonPane(
+                super.createDownloadButton(parent, audio),
+                super.createAddToQueueButton(parent, audio)
+        );
     }
 }
