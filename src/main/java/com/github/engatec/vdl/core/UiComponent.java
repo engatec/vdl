@@ -2,6 +2,7 @@ package com.github.engatec.vdl.core;
 
 public enum UiComponent {
 
+    ABOUT("/fxml/about.fxml"),
     MAIN("/fxml/main.fxml"),
     QUEUE("/fxml/queue/queue.fxml"),
     PREFERENCES("/fxml/preferences/preferences.fxml"),

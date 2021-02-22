@@ -99,6 +99,11 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
+    public YoutubeDlCommandBuilder version() {
+        commandList.add("--version");
+        return this;
+    }
+
     public YoutubeDlCommandBuilder noMTime() {
         commandList.add("--no-mtime");
         return this;

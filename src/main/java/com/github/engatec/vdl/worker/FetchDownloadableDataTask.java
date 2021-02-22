@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import com.github.engatec.vdl.core.DownloadManager;
+import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
 import com.github.engatec.vdl.exception.NoDownloadableFoundException;
 import com.github.engatec.vdl.model.Format;
@@ -49,7 +49,7 @@ public class FetchDownloadableDataTask extends Task<DownloadableData> {
 
     @Override
     protected DownloadableData call() throws Exception {
-        VideoInfo videoInfo = DownloadManager.INSTANCE.fetchVideoInfo(url);
+        VideoInfo videoInfo = YoutubeDlManager.INSTANCE.fetchVideoInfo(url);
         List<Format> formats = ListUtils.emptyIfNull(videoInfo.getFormats());
         if (CollectionUtils.isEmpty(formats)) {
             throw new NoDownloadableFoundException();

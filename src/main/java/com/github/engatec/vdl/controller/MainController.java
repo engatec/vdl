@@ -144,6 +144,7 @@ public class MainController extends StageAwareController {
         exitMenuItem.setOnAction(this::handleExitMenuItemClick);
         preferencesMenuItem.setOnAction(this::handlePreferencesMenuItemClick);
         checkYoutubeDlUpdatesMenuItem.setOnAction(this::handleYoutubeDlUpdatesMenuItemClick);
+        aboutMenuItem.setOnAction(this::handleAboutMenuItemClick);
         downloadQueueMenuItem.setOnAction(this::handleDownloadQueueMenuItemClick);
 
         langEnMenuItem.setOnAction(event -> handleLanguageChange(event, Language.ENGLISH));
@@ -176,6 +177,13 @@ public class MainController extends StageAwareController {
         } else {
             Dialogs.error(appCtx.getResourceBundle().getString("update.youtubedl.nopermissions"));
         }
+        event.consume();
+    }
+
+    private void handleAboutMenuItemClick(ActionEvent event) {
+        Stage s = Stages.newModalStage(UiComponent.ABOUT, AboutController::new, this.stage);
+        s.setResizable(false);
+        s.showAndWait();
         event.consume();
     }
 

@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.DownloadManager;
+import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -27,7 +27,7 @@ public class DownloadTask extends Task<Void> {
 
     @Override
     protected Void call() throws Exception {
-        Process process = DownloadManager.INSTANCE.download(downloadable);
+        Process process = YoutubeDlManager.INSTANCE.download(downloadable);
         try (Stream<String> lines = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding())).lines()) {
             lines.filter(StringUtils::isNotBlank).forEach(it -> {
                 if (isCancelled()) {

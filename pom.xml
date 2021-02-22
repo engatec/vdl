@@ -75,6 +75,7 @@
                     <archive>
                         <manifest>
                             <mainClass>com.github.engatec.vdl.MainWrapper</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
                     <descriptorRefs>

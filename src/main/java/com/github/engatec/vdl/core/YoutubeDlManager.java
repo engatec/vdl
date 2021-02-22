@@ -9,11 +9,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
+import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.youtubedl.CustomArgumentsConfigItem;
@@ -23,11 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DownloadManager {
+public class YoutubeDlManager {
 
-    private static final Logger LOGGER = LogManager.getLogger(DownloadManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(YoutubeDlManager.class);
 
-    public static final DownloadManager INSTANCE = new DownloadManager();
+    public static final YoutubeDlManager INSTANCE = new YoutubeDlManager();
 
     private final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -108,6 +110,26 @@ public class DownloadManager {
                 .buildAsList();
 
         return runCommand(command);
+    }
+
+    public String getYoutubeDlVersion() {
+        String version = null;
+
+        List<String> command = YoutubeDlCommandBuilder.newInstance().version().buildAsList();
+        try {
+            Process process = new ProcessBuilder(command).start();
+            try (Stream<String> stream = new BufferedReader(new InputStreamReader(process.getInputStream())).lines()) {
+                version = stream.findFirst().orElseThrow(YoutubeDlProcessException::new);
+            } catch (Exception e) {
+                try (InputStream errorStream = process.getErrorStream()) {
+                    logError(errorStream);
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
+        return version;
     }
 
     public void checkYoutubeDlUpdates() throws IOException, InterruptedException {

@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.DownloadManager;
+import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.worker.data.QueueItemDownloadProgressData;
@@ -126,7 +126,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
             @Override
             protected QueueItemDownloadProgressData call() throws Exception {
                 var progressData = new QueueItemDownloadProgressData();
-                Process process = DownloadManager.INSTANCE.download(queueItem);
+                Process process = YoutubeDlManager.INSTANCE.download(queueItem);
                 try (Stream<String> lines = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding())).lines()) {
                     lines.filter(StringUtils::isNotBlank).forEach(it -> {
                         if (isCancelled()) {

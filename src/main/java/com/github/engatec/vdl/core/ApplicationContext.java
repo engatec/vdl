@@ -17,7 +17,6 @@ public class ApplicationContext {
     public static final ApplicationContext INSTANCE = new ApplicationContext();
 
     public static final String APP_DIR = System.getProperty("app.dir");
-    private static final String YOUTUBE_DL_APP_NAME = System.getProperty("app.youtubedl");
 
     public static final Path CONFIG_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
 
@@ -53,7 +52,14 @@ public class ApplicationContext {
     }
 
     public Path getYoutubeDlPath() {
-        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), YOUTUBE_DL_APP_NAME);
+        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), resolveYoutubeDlFileName());
+    }
+
+    private String resolveYoutubeDlFileName() {
+        return StringUtils.defaultIfBlank(
+                System.getProperty("app.youtubedl"),
+                SystemUtils.IS_OS_WINDOWS ? "youtube-dl.exe" : "youtube-dl" // If app.youtubedl is not set, assume default name
+        );
     }
 
     public void cleanUp() {
