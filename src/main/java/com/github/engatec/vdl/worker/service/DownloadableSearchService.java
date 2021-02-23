@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
@@ -17,6 +18,8 @@ import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.worker.data.DownloadableData;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,72 +32,90 @@ import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsFirst;
 
-public class DownloadableSearchService extends Service<DownloadableData> {
+public class DownloadableSearchService extends Service<List<DownloadableData>> {
 
     private static final Logger LOGGER = LogManager.getLogger(DownloadableSearchService.class);
 
     private static final int MIN_CONTENT_LENGTH = 307200; // 300kb
     private static final int MAX_TIMEOUT_SECONDS = 30;
 
-    private final String url;
     private final HttpClient client;
+    private final StringProperty url = new SimpleStringProperty();
 
-    public DownloadableSearchService(String url) {
+    public DownloadableSearchService() {
         super();
-        this.url = url;
         client = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(MAX_TIMEOUT_SECONDS))
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
     }
 
+    public String getUrl() {
+        return url.get();
+    }
+
+    public StringProperty urlProperty() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url.set(url);
+    }
+
     @Override
-    protected Task<DownloadableData> createTask() {
+    protected Task<List<DownloadableData>> createTask() {
         return new Task<>() {
             @Override
-            protected DownloadableData call() throws Exception {
-                List<VideoInfo> videoInfoList = YoutubeDlManager.INSTANCE.fetchVideoInfo(url);
+            protected List<DownloadableData> call() throws Exception {
+                List<VideoInfo> videoInfoList = YoutubeDlManager.INSTANCE.fetchVideoInfo(getUrl());
                 if (CollectionUtils.isEmpty(videoInfoList)) {
                     throw new NoDownloadableFoundException();
                 }
 
-                List<Format> formats = ListUtils.emptyIfNull(videoInfoList.get(0).getFormats());
-
-                List<Video> videoList = new ArrayList<>();
-                List<Audio> audioList = new ArrayList<>();
-                final String codecAbsenseAttr = YoutubeDlAttr.NO_CODEC.getValue();
-
-                for (Format format : formats) {
-                    String acodec = format.getAcodec();
-                    String vcodec = format.getVcodec();
-                    if (codecAbsenseAttr.equals(vcodec)) {
-                        audioList.add(new Audio(url, format));
-                    } else if (codecAbsenseAttr.equals(acodec)) {
-                        videoList.add(new Video(url, format));
-                    } else {
-                        videoList.add(new Video(url, format, new Audio(url, format)));
-                    }
-                }
-
-                ensureFileSize(formats);
-
-                videoList.sort(
-                        comparing(Video::getWidth, nullsFirst(naturalOrder()))
-                                .thenComparing(Video::getHeight, nullsFirst(naturalOrder()))
-                                .thenComparing(Video::getFilesize, nullsFirst(naturalOrder()))
-                                .reversed()
-                );
-
-                audioList.sort(
-                        comparing(Audio::getBitrate, nullsFirst(naturalOrder()))
-                                .thenComparing(Audio::getFilesize, nullsFirst(naturalOrder()))
-                                .reversed()
-                );
-                setTrackNo(audioList);
-
-                return new DownloadableData(videoList, audioList);
+                return videoInfoList.stream()
+                        .map(DownloadableSearchService.this::prepareDownloadableData)
+                        .collect(Collectors.toList());
             }
         };
+    }
+
+    private DownloadableData prepareDownloadableData(VideoInfo videoInfo) {
+        List<Format> formats = ListUtils.emptyIfNull(videoInfo.getFormats());
+
+        List<Video> videoList = new ArrayList<>();
+        List<Audio> audioList = new ArrayList<>();
+        final String codecAbsenseAttr = YoutubeDlAttr.NO_CODEC.getValue();
+
+        for (Format format : formats) {
+            String baseUrl = videoInfo.getBaseUrl();
+            String acodec = format.getAcodec();
+            String vcodec = format.getVcodec();
+            if (codecAbsenseAttr.equals(vcodec)) {
+                audioList.add(new Audio(baseUrl, format));
+            } else if (codecAbsenseAttr.equals(acodec)) {
+                videoList.add(new Video(baseUrl, format));
+            } else {
+                videoList.add(new Video(baseUrl, format, new Audio(baseUrl, format)));
+            }
+        }
+
+        ensureFileSize(formats);
+
+        videoList.sort(
+                comparing(Video::getWidth, nullsFirst(naturalOrder()))
+                        .thenComparing(Video::getHeight, nullsFirst(naturalOrder()))
+                        .thenComparing(Video::getFilesize, nullsFirst(naturalOrder()))
+                        .reversed()
+        );
+
+        audioList.sort(
+                comparing(Audio::getBitrate, nullsFirst(naturalOrder()))
+                        .thenComparing(Audio::getFilesize, nullsFirst(naturalOrder()))
+                        .reversed()
+        );
+        setTrackNo(audioList);
+
+        return new DownloadableData(videoInfo.getTitle(), videoInfo.getBaseUrl(), videoList, audioList);
     }
 
     private void setTrackNo(List<Audio> audioList) {

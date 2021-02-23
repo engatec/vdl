@@ -3,6 +3,7 @@ package com.github.engatec.vdl.controller;
 import java.nio.file.Files;
 import java.util.List;
 
+import com.github.engatec.vdl.controller.components.DownloadableItemsComponentController;
 import com.github.engatec.vdl.controller.preferences.PreferencesController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
@@ -13,10 +14,8 @@ import com.github.engatec.vdl.core.action.DownloadAction;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.Language;
-import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.BasicDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadCustomFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadUseCustomFormatConfigItem;
@@ -54,7 +53,8 @@ public class MainController extends StageAwareController {
 
     private static final Logger LOGGER = LogManager.getLogger(MainController.class);
 
-    private ApplicationContext appCtx;
+    private final ApplicationContext appCtx = ApplicationContext.INSTANCE;
+    private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
 
     @FXML private VBox rootControlVBox;
 
@@ -90,8 +90,6 @@ public class MainController extends StageAwareController {
 
     @FXML
     public void initialize() {
-        appCtx = ApplicationContext.INSTANCE;
-
         initLocaleBindings();
         initSearchBindings();
         initTabBindings();
@@ -215,29 +213,65 @@ public class MainController extends StageAwareController {
     }
 
     private void searchDownloadables() {
-        DownloadableSearchService service = new DownloadableSearchService(videoUrlTextField.getText());
-        service.setOnSucceeded(it -> {
-            DownloadableData downloadableData = (DownloadableData) it.getSource().getValue();
-            List<Video> videoList = downloadableData.getVideoList();
-            List<Audio> audioList = downloadableData.getAudioList();
+        downloadableSearchService.setUrl(videoUrlTextField.getText());
 
-            if (CollectionUtils.isNotEmpty(videoList)) {
-                Parent videoComponent = UiManager.loadComponent(UiComponent.VIDEO_DOWNLOAD_GRID, param -> new VideoDownloadGridController(stage, videoList, audioList));
-                videoTabScrollPane.setContent(videoComponent);
-            }
-
-            if (CollectionUtils.isNotEmpty(audioList)) {
-                Parent audioComponent = UiManager.loadComponent(UiComponent.AUTIO_DOWNLOAD_GRID, param -> new AudioDownloadGridController(stage, audioList));
-                audioTabScrollPane.setContent(audioComponent);
-            }
+        downloadableSearchService.setOnSucceeded(it -> {
+            List<DownloadableData> downloadableDataList = (List<DownloadableData>) it.getSource().getValue();
+            loadVideoTab(downloadableDataList);
+            loadAudioTab(downloadableDataList);
         });
-        service.setOnFailed(it -> {
+
+        downloadableSearchService.setOnFailed(it -> {
             Throwable ex = it.getSource().getException();
             LOGGER.error(ex.getMessage(), ex);
             Dialogs.info(appCtx.getResourceBundle().getString("video.search.error"));
         });
-        searchProgressIndicator.visibleProperty().bind(service.runningProperty());
-        service.start();
+
+        searchProgressIndicator.visibleProperty().bind(downloadableSearchService.runningProperty());
+
+        downloadableSearchService.restart();
+    }
+
+    private void loadVideoTab(List<DownloadableData> downloadableDataList) {
+        boolean hasVideos = false;
+        for (DownloadableData item : downloadableDataList) {
+            if (CollectionUtils.isNotEmpty(item.getVideoList())) {
+                hasVideos = true;
+                break;
+            }
+        }
+
+        if (hasVideos) {
+            Parent videoComponent = UiManager.loadComponent(
+                    UiComponent.DOWNLOADABLE_ITEMS_COMPONENT,
+                    param -> new DownloadableItemsComponentController(
+                            downloadableDataList,
+                            (videos, audios) -> UiManager.loadComponent(UiComponent.VIDEO_DOWNLOAD_GRID, param1 -> new VideoDownloadGridController(stage, videos, audios))
+                    )
+            );
+            videoTabScrollPane.setContent(videoComponent);
+        }
+    }
+
+    private void loadAudioTab(List<DownloadableData> downloadableDataList) {
+        boolean hasAudios = false;
+        for (DownloadableData item : downloadableDataList) {
+            if (CollectionUtils.isNotEmpty(item.getAudioList())) {
+                hasAudios = true;
+                break;
+            }
+        }
+
+        if (hasAudios) {
+            Parent audioComponent = UiManager.loadComponent(
+                    UiComponent.DOWNLOADABLE_ITEMS_COMPONENT,
+                    param -> new DownloadableItemsComponentController(
+                            downloadableDataList,
+                            (videos, audios) -> UiManager.loadComponent(UiComponent.AUTIO_DOWNLOAD_GRID, param1 -> new AudioDownloadGridController(stage, audios))
+                    )
+            );
+            audioTabScrollPane.setContent(audioComponent);
+        }
     }
 
     private void initDragAndDrop() {

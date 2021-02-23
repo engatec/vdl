@@ -9,6 +9,7 @@ public enum UiComponent {
     PREFERENCES_GENERAL("/fxml/preferences/preferences-general.fxml"),
     PREFERENCES_YOUTUBE_DL("/fxml/preferences/preferences-youtubedl.fxml"),
     VIDEO_DOWNLOAD_GRID("/fxml/video-download-grid.fxml"),
+    DOWNLOADABLE_ITEMS_COMPONENT("/fxml/downloadable-items-component.fxml"),
     AUTIO_DOWNLOAD_GRID("/fxml/audio-download-grid.fxml"),
     DOWNLOADING_PROGRESS("/fxml/downloading-progress.fxml"),
     DIALOG_PROGRESS("/fxml/dialog/progress-dialog.fxml");

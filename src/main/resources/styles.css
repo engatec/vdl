@@ -18,3 +18,7 @@
     -fx-max-height: 22;
     -fx-max-width: 34;
 }
+
+.no-border {
+    -fx-box-border: transparent;
+}
