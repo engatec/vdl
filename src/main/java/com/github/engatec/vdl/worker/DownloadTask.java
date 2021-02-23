@@ -3,7 +3,6 @@ package com.github.engatec.vdl.worker;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.YoutubeDlManager;
@@ -28,8 +27,8 @@ public class DownloadTask extends Task<Void> {
     @Override
     protected Void call() throws Exception {
         Process process = YoutubeDlManager.INSTANCE.download(downloadable);
-        try (Stream<String> lines = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding())).lines()) {
-            lines.filter(StringUtils::isNotBlank).forEach(it -> {
+        try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding()))) {
+            reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
                 if (isCancelled()) {
                     process.destroy();
                     return;

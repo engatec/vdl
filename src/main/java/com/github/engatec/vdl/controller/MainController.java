@@ -24,12 +24,11 @@ import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.Stages;
 import com.github.engatec.vdl.util.ActionUtils;
-import com.github.engatec.vdl.worker.FetchDownloadableDataTask;
 import com.github.engatec.vdl.worker.data.DownloadableData;
+import com.github.engatec.vdl.worker.service.DownloadableSearchService;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -216,8 +215,8 @@ public class MainController extends StageAwareController {
     }
 
     private void searchDownloadables() {
-        Task<DownloadableData> task = new FetchDownloadableDataTask(videoUrlTextField.getText());
-        task.setOnSucceeded(it -> {
+        DownloadableSearchService service = new DownloadableSearchService(videoUrlTextField.getText());
+        service.setOnSucceeded(it -> {
             DownloadableData downloadableData = (DownloadableData) it.getSource().getValue();
             List<Video> videoList = downloadableData.getVideoList();
             List<Audio> audioList = downloadableData.getAudioList();
@@ -232,13 +231,13 @@ public class MainController extends StageAwareController {
                 audioTabScrollPane.setContent(audioComponent);
             }
         });
-        task.setOnFailed(it -> {
+        service.setOnFailed(it -> {
             Throwable ex = it.getSource().getException();
             LOGGER.error(ex.getMessage(), ex);
             Dialogs.info(appCtx.getResourceBundle().getString("video.search.error"));
         });
-        searchProgressIndicator.visibleProperty().bind(task.runningProperty());
-        appCtx.runTaskAsync(task);
+        searchProgressIndicator.visibleProperty().bind(service.runningProperty());
+        service.start();
     }
 
     private void initDragAndDrop() {

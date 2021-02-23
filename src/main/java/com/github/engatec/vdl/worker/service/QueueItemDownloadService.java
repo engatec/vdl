@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.YoutubeDlManager;
@@ -42,6 +41,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     private int progressModificator = 0;
 
     public QueueItemDownloadService(QueueItem queueItem) {
+        super();
         this.queueItem = queueItem;
         maxOverallProgress = MAX_PROGRESS_PER_ITEM * (StringUtils.countMatches(queueItem.getFormatId(), '+') + 1);
         setExecutor(ApplicationContext.INSTANCE.getExecutorService());
@@ -127,8 +127,8 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
             protected QueueItemDownloadProgressData call() throws Exception {
                 var progressData = new QueueItemDownloadProgressData();
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
-                try (Stream<String> lines = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding())).lines()) {
-                    lines.filter(StringUtils::isNotBlank).forEach(it -> {
+                try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding()))) {
+                    reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
                         if (isCancelled()) {
                             process.destroy();
                             return;

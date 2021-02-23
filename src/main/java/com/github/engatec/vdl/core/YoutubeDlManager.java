@@ -6,10 +6,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +39,7 @@ public class YoutubeDlManager {
                 .start();
     }
 
-    public VideoInfo fetchVideoInfo(String url) throws IOException {
+    public List<VideoInfo> fetchVideoInfo(String url) throws IOException {
         if (StringUtils.isBlank(url)) {
             throw new IllegalArgumentException("url must not be blank");
         }
@@ -51,8 +51,13 @@ public class YoutubeDlManager {
                 .buildAsList();
 
         Process process = new ProcessBuilder(command).start();
-        try (InputStream is = process.getInputStream()) {
-            return objectMapper.readValue(is, VideoInfo.class);
+        try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            List<String> jsonList = reader.lines().collect(Collectors.toList());
+            List<VideoInfo> videoInfoList = new ArrayList<>(jsonList.size());
+            for (String json : jsonList) {
+                videoInfoList.add(objectMapper.readValue(json, VideoInfo.class));
+            }
+            return videoInfoList;
         } catch (Exception e) {
             try (InputStream errorStream = process.getErrorStream()) {
                 logError(errorStream);
@@ -118,8 +123,8 @@ public class YoutubeDlManager {
         List<String> command = YoutubeDlCommandBuilder.newInstance().version().buildAsList();
         try {
             Process process = new ProcessBuilder(command).start();
-            try (Stream<String> stream = new BufferedReader(new InputStreamReader(process.getInputStream())).lines()) {
-                version = stream.findFirst().orElseThrow(YoutubeDlProcessException::new);
+            try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                version = reader.lines().findFirst().orElseThrow(YoutubeDlProcessException::new);
             } catch (Exception e) {
                 try (InputStream errorStream = process.getErrorStream()) {
                     logError(errorStream);
