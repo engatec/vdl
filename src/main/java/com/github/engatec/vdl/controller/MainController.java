@@ -13,6 +13,7 @@ import com.github.engatec.vdl.core.UpdateManager;
 import com.github.engatec.vdl.core.action.DownloadAction;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.handler.CopyUrlFromClipboardOnFocusChangeListener;
+import com.github.engatec.vdl.core.youtubedl.YoutubeDlFormatHelper;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.downloadable.BasicDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
@@ -207,7 +208,7 @@ public class MainController extends StageAwareController {
         ConfigManager cfg = ConfigManager.INSTANCE;
 
         boolean useCustomFormat = cfg.getValue(new AutoDownloadUseCustomFormatConfigItem());
-        final String format = useCustomFormat ? cfg.getValue(new AutoDownloadCustomFormatConfigItem()) : "bestvideo+bestaudio/best";
+        final String format = useCustomFormat ? cfg.getValue(new AutoDownloadCustomFormatConfigItem()) : YoutubeDlFormatHelper.best();
         Downloadable downloadable = new BasicDownloadable(videoUrlTextField.getText(), format);
         ActionUtils.performActionResolvingPath(stage, new DownloadAction(stage, downloadable), downloadable::setDownloadPath);
     }
@@ -245,6 +246,7 @@ public class MainController extends StageAwareController {
             Parent videoComponent = UiManager.loadComponent(
                     UiComponent.DOWNLOADABLE_ITEMS_COMPONENT,
                     param -> new DownloadableItemsComponentController(
+                            stage,
                             downloadableDataList,
                             (videos, audios) -> UiManager.loadComponent(UiComponent.VIDEO_DOWNLOAD_GRID, param1 -> new VideoDownloadGridController(stage, videos, audios))
                     )
@@ -266,6 +268,7 @@ public class MainController extends StageAwareController {
             Parent audioComponent = UiManager.loadComponent(
                     UiComponent.DOWNLOADABLE_ITEMS_COMPONENT,
                     param -> new DownloadableItemsComponentController(
+                            stage,
                             downloadableDataList,
                             (videos, audios) -> UiManager.loadComponent(UiComponent.AUTIO_DOWNLOAD_GRID, param1 -> new AudioDownloadGridController(stage, audios))
                     )
