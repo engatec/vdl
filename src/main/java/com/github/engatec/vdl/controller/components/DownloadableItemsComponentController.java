@@ -7,13 +7,11 @@ import java.util.function.BiFunction;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.action.AddToQueueAction;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.core.youtubedl.YoutubeDlFormatHelper;
 import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.BasicDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadCustomFormatConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadUseCustomFormatConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.util.ActionUtils;
 import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.fxml.FXML;
@@ -25,8 +23,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class DownloadableItemsComponentController {
-
-    private static final ConfigManager cfg = ConfigManager.INSTANCE;
 
     private Stage stage;
     private List<DownloadableData> downloadableDataList;
@@ -47,7 +43,7 @@ public class DownloadableItemsComponentController {
     public void initialize() {
         rootVBox.setSpacing(4);
 
-        boolean autodownloadEnabled = cfg.getValue(new AutoDownloadConfigItem());
+        boolean autodownloadEnabled = ConfigManager.INSTANCE.getValue(new AutoDownloadConfigItem());
         boolean singleItem = downloadableDataList.size() == 1;
         for (DownloadableData item : downloadableDataList) {
             TitledPane tp = new TitledPane(item.getTitle(), contentFunction.apply(item.getVideoList(), item.getAudioList()));
@@ -68,8 +64,7 @@ public class DownloadableItemsComponentController {
 
         MenuItem addToQueueMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.queue.add"));
         addToQueueMenuItem.setOnAction(e -> {
-            Boolean customFormat = cfg.getValue(new AutoDownloadUseCustomFormatConfigItem());
-            String format = customFormat ? cfg.getValue(new AutoDownloadCustomFormatConfigItem()) : YoutubeDlFormatHelper.best();
+            String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
             BasicDownloadable downloadable = new BasicDownloadable(item.getBaseUrl(), format);
             ActionUtils.performActionResolvingPath(stage, new AddToQueueAction(downloadable), downloadable::setDownloadPath);
             e.consume();

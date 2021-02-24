@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.preferences.general.AlwaysAskDownloadPathConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoSearchFromClipboardConfigItem;
 import com.github.engatec.vdl.model.preferences.general.DownloadPathConfigItem;
 import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
@@ -60,25 +61,33 @@ public class Janitor {
         String language = cfg.getValue("language");
         if (StringUtils.isNotBlank(language)) {
             cfg.setValue(new LanguageConfigItem(), language);
-            cfg.remove("language");
         }
+        cfg.remove("language");
 
         String downloadPath = cfg.getValue("download.path");
         if (StringUtils.isNotBlank(downloadPath)) {
             cfg.setValue(new DownloadPathConfigItem(), downloadPath);
-            cfg.remove("download.path");
         }
+        cfg.remove("download.path");
 
         String alwaysAskDownloadPath = cfg.getValue("download.alwaysAskPath");
         if (StringUtils.isNotBlank(alwaysAskDownloadPath)) {
             cfg.setValue(new AlwaysAskDownloadPathConfigItem(), Boolean.parseBoolean(alwaysAskDownloadPath));
-            cfg.remove("download.alwaysAskPath");
         }
+        cfg.remove("download.alwaysAskPath");
 
         String autoSearchFromClipboard = cfg.getValue("general.autosearchfromclipboard");
         if (StringUtils.isNotBlank(autoSearchFromClipboard)) {
             cfg.setValue(new AutoSearchFromClipboardConfigItem(), Boolean.parseBoolean(autoSearchFromClipboard));
-            cfg.remove("general.autosearchfromclipboard");
         }
+        cfg.remove("general.autosearchfromclipboard");
+
+        cfg.remove("general.autodownloadUseCustomFormat");
+
+        String autodownloadCustomFormat = cfg.getValue("general.autodownloadCustomFormat");
+        if (StringUtils.isNotBlank(autodownloadCustomFormat)) {
+            cfg.setValue(new AutoDownloadFormatConfigItem(), autodownloadCustomFormat);
+        }
+        cfg.remove("general.autodownloadCustomFormat");
     }
 }

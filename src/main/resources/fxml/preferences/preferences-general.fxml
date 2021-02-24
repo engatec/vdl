@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
@@ -34,15 +35,11 @@
             <CheckBox fx:id="autodownloadCheckBox" mnemonicParsing="false" text="%preferences.general.autodownload.label" />
             <VBox fx:id="autodownloadSettingsWrapperVBox" spacing="8.0">
                <children>
-                  <RadioButton fx:id="autodownloadBestQualityRadioBtn" mnemonicParsing="false" text="%preferences.general.autodownload.bestquality" />
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
-                        <RadioButton fx:id="autodownloadCustomFormatRadioBtn" mnemonicParsing="false" text="%preferences.general.autodownload.customformat" />
-                        <TextField fx:id="autodownloadCustomFormatTextField" HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="autodownloadFormatComboBox" />
+                        <TextField fx:id="autodownloadFormatTextField" HBox.hgrow="ALWAYS" />
                      </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
                   </HBox>
                </children>
                <VBox.margin>

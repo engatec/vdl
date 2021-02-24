@@ -7,12 +7,12 @@ import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.propertyholder.GeneralPropertyHolder;
 import com.github.engatec.vdl.model.preferences.general.AlwaysAskDownloadPathConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadCustomFormatConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadUseCustomFormatConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoSearchFromClipboardConfigItem;
 import com.github.engatec.vdl.model.preferences.general.DownloadPathConfigItem;
 import javafx.scene.Node;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 public class GeneralCategory extends Category {
 
@@ -39,8 +39,7 @@ public class GeneralCategory extends Category {
         propertyHolder.setDownloadPath(config.getValue(new DownloadPathConfigItem()));
         propertyHolder.setAutoSearchFromClipboard(config.getValue(new AutoSearchFromClipboardConfigItem()));
         propertyHolder.setAutoDownload(config.getValue(new AutoDownloadConfigItem()));
-        propertyHolder.setAutodownloadUseCustomFormat(config.getValue(new AutoDownloadUseCustomFormatConfigItem()));
-        propertyHolder.setAutodownloadCustomFormat(config.getValue(new AutoDownloadCustomFormatConfigItem()));
+        propertyHolder.setAutodownloadFormat(config.getValue(new AutoDownloadFormatConfigItem()));
     }
 
     @Override
@@ -49,12 +48,23 @@ public class GeneralCategory extends Category {
             return;
         }
 
+        fixState();
+
         ConfigManager config = ConfigManager.INSTANCE;
         config.setValue(new AlwaysAskDownloadPathConfigItem(), propertyHolder.isAlwaysAskPath());
         config.setValue(new DownloadPathConfigItem(), propertyHolder.getDownloadPath());
         config.setValue(new AutoSearchFromClipboardConfigItem(), propertyHolder.isAutoSearchFromClipboard());
         config.setValue(new AutoDownloadConfigItem(), propertyHolder.isAutoDownload());
-        config.setValue(new AutoDownloadUseCustomFormatConfigItem(), propertyHolder.isAutodownloadUseCustomFormat());
-        config.setValue(new AutoDownloadCustomFormatConfigItem(), propertyHolder.getAutodownloadCustomFormat());
+        config.setValue(new AutoDownloadFormatConfigItem(), propertyHolder.getAutodownloadFormat());
+    }
+
+    private void fixState() {
+        if (StringUtils.isBlank(propertyHolder.getAutodownloadFormat())) {
+            propertyHolder.setAutodownloadFormat(StringUtils.EMPTY); // Reset the field if user entered multiple space characters
+        }
+
+        if (propertyHolder.isAutoDownload() && StringUtils.isBlank(propertyHolder.getAutodownloadFormat())) {
+            propertyHolder.setAutoDownload(false);
+        }
     }
 }

@@ -13,8 +13,7 @@ public class GeneralPropertyHolder {
     private final BooleanProperty autoSearchFromClipboard = new SimpleBooleanProperty();
 
     private final BooleanProperty autoDownload = new SimpleBooleanProperty();
-    private final BooleanProperty autodownloadUseCustomFormat = new SimpleBooleanProperty();
-    private final StringProperty autodownloadCustomFormat = new SimpleStringProperty();
+    private final StringProperty autodownloadFormat = new SimpleStringProperty();
 
     public boolean isAlwaysAskPath() {
         return alwaysAskPath.get();
@@ -64,27 +63,15 @@ public class GeneralPropertyHolder {
         this.autoDownload.set(autoDownload);
     }
 
-    public boolean isAutodownloadUseCustomFormat() {
-        return autodownloadUseCustomFormat.get();
+    public String getAutodownloadFormat() {
+        return autodownloadFormat.get();
     }
 
-    public BooleanProperty autodownloadUseCustomFormatProperty() {
-        return autodownloadUseCustomFormat;
+    public StringProperty autodownloadFormatProperty() {
+        return autodownloadFormat;
     }
 
-    public void setAutodownloadUseCustomFormat(boolean autodownloadUseCustomFormat) {
-        this.autodownloadUseCustomFormat.set(autodownloadUseCustomFormat);
-    }
-
-    public String getAutodownloadCustomFormat() {
-        return autodownloadCustomFormat.get();
-    }
-
-    public StringProperty autodownloadCustomFormatProperty() {
-        return autodownloadCustomFormat;
-    }
-
-    public void setAutodownloadCustomFormat(String autodownloadCustomFormat) {
-        this.autodownloadCustomFormat.set(autodownloadCustomFormat);
+    public void setAutodownloadFormat(String autodownloadFormat) {
+        this.autodownloadFormat.set(autodownloadFormat);
     }
 }

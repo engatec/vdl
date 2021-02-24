@@ -13,13 +13,11 @@ import com.github.engatec.vdl.core.UpdateManager;
 import com.github.engatec.vdl.core.action.DownloadAction;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.handler.CopyUrlFromClipboardOnFocusChangeListener;
-import com.github.engatec.vdl.core.youtubedl.YoutubeDlFormatHelper;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.downloadable.BasicDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadCustomFormatConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadUseCustomFormatConfigItem;
+import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.Stages;
@@ -205,10 +203,7 @@ public class MainController extends StageAwareController {
     }
 
     private void performAutoDownload() {
-        ConfigManager cfg = ConfigManager.INSTANCE;
-
-        boolean useCustomFormat = cfg.getValue(new AutoDownloadUseCustomFormatConfigItem());
-        final String format = useCustomFormat ? cfg.getValue(new AutoDownloadCustomFormatConfigItem()) : YoutubeDlFormatHelper.best();
+        final String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
         Downloadable downloadable = new BasicDownloadable(videoUrlTextField.getText(), format);
         ActionUtils.performActionResolvingPath(stage, new DownloadAction(stage, downloadable), downloadable::setDownloadPath);
     }
