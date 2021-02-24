@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
 import com.github.engatec.vdl.exception.NoDownloadableFoundException;
@@ -48,6 +49,7 @@ public class DownloadableSearchService extends Service<List<DownloadableData>> {
                 .connectTimeout(Duration.ofSeconds(MAX_TIMEOUT_SECONDS))
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
+        setExecutor(ApplicationContext.INSTANCE.getExecutorService());
     }
 
     public String getUrl() {
