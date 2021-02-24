@@ -1,6 +1,7 @@
 package com.github.engatec.vdl.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
@@ -23,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class VideoDownloadGridController extends AbstractDownloadGridController {
 
@@ -39,6 +41,8 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
     private List<Video> videoList;
     private List<Audio> audioList;
 
+    private Map<String, String> videoExtToAudioExtMap;
+
     private VideoDownloadGridController() {
     }
 
@@ -47,6 +51,8 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
         this.parent = parent;
         this.videoList = ListUtils.emptyIfNull(videoList);
         this.audioList = ListUtils.emptyIfNull(audioList);
+
+        videoExtToAudioExtMap = Map.of("mp4", "m4a", "webm", "webm");
     }
 
     @FXML
@@ -153,7 +159,11 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
         });
 
         SingleSelectionModel<Audio> selectionModel = comboBox.getSelectionModel();
-        selectionModel.selectFirst();
+        String matchedAudioExtension = videoExtToAudioExtMap.get(video.getExtension());
+        items.stream()
+                .filter(it -> StringUtils.equals(matchedAudioExtension, it.getExtension()))
+                .findFirst()
+                .ifPresentOrElse(selectionModel::select, selectionModel::selectFirst);
         video.setAudio(selectionModel.getSelectedItem());
 
         return comboBox;
