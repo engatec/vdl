@@ -9,12 +9,11 @@ import com.github.engatec.vdl.util.Svg;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public abstract class AbstractDownloadGridController extends GridPane {
+public abstract class AbstractDownloadGridController {
 
     protected HBox createButtonPane(Button... buttons) {
         HBox hBox = new HBox();
