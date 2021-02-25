@@ -19,6 +19,7 @@ import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
+import com.github.engatec.vdl.model.preferences.general.SkipDownloadableDetailsSearchConfigItem;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.Stages;
 import com.github.engatec.vdl.util.ActionUtils;
@@ -53,6 +54,7 @@ public class MainController extends StageAwareController {
     private static final Logger LOGGER = LogManager.getLogger(MainController.class);
 
     private final ApplicationContext appCtx = ApplicationContext.INSTANCE;
+    private final ConfigManager cfgMgr = ConfigManager.INSTANCE;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
 
     @FXML private VBox rootControlVBox;
@@ -163,7 +165,7 @@ public class MainController extends StageAwareController {
 
     private void handleLanguageChange(ActionEvent event, Language language) {
         appCtx.setLanguage(language);
-        ConfigManager.INSTANCE.setValue(new LanguageConfigItem(), language.getLocaleLanguage());
+        cfgMgr.setValue(new LanguageConfigItem(), language.getLocaleLanguage());
         event.consume();
     }
 
@@ -192,8 +194,9 @@ public class MainController extends StageAwareController {
         videoTabScrollPane.setContent(null);
         audioTabScrollPane.setContent(null);
 
-        boolean autodownloadEnabled = ConfigManager.INSTANCE.getValue(new AutoDownloadConfigItem());
-        if (autodownloadEnabled) {
+        boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
+        boolean skipDownloadableDetailsSearch = cfgMgr.getValue(new SkipDownloadableDetailsSearchConfigItem());
+        if (autodownloadEnabled && skipDownloadableDetailsSearch) {
             performAutoDownload();
         } else {
             searchDownloadables();
@@ -203,7 +206,7 @@ public class MainController extends StageAwareController {
     }
 
     private void performAutoDownload() {
-        final String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
+        final String format = cfgMgr.getValue(new AutoDownloadFormatConfigItem());
         Downloadable downloadable = new BasicDownloadable(videoUrlTextField.getText(), format);
         ActionUtils.performActionResolvingPath(stage, new DownloadAction(stage, downloadable), downloadable::setDownloadPath);
     }
@@ -215,6 +218,11 @@ public class MainController extends StageAwareController {
             List<DownloadableData> downloadableDataList = (List<DownloadableData>) it.getSource().getValue();
             loadVideoTab(downloadableDataList);
             loadAudioTab(downloadableDataList);
+
+            boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
+            if (autodownloadEnabled && downloadableDataList.size() == 1) {
+                Platform.runLater(this::performAutoDownload); // runLater is to release the service and trigger runningProperty to be false
+            }
         });
 
         downloadableSearchService.setOnFailed(it -> {

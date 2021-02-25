@@ -33,7 +33,7 @@
       <VBox spacing="8.0">
          <children>
             <CheckBox fx:id="autodownloadCheckBox" mnemonicParsing="false" text="%preferences.general.autodownload.label" />
-            <VBox fx:id="autodownloadSettingsWrapperVBox" spacing="8.0">
+            <VBox fx:id="autodownloadSettingsWrapperVBox" spacing="12.0">
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="8.0">
                      <children>
@@ -41,6 +41,7 @@
                         <TextField fx:id="autodownloadFormatTextField" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
+                  <CheckBox fx:id="skipDownloadableDetailsSearchCheckBox" mnemonicParsing="false" text="%preferences.general.autodownload.checkbox.skipdetailssearch" wrapText="true" />
                </children>
                <VBox.margin>
                   <Insets left="16.0" top="4.0" />

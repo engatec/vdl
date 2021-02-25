@@ -10,6 +10,7 @@ import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoSearchFromClipboardConfigItem;
 import com.github.engatec.vdl.model.preferences.general.DownloadPathConfigItem;
+import com.github.engatec.vdl.model.preferences.general.SkipDownloadableDetailsSearchConfigItem;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +41,7 @@ public class GeneralCategory extends Category {
         propertyHolder.setAutoSearchFromClipboard(config.getValue(new AutoSearchFromClipboardConfigItem()));
         propertyHolder.setAutoDownload(config.getValue(new AutoDownloadConfigItem()));
         propertyHolder.setAutodownloadFormat(config.getValue(new AutoDownloadFormatConfigItem()));
+        propertyHolder.setSkipDownloadableDetailsSearch(config.getValue(new SkipDownloadableDetailsSearchConfigItem()));
     }
 
     @Override
@@ -56,6 +58,7 @@ public class GeneralCategory extends Category {
         config.setValue(new AutoSearchFromClipboardConfigItem(), propertyHolder.isAutoSearchFromClipboard());
         config.setValue(new AutoDownloadConfigItem(), propertyHolder.isAutoDownload());
         config.setValue(new AutoDownloadFormatConfigItem(), propertyHolder.getAutodownloadFormat());
+        config.setValue(new SkipDownloadableDetailsSearchConfigItem(), propertyHolder.isSkipDownloadableDetailsSearch());
     }
 
     private void fixState() {

@@ -9,7 +9,7 @@ public class PredefinedFormatCreator {
     public static String create(String height) {
         String h = StringUtils.EMPTY;
         if (height != null) {
-            h = "[" + height + "]";
+            h = "[height<=" + height + "]";
         }
 
         return new StringJoiner("/")

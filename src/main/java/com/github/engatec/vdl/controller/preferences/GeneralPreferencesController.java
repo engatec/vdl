@@ -41,6 +41,7 @@ public class GeneralPreferencesController {
     @FXML private VBox autodownloadSettingsWrapperVBox;
     @FXML private ComboBox<AutodownloadFormat> autodownloadFormatComboBox;
     @FXML private TextField autodownloadFormatTextField;
+    @FXML private CheckBox skipDownloadableDetailsSearchCheckBox;
 
     private GeneralPreferencesController() {
     }
@@ -66,6 +67,7 @@ public class GeneralPreferencesController {
 
         autodownloadCheckBox.selectedProperty().bindBidirectional(propertyHolder.autoDownloadProperty());
         autodownloadFormatTextField.textProperty().bindBidirectional(propertyHolder.autodownloadFormatProperty());
+        skipDownloadableDetailsSearchCheckBox.selectedProperty().bindBidirectional(propertyHolder.skipDownloadableDetailsSearchProperty());
     }
 
     private void handleDownloadPathChoose(ActionEvent event) {
@@ -111,7 +113,7 @@ public class GeneralPreferencesController {
         comboboxItems.add(new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.custom"), customFormatValue));
 
         SingleSelectionModel<AutodownloadFormat> selectionModel = autodownloadFormatComboBox.getSelectionModel();
-        selectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> autodownloadFormatTextField.setText(newValue.getValue()));
+        selectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> propertyHolder.setAutodownloadFormat(newValue.getValue()));
         autodownloadFormatTextField.visibleProperty().bind(selectionModel.selectedIndexProperty().isEqualTo(comboboxItems.size() - 1));
 
         int itemToSelect = 0;

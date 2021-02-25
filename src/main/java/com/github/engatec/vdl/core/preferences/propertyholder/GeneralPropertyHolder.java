@@ -14,6 +14,7 @@ public class GeneralPropertyHolder {
 
     private final BooleanProperty autoDownload = new SimpleBooleanProperty();
     private final StringProperty autodownloadFormat = new SimpleStringProperty();
+    private final BooleanProperty skipDownloadableDetailsSearch = new SimpleBooleanProperty();
 
     public boolean isAlwaysAskPath() {
         return alwaysAskPath.get();
@@ -73,5 +74,17 @@ public class GeneralPropertyHolder {
 
     public void setAutodownloadFormat(String autodownloadFormat) {
         this.autodownloadFormat.set(autodownloadFormat);
+    }
+
+    public boolean isSkipDownloadableDetailsSearch() {
+        return skipDownloadableDetailsSearch.get();
+    }
+
+    public BooleanProperty skipDownloadableDetailsSearchProperty() {
+        return skipDownloadableDetailsSearch;
+    }
+
+    public void setSkipDownloadableDetailsSearch(boolean skipDownloadableDetailsSearch) {
+        this.skipDownloadableDetailsSearch.set(skipDownloadableDetailsSearch);
     }
 }
