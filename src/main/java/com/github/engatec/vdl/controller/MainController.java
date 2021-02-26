@@ -14,7 +14,7 @@ import com.github.engatec.vdl.core.action.DownloadAction;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.Language;
-import com.github.engatec.vdl.model.downloadable.BasicDownloadable;
+import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
@@ -207,7 +207,7 @@ public class MainController extends StageAwareController {
 
     private void performAutoDownload() {
         final String format = cfgMgr.getValue(new AutoDownloadFormatConfigItem());
-        Downloadable downloadable = new BasicDownloadable(videoUrlTextField.getText(), format);
+        Downloadable downloadable = new CustomFormatDownloadable(videoUrlTextField.getText(), format);
         ActionUtils.performActionResolvingPath(stage, new DownloadAction(stage, downloadable), downloadable::setDownloadPath);
     }
 

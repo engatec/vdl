@@ -2,25 +2,14 @@ package com.github.engatec.vdl.model.downloadable;
 
 import java.nio.file.Path;
 
-public class BasicDownloadable implements Downloadable {
+public abstract class BaseDownloadable implements Downloadable {
 
-    private String baseUrl;
-    private Path downloadPath;
-    private String formatId;
-
-    public BasicDownloadable(String baseUrl, String formatId) {
-        this.baseUrl = baseUrl;
-        this.formatId = formatId;
-    }
+    protected String baseUrl;
+    protected Path downloadPath;
 
     @Override
     public String getBaseUrl() {
         return baseUrl;
-    }
-
-    @Override
-    public String getFormatId() {
-        return formatId;
     }
 
     @Override

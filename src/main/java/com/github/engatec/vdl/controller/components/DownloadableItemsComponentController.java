@@ -8,7 +8,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.action.AddToQueueAction;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.downloadable.Audio;
-import com.github.engatec.vdl.model.downloadable.BasicDownloadable;
+import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
@@ -65,7 +65,7 @@ public class DownloadableItemsComponentController {
         MenuItem addToQueueMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.queue.add"));
         addToQueueMenuItem.setOnAction(e -> {
             String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
-            BasicDownloadable downloadable = new BasicDownloadable(item.getBaseUrl(), format);
+            CustomFormatDownloadable downloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
             ActionUtils.performActionResolvingPath(stage, new AddToQueueAction(downloadable), downloadable::setDownloadPath);
             e.consume();
         });

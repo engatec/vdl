@@ -1,36 +1,16 @@
 package com.github.engatec.vdl.model.downloadable;
 
-import java.nio.file.Path;
-
 import com.github.engatec.vdl.model.Format;
 import org.apache.commons.lang3.ObjectUtils;
 
-public class Audio implements Downloadable {
-
-    private final String baseUrl;
-    private Path downloadPath;
+public class Audio extends BaseDownloadable {
 
     private int trackNo;
     private final Format format;
 
     public Audio(String baseUrl, Format format) {
-        this.baseUrl = baseUrl;
+        super.baseUrl = baseUrl;
         this.format = format;
-    }
-
-    @Override
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    @Override
-    public Path getDownloadPath() {
-        return downloadPath;
-    }
-
-    @Override
-    public void setDownloadPath(Path downloadPath) {
-        this.downloadPath = downloadPath;
     }
 
     @Override
