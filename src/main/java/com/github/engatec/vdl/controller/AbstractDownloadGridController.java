@@ -1,10 +1,12 @@
 package com.github.engatec.vdl.controller;
 
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
-import com.github.engatec.vdl.core.action.AddToQueueAction;
-import com.github.engatec.vdl.core.action.DownloadAction;
+import com.github.engatec.vdl.core.command.DownloadCommand;
+import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.util.ActionUtils;
+import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.Svg;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
@@ -30,7 +32,13 @@ public abstract class AbstractDownloadGridController {
 
         Button downloadBtn = new Button();
         downloadBtn.setOnAction(e -> {
-            ActionUtils.performActionResolvingPath(parentStage, new DownloadAction(parentStage, downloadable), downloadable::setDownloadPath);
+            AppUtils.resolveDownloadPath(parentStage).ifPresentOrElse(
+                    path -> {
+                        downloadable.setDownloadPath(path);
+                        new DownloadCommand(parentStage, downloadable).execute();
+                    },
+                    () -> Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("download.path.directory.error"))
+            );
             e.consume();
         });
 
@@ -50,7 +58,13 @@ public abstract class AbstractDownloadGridController {
 
         Button addToQueueBtn = new Button();
         addToQueueBtn.setOnAction(e -> {
-            ActionUtils.performActionResolvingPath(parentStage, new AddToQueueAction(downloadable), downloadable::setDownloadPath);
+            AppUtils.resolveDownloadPath(parentStage).ifPresentOrElse(
+                    path -> {
+                        downloadable.setDownloadPath(path);
+                        new EnqueueCommand(downloadable).execute();
+                    },
+                    () -> Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("download.path.directory.error"))
+            );
             e.consume();
         });
 

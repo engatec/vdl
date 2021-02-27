@@ -10,7 +10,7 @@ import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.UpdateManager;
-import com.github.engatec.vdl.core.action.DownloadAction;
+import com.github.engatec.vdl.core.command.DownloadCommand;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.Language;
@@ -22,7 +22,7 @@ import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
 import com.github.engatec.vdl.model.preferences.general.SkipDownloadableDetailsSearchConfigItem;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.Stages;
-import com.github.engatec.vdl.util.ActionUtils;
+import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.data.DownloadableData;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
 import javafx.application.Platform;
@@ -208,7 +208,13 @@ public class MainController extends StageAwareController {
     private void performAutoDownload() {
         final String format = cfgMgr.getValue(new AutoDownloadFormatConfigItem());
         Downloadable downloadable = new CustomFormatDownloadable(videoUrlTextField.getText(), format);
-        ActionUtils.performActionResolvingPath(stage, new DownloadAction(stage, downloadable), downloadable::setDownloadPath);
+        AppUtils.resolveDownloadPath(stage).ifPresentOrElse(
+                path -> {
+                    downloadable.setDownloadPath(path);
+                    new DownloadCommand(stage, downloadable).execute();
+                },
+                () -> Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("download.path.directory.error"))
+        );
     }
 
     private void searchDownloadables() {

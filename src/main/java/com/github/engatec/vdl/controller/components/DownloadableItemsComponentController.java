@@ -5,14 +5,15 @@ import java.util.ResourceBundle;
 import java.util.function.BiFunction;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.action.AddToQueueAction;
+import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
-import com.github.engatec.vdl.util.ActionUtils;
+import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -66,7 +67,13 @@ public class DownloadableItemsComponentController {
         addToQueueMenuItem.setOnAction(e -> {
             String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
             CustomFormatDownloadable downloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
-            ActionUtils.performActionResolvingPath(stage, new AddToQueueAction(downloadable), downloadable::setDownloadPath);
+            AppUtils.resolveDownloadPath(stage).ifPresentOrElse(
+                    path -> {
+                        downloadable.setDownloadPath(path);
+                        new EnqueueCommand(downloadable).execute();
+                    },
+                    () -> Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("download.path.directory.error"))
+            );
             e.consume();
         });
 

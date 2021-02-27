@@ -1,19 +1,19 @@
-package com.github.engatec.vdl.core.action;
+package com.github.engatec.vdl.core.command;
 
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 
-public class AddToQueueAction implements Action {
+public class EnqueueCommand implements Command {
 
     private final Downloadable downloadable;
 
-    public AddToQueueAction(Downloadable downloadable) {
+    public EnqueueCommand(Downloadable downloadable) {
         this.downloadable = downloadable;
     }
 
     @Override
-    public void perform() {
+    public void execute() {
         var item = new QueueItem();
         item.setBaseUrl(downloadable.getBaseUrl());
         item.setFormatId(downloadable.getFormatId());
