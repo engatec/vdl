@@ -12,8 +12,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ApplicationContext {
+
+    private static final Logger LOGGER = LogManager.getLogger(ApplicationContext.class);
 
     public static final ApplicationContext INSTANCE = new ApplicationContext();
 
@@ -21,11 +25,14 @@ public class ApplicationContext {
 
     public static final Path CONFIG_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
 
-    private final ExecutorService executorService;
     private final ObjectProperty<ResourceBundle> resourceBundleProperty = new SimpleObjectProperty<>();
 
+    private final ExecutorService sharedExecutor;
+    private final ExecutorService queueExecutor;
+
     public ApplicationContext() {
-        executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+        sharedExecutor = Executors.newSingleThreadExecutor();
+        queueExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
     }
 
     public void setLanguage(Language language) {
@@ -45,11 +52,15 @@ public class ApplicationContext {
     }
 
     public <T> void runTaskAsync(Task<T> task) {
-        executorService.submit(task);
+        sharedExecutor.submit(task);
     }
 
-    public ExecutorService getExecutorService() {
-        return executorService;
+    public ExecutorService getSharedExecutor() {
+        return sharedExecutor;
+    }
+
+    public ExecutorService getQueueExecutor() {
+        return queueExecutor;
     }
 
     public Path getYoutubeDlPath() {
@@ -64,9 +75,21 @@ public class ApplicationContext {
     }
 
     public void stopExecutorService() {
+        shutdownSharedExecutor();
+        shutdownQueueExecutor();
+    }
+
+    private void shutdownSharedExecutor() {
+        sharedExecutor.shutdownNow();
+    }
+
+    private void shutdownQueueExecutor() {
         try {
-            executorService.shutdownNow();
-            executorService.awaitTermination(10, TimeUnit.SECONDS);
+            queueExecutor.shutdownNow();
+            boolean successfulTermination = queueExecutor.awaitTermination(10, TimeUnit.SECONDS);
+            if (!successfulTermination) {
+                LOGGER.warn("Queue executor shutdown abruptly after 10 seconds");
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

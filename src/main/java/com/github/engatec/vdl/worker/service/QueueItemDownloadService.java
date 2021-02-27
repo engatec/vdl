@@ -44,7 +44,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
         super();
         this.queueItem = queueItem;
         maxOverallProgress = MAX_PROGRESS_PER_ITEM * (StringUtils.countMatches(queueItem.getFormatId(), '+') + 1);
-        setExecutor(ApplicationContext.INSTANCE.getExecutorService());
+        setExecutor(ApplicationContext.INSTANCE.getQueueExecutor());
 
         queueItem.progressProperty().bind(progressProperty());
         valueProperty().addListener((observable, oldValue, newValue) -> {

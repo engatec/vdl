@@ -49,7 +49,7 @@ public class DownloadableSearchService extends Service<List<DownloadableData>> {
                 .connectTimeout(Duration.ofSeconds(MAX_TIMEOUT_SECONDS))
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .build();
-        setExecutor(ApplicationContext.INSTANCE.getExecutorService());
+        setExecutor(ApplicationContext.INSTANCE.getSharedExecutor());
     }
 
     public String getUrl() {
