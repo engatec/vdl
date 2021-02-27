@@ -74,7 +74,7 @@ public class ApplicationContext {
         );
     }
 
-    public void stopExecutorService() {
+    public void shutdownExecutors() {
         shutdownSharedExecutor();
         shutdownQueueExecutor();
     }

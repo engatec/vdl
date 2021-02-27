@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,6 +36,10 @@ public class QueueManager {
 
     public ObservableList<QueueItem> getQueueItems() {
         return queueItems;
+    }
+
+    public boolean hasItemsInProgress() {
+        return queueItems.stream().anyMatch(it -> it.getStatus() == DownloadStatus.IN_PROGRESS);
     }
 
     public void persistQueue() {

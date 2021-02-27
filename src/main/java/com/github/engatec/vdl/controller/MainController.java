@@ -45,6 +45,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -151,7 +152,7 @@ public class MainController extends StageAwareController {
 
     private void handleExitMenuItemClick(ActionEvent event) {
         event.consume();
-        Platform.exit();
+        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
     private void handlePreferencesMenuItemClick(ActionEvent event) {
