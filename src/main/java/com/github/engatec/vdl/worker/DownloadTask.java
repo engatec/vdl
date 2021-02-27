@@ -29,10 +29,15 @@ public class DownloadTask extends Task<Void> {
         Process process = YoutubeDlManager.INSTANCE.download(downloadable);
         try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding()))) {
             reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
+                if (Thread.interrupted()) {
+                    cancel();
+                }
+
                 if (isCancelled()) {
                     process.destroy();
                     return;
                 }
+
                 // Намеренно не использую здесь updateMessage, чтобы не пропустить ни одного сообщения от youtube-dl
                 if (DOWNLOAD_PROGRESS_PATTERN.matcher(it).matches()) {
                     Platform.runLater(() -> {

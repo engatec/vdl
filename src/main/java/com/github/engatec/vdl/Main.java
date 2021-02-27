@@ -23,8 +23,7 @@ public class Main extends Application {
 
     @Override
     public void stop() {
-        QueueManager.INSTANCE.persistQueue();
-        ApplicationContext.INSTANCE.cleanUp();
+        ApplicationContext.INSTANCE.stopExecutorService();
     }
 
     public static void main(String[] args) {
@@ -32,6 +31,7 @@ public class Main extends Application {
         setLanguage();
         QueueManager.INSTANCE.restoreQueue();
         launch(args);
+        QueueManager.INSTANCE.persistQueue();
     }
 
     private static void setLanguage() {

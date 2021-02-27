@@ -45,6 +45,13 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
         this.queueItem = queueItem;
         maxOverallProgress = MAX_PROGRESS_PER_ITEM * (StringUtils.countMatches(queueItem.getFormatId(), '+') + 1);
         setExecutor(ApplicationContext.INSTANCE.getExecutorService());
+
+        queueItem.progressProperty().bind(progressProperty());
+        valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                updateQueueItem(null, newValue.getSize(), newValue.getThroughput());
+            }
+        });
     }
 
     @Override
@@ -57,8 +64,6 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
         }
         queueItem.setStatus(DownloadStatus.SCHEDULED);
 
-        queueItem.progressProperty().bind(progressProperty());
-        bindValueProperty();
         super.start();
     }
 
@@ -99,10 +104,6 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
         LOGGER.error(ex.getMessage(), ex);
     }
 
-    private void bindValueProperty() {
-        valueProperty().addListener((observable, oldValue, newValue) -> updateQueueItem(null, newValue.getSize(), newValue.getThroughput()));
-    }
-
     private void updateQueueItem(DownloadStatus status, String size, String throughput) {
         if (status != null) {
             queueItem.setStatus(status);
@@ -129,6 +130,10 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
                 try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
+                        if (Thread.interrupted()) {
+                            cancel();
+                        }
+
                         if (isCancelled()) {
                             process.destroy();
                             return;

@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.github.engatec.vdl.model.Language;
 import javafx.beans.property.ObjectProperty;
@@ -62,7 +63,12 @@ public class ApplicationContext {
         );
     }
 
-    public void cleanUp() {
-        executorService.shutdownNow();
+    public void stopExecutorService() {
+        try {
+            executorService.shutdownNow();
+            executorService.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
