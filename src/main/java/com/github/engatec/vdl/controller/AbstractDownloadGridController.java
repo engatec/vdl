@@ -1,11 +1,9 @@
 package com.github.engatec.vdl.controller;
 
-import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.command.DownloadCommand;
 import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.Svg;
 import javafx.scene.Group;
@@ -32,13 +30,7 @@ public abstract class AbstractDownloadGridController {
 
         Button downloadBtn = new Button();
         downloadBtn.setOnAction(e -> {
-            AppUtils.resolveDownloadPath(parentStage).ifPresentOrElse(
-                    path -> {
-                        downloadable.setDownloadPath(path);
-                        new DownloadCommand(parentStage, downloadable).execute();
-                    },
-                    () -> Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("download.path.directory.error"))
-            );
+            AppUtils.executeCommandResolvingPath(parentStage, new DownloadCommand(parentStage, downloadable), downloadable::setDownloadPath);
             e.consume();
         });
 
@@ -58,13 +50,7 @@ public abstract class AbstractDownloadGridController {
 
         Button addToQueueBtn = new Button();
         addToQueueBtn.setOnAction(e -> {
-            AppUtils.resolveDownloadPath(parentStage).ifPresentOrElse(
-                    path -> {
-                        downloadable.setDownloadPath(path);
-                        new EnqueueCommand(downloadable).execute();
-                    },
-                    () -> Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("download.path.directory.error"))
-            );
+            AppUtils.executeCommandResolvingPath(parentStage, new EnqueueCommand(downloadable), downloadable::setDownloadPath);
             e.consume();
         });
 

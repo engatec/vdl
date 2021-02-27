@@ -12,7 +12,6 @@ import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
-import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.fxml.FXML;
@@ -67,13 +66,7 @@ public class DownloadableItemsComponentController {
         addToQueueMenuItem.setOnAction(e -> {
             String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
             CustomFormatDownloadable downloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
-            AppUtils.resolveDownloadPath(stage).ifPresentOrElse(
-                    path -> {
-                        downloadable.setDownloadPath(path);
-                        new EnqueueCommand(downloadable).execute();
-                    },
-                    () -> Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("download.path.directory.error"))
-            );
+            AppUtils.executeCommandResolvingPath(stage, new EnqueueCommand(downloadable), downloadable::setDownloadPath);
             e.consume();
         });
 

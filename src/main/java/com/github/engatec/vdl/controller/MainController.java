@@ -208,13 +208,7 @@ public class MainController extends StageAwareController {
     private void performAutoDownload() {
         final String format = cfgMgr.getValue(new AutoDownloadFormatConfigItem());
         Downloadable downloadable = new CustomFormatDownloadable(videoUrlTextField.getText(), format);
-        AppUtils.resolveDownloadPath(stage).ifPresentOrElse(
-                path -> {
-                    downloadable.setDownloadPath(path);
-                    new DownloadCommand(stage, downloadable).execute();
-                },
-                () -> Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("download.path.directory.error"))
-        );
+        AppUtils.executeCommandResolvingPath(stage, new DownloadCommand(stage, downloadable), downloadable::setDownloadPath);
     }
 
     private void searchDownloadables() {
