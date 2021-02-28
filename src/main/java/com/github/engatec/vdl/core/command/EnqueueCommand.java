@@ -18,6 +18,7 @@ public class EnqueueCommand implements Command {
         item.setBaseUrl(downloadable.getBaseUrl());
         item.setFormatId(downloadable.getFormatId());
         item.setDownloadPath(downloadable.getDownloadPath());
+        item.setPostprocessingSteps(downloadable.getPostprocessingSteps());
         QueueManager.INSTANCE.addItem(item);
     }
 }

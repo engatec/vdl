@@ -1,15 +1,18 @@
 package com.github.engatec.vdl.model;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Objects;
 
 import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import org.apache.commons.collections4.ListUtils;
 
 public class QueueItem implements Downloadable {
 
@@ -21,6 +24,8 @@ public class QueueItem implements Downloadable {
     private String baseUrl;
     private Path downloadPath;
     private String formatId;
+
+    private List<Postprocessing> postprocessingSteps;
 
     public QueueItem() {
     }
@@ -99,6 +104,16 @@ public class QueueItem implements Downloadable {
 
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    @Override
+    public List<Postprocessing> getPostprocessingSteps() {
+        return ListUtils.emptyIfNull(postprocessingSteps);
+    }
+
+    @Override
+    public void setPostprocessingSteps(List<Postprocessing> items) {
+        postprocessingSteps = List.copyOf(ListUtils.emptyIfNull(items));
     }
 
     @Override

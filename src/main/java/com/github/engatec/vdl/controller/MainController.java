@@ -174,7 +174,7 @@ public class MainController extends StageAwareController {
         if (Files.isWritable(appCtx.getYoutubeDlPath())) {
             UpdateManager.updateYoutubeDl(stage);
         } else {
-            Dialogs.error(appCtx.getResourceBundle().getString("update.youtubedl.nopermissions"));
+            Dialogs.error("update.youtubedl.nopermissions");
         }
         event.consume();
     }
@@ -229,7 +229,7 @@ public class MainController extends StageAwareController {
         downloadableSearchService.setOnFailed(it -> {
             Throwable ex = it.getSource().getException();
             LOGGER.error(ex.getMessage(), ex);
-            Dialogs.info(appCtx.getResourceBundle().getString("video.search.error"));
+            Dialogs.info("video.search.error");
         });
 
         searchProgressIndicator.visibleProperty().bind(downloadableSearchService.runningProperty());
@@ -252,7 +252,7 @@ public class MainController extends StageAwareController {
                     param -> new DownloadableItemsComponentController(
                             stage,
                             downloadableDataList,
-                            (videos, audios) -> UiManager.loadComponent(UiComponent.VIDEO_DOWNLOAD_GRID, param1 -> new VideoDownloadGridController(stage, videos, audios))
+                            (downloadableData) -> UiManager.loadComponent(UiComponent.VIDEO_DOWNLOAD_GRID, param1 -> new VideoDownloadGridController(stage, downloadableData))
                     )
             );
             videoTabScrollPane.setContent(videoComponent);
@@ -274,7 +274,7 @@ public class MainController extends StageAwareController {
                     param -> new DownloadableItemsComponentController(
                             stage,
                             downloadableDataList,
-                            (videos, audios) -> UiManager.loadComponent(UiComponent.AUTIO_DOWNLOAD_GRID, param1 -> new AudioDownloadGridController(stage, audios))
+                            (downloadableData) -> UiManager.loadComponent(UiComponent.AUTIO_DOWNLOAD_GRID, param1 -> new AudioDownloadGridController(stage, downloadableData))
                     )
             );
             audioTabScrollPane.setContent(audioComponent);

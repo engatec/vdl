@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -99,6 +100,13 @@ public class YoutubeDlManager {
 
         if (cfg.getValue(new NoMTimeConfigItem())) {
             commandBuilder.noMTime();
+        }
+
+        String postprocessing = downloadable.getPostprocessingSteps().stream()
+                .map(Objects::toString)
+                .collect(Collectors.joining(StringUtils.SPACE));
+        if (StringUtils.isNotBlank(postprocessing)) {
+            commandBuilder.postprocessing(postprocessing);
         }
 
         if (cfg.getValue(new UseCustomArgumentsConfigItem())) {

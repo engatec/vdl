@@ -7,7 +7,9 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.Video;
+import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.util.LabelUtils;
+import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,17 +42,19 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
 
     private List<Video> videoList;
     private List<Audio> audioList;
+    private List<Postprocessing> postprocessingList;
 
     private Map<String, String> videoExtToAudioExtMap;
 
     private VideoDownloadGridController() {
     }
 
-    public VideoDownloadGridController(Stage parent, List<Video> videoList, List<Audio> audioList) {
+    public VideoDownloadGridController(Stage parent, DownloadableData downloadableData) {
         super();
         this.parent = parent;
-        this.videoList = ListUtils.emptyIfNull(videoList);
-        this.audioList = ListUtils.emptyIfNull(audioList);
+        this.videoList = ListUtils.emptyIfNull(downloadableData.getVideoList());
+        this.audioList = ListUtils.emptyIfNull(downloadableData.getAudioList());
+        this.postprocessingList = downloadableData.getPostprocessingList();
 
         videoExtToAudioExtMap = Map.of("mp4", "m4a", "webm", "webm");
     }
@@ -171,8 +175,8 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
 
     private HBox createButtonPane(Video video) {
         return super.createButtonPane(
-                super.createDownloadButton(parent, video),
-                super.createAddToQueueButton(parent, video)
+                super.createDownloadButton(parent, video, postprocessingList),
+                super.createAddToQueueButton(parent, video, postprocessingList)
         );
     }
 }

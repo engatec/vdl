@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
 
-import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.command.Command;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.preferences.general.AlwaysAskDownloadPathConfigItem;
@@ -25,7 +24,7 @@ public class AppUtils {
 
         boolean pathIsWritableDirectory = Files.isDirectory(path) && Files.isWritable(path);
         if (!pathIsWritableDirectory) {
-            Dialogs.error(ApplicationContext.INSTANCE.getResourceBundle().getString("download.path.directory.error"));
+            Dialogs.error("download.path.directory.error");
             return;
         }
 

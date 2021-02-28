@@ -1,9 +1,12 @@
 package com.github.engatec.vdl.controller;
 
+import java.util.List;
+
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.command.DownloadCommand;
 import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.Svg;
 import javafx.scene.Group;
@@ -22,7 +25,7 @@ public abstract class AbstractDownloadGridController {
         return hBox;
     }
 
-    protected Button createDownloadButton(Stage parentStage, Downloadable downloadable) {
+    protected Button createDownloadButton(Stage parentStage, Downloadable downloadable, List<Postprocessing> postprocessingList) {
         Group svg = Svg.create(
                 Svg.pathBuilder().d("M0 0h24v24H0z").build(),
                 Svg.pathBuilder().d("M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z").fill("#000000").build()
@@ -30,6 +33,7 @@ public abstract class AbstractDownloadGridController {
 
         Button downloadBtn = new Button();
         downloadBtn.setOnAction(e -> {
+            downloadable.setPostprocessingSteps(postprocessingList);
             AppUtils.executeCommandResolvingPath(parentStage, new DownloadCommand(parentStage, downloadable), downloadable::setDownloadPath);
             e.consume();
         });
@@ -39,7 +43,7 @@ public abstract class AbstractDownloadGridController {
         return downloadBtn;
     }
 
-    protected Button createAddToQueueButton(Stage parentStage, Downloadable downloadable) {
+    protected Button createAddToQueueButton(Stage parentStage, Downloadable downloadable, List<Postprocessing> postprocessingList) {
         Group svg = Svg.create(
                 Svg.pathBuilder().d("M0 0h24v24H0z").build(),
                 Svg.pathBuilder()
@@ -50,6 +54,7 @@ public abstract class AbstractDownloadGridController {
 
         Button addToQueueBtn = new Button();
         addToQueueBtn.setOnAction(e -> {
+            downloadable.setPostprocessingSteps(postprocessingList);
             AppUtils.executeCommandResolvingPath(parentStage, new EnqueueCommand(downloadable), downloadable::setDownloadPath);
             e.consume();
         });

@@ -36,8 +36,8 @@
       </Pane>
       <HBox alignment="CENTER_RIGHT" spacing="8.0">
          <children>
-            <Button mnemonicParsing="false" styleClass="control-btn" text="%button.ok" />
-            <Button mnemonicParsing="false" styleClass="control-btn" text="%button.cancel" />
+            <Button fx:id="okButton" mnemonicParsing="false" styleClass="control-btn" text="%button.ok" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="control-btn" text="%button.cancel" />
          </children>
          <VBox.margin>
             <Insets />

@@ -14,19 +14,21 @@ import javafx.stage.Stage;
 
 public class Dialogs {
 
-    public static void error(String message) {
+    public static void error(String key) {
+        ResourceBundle resBundle = ApplicationContext.INSTANCE.getResourceBundle();
         var alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("error"));
+        alert.setTitle(resBundle.getString("error"));
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(resBundle.getString(key));
         alert.showAndWait();
     }
 
-    public static void info(String message) {
+    public static void info(String key) {
+        ResourceBundle resBundle = ApplicationContext.INSTANCE.getResourceBundle();
         var alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("info"));
+        alert.setTitle(resBundle.getString("info"));
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(resBundle.getString(key));
         alert.showAndWait();
     }
 

@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.model.downloadable.Audio;
+import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.util.LabelUtils;
+import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -26,14 +28,16 @@ public class AudioDownloadGridController extends AbstractDownloadGridController 
     @FXML private Label extensionTitleLabel;
 
     private List<Audio> audioList;
+    private List<Postprocessing> postprocessingList;
 
     private AudioDownloadGridController() {
     }
 
-    public AudioDownloadGridController(Stage parent, List<Audio> audioList) {
+    public AudioDownloadGridController(Stage parent, DownloadableData downloadableData) {
         super();
         this.parent = parent;
-        this.audioList = ListUtils.emptyIfNull(audioList);
+        this.audioList = ListUtils.emptyIfNull(downloadableData.getAudioList());
+        this.postprocessingList = downloadableData.getPostprocessingList();
     }
 
     @FXML
@@ -97,8 +101,8 @@ public class AudioDownloadGridController extends AbstractDownloadGridController 
 
     private HBox createButtonPane(Audio audio) {
         return super.createButtonPane(
-                super.createDownloadButton(parent, audio),
-                super.createAddToQueueButton(parent, audio)
+                super.createDownloadButton(parent, audio, postprocessingList),
+                super.createAddToQueueButton(parent, audio, postprocessingList)
         );
     }
 }

@@ -108,4 +108,14 @@ public class YoutubeDlCommandBuilder {
         commandList.add("--no-mtime");
         return this;
     }
+
+    public YoutubeDlCommandBuilder postprocessing(String args) {
+        if (StringUtils.isBlank(args)) {
+            throw new IllegalArgumentException("Postprocessor args must not be blank");
+        }
+
+        commandList.add("--postprocessor-args");
+        commandList.add(args);
+        return this;
+    }
 }

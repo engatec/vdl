@@ -2,16 +2,14 @@ package com.github.engatec.vdl.controller.components;
 
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import com.github.engatec.vdl.controller.preferences.PostprocessingController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
-import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.ui.Stages;
@@ -29,14 +27,14 @@ public class DownloadableItemsComponentController {
 
     private Stage stage;
     private List<DownloadableData> downloadableDataList;
-    private BiFunction<List<Video>, List<Audio>, ? extends Parent> contentFunction;
+    private Function<DownloadableData, ? extends Parent> contentFunction;
 
     @FXML private VBox rootVBox;
 
     private DownloadableItemsComponentController() {
     }
 
-    public DownloadableItemsComponentController(Stage stage, List<DownloadableData> downloadableDataList, BiFunction<List<Video>, List<Audio>, ? extends Parent> contentFunction) {
+    public DownloadableItemsComponentController(Stage stage, List<DownloadableData> downloadableDataList, Function<DownloadableData, ? extends Parent> contentFunction) {
         this.stage = stage;
         this.downloadableDataList = downloadableDataList;
         this.contentFunction = contentFunction;
@@ -49,7 +47,7 @@ public class DownloadableItemsComponentController {
         boolean autodownloadEnabled = ConfigManager.INSTANCE.getValue(new AutoDownloadConfigItem());
         boolean singleItem = downloadableDataList.size() == 1;
         for (DownloadableData item : downloadableDataList) {
-            TitledPane tp = new TitledPane(item.getTitle(), contentFunction.apply(item.getVideoList(), item.getAudioList()));
+            TitledPane tp = new TitledPane(item.getTitle(), contentFunction.apply(item));
             tp.setExpanded(singleItem);
             tp.setCollapsible(!singleItem);
             tp.getStyleClass().add("no-border");
@@ -65,7 +63,7 @@ public class DownloadableItemsComponentController {
 
         MenuItem postprocessingMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.postprocessing"));
         postprocessingMenuItem.setOnAction(e -> {
-            Stages.newModalStage(UiComponent.POSTPROCESSING, PostprocessingController::new, stage).showAndWait();
+            Stages.newModalStage(UiComponent.POSTPROCESSING, it -> new PostprocessingController(it, item.getPostprocessingList()), stage).showAndWait();
             e.consume();
         });
         ctxMenu.getItems().add(postprocessingMenuItem);
@@ -75,6 +73,7 @@ public class DownloadableItemsComponentController {
             addToQueueMenuItem.setOnAction(e -> {
                 String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
                 CustomFormatDownloadable downloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
+                downloadable.setPostprocessingSteps(item.getPostprocessingList());
                 AppUtils.executeCommandResolvingPath(stage, new EnqueueCommand(downloadable), downloadable::setDownloadPath);
                 e.consume();
             });
