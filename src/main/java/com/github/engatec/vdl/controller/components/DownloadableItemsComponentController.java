@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.BiFunction;
 
+import com.github.engatec.vdl.controller.preferences.PostprocessingController;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.downloadable.Audio;
@@ -12,6 +14,7 @@ import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
+import com.github.engatec.vdl.ui.Stages;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.fxml.FXML;
@@ -50,27 +53,34 @@ public class DownloadableItemsComponentController {
             tp.setExpanded(singleItem);
             tp.setCollapsible(!singleItem);
             tp.getStyleClass().add("no-border");
-            if (!singleItem && autodownloadEnabled) {
-                setContextMenu(tp, item);
-            }
+            setContextMenu(tp, item, singleItem, autodownloadEnabled);
             rootVBox.getChildren().add(tp);
         }
     }
 
-    private void setContextMenu(TitledPane tp, DownloadableData item) {
+    private void setContextMenu(TitledPane tp, DownloadableData item, boolean singleItem, boolean autodownloadEnabled) {
         ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
 
         ContextMenu ctxMenu = new ContextMenu();
 
-        MenuItem addToQueueMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.queue.add"));
-        addToQueueMenuItem.setOnAction(e -> {
-            String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
-            CustomFormatDownloadable downloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
-            AppUtils.executeCommandResolvingPath(stage, new EnqueueCommand(downloadable), downloadable::setDownloadPath);
+        MenuItem postprocessingMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.postprocessing"));
+        postprocessingMenuItem.setOnAction(e -> {
+            Stages.newModalStage(UiComponent.POSTPROCESSING, PostprocessingController::new, stage).showAndWait();
             e.consume();
         });
+        ctxMenu.getItems().add(postprocessingMenuItem);
 
-        ctxMenu.getItems().addAll(addToQueueMenuItem);
+        if (!singleItem && autodownloadEnabled) {
+            MenuItem addToQueueMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.queue.add"));
+            addToQueueMenuItem.setOnAction(e -> {
+                String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
+                CustomFormatDownloadable downloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
+                AppUtils.executeCommandResolvingPath(stage, new EnqueueCommand(downloadable), downloadable::setDownloadPath);
+                e.consume();
+            });
+            ctxMenu.getItems().add(addToQueueMenuItem);
+        }
+
         tp.setContextMenu(ctxMenu);
     }
 }

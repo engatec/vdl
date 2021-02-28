@@ -32,8 +32,8 @@ public class Dialogs {
 
     public static Optional<ButtonType> warningWithYesNoButtons(String key) {
         ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
-        ButtonType yes = new ButtonType(resourceBundle.getString("dialog.button.yes"), ButtonBar.ButtonData.YES);
-        ButtonType no = new ButtonType(resourceBundle.getString("dialog.button.no"), ButtonBar.ButtonData.NO);
+        ButtonType yes = new ButtonType(resourceBundle.getString("button.yes"), ButtonBar.ButtonData.YES);
+        ButtonType no = new ButtonType(resourceBundle.getString("button.no"), ButtonBar.ButtonData.NO);
         var alert = new Alert(Alert.AlertType.WARNING, resourceBundle.getString(key), yes, no);
         alert.setTitle(resourceBundle.getString("warning"));
         alert.setHeaderText(null);

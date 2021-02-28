@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.core.preferences.handler;
+package com.github.engatec.vdl.core.handler;
 
 import java.net.MalformedURLException;
 import java.net.URL;

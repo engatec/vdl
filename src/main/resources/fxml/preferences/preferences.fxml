@@ -24,8 +24,8 @@
          <children>
             <HBox alignment="CENTER_RIGHT" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Button fx:id="okBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%preferences.ok" />
-                  <Button fx:id="cancelBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%preferences.cancel">
+                  <Button fx:id="okBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%button.ok" />
+                  <Button fx:id="cancelBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%button.cancel">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
