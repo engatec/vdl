@@ -5,22 +5,20 @@ import java.util.Objects;
 import com.github.engatec.vdl.model.Format;
 import org.apache.commons.lang3.ObjectUtils;
 
-public class Video extends BaseDownloadable {
+public class Video {
 
     private final Format format;
     private Audio audio;
 
-    public Video(String baseUrl, Format format) {
-        this(baseUrl, format, null);
+    public Video(Format format) {
+        this(format, null);
     }
 
-    public Video(String baseUrl, Format format, Audio audio) {
-        super.baseUrl = baseUrl;
+    public Video(Format format, Audio audio) {
         this.format = format;
         this.audio = audio;
     }
 
-    @Override
     public String getFormatId() {
         String formatId = getId();
         if (audio != null && !Objects.equals(formatId, audio.getFormatId())) {

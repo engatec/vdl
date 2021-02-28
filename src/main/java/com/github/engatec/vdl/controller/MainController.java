@@ -16,6 +16,7 @@ import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
@@ -23,7 +24,6 @@ import com.github.engatec.vdl.model.preferences.general.SkipDownloadableDetailsS
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.Stages;
 import com.github.engatec.vdl.util.AppUtils;
-import com.github.engatec.vdl.worker.data.DownloadableData;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -216,12 +216,12 @@ public class MainController extends StageAwareController {
         downloadableSearchService.setUrl(videoUrlTextField.getText());
 
         downloadableSearchService.setOnSucceeded(it -> {
-            List<DownloadableData> downloadableDataList = (List<DownloadableData>) it.getSource().getValue();
-            loadVideoTab(downloadableDataList);
-            loadAudioTab(downloadableDataList);
+            List<MultiFormatDownloadable> downloadables = (List<MultiFormatDownloadable>) it.getSource().getValue();
+            loadVideoTab(downloadables);
+            loadAudioTab(downloadables);
 
             boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
-            if (autodownloadEnabled && downloadableDataList.size() == 1) {
+            if (autodownloadEnabled && downloadables.size() == 1) {
                 Platform.runLater(this::performAutoDownload); // runLater is to release the service and trigger runningProperty to be false
             }
         });
@@ -237,10 +237,10 @@ public class MainController extends StageAwareController {
         downloadableSearchService.restart();
     }
 
-    private void loadVideoTab(List<DownloadableData> downloadableDataList) {
+    private void loadVideoTab(List<MultiFormatDownloadable> downloadables) {
         boolean hasVideos = false;
-        for (DownloadableData item : downloadableDataList) {
-            if (CollectionUtils.isNotEmpty(item.getVideoList())) {
+        for (MultiFormatDownloadable item : downloadables) {
+            if (CollectionUtils.isNotEmpty(item.getVideos())) {
                 hasVideos = true;
                 break;
             }
@@ -251,18 +251,18 @@ public class MainController extends StageAwareController {
                     UiComponent.DOWNLOADABLE_ITEMS_COMPONENT,
                     param -> new DownloadableItemsComponentController(
                             stage,
-                            downloadableDataList,
-                            (downloadableData) -> UiManager.loadComponent(UiComponent.VIDEO_DOWNLOAD_GRID, param1 -> new VideoDownloadGridController(stage, downloadableData))
+                            downloadables,
+                            (downloadable) -> UiManager.loadComponent(UiComponent.VIDEO_DOWNLOAD_GRID, param1 -> new VideoDownloadGridController(stage, downloadable))
                     )
             );
             videoTabScrollPane.setContent(videoComponent);
         }
     }
 
-    private void loadAudioTab(List<DownloadableData> downloadableDataList) {
+    private void loadAudioTab(List<MultiFormatDownloadable> downloadables) {
         boolean hasAudios = false;
-        for (DownloadableData item : downloadableDataList) {
-            if (CollectionUtils.isNotEmpty(item.getAudioList())) {
+        for (MultiFormatDownloadable item : downloadables) {
+            if (CollectionUtils.isNotEmpty(item.getAudios())) {
                 hasAudios = true;
                 break;
             }
@@ -273,7 +273,7 @@ public class MainController extends StageAwareController {
                     UiComponent.DOWNLOADABLE_ITEMS_COMPONENT,
                     param -> new DownloadableItemsComponentController(
                             stage,
-                            downloadableDataList,
+                            downloadables,
                             (downloadableData) -> UiManager.loadComponent(UiComponent.AUTIO_DOWNLOAD_GRID, param1 -> new AudioDownloadGridController(stage, downloadableData))
                     )
             );

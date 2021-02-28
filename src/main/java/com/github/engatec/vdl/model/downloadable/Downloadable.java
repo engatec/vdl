@@ -8,6 +8,8 @@ public interface Downloadable extends Postprocessable {
 
     String getFormatId();
 
+    String getTitle();
+
     String getBaseUrl();
 
     Path getDownloadPath();

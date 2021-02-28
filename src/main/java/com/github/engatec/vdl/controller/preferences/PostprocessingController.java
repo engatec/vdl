@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.FragmentCutPostprocessing;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.ui.Dialogs;
@@ -29,7 +30,7 @@ public class PostprocessingController extends StageAwareController {
     private static final Pattern TIME_PATTERN = Pattern.compile("^[0-9]?[0-9]?:[0-5]?[0-9]?:[0-5]?[0-9]?$");
     private static final String DEFAULT_TIME = "00:00:00";
 
-    private List<? super Postprocessing> postprocessingList;
+    private Downloadable downloadable;
 
     @FXML private CheckBox fragmentCheckbox;
     @FXML private HBox fragmentTimeRangeWrapper;
@@ -42,9 +43,9 @@ public class PostprocessingController extends StageAwareController {
     private PostprocessingController() {
     }
 
-    public PostprocessingController(Stage stage, List<? super Postprocessing> postprocessingList) {
+    public PostprocessingController(Stage stage, Downloadable downloadable) {
         super(stage);
-        this.postprocessingList = postprocessingList;
+        this.downloadable = downloadable;
     }
 
     @FXML
@@ -61,7 +62,7 @@ public class PostprocessingController extends StageAwareController {
         initFragmentTimeTextField(fragmentFromTextField);
         initFragmentTimeTextField(fragmentToTextField);
 
-        ListUtils.emptyIfNull(postprocessingList).stream()
+        ListUtils.emptyIfNull(downloadable.getPostprocessingSteps()).stream()
                 .filter(it -> it instanceof FragmentCutPostprocessing)
                 .map(it -> (FragmentCutPostprocessing) it)
                 .findFirst()
@@ -103,8 +104,7 @@ public class PostprocessingController extends StageAwareController {
             tempPostprocessingList.add(FragmentCutPostprocessing.newInstance(startTime, endTime));
         }
 
-        postprocessingList.clear();
-        postprocessingList.addAll(tempPostprocessingList);
+        downloadable.setPostprocessingSteps(tempPostprocessingList);
         stage.close();
         event.consume();
     }

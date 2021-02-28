@@ -1,20 +1,23 @@
 package com.github.engatec.vdl.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
+import com.github.engatec.vdl.core.command.Command;
+import com.github.engatec.vdl.core.command.DownloadCommand;
+import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.model.downloadable.Audio;
+import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
-import com.github.engatec.vdl.model.postprocessing.Postprocessing;
+import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.LabelUtils;
-import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -25,7 +28,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class VideoDownloadGridController extends AbstractDownloadGridController {
@@ -40,21 +42,17 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
     @FXML private Label extensionTitleLabel;
     @FXML private Label audioTitleLabel;
 
-    private List<Video> videoList;
-    private List<Audio> audioList;
-    private List<Postprocessing> postprocessingList;
+    private MultiFormatDownloadable downloadable;
 
     private Map<String, String> videoExtToAudioExtMap;
 
     private VideoDownloadGridController() {
     }
 
-    public VideoDownloadGridController(Stage parent, DownloadableData downloadableData) {
+    public VideoDownloadGridController(Stage parent, MultiFormatDownloadable downloadable) {
         super();
         this.parent = parent;
-        this.videoList = ListUtils.emptyIfNull(downloadableData.getVideoList());
-        this.audioList = ListUtils.emptyIfNull(downloadableData.getAudioList());
-        this.postprocessingList = downloadableData.getPostprocessingList();
+        this.downloadable = downloadable;
 
         videoExtToAudioExtMap = Map.of("mp4", "m4a", "webm", "webm");
     }
@@ -63,7 +61,7 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
     public void initialize() {
         setLocaleBindings();
 
-        for (Video video : videoList) {
+        for (Video video : downloadable.getVideos()) {
             addVideoToGrid(video);
         }
     }
@@ -77,7 +75,7 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
     }
 
     private void addVideoToGrid(Video video) {
-        ObservableList<Audio> audioObservableList = FXCollections.observableArrayList(audioList);
+        ObservableList<Audio> audioObservableList = FXCollections.observableArrayList(downloadable.getAudios());
         Node[] nodes = {
                 createResolutionLabel(video),
                 createSizeLabel(video),
@@ -174,9 +172,20 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
     }
 
     private HBox createButtonPane(Video video) {
-        return super.createButtonPane(
-                super.createDownloadButton(parent, video, postprocessingList),
-                super.createAddToQueueButton(parent, video, postprocessingList)
-        );
+        Button downloadBtn = super.createDownloadButton();
+        setButtonOnAction(downloadBtn, video, new DownloadCommand(parent, downloadable));
+
+        Button addToQueueBtn = super.createAddToQueueButton();
+        setButtonOnAction(addToQueueBtn, video, new EnqueueCommand(downloadable));
+
+        return super.createButtonPane(downloadBtn, addToQueueBtn);
+    }
+
+    private void setButtonOnAction(Button button, Video video, Command command) {
+        button.setOnAction(e -> {
+            downloadable.setFormatId(video.getFormatId());
+            AppUtils.executeCommandResolvingPath(parent, command, downloadable::setDownloadPath);
+            e.consume();
+        });
     }
 }

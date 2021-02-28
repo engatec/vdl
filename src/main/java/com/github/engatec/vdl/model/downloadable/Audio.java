@@ -3,17 +3,15 @@ package com.github.engatec.vdl.model.downloadable;
 import com.github.engatec.vdl.model.Format;
 import org.apache.commons.lang3.ObjectUtils;
 
-public class Audio extends BaseDownloadable {
+public class Audio {
 
     private int trackNo;
     private final Format format;
 
-    public Audio(String baseUrl, Format format) {
-        super.baseUrl = baseUrl;
+    public Audio(Format format) {
         this.format = format;
     }
 
-    @Override
     public String getFormatId() {
         return getId();
     }

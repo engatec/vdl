@@ -10,11 +10,11 @@ import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
+import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.ui.Stages;
 import com.github.engatec.vdl.util.AppUtils;
-import com.github.engatec.vdl.worker.data.DownloadableData;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
@@ -26,17 +26,17 @@ import javafx.stage.Stage;
 public class DownloadableItemsComponentController {
 
     private Stage stage;
-    private List<DownloadableData> downloadableDataList;
-    private Function<DownloadableData, ? extends Parent> contentFunction;
+    private List<MultiFormatDownloadable> downloadables;
+    private Function<MultiFormatDownloadable, ? extends Parent> contentFunction;
 
     @FXML private VBox rootVBox;
 
     private DownloadableItemsComponentController() {
     }
 
-    public DownloadableItemsComponentController(Stage stage, List<DownloadableData> downloadableDataList, Function<DownloadableData, ? extends Parent> contentFunction) {
+    public DownloadableItemsComponentController(Stage stage, List<MultiFormatDownloadable> downloadables, Function<MultiFormatDownloadable, ? extends Parent> contentFunction) {
         this.stage = stage;
-        this.downloadableDataList = downloadableDataList;
+        this.downloadables = downloadables;
         this.contentFunction = contentFunction;
     }
 
@@ -45,8 +45,8 @@ public class DownloadableItemsComponentController {
         rootVBox.setSpacing(4);
 
         boolean autodownloadEnabled = ConfigManager.INSTANCE.getValue(new AutoDownloadConfigItem());
-        boolean singleItem = downloadableDataList.size() == 1;
-        for (DownloadableData item : downloadableDataList) {
+        boolean singleItem = downloadables.size() == 1;
+        for (MultiFormatDownloadable item : downloadables) {
             TitledPane tp = new TitledPane(item.getTitle(), contentFunction.apply(item));
             tp.setExpanded(singleItem);
             tp.setCollapsible(!singleItem);
@@ -56,14 +56,14 @@ public class DownloadableItemsComponentController {
         }
     }
 
-    private void setContextMenu(TitledPane tp, DownloadableData item, boolean singleItem, boolean autodownloadEnabled) {
+    private void setContextMenu(TitledPane tp, MultiFormatDownloadable downloadable, boolean singleItem, boolean autodownloadEnabled) {
         ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
 
         ContextMenu ctxMenu = new ContextMenu();
 
         MenuItem postprocessingMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.postprocessing"));
         postprocessingMenuItem.setOnAction(e -> {
-            Stages.newModalStage(UiComponent.POSTPROCESSING, it -> new PostprocessingController(it, item.getPostprocessingList()), stage).showAndWait();
+            Stages.newModalStage(UiComponent.POSTPROCESSING, it -> new PostprocessingController(it, downloadable), stage).showAndWait();
             e.consume();
         });
         ctxMenu.getItems().add(postprocessingMenuItem);
@@ -72,9 +72,9 @@ public class DownloadableItemsComponentController {
             MenuItem addToQueueMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.queue.add"));
             addToQueueMenuItem.setOnAction(e -> {
                 String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
-                CustomFormatDownloadable downloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
-                downloadable.setPostprocessingSteps(item.getPostprocessingList());
-                AppUtils.executeCommandResolvingPath(stage, new EnqueueCommand(downloadable), downloadable::setDownloadPath);
+                CustomFormatDownloadable customFormatDownloadable = new CustomFormatDownloadable(downloadable.getBaseUrl(), format);
+                customFormatDownloadable.setPostprocessingSteps(downloadable.getPostprocessingSteps());
+                AppUtils.executeCommandResolvingPath(stage, new EnqueueCommand(customFormatDownloadable), customFormatDownloadable::setDownloadPath);
                 e.consume();
             });
             ctxMenu.getItems().add(addToQueueMenuItem);

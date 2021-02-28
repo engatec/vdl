@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class QueueItem implements Downloadable {
 
@@ -95,6 +96,11 @@ public class QueueItem implements Downloadable {
 
     public void setFormatId(String formatId) {
         this.formatId = formatId;
+    }
+
+    @Override
+    public String getTitle() {
+        return StringUtils.EMPTY;
     }
 
     @Override

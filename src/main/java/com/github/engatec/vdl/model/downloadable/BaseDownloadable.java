@@ -8,10 +8,21 @@ import org.apache.commons.collections4.ListUtils;
 
 public abstract class BaseDownloadable implements Downloadable {
 
+    protected String title;
     protected String baseUrl;
     protected Path downloadPath;
 
     protected List<Postprocessing> postprocessingSteps;
+
+    public BaseDownloadable(String title, String baseUrl) {
+        this.title = title;
+        this.baseUrl = baseUrl;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
 
     @Override
     public String getBaseUrl() {
