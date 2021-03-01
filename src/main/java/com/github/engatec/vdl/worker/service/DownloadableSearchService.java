@@ -1,14 +1,8 @@
 package com.github.engatec.vdl.worker.service;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -25,9 +19,6 @@ import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
@@ -35,20 +26,10 @@ import static java.util.Comparator.nullsFirst;
 
 public class DownloadableSearchService extends Service<List<MultiFormatDownloadable>> {
 
-    private static final Logger LOGGER = LogManager.getLogger(DownloadableSearchService.class);
-
-    private static final int MIN_CONTENT_LENGTH = 307200; // 300kb
-    private static final int MAX_TIMEOUT_SECONDS = 30;
-
-    private final HttpClient client;
     private final StringProperty url = new SimpleStringProperty();
 
     public DownloadableSearchService() {
         super();
-        client = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(MAX_TIMEOUT_SECONDS))
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .build();
         setExecutor(ApplicationContext.INSTANCE.getSharedExecutor());
     }
 
@@ -104,8 +85,6 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
             }
         }
 
-        ensureFileSize(formats);
-
         videoList.sort(
                 comparing(Video::getWidth, nullsFirst(naturalOrder()))
                         .thenComparing(Video::getHeight, nullsFirst(naturalOrder()))
@@ -128,50 +107,5 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
             Audio audio = audioList.get(i);
             audio.setTrackNo(i + 1);
         }
-    }
-
-    private void ensureFileSize(List<Format> formats) {
-        List<CompletableFuture<Void>> cf = new ArrayList<>();
-        for (Format format : formats) {
-            if (format.getFilesize() == null) {
-                cf.add(tryResolveFileSizeAsync(format).exceptionally(t -> {
-                    LOGGER.warn(t.getMessage(), t);
-                    return null;
-                }));
-            }
-        }
-
-        CompletableFuture.allOf(cf.toArray(new CompletableFuture[] {})).join();
-    }
-
-    private CompletableFuture<Void> tryResolveFileSizeAsync(final Format format) {
-        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-                .uri(URI.create(format.getUrl()))
-                .method("HEAD", HttpRequest.BodyPublishers.noBody())
-                .timeout(Duration.ofSeconds(MAX_TIMEOUT_SECONDS));
-
-        for (var header : MapUtils.emptyIfNull(format.getHttpHeaders()).entrySet()) {
-            requestBuilder.setHeader(header.getKey(), header.getValue());
-        }
-
-        return client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.discarding())
-                .thenAccept(response -> {
-                    if (response.statusCode() == 200) {
-                        response.headers().firstValue("content-length").ifPresent(contentLength -> {
-                            try {
-                                long filesize = Long.parseLong(contentLength);
-                                /* Перестрахуемся. Если дошли до сюда, значит youtube-dl не смог определить размер видео.
-                                   По факту этот метод - костыль, попытка напрямую спросить ресурс о его размере.
-                                   Но если ответ слишком маленький, есть основания полагать, что это не видео/аудио мелкого размера,
-                                   а вернулась какая-то дичь, поэтому скипнем такой размер на всякий случай. */
-                                if (filesize < MIN_CONTENT_LENGTH) {
-                                    return;
-                                }
-                                format.setFilesize(filesize);
-                            } catch (Exception ignored) {
-                            }
-                        });
-                    }
-                });
     }
 }
