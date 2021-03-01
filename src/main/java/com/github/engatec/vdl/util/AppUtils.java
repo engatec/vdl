@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.github.engatec.vdl.core.command.Command;
@@ -17,22 +18,28 @@ import javafx.stage.Stage;
 public class AppUtils {
 
     public static void executeCommandResolvingPath(Stage stage, Command command, Consumer<Path> onPathResolved) {
-        Path path = resolveDownloadPath(stage);
+        resolveDownloadPath(stage).ifPresent(path -> {
+            onPathResolved.accept(path);
+            command.execute();
+        });
+    }
+
+    public static Optional<Path> resolveDownloadPath(Stage stage) {
+        Path path = doResolveDownloadPath(stage);
         if (path == null) {
-            return;
+            return Optional.empty();
         }
 
         boolean pathIsWritableDirectory = Files.isDirectory(path) && Files.isWritable(path);
         if (!pathIsWritableDirectory) {
             Dialogs.error("download.path.directory.error");
-            return;
+            return Optional.empty();
         }
 
-        onPathResolved.accept(path);
-        command.execute();
+        return Optional.of(path);
     }
 
-    private static Path resolveDownloadPath(Stage stage) {
+    private static Path doResolveDownloadPath(Stage stage) {
         ConfigManager cfg = ConfigManager.INSTANCE;
         Path downloadPath = Paths.get(cfg.getValue(new DownloadPathConfigItem()));
         boolean askPath = cfg.getValue(new AlwaysAskDownloadPathConfigItem());

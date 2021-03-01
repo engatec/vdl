@@ -78,6 +78,22 @@ public class DownloadableItemsComponentController {
                 e.consume();
             });
             ctxMenu.getItems().add(addToQueueMenuItem);
+
+            MenuItem addToQueueAllMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.queue.addall"));
+            addToQueueAllMenuItem.setOnAction(e -> {
+                AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
+                    String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
+                    for (MultiFormatDownloadable item : downloadables) {
+                        CustomFormatDownloadable customFormatDownloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
+                        customFormatDownloadable.setPostprocessingSteps(item.getPostprocessingSteps());
+                        customFormatDownloadable.setDownloadPath(path);
+                        new EnqueueCommand(customFormatDownloadable).execute();
+                    }
+                });
+
+                e.consume();
+            });
+            ctxMenu.getItems().add(addToQueueAllMenuItem);
         }
 
         tp.setContextMenu(ctxMenu);
