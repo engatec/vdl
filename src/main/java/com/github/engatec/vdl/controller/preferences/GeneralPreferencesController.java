@@ -7,21 +7,27 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.data.AutodownloadFormat;
 import com.github.engatec.vdl.core.preferences.data.PredefinedFormatCreator;
 import com.github.engatec.vdl.core.preferences.propertyholder.GeneralPropertyHolder;
+import com.github.engatec.vdl.ui.Icons;
+import com.github.engatec.vdl.util.Svg;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 
 public class GeneralPreferencesController {
@@ -94,6 +100,8 @@ public class GeneralPreferencesController {
     private void initAutodownloadSettings() {
         ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
 
+        autodownloadSettingsWrapperVBox.disableProperty().bind(autodownloadCheckBox.selectedProperty().not());
+
         autodownloadFormatComboBox.setItems(FXCollections.observableArrayList(
                 new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.best"), PredefinedFormatCreator.create(null)),
                 new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher2160p"), PredefinedFormatCreator.create("2160")),
@@ -127,6 +135,13 @@ public class GeneralPreferencesController {
         }
         selectionModel.select(itemToSelect);
 
-        autodownloadSettingsWrapperVBox.disableProperty().bind(autodownloadCheckBox.selectedProperty().not());
+        Group infoIcon = Icons.info();
+        Svg.scale(infoIcon, 0.8);
+        Tooltip tooltip = new Tooltip(resourceBundle.getString("preferences.general.autodownload.checkbox.skipdetailssearch.tooltip"));
+        tooltip.setShowDelay(Duration.ZERO);
+        tooltip.setShowDuration(Duration.INDEFINITE);
+        Tooltip.install(infoIcon, tooltip);
+        skipDownloadableDetailsSearchCheckBox.setGraphic(infoIcon);
+        skipDownloadableDetailsSearchCheckBox.setContentDisplay(ContentDisplay.RIGHT);
     }
 }
