@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import javafx.beans.property.DoubleProperty;
@@ -98,6 +99,7 @@ public class QueueItem implements Downloadable {
         this.formatId = formatId;
     }
 
+    @JsonIgnore
     @Override
     public String getTitle() {
         return StringUtils.EMPTY;

@@ -3,6 +3,8 @@ package com.github.engatec.vdl.worker.service;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +24,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     private static final Logger LOGGER = LogManager.getLogger(QueueItemDownloadService.class);
 
     private static final String SIZE_SEPARATOR = " / ";
+    private static final String FORMAT_SEPARATOR = "/";
 
     private static final String GROUP_PROGRESS = "progress";
     private static final String GROUP_SIZE = "size";
@@ -38,12 +41,11 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     private final QueueItem queueItem;
     private static final int MAX_PROGRESS_PER_ITEM = 100;
     private final int maxOverallProgress;
-    private int progressModificator = 0;
 
     public QueueItemDownloadService(QueueItem queueItem) {
         super();
         this.queueItem = queueItem;
-        maxOverallProgress = MAX_PROGRESS_PER_ITEM * (StringUtils.countMatches(queueItem.getFormatId(), '+') + 1);
+        maxOverallProgress = MAX_PROGRESS_PER_ITEM * (StringUtils.countMatches(StringUtils.substringBefore(queueItem.getFormatId(), FORMAT_SEPARATOR), '+') + 1);
         setExecutor(ApplicationContext.INSTANCE.getQueueExecutor());
 
         queueItem.progressProperty().bind(progressProperty());
@@ -127,6 +129,8 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
             @Override
             protected QueueItemDownloadProgressData call() throws Exception {
                 var progressData = new QueueItemDownloadProgressData();
+                AtomicBoolean leftMatchedBlock = new AtomicBoolean(false);
+                AtomicInteger progressModificator = new AtomicInteger(0);
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
                 try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
@@ -142,23 +146,23 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                         Matcher matcher = DOWNLOAD_PROGRESS_PATTERN.matcher(it);
                         if (matcher.matches()) {
                             double currentProgress = Double.parseDouble(matcher.group(GROUP_PROGRESS));
-                            int progressComparisonResult = Double.compare(currentProgress, progressData.getProgress());
-                            if (progressComparisonResult == 1) {
-                                progressData.setProgress(currentProgress);
-                                progressData.setThroughput(matcher.group(GROUP_THROUGHPUT));
-                                progressData.setSize(calculateSizeString(progressData.getSize(), matcher.group(GROUP_SIZE)));
 
-                                updateProgress(currentProgress + progressModificator, maxOverallProgress);
-                                updateValue(new QueueItemDownloadProgressData(progressData.getProgress(), progressData.getSize(), progressData.getThroughput()));
-                            } else if (progressComparisonResult == -1) {
-                                progressModificator += MAX_PROGRESS_PER_ITEM;
-                                progressData.setProgress(0);
-                                progressData.setSize(progressData.getSize() + SIZE_SEPARATOR + matcher.group(GROUP_SIZE));
-                            }
+                            progressData.setProgress(currentProgress);
+                            progressData.setThroughput(matcher.group(GROUP_THROUGHPUT));
+                            progressData.setSize(calculateSizeString(progressData.getSize(), matcher.group(GROUP_SIZE)));
+
+                            updateProgress(currentProgress + progressModificator.get(), maxOverallProgress);
+                            updateValue(new QueueItemDownloadProgressData(progressData.getProgress(), progressData.getSize(), progressData.getThroughput()));
+                            leftMatchedBlock.set(true);
+                        } else if (leftMatchedBlock.get() && StringUtils.isNotBlank(progressData.getSize())) {
+                            progressModificator.addAndGet(MAX_PROGRESS_PER_ITEM);
+                            progressData.setProgress(0);
+                            progressData.setSize(progressData.getSize() + SIZE_SEPARATOR);
+                            leftMatchedBlock.set(false);
                         }
                     });
                 }
-                return progressData;
+                return null;
             }
         };
     }

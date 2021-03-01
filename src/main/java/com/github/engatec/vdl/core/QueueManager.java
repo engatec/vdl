@@ -12,6 +12,7 @@ import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,6 +52,18 @@ public class QueueManager {
         }
     }
 
+    private void fixState(List<QueueItem> items) {
+        for (QueueItem item : ListUtils.emptyIfNull(items)) {
+            DownloadStatus status = item.getStatus();
+            if (status == DownloadStatus.SCHEDULED) {
+                item.setStatus(DownloadStatus.READY); // Should be safe to turn SCHEDULED into READY as it hadn't started when the app shut down
+            }
+            if (item.getProgress() < 0) {
+                item.setProgress(0);
+            }
+        }
+    }
+
     public void restoreQueue() {
         Path queueFilePath = ApplicationContext.CONFIG_PATH.resolve(FILENAME);
         if (!Files.exists(queueFilePath)) {
@@ -60,6 +73,7 @@ public class QueueManager {
         ObjectMapper mapper = new ObjectMapper();
         try {
             List<QueueItem> items = mapper.readValue(queueFilePath.toFile(), new TypeReference<>(){});
+            fixState(items);
             queueItems.addAll(items);
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e);
