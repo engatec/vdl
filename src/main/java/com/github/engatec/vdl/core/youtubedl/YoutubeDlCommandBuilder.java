@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class YoutubeDlCommandBuilder {
@@ -28,15 +27,6 @@ public class YoutubeDlCommandBuilder {
 
     public List<String> buildAsList() {
         return List.copyOf(commandList);
-    }
-
-    public YoutubeDlCommandBuilder addCustomArguments(List<String> args) {
-        if (CollectionUtils.isEmpty(args)) {
-            return this;
-        }
-
-        commandList.addAll(args);
-        return this;
     }
 
     /**
@@ -106,6 +96,17 @@ public class YoutubeDlCommandBuilder {
 
     public YoutubeDlCommandBuilder noMTime() {
         commandList.add("--no-mtime");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder configLocation(String path) {
+        commandList.add("--config-location");
+        commandList.add(path);
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder ignoreConfig() {
+        commandList.add("--ignore-config");
         return this;
     }
 

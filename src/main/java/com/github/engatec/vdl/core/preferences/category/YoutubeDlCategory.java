@@ -5,9 +5,9 @@ import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.propertyholder.YoutubedlPropertyHolder;
-import com.github.engatec.vdl.model.preferences.youtubedl.CustomArgumentsConfigItem;
+import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
 import com.github.engatec.vdl.model.preferences.youtubedl.NoMTimeConfigItem;
-import com.github.engatec.vdl.model.preferences.youtubedl.UseCustomArgumentsConfigItem;
+import com.github.engatec.vdl.model.preferences.youtubedl.UseConfigFileConfigItem;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 
@@ -23,7 +23,7 @@ public class YoutubeDlCategory extends Category {
     public Node buildCategoryUi(Stage stage) {
         if (super.node == null) {
             readPreferences();
-            super.node = UiManager.loadComponent(UiComponent.PREFERENCES_YOUTUBE_DL, param -> new YoutubedlPreferencesController(propertyHolder));
+            super.node = UiManager.loadComponent(UiComponent.PREFERENCES_YOUTUBE_DL, param -> new YoutubedlPreferencesController(stage, propertyHolder));
         }
         return node;
     }
@@ -33,8 +33,8 @@ public class YoutubeDlCategory extends Category {
         ConfigManager config = ConfigManager.INSTANCE;
         propertyHolder = new YoutubedlPropertyHolder();
         propertyHolder.setNoMTime(config.getValue(new NoMTimeConfigItem()));
-        propertyHolder.setUseCustomArguments(config.getValue(new UseCustomArgumentsConfigItem()));
-        propertyHolder.setCustomArguments(config.getValue(new CustomArgumentsConfigItem()));
+        propertyHolder.setUseConfigFile(config.getValue(new UseConfigFileConfigItem()));
+        propertyHolder.setConfigFilePath(config.getValue(new ConfigFilePathConfigItem()));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class YoutubeDlCategory extends Category {
 
         ConfigManager config = ConfigManager.INSTANCE;
         config.setValue(new NoMTimeConfigItem(), propertyHolder.isNoMTime());
-        config.setValue(new UseCustomArgumentsConfigItem(), propertyHolder.isUseCustomArguments());
-        config.setValue(new CustomArgumentsConfigItem(), propertyHolder.getCustomArguments());
+        config.setValue(new UseConfigFileConfigItem(), propertyHolder.isUseConfigFile());
+        config.setValue(new ConfigFilePathConfigItem(), propertyHolder.getConfigFilePath());
     }
 }

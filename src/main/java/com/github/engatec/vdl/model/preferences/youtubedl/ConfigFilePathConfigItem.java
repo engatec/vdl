@@ -4,11 +4,11 @@ import java.util.prefs.Preferences;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class CustomArgumentsConfigItem extends YoutubeDlConfigItem<String> {
+public class ConfigFilePathConfigItem extends YoutubeDlConfigItem<String> {
 
     @Override
     protected String getName() {
-        return "customArguments";
+        return "configFilePath";
     }
 
     @Override

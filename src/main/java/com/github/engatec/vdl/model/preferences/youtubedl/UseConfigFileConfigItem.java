@@ -2,11 +2,11 @@ package com.github.engatec.vdl.model.preferences.youtubedl;
 
 import java.util.prefs.Preferences;
 
-public class UseCustomArgumentsConfigItem extends YoutubeDlConfigItem<Boolean> {
+public class UseConfigFileConfigItem extends YoutubeDlConfigItem<Boolean> {
 
     @Override
     protected String getName() {
-        return "useCustomArguments";
+        return "useConfigFile";
     }
 
     @Override

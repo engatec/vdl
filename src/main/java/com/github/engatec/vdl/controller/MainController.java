@@ -138,7 +138,7 @@ public class MainController extends StageAwareController {
     private void handlePreferencesMenuItemClick(ActionEvent event) {
         Stage prefStage = Stages.newModalStage(UiComponent.PREFERENCES, PreferencesController::new, this.stage);
         // Убрать хардкод в проперти
-        prefStage.setMinWidth(600);
+        prefStage.setMinWidth(700);
         prefStage.setMinHeight(400);
         prefStage.showAndWait();
         event.consume();

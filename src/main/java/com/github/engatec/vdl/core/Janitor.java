@@ -89,5 +89,8 @@ public class Janitor {
             cfg.setValue(new AutoDownloadFormatConfigItem(), autodownloadCustomFormat);
         }
         cfg.remove("general.autodownloadCustomFormat");
+
+        cfg.remove("youtubedl.useCustomArguments");
+        cfg.remove("youtubedl.customArguments");
     }
 }

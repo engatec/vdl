@@ -6,11 +6,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,9 +21,9 @@ import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.model.preferences.youtubedl.CustomArgumentsConfigItem;
+import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
 import com.github.engatec.vdl.model.preferences.youtubedl.NoMTimeConfigItem;
-import com.github.engatec.vdl.model.preferences.youtubedl.UseCustomArgumentsConfigItem;
+import com.github.engatec.vdl.model.preferences.youtubedl.UseConfigFileConfigItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -88,6 +90,11 @@ public class YoutubeDlManager {
     }
 
     public Process download(Downloadable downloadable) throws IOException {
+        Boolean useConfigFile = ConfigManager.INSTANCE.getValue(new UseConfigFileConfigItem());
+        return useConfigFile ? downloadWithConfigFile(downloadable) : downloadNoConfigFile(downloadable);
+    }
+
+    private Process downloadNoConfigFile(Downloadable downloadable) throws IOException {
         ConfigManager cfg = ConfigManager.INSTANCE;
 
         YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
@@ -96,6 +103,7 @@ public class YoutubeDlManager {
                 .noDebug()
                 .formatId(downloadable.getFormatId())
                 .outputPath(downloadable.getDownloadPath())
+                .ignoreConfig()
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
         if (cfg.getValue(new NoMTimeConfigItem())) {
@@ -109,16 +117,35 @@ public class YoutubeDlManager {
             commandBuilder.postprocessing(postprocessing);
         }
 
-        if (cfg.getValue(new UseCustomArgumentsConfigItem())) {
-            String customArgumentsString = cfg.getValue(new CustomArgumentsConfigItem());
-            List<String> customArguments = Arrays.stream(customArgumentsString.split("\\s+"))
-                    .map(StringUtils::strip)
-                    .filter(StringUtils::isNotBlank)
-                    .collect(Collectors.toList());
-            commandBuilder.addCustomArguments(customArguments);
+        List<String> command = commandBuilder
+                .url(downloadable.getBaseUrl())
+                .buildAsList();
+
+        return runCommand(command);
+    }
+
+    private Process downloadWithConfigFile(Downloadable downloadable) throws IOException {
+        String configLocation = ConfigManager.INSTANCE.getValue(new ConfigFilePathConfigItem());
+
+        YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance().configLocation(configLocation);
+
+        String configFile = StringUtils.EMPTY;
+        try (Stream<String> lines = Files.lines(Path.of(configLocation))) {
+            configFile = lines.map(it -> StringUtils.substringBefore(it, "#")).filter(StringUtils::isNotBlank).collect(Collectors.joining(StringUtils.SPACE));
+        } catch (Exception ignored) {
+            // Couldn't open config file. Youtube-dl will show the error
+        }
+
+        if (!configFile.contains("-f ") && !configFile.contains("--format ")) {
+            commandBuilder.formatId(downloadable.getFormatId());
+        }
+
+        if (!configFile.contains("-o ") && !configFile.contains("--output ")) {
+            commandBuilder.outputPath(downloadable.getDownloadPath());
         }
 
         List<String> command = commandBuilder
+                .ffmpegLocation(ApplicationContext.APP_DIR)
                 .url(downloadable.getBaseUrl())
                 .buildAsList();
 

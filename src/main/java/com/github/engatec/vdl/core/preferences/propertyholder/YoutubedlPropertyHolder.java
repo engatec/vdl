@@ -9,8 +9,8 @@ public class YoutubedlPropertyHolder {
 
     private final BooleanProperty noMTime = new SimpleBooleanProperty();
 
-    private final BooleanProperty useCustomArguments = new SimpleBooleanProperty();
-    private final StringProperty customArguments = new SimpleStringProperty();
+    private final BooleanProperty useConfigFile = new SimpleBooleanProperty();
+    private final StringProperty configFilePath = new SimpleStringProperty();
 
     public boolean isNoMTime() {
         return noMTime.get();
@@ -24,27 +24,27 @@ public class YoutubedlPropertyHolder {
         this.noMTime.set(noMTime);
     }
 
-    public boolean isUseCustomArguments() {
-        return useCustomArguments.get();
+    public boolean isUseConfigFile() {
+        return useConfigFile.get();
     }
 
-    public BooleanProperty useCustomArgumentsProperty() {
-        return useCustomArguments;
+    public BooleanProperty useConfigFileProperty() {
+        return useConfigFile;
     }
 
-    public void setUseCustomArguments(boolean useCustomArguments) {
-        this.useCustomArguments.set(useCustomArguments);
+    public void setUseConfigFile(boolean useConfigFile) {
+        this.useConfigFile.set(useConfigFile);
     }
 
-    public String getCustomArguments() {
-        return customArguments.get();
+    public String getConfigFilePath() {
+        return configFilePath.get();
     }
 
-    public StringProperty customArgumentsProperty() {
-        return customArguments;
+    public StringProperty configFilePathProperty() {
+        return configFilePath;
     }
 
-    public void setCustomArguments(String customArguments) {
-        this.customArguments.set(customArguments);
+    public void setConfigFilePath(String configFilePath) {
+        this.configFilePath.set(configFilePath);
     }
 }
