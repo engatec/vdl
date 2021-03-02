@@ -13,12 +13,15 @@
             <Insets bottom="8.0" />
          </VBox.margin>
       </CheckBox>
+      <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.checkbox.configitem" wrapText="true" />
       <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
-            <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.checkbox.configitem" wrapText="true" />
             <TextField fx:id="configFileTextField" editable="false" minWidth="150.0" HBox.hgrow="ALWAYS" />
             <Button fx:id="configFileChooseBtn" mnemonicParsing="false" styleClass="control-btn" text="%preferences.youtubedl.btn.choose" />
          </children>
+         <VBox.margin>
+            <Insets left="8.0" />
+         </VBox.margin>
       </HBox>
    </children>
    <padding>
