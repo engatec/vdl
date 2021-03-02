@@ -97,15 +97,7 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
                         .thenComparing(Audio::getFilesize, nullsFirst(naturalOrder()))
                         .reversed()
         );
-        setTrackNo(audioList);
 
         return new MultiFormatDownloadable(videoInfo.getTitle(), videoInfo.getBaseUrl(), videoList, audioList);
-    }
-
-    private void setTrackNo(List<Audio> audioList) {
-        for (int i = 0; i < audioList.size(); i++) {
-            Audio audio = audioList.get(i);
-            audio.setTrackNo(i + 1);
-        }
     }
 }

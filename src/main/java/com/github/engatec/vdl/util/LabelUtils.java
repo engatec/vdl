@@ -1,5 +1,9 @@
 package com.github.engatec.vdl.util;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.github.engatec.vdl.model.downloadable.Audio;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -7,7 +11,7 @@ public class LabelUtils {
 
     private static final String N_A = "N/A";
     private static final String QUESTION_MARK = "?";
-    private static final String TRACK_PREFIX = "Track ";
+    private static final String AUDIO_LABEL_DELIMITER = " / ";
 
     public static String formatResolution(Integer width, Integer height) {
         String w = width == null ? QUESTION_MARK : width.toString();
@@ -16,18 +20,23 @@ public class LabelUtils {
     }
 
     public static String formatSize(Long filesize) {
-        return filesize == null || filesize == 0 ? N_A : FileUtils.byteCountToDisplaySize(filesize);
+        return formatSize(filesize, N_A);
+    }
+
+    public static String formatSize(Long filesize, String defaultValue) {
+        return filesize == null || filesize == 0 ? defaultValue : FileUtils.byteCountToDisplaySize(filesize);
     }
 
     public static String formatCodec(String codec) {
         return StringUtils.defaultIfBlank(codec, N_A);
     }
 
-    public static String formatBitrate(Double bitrate) {
-        return bitrate == null ? N_A : String.valueOf(bitrate.intValue());
-    }
-
-    public static String formatTrackNo(int trackNo) {
-        return TRACK_PREFIX + trackNo;
+    public static String formatAudio(Audio item) {
+        return List.of(
+                item.getExtension(),
+                formatSize(item.getFilesize(), null)
+        ).stream()
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.joining(AUDIO_LABEL_DELIMITER));
     }
 }

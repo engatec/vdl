@@ -11,7 +11,6 @@ public enum UiComponent {
     POSTPROCESSING("/fxml/postprocessing.fxml"),
     VIDEO_DOWNLOAD_GRID("/fxml/video-download-grid.fxml"),
     DOWNLOADABLE_ITEMS_COMPONENT("/fxml/downloadable-items-component.fxml"),
-    AUTIO_DOWNLOAD_GRID("/fxml/audio-download-grid.fxml"),
     DOWNLOADING_PROGRESS("/fxml/downloading-progress.fxml"),
     DIALOG_PROGRESS("/fxml/dialog/progress-dialog.fxml");
 

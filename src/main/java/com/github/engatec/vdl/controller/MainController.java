@@ -26,8 +26,6 @@ import com.github.engatec.vdl.ui.Stages;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -37,8 +35,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -60,11 +56,7 @@ public class MainController extends StageAwareController {
 
     @FXML private VBox rootControlVBox;
 
-    @FXML private TabPane videoAudioTabPane;
-    @FXML private Tab videoTab;
-    @FXML private ScrollPane videoTabScrollPane;
-    @FXML private Tab audioTab;
-    @FXML private ScrollPane audioTabScrollPane;
+    @FXML private ScrollPane contentScrollPane;
 
     @FXML private Menu fileMenu;
     @FXML private MenuItem downloadQueueMenuItem;
@@ -94,7 +86,6 @@ public class MainController extends StageAwareController {
     public void initialize() {
         initLocaleBindings();
         initSearchBindings();
-        initTabBindings();
         initMenuItems();
         initDragAndDrop();
 
@@ -111,8 +102,6 @@ public class MainController extends StageAwareController {
         I18n.bindLocaleProperty(checkYoutubeDlUpdatesMenuItem.textProperty(), "menu.help.update.youtubedl");
         I18n.bindLocaleProperty(aboutMenuItem.textProperty(), "menu.help.about");
         I18n.bindLocaleProperty(searchBtn.textProperty(), "search");
-        I18n.bindLocaleProperty(videoTab.textProperty(), "video");
-        I18n.bindLocaleProperty(audioTab.textProperty(), "audio");
     }
 
     private void initSearchBindings() {
@@ -128,15 +117,6 @@ public class MainController extends StageAwareController {
                 handleSearchEvent(event);
             }
         });
-    }
-
-    private void initTabBindings() {
-        BooleanBinding hasVideoBinding = videoTabScrollPane.contentProperty().isNotNull();
-        BooleanBinding hasAudioBinding = audioTabScrollPane.contentProperty().isNotNull();
-        BooleanBinding hasVideoOrAudioBinding = Bindings.or(hasVideoBinding, hasAudioBinding);
-        videoTab.disableProperty().bind(hasVideoBinding.not());
-        audioTab.disableProperty().bind(hasAudioBinding.not());
-        videoAudioTabPane.visibleProperty().bind(hasVideoOrAudioBinding);
     }
 
     private void initMenuItems() {
@@ -192,8 +172,7 @@ public class MainController extends StageAwareController {
     }
 
     private void handleSearchEvent(Event event) {
-        videoTabScrollPane.setContent(null);
-        audioTabScrollPane.setContent(null);
+        contentScrollPane.setContent(null);
 
         boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
         boolean skipDownloadableDetailsSearch = cfgMgr.getValue(new SkipDownloadableDetailsSearchConfigItem());
@@ -217,8 +196,7 @@ public class MainController extends StageAwareController {
 
         downloadableSearchService.setOnSucceeded(it -> {
             List<MultiFormatDownloadable> downloadables = (List<MultiFormatDownloadable>) it.getSource().getValue();
-            loadVideoTab(downloadables);
-            loadAudioTab(downloadables);
+            loadContentPane(downloadables);
 
             boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
             if (autodownloadEnabled && downloadables.size() == 1) {
@@ -237,7 +215,7 @@ public class MainController extends StageAwareController {
         downloadableSearchService.restart();
     }
 
-    private void loadVideoTab(List<MultiFormatDownloadable> downloadables) {
+    private void loadContentPane(List<MultiFormatDownloadable> downloadables) {
         boolean hasVideos = false;
         for (MultiFormatDownloadable item : downloadables) {
             if (CollectionUtils.isNotEmpty(item.getVideos())) {
@@ -255,29 +233,7 @@ public class MainController extends StageAwareController {
                             (downloadable) -> UiManager.loadComponent(UiComponent.VIDEO_DOWNLOAD_GRID, param1 -> new VideoDownloadGridController(stage, downloadable))
                     )
             );
-            videoTabScrollPane.setContent(videoComponent);
-        }
-    }
-
-    private void loadAudioTab(List<MultiFormatDownloadable> downloadables) {
-        boolean hasAudios = false;
-        for (MultiFormatDownloadable item : downloadables) {
-            if (CollectionUtils.isNotEmpty(item.getAudios())) {
-                hasAudios = true;
-                break;
-            }
-        }
-
-        if (hasAudios) {
-            Parent audioComponent = UiManager.loadComponent(
-                    UiComponent.DOWNLOADABLE_ITEMS_COMPONENT,
-                    param -> new DownloadableItemsComponentController(
-                            stage,
-                            downloadables,
-                            (downloadableData) -> UiManager.loadComponent(UiComponent.AUTIO_DOWNLOAD_GRID, param1 -> new AudioDownloadGridController(stage, downloadableData))
-                    )
-            );
-            audioTabScrollPane.setContent(audioComponent);
+            contentScrollPane.setContent(videoComponent);
         }
     }
 

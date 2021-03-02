@@ -10,12 +10,15 @@ import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
+import com.github.engatec.vdl.ui.Icons;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.LabelUtils;
+import com.github.engatec.vdl.util.Svg;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -23,14 +26,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 
-public class VideoDownloadGridController extends AbstractDownloadGridController {
+public class VideoDownloadGridController {
 
     private Stage parent;
 
@@ -50,7 +55,6 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
     }
 
     public VideoDownloadGridController(Stage parent, MultiFormatDownloadable downloadable) {
-        super();
         this.parent = parent;
         this.downloadable = downloadable;
 
@@ -136,7 +140,7 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
                             return;
                         }
 
-                        setText(LabelUtils.formatTrackNo(item.getTrackNo()));
+                        setText(LabelUtils.formatAudio(item));
                     }
                 };
             }
@@ -145,7 +149,7 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
         comboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Audio item) {
-                return item == null ? null : LabelUtils.formatTrackNo(item.getTrackNo());
+                return item == null ? null : LabelUtils.formatAudio(item);
             }
 
             @Override
@@ -172,13 +176,41 @@ public class VideoDownloadGridController extends AbstractDownloadGridController 
     }
 
     private HBox createButtonPane(Video video) {
-        Button downloadBtn = super.createDownloadButton();
+        Button downloadBtn = createDownloadButton();
         setButtonOnAction(downloadBtn, video, new DownloadCommand(parent, downloadable));
 
-        Button addToQueueBtn = super.createAddToQueueButton();
+        Button addToQueueBtn = createAddToQueueButton();
         setButtonOnAction(addToQueueBtn, video, new EnqueueCommand(downloadable));
 
-        return super.createButtonPane(downloadBtn, addToQueueBtn);
+        HBox hBox = new HBox();
+        hBox.setSpacing(8);
+        hBox.getChildren().addAll(downloadBtn, addToQueueBtn);
+        return hBox;
+    }
+
+    protected Button createDownloadButton() {
+        Group svg = Icons.download();
+        Button downloadBtn = new Button();
+        initButtonLookAndFeel(downloadBtn, svg, "download");
+        return downloadBtn;
+    }
+
+    protected Button createAddToQueueButton() {
+        Group svg = Icons.queue();
+        Button addToQueueBtn = new Button();
+        initButtonLookAndFeel(addToQueueBtn, svg, "component.downloadgrid.queue.add");
+        return addToQueueBtn;
+    }
+
+    private void initButtonLookAndFeel(Button btn, Group svg, String localeKey) {
+        Svg.scale(svg, 0.7);
+        btn.setGraphic(svg);
+        btn.getStyleClass().add("img-btn");
+
+        Tooltip tooltip = new Tooltip();
+        tooltip.setShowDelay(Duration.millis(300));
+        btn.setTooltip(tooltip);
+        I18n.bindLocaleProperty(tooltip.textProperty(), localeKey);
     }
 
     private void setButtonOnAction(Button button, Video video, Command command) {

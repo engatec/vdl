@@ -5,7 +5,6 @@ import org.apache.commons.lang3.ObjectUtils;
 
 public class Audio {
 
-    private int trackNo;
     private final Format format;
 
     public Audio(Format format) {
@@ -30,17 +29,5 @@ public class Audio {
 
     public Long getFilesize() {
         return format.getFilesize();
-    }
-
-    public String getCodec() {
-        return format.getAcodec();
-    }
-
-    public int getTrackNo() {
-        return trackNo;
-    }
-
-    public void setTrackNo(int trackNo) {
-        this.trackNo = trackNo;
     }
 }
