@@ -4,16 +4,14 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
-import com.github.engatec.vdl.controller.preferences.PostprocessingController;
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.UiComponent;
 import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
-import com.github.engatec.vdl.ui.Stages;
+import com.github.engatec.vdl.stage.PostprocessingStage;
 import com.github.engatec.vdl.util.AppUtils;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -63,7 +61,7 @@ public class DownloadableItemsComponentController {
 
         MenuItem postprocessingMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.postprocessing"));
         postprocessingMenuItem.setOnAction(e -> {
-            Stages.newModalStage(UiComponent.POSTPROCESSING, it -> new PostprocessingController(it, downloadable), stage).showAndWait();
+            new PostprocessingStage(downloadable).modal(stage).showAndWait();
             e.consume();
         });
         ctxMenu.getItems().add(postprocessingMenuItem);

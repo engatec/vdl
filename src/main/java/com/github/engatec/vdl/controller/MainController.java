@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import java.util.List;
 
 import com.github.engatec.vdl.controller.components.DownloadableItemsComponentController;
-import com.github.engatec.vdl.controller.preferences.PreferencesController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.UiComponent;
@@ -21,8 +20,10 @@ import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
 import com.github.engatec.vdl.model.preferences.general.SkipDownloadableDetailsSearchConfigItem;
+import com.github.engatec.vdl.stage.AboutStage;
+import com.github.engatec.vdl.stage.PreferencesStage;
+import com.github.engatec.vdl.stage.QueueStage;
 import com.github.engatec.vdl.ui.Dialogs;
-import com.github.engatec.vdl.ui.Stages;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
 import javafx.application.Platform;
@@ -136,11 +137,7 @@ public class MainController extends StageAwareController {
     }
 
     private void handlePreferencesMenuItemClick(ActionEvent event) {
-        Stage prefStage = Stages.newModalStage(UiComponent.PREFERENCES, PreferencesController::new, this.stage);
-        // Убрать хардкод в проперти
-        prefStage.setMinWidth(700);
-        prefStage.setMinHeight(400);
-        prefStage.showAndWait();
+        new PreferencesStage().modal(stage).showAndWait();
         event.consume();
     }
 
@@ -160,14 +157,12 @@ public class MainController extends StageAwareController {
     }
 
     private void handleAboutMenuItemClick(ActionEvent event) {
-        Stage s = Stages.newModalStage(UiComponent.ABOUT, AboutController::new, this.stage);
-        s.setResizable(false);
-        s.showAndWait();
+        new AboutStage().modal(stage).showAndWait();
         event.consume();
     }
 
     private void handleDownloadQueueMenuItemClick(ActionEvent event) {
-        Stages.newModalStage(UiComponent.QUEUE, QueueController::new, this.stage).showAndWait();
+        new QueueStage().modal(stage).showAndWait();
         event.consume();
     }
 

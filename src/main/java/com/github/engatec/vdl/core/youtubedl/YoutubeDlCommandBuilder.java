@@ -22,7 +22,7 @@ public class YoutubeDlCommandBuilder {
     }
 
     public String build() {
-        return String.join(StringUtils.EMPTY, buildAsList());
+        return String.join(StringUtils.SPACE, buildAsList());
     }
 
     public List<String> buildAsList() {
@@ -115,7 +115,9 @@ public class YoutubeDlCommandBuilder {
             throw new IllegalArgumentException("Postprocessor args must not be blank");
         }
 
-        commandList.add("--postprocessor-args");
+        commandList.add("--external-downloader");
+        commandList.add("ffmpeg");
+        commandList.add("--external-downloader-args");
         commandList.add(args);
         return this;
     }
