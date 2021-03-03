@@ -11,7 +11,7 @@ import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
-import com.github.engatec.vdl.stage.PostprocessingStage;
+import com.github.engatec.vdl.stage.postprocessing.PostprocessingStage;
 import com.github.engatec.vdl.util.AppUtils;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;

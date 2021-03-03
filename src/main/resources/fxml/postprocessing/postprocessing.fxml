@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<HBox spacing="8.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.postprocessing.PostprocessingController">
+   <children>
+      <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Label text="%stage.postprocessing.label.available">
+               <VBox.margin>
+                  <Insets left="8.0" />
+               </VBox.margin>
+            </Label>
+            <ListView fx:id="availableItemsListView" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+      <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Label text="%stage.postprocessing.label.active">
+               <VBox.margin>
+                  <Insets left="8.0" />
+               </VBox.margin>
+            </Label>
+            <ListView fx:id="activeItemsListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+   </padding>
+</HBox>

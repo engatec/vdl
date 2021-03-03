@@ -1,16 +1,13 @@
-package com.github.engatec.vdl.controller.preferences;
+package com.github.engatec.vdl.controller.postprocessing;
 
 import java.text.ParseException;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.controller.StageAwareController;
-import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.FragmentCutPostprocessing;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.ui.Dialogs;
@@ -22,15 +19,15 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 
-public class PostprocessingController extends StageAwareController {
+public class FragmentController extends StageAwareController {
 
     private static final Pattern TIME_PATTERN = Pattern.compile("^[0-9]?[0-9]?:[0-5]?[0-9]?:[0-5]?[0-9]?$");
     private static final String DEFAULT_TIME = "00:00:00";
 
-    private Downloadable downloadable;
+    private FragmentCutPostprocessing model;
+    private Consumer<? super Postprocessing> okClickCallback;
 
     @FXML private CheckBox fragmentCheckbox;
     @FXML private HBox fragmentTimeRangeWrapper;
@@ -40,17 +37,17 @@ public class PostprocessingController extends StageAwareController {
     @FXML private Button okButton;
     @FXML private Button cancelButton;
 
-    private PostprocessingController() {
+    private FragmentController() {
     }
 
-    public PostprocessingController(Stage stage, Downloadable downloadable) {
+    public FragmentController(Stage stage, FragmentCutPostprocessing model, Consumer<? super Postprocessing> okClickCallback) {
         super(stage);
-        this.downloadable = downloadable;
+        this.model = model;
+        this.okClickCallback = okClickCallback;
     }
 
     @FXML
     public void initialize() throws ParseException {
-        stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("component.downloadgrid.postprocessing"));
         initFragment();
 
         okButton.setOnAction(this::handleOkButtonClick);
@@ -62,15 +59,11 @@ public class PostprocessingController extends StageAwareController {
         initFragmentTimeTextField(fragmentFromTextField);
         initFragmentTimeTextField(fragmentToTextField);
 
-        ListUtils.emptyIfNull(downloadable.getPostprocessingSteps()).stream()
-                .filter(it -> it instanceof FragmentCutPostprocessing)
-                .map(it -> (FragmentCutPostprocessing) it)
-                .findFirst()
-                .ifPresent(it -> {
-                    fragmentCheckbox.setSelected(true);
-                    fragmentFromTextField.setText(it.getStartTimeAsString());
-                    fragmentToTextField.setText(it.getEndTimeAsString());
-                });
+        if (model != null) {
+            fragmentCheckbox.setSelected(true);
+            fragmentFromTextField.setText(model.getStartTimeAsString());
+            fragmentToTextField.setText(model.getEndTimeAsString());
+        }
     }
 
     private void initFragmentTimeTextField(final TextField tf) {
@@ -92,19 +85,14 @@ public class PostprocessingController extends StageAwareController {
     }
 
     private void handleOkButtonClick(ActionEvent event) {
-        List<Postprocessing> tempPostprocessingList = new ArrayList<>();
-
-        if (fragmentCheckbox.isSelected()) {
-            LocalTime startTime = LocalTime.parse(fragmentFromTextField.getText());
-            LocalTime endTime = LocalTime.parse(fragmentToTextField.getText());
-            if (startTime.isAfter(endTime)) {
-                Dialogs.error("stage.postprocessing.fragmen.error.starttimeafterendtime");
-                return;
-            }
-            tempPostprocessingList.add(FragmentCutPostprocessing.newInstance(startTime, endTime));
+        LocalTime startTime = LocalTime.parse(fragmentFromTextField.getText());
+        LocalTime endTime = LocalTime.parse(fragmentToTextField.getText());
+        if (startTime.isAfter(endTime)) {
+            Dialogs.error("stage.postprocessing.fragmen.error.starttimeafterendtime");
+            return;
         }
 
-        downloadable.setPostprocessingSteps(tempPostprocessingList);
+        okClickCallback.accept(FragmentCutPostprocessing.newInstance(startTime, endTime));
         stage.close();
         event.consume();
     }
