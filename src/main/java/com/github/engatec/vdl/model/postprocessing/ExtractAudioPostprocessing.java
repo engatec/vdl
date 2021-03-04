@@ -1,47 +1,36 @@
 package com.github.engatec.vdl.model.postprocessing;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.StringJoiner;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
 
 public class ExtractAudioPostprocessing implements Postprocessing {
 
-    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private String format;
+    private int quality;
 
     private ExtractAudioPostprocessing() {
     }
 
-    public static ExtractAudioPostprocessing newInstance(LocalTime startTime, LocalTime endTime) {
-        if (startTime.isAfter(endTime)) {
-            throw new IllegalArgumentException("Start time " + startTime + " is after end time " + endTime);
-        }
-
+    public static ExtractAudioPostprocessing newInstance(String format, int quality) {
         var instance = new ExtractAudioPostprocessing();
-        instance.startTime = startTime;
-        instance.endTime = endTime;
+        instance.format = format;
+        instance.quality = quality;
         return instance;
     }
 
-    public String getStartTimeAsString() {
-        return startTime.format(TIME_FORMATTER);
+    public String getFormat() {
+        return format;
     }
 
-    public String getEndTimeAsString() {
-        return endTime.format(TIME_FORMATTER);
+    public int getQuality() {
+        return quality;
     }
 
     @Override
-    public String toString() {
-        return new StringJoiner(StringUtils.SPACE)
-                .add("-ss")
-                .add(startTime.format(TIME_FORMATTER))
-                .add("-to")
-                .add(endTime.format(TIME_FORMATTER))
-                .toString();
+    public List<String> getCommandList() {
+        return List.of(
+                "-x",
+                "--audio-format", format,
+                "--audio-quality", String.valueOf(quality)
+        );
     }
 }

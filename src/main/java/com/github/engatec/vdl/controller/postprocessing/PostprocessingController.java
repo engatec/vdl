@@ -1,7 +1,9 @@
 package com.github.engatec.vdl.controller.postprocessing;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.github.engatec.vdl.controller.StageAwareController;
@@ -9,7 +11,9 @@ import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.stage.postprocessing.PostprocessingStageFactory;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
@@ -22,6 +26,9 @@ public class PostprocessingController extends StageAwareController {
 
     @FXML private ListView<PostprocessingStageFactory> availableItemsListView;
     @FXML private ListView<PostprocessingStageFactory> activeItemsListView;
+
+    @FXML private Button okButton;
+    @FXML private Button cancelButton;
 
     private PostprocessingController() {
     }
@@ -36,10 +43,19 @@ public class PostprocessingController extends StageAwareController {
 
     @FXML
     public void initialize() throws ParseException {
-        availableItemsListView.getItems().addAll(PostprocessingStageFactory.values());
+        PostprocessingStageFactory[] postProcessingFactories = PostprocessingStageFactory.values();
+        availableItemsListView.getItems().addAll(postProcessingFactories);
+        for (PostprocessingStageFactory item : postProcessingFactories) {
+            if (appliedPostprocessingsMap.containsKey(item.getPostprocessingClass())) {
+                activeItemsListView.getItems().add(item);
+            }
+        }
 
         setOnItemsListViewMouseClicked(availableItemsListView);
         setOnItemsListViewMouseClicked(activeItemsListView);
+
+        okButton.setOnAction(this::handleOkButtonClick);
+        cancelButton.setOnAction(this::handleCancelButtonClick);
     }
 
     private void setOnItemsListViewMouseClicked(ListView<PostprocessingStageFactory> listView) {
@@ -66,5 +82,17 @@ public class PostprocessingController extends StageAwareController {
                 ).modal(stage).showAndWait();
             }
         });
+    }
+
+    private void handleOkButtonClick(ActionEvent event) {
+        List<Postprocessing> postprocessings = new ArrayList<>(appliedPostprocessingsMap.values());
+        downloadable.setPostprocessingSteps(postprocessings);
+        stage.close();
+        event.consume();
+    }
+
+    private void handleCancelButtonClick(ActionEvent event) {
+        stage.close();
+        event.consume();
     }
 }

@@ -110,15 +110,8 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
-    public YoutubeDlCommandBuilder postprocessing(String args) {
-        if (StringUtils.isBlank(args)) {
-            throw new IllegalArgumentException("Postprocessor args must not be blank");
-        }
-
-        commandList.add("--external-downloader");
-        commandList.add("ffmpeg");
-        commandList.add("--external-downloader-args");
-        commandList.add(args);
+    public YoutubeDlCommandBuilder addAll(List<String> commands) {
+        commandList.addAll(commands);
         return this;
     }
 }

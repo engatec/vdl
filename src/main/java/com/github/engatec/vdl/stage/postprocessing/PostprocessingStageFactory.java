@@ -13,7 +13,7 @@ public enum PostprocessingStageFactory {
     EXTRACT_AUDIO("stage.postprocessing.extractaudio", ExtractAudioPostprocessing.class) {
         @Override
         public AppStage create(Postprocessing model, Consumer<? super Postprocessing> okClickCallback) {
-            return null;
+            return new ExtractAudioStage((ExtractAudioPostprocessing) model, okClickCallback);
         }
     },
 

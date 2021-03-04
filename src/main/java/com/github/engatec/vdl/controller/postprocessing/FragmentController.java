@@ -16,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,7 +27,6 @@ public class FragmentController extends StageAwareController {
     private FragmentCutPostprocessing model;
     private Consumer<? super Postprocessing> okClickCallback;
 
-    @FXML private HBox fragmentTimeRangeWrapper;
     @FXML private TextField fragmentFromTextField;
     @FXML private TextField fragmentToTextField;
 

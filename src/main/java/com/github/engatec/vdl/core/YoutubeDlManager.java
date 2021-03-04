@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,6 +20,7 @@ import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
 import com.github.engatec.vdl.model.preferences.youtubedl.NoMTimeConfigItem;
 import com.github.engatec.vdl.model.preferences.youtubedl.UseConfigFileConfigItem;
@@ -110,11 +110,8 @@ public class YoutubeDlManager {
             commandBuilder.noMTime();
         }
 
-        String postprocessing = downloadable.getPostprocessingSteps().stream()
-                .map(Objects::toString)
-                .collect(Collectors.joining(StringUtils.SPACE));
-        if (StringUtils.isNotBlank(postprocessing)) {
-            commandBuilder.postprocessing(postprocessing);
+        for (Postprocessing pp : downloadable.getPostprocessingSteps()) {
+            commandBuilder.addAll(pp.getCommandList());
         }
 
         List<String> command = commandBuilder
