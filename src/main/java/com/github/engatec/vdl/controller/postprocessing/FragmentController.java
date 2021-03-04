@@ -15,7 +15,6 @@ import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -29,7 +28,6 @@ public class FragmentController extends StageAwareController {
     private FragmentCutPostprocessing model;
     private Consumer<? super Postprocessing> okClickCallback;
 
-    @FXML private CheckBox fragmentCheckbox;
     @FXML private HBox fragmentTimeRangeWrapper;
     @FXML private TextField fragmentFromTextField;
     @FXML private TextField fragmentToTextField;
@@ -55,12 +53,10 @@ public class FragmentController extends StageAwareController {
     }
 
     private void initFragment() {
-        fragmentTimeRangeWrapper.disableProperty().bind(fragmentCheckbox.selectedProperty().not());
         initFragmentTimeTextField(fragmentFromTextField);
         initFragmentTimeTextField(fragmentToTextField);
 
         if (model != null) {
-            fragmentCheckbox.setSelected(true);
             fragmentFromTextField.setText(model.getStartTimeAsString());
             fragmentToTextField.setText(model.getEndTimeAsString());
         }
@@ -87,13 +83,12 @@ public class FragmentController extends StageAwareController {
     private void handleOkButtonClick(ActionEvent event) {
         LocalTime startTime = LocalTime.parse(fragmentFromTextField.getText());
         LocalTime endTime = LocalTime.parse(fragmentToTextField.getText());
-        if (startTime.isAfter(endTime)) {
-            Dialogs.error("stage.postprocessing.fragmen.error.starttimeafterendtime");
-            return;
+        if (endTime.isAfter(startTime)) {
+            okClickCallback.accept(FragmentCutPostprocessing.newInstance(startTime, endTime));
+            stage.close();
+        } else {
+            Dialogs.error("stage.postprocessing.fragment.error.timerange");
         }
-
-        okClickCallback.accept(FragmentCutPostprocessing.newInstance(startTime, endTime));
-        stage.close();
         event.consume();
     }
 
