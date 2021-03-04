@@ -3,7 +3,6 @@ package com.github.engatec.vdl.worker.service;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,9 +33,11 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
             "\\s*\\[download]\\s+" +
                     "(?<progress>\\d+\\.?\\d*)%\\s+" +
                     "of\\s+(?<size>.+)\\s+" +
-                    "at\\s+(?<throughput>.+/s)\\s+" +
+                    "at\\s+(?<throughput>.+)\\s+" +
                     ".*"
     );
+
+    private static final Pattern DOWNLOAD_NEW_DESTINATION_PATTERN = Pattern.compile("\\s*\\[download] Destination:.*");
 
     private final QueueItem queueItem;
     private static final int MAX_PROGRESS_PER_ITEM = 100;
@@ -129,7 +130,6 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
             @Override
             protected QueueItemDownloadProgressData call() throws Exception {
                 var progressData = new QueueItemDownloadProgressData();
-                AtomicBoolean leftMatchedBlock = new AtomicBoolean(false);
                 AtomicInteger progressModificator = new AtomicInteger(0);
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
                 try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding()))) {
@@ -153,12 +153,10 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
 
                             updateProgress(currentProgress + progressModificator.get(), maxOverallProgress);
                             updateValue(new QueueItemDownloadProgressData(progressData.getProgress(), progressData.getSize(), progressData.getThroughput()));
-                            leftMatchedBlock.set(true);
-                        } else if (leftMatchedBlock.get() && StringUtils.isNotBlank(progressData.getSize())) {
+                        } else if (DOWNLOAD_NEW_DESTINATION_PATTERN.matcher(it).matches() && StringUtils.isNotBlank(progressData.getSize())) {
                             progressModificator.addAndGet(MAX_PROGRESS_PER_ITEM);
                             progressData.setProgress(0);
                             progressData.setSize(progressData.getSize() + SIZE_SEPARATOR);
-                            leftMatchedBlock.set(false);
                         }
                     });
                 }
