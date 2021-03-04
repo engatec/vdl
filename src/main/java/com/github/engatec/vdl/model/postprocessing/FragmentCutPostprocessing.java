@@ -39,8 +39,14 @@ public class FragmentCutPostprocessing implements Postprocessing {
     @Override
     public List<String> getCommandList() {
         return List.of(
-                "--external-downloader", "ffmpeg",
-                "--external-downloader-args", new StringJoiner(StringUtils.SPACE).add("-ss").add(startTime.format(TIME_FORMATTER)).add("-to").add(endTime.format(TIME_FORMATTER)).toString()
+                "--exec",
+                new StringJoiner(StringUtils.SPACE)
+                        .add("ffmpeg")
+                        .add("-i").add("{}")
+                        .add("-ss").add(startTime.format(TIME_FORMATTER)).add("-to").add(endTime.format(TIME_FORMATTER))
+                        .add("-c").add("copy")
+                        .add("{}.mkv")
+                        .toString()
         );
     }
 }
