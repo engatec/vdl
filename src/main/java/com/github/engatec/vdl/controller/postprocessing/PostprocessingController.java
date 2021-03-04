@@ -7,15 +7,24 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.engatec.vdl.controller.StageAwareController;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.stage.postprocessing.PostprocessingStageFactory;
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 public class PostprocessingController extends StageAwareController {
@@ -44,32 +53,66 @@ public class PostprocessingController extends StageAwareController {
     @FXML
     public void initialize() throws ParseException {
         PostprocessingStageFactory[] postProcessingFactories = PostprocessingStageFactory.values();
-        availableItemsListView.getItems().addAll(postProcessingFactories);
+        availableItemsListView.setItems(FXCollections.observableArrayList(postProcessingFactories));
         for (PostprocessingStageFactory item : postProcessingFactories) {
             if (appliedPostprocessingsMap.containsKey(item.getPostprocessingClass())) {
                 activeItemsListView.getItems().add(item);
             }
         }
 
-        setOnItemsListViewMouseClicked(availableItemsListView);
-        setOnItemsListViewMouseClicked(activeItemsListView);
+        availableItemsListView.setCellFactory(param -> {
+            ListCell<PostprocessingStageFactory> cell = new ListCell<>() {
+                @Override
+                protected void updateItem(PostprocessingStageFactory item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : item.toString());
+                }
+            };
+
+            cell.onMouseClickedProperty().bind(
+                    Bindings.when(cell.emptyProperty().not())
+                    .then(createMouseClickHandler(cell, false))
+                    .otherwise(Event::consume)
+            );
+            return cell;
+        });
+
+        activeItemsListView.setCellFactory(param -> {
+            ListCell<PostprocessingStageFactory> cell = new ListCell<>() {
+                @Override
+                protected void updateItem(PostprocessingStageFactory item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setText(empty || item == null ? null : item.toString());
+                }
+            };
+
+            cell.onMouseClickedProperty().bind(
+                    Bindings.when(cell.emptyProperty().not())
+                            .then(createMouseClickHandler(cell, true))
+                            .otherwise(Event::consume)
+            );
+            return cell;
+        });
 
         okButton.setOnAction(this::handleOkButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
     }
 
-    private void setOnItemsListViewMouseClicked(ListView<PostprocessingStageFactory> listView) {
-        listView.setOnMouseClicked(event -> {
-            if (event.getButton() != MouseButton.PRIMARY) {
+    private EventHandler<? super MouseEvent> createMouseClickHandler(ListCell<PostprocessingStageFactory> cell, boolean contextMenuAvailable) {
+        return (EventHandler<MouseEvent>) event -> {
+            PostprocessingStageFactory factory = cell.getItem();
+            if (factory == null) {
+                event.consume();
                 return;
             }
 
-            if (event.getClickCount() != 2) {
-                return;
-            }
+            MouseButton clickedButton = event.getButton();
 
-            PostprocessingStageFactory factory = listView.getSelectionModel().getSelectedItem();
-            if (factory != null) {
+            if (clickedButton == MouseButton.PRIMARY) {
+                if (event.getClickCount() != 2) {
+                    return;
+                }
+
                 factory.create(
                         appliedPostprocessingsMap.get(factory.getPostprocessingClass()),
                         param -> {
@@ -80,8 +123,26 @@ public class PostprocessingController extends StageAwareController {
                             }
                         }
                 ).modal(stage).showAndWait();
+            } else if (clickedButton == MouseButton.SECONDARY && contextMenuAvailable) {
+                ContextMenu ctxMenu = createContextMenu(factory);
+                cell.setContextMenu(ctxMenu);
             }
+
+            event.consume();
+        };
+    }
+
+    private ContextMenu createContextMenu(PostprocessingStageFactory factory) {
+        ContextMenu ctxMenu = new ContextMenu();
+        MenuItem removeMenuItem = new MenuItem(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.postprocessing.contextmenu.remove"));
+        removeMenuItem.setOnAction(e -> {
+            appliedPostprocessingsMap.remove(factory.getPostprocessingClass());
+            activeItemsListView.getItems().remove(factory);
+            e.consume();
         });
+
+        ctxMenu.getItems().addAll(removeMenuItem);
+        return ctxMenu;
     }
 
     private void handleOkButtonClick(ActionEvent event) {
