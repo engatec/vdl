@@ -11,11 +11,9 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.stage.postprocessing.PostprocessingStageFactory;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -60,47 +58,43 @@ public class PostprocessingController extends StageAwareController {
             }
         }
 
-        availableItemsListView.setCellFactory(param -> {
-            ListCell<PostprocessingStageFactory> cell = new ListCell<>() {
-                @Override
-                protected void updateItem(PostprocessingStageFactory item, boolean empty) {
-                    super.updateItem(item, empty);
-                    setText(empty || item == null ? null : item.toString());
+        availableItemsListView.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(PostprocessingStageFactory item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setOnMouseClicked(null);
+                    setContextMenu(null);
+                } else {
+                    setText(item.toString());
+                    setOnMouseClicked(createMouseClickHandler(item));
                 }
-            };
-
-            cell.onMouseClickedProperty().bind(
-                    Bindings.when(cell.emptyProperty().not())
-                    .then(createMouseClickHandler(cell, false))
-                    .otherwise(Event::consume)
-            );
-            return cell;
+            }
         });
 
-        activeItemsListView.setCellFactory(param -> {
-            ListCell<PostprocessingStageFactory> cell = new ListCell<>() {
-                @Override
-                protected void updateItem(PostprocessingStageFactory item, boolean empty) {
-                    super.updateItem(item, empty);
-                    setText(empty || item == null ? null : item.toString());
+        activeItemsListView.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(PostprocessingStageFactory item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setOnMouseClicked(null);
+                    setContextMenu(null);
+                } else {
+                    setText(item.toString());
+                    setOnMouseClicked(createMouseClickHandler(item));
+                    setContextMenu(createContextMenu(item));
                 }
-            };
-
-            cell.onMouseClickedProperty().bind(
-                    Bindings.when(cell.emptyProperty().not())
-                            .then(createMouseClickHandler(cell, true))
-                            .otherwise(Event::consume)
-            );
-            return cell;
+            }
         });
 
         okButton.setOnAction(this::handleOkButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
     }
 
-    private EventHandler<? super MouseEvent> createMouseClickHandler(ListCell<PostprocessingStageFactory> cell, boolean contextMenuAvailable) {
+    private EventHandler<? super MouseEvent> createMouseClickHandler(PostprocessingStageFactory factory) {
         return (EventHandler<MouseEvent>) event -> {
-            PostprocessingStageFactory factory = cell.getItem();
             if (factory == null) {
                 event.consume();
                 return;
@@ -123,9 +117,6 @@ public class PostprocessingController extends StageAwareController {
                             }
                         }
                 ).modal(stage).showAndWait();
-            } else if (clickedButton == MouseButton.SECONDARY && contextMenuAvailable) {
-                ContextMenu ctxMenu = createContextMenu(factory);
-                cell.setContextMenu(ctxMenu);
             }
 
             event.consume();
