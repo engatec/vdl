@@ -33,7 +33,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
             "\\s*\\[download]\\s+" +
                     "(?<progress>\\d+\\.?\\d*)%\\s+" +
                     "of\\s+(?<size>.+)\\s+" +
-                    "at\\s+(?<throughput>.+)\\s+" +
+                    "at\\s+(?<throughput>.+?)\\s+" +
                     ".*"
     );
 
