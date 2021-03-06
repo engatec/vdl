@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class YoutubeDlCommandBuilder {
 
+    private final int MAX_TITLE_LENGTH = 200;
+
     private List<String> commandList;
 
     private YoutubeDlCommandBuilder() {
@@ -69,13 +71,15 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
-    public YoutubeDlCommandBuilder outputPath(Path path) {
+    public YoutubeDlCommandBuilder outputPath(Path path, String title) {
         if (path == null) {
             throw new IllegalArgumentException("path must not be null");
         }
 
+        title = StringUtils.length(title) > MAX_TITLE_LENGTH ? "%(id)s" : "%(title)s";
+
         commandList.add("-o");
-        commandList.add(path.resolve("%(title)s.%(ext)s").toString());
+        commandList.add(path.resolve(title + ".%(ext)s").toString());
         return this;
     }
 
