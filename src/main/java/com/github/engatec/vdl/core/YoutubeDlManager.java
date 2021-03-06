@@ -50,6 +50,7 @@ public class YoutubeDlManager {
         List<String> command = YoutubeDlCommandBuilder.newInstance()
                 .noDebug()
                 .dumpJson()
+                .ignoreErrors()
                 .url(url)
                 .buildAsList();
 
@@ -60,17 +61,23 @@ public class YoutubeDlManager {
             for (String json : jsonList) {
                 videoInfoList.add(objectMapper.readValue(json, VideoInfo.class));
             }
+
+            // Log encountered errors that didn't result in exception
+            try (InputStream errorStream = process.getErrorStream()) {
+                logErrors(errorStream);
+            }
+
             return videoInfoList;
         } catch (Exception e) {
             try (InputStream errorStream = process.getErrorStream()) {
-                logError(errorStream);
+                logErrors(errorStream);
             }
             LOGGER.error("Failed command: '{}'", String.join(StringUtils.SPACE, command));
             throw e;
         }
     }
 
-    private void logError(InputStream errorStream) {
+    private void logErrors(InputStream errorStream) {
         try {
             if (errorStream.available() <= 0) {
                 return;
@@ -104,6 +111,7 @@ public class YoutubeDlManager {
                 .formatId(downloadable.getFormatId())
                 .outputPath(downloadable.getDownloadPath())
                 .ignoreConfig()
+                .ignoreErrors()
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
         if (cfg.getValue(new NoMTimeConfigItem())) {
@@ -159,7 +167,7 @@ public class YoutubeDlManager {
                 version = reader.lines().findFirst().orElseThrow(YoutubeDlProcessException::new);
             } catch (Exception e) {
                 try (InputStream errorStream = process.getErrorStream()) {
-                    logError(errorStream);
+                    logErrors(errorStream);
                 }
             }
         } catch (IOException e) {
