@@ -109,7 +109,7 @@ public class YoutubeDlManager {
         commandBuilder
                 .noDebug()
                 .formatId(downloadable.getFormatId())
-                .outputPath(downloadable.getDownloadPath())
+                .outputPath(downloadable.getDownloadPath(), downloadable.getTitle())
                 .ignoreConfig()
                 .ignoreErrors()
                 .ffmpegLocation(ApplicationContext.APP_DIR);
@@ -146,7 +146,7 @@ public class YoutubeDlManager {
         }
 
         if (!configFile.contains("-o ") && !configFile.contains("--output ")) {
-            commandBuilder.outputPath(downloadable.getDownloadPath());
+            commandBuilder.outputPath(downloadable.getDownloadPath(), downloadable.getTitle());
         }
 
         List<String> command = commandBuilder
