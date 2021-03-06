@@ -110,6 +110,11 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
+    public YoutubeDlCommandBuilder ignoreErrors() {
+        commandList.add("-i");
+        return this;
+    }
+
     public YoutubeDlCommandBuilder addAll(List<String> commands) {
         commandList.addAll(commands);
         return this;
