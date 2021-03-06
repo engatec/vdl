@@ -51,6 +51,7 @@ public class YoutubeDlManager {
                 .noDebug()
                 .dumpJson()
                 .ignoreErrors()
+                .noCheckCertificate()
                 .url(url)
                 .buildAsList();
 
@@ -112,6 +113,7 @@ public class YoutubeDlManager {
                 .outputPath(downloadable.getDownloadPath(), downloadable.getTitle())
                 .ignoreConfig()
                 .ignoreErrors()
+                .noCheckCertificate()
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
         if (cfg.getValue(new NoMTimeConfigItem())) {

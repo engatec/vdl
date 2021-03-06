@@ -119,6 +119,11 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
+    public YoutubeDlCommandBuilder noCheckCertificate() {
+        commandList.add("--no-check-certificate");
+        return this;
+    }
+
     public YoutubeDlCommandBuilder addAll(List<String> commands) {
         commandList.addAll(commands);
         return this;
