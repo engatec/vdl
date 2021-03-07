@@ -6,6 +6,7 @@ public enum Language {
 
     ENGLISH("en"),
     RUSSIAN("ru");
+    UKRAINIAN("uk");
 
     private final String localeLanguage;
 
