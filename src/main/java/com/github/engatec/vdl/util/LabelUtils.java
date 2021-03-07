@@ -34,7 +34,7 @@ public class LabelUtils {
     public static String formatAudio(Audio item) {
         return List.of(
                 item.getExtension(),
-                formatSize(item.getFilesize(), null)
+                formatSize(item.getFilesize(), StringUtils.EMPTY)
         ).stream()
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining(AUDIO_LABEL_DELIMITER));
