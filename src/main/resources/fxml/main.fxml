@@ -26,8 +26,10 @@
         <Menu fx:id="languageMenu" mnemonicParsing="false" text="%menu.language">
           <items>
             <MenuItem fx:id="langEnMenuItem" mnemonicParsing="false" text="%menu.language.en" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="langRuMenuItem" mnemonicParsing="false" text="%menu.language.ru" />
+              <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="langRuMenuItem" mnemonicParsing="false" text="%menu.language.ru" />
+              <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="langUkMenuItem" mnemonicParsing="false" text="%menu.language.uk" />
           </items>
         </Menu>
             <Menu fx:id="helpMenu" mnemonicParsing="false" text="%menu.help">
