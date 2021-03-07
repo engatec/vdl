@@ -67,6 +67,7 @@ public class MainController extends StageAwareController {
     @FXML private Menu languageMenu;
     @FXML private MenuItem langEnMenuItem;
     @FXML private MenuItem langRuMenuItem;
+    @FXML private MenuItem langUkMenuItem;
 
     @FXML private Menu helpMenu;
     @FXML private MenuItem checkYoutubeDlUpdatesMenuItem;
@@ -129,6 +130,7 @@ public class MainController extends StageAwareController {
 
         langEnMenuItem.setOnAction(event -> handleLanguageChange(event, Language.ENGLISH));
         langRuMenuItem.setOnAction(event -> handleLanguageChange(event, Language.RUSSIAN));
+        langUkMenuItem.setOnAction(event -> handleLanguageChange(event, Language.UKRAINIAN));
     }
 
     private void handleExitMenuItemClick(ActionEvent event) {
