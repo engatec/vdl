@@ -2,11 +2,13 @@ package com.github.engatec.vdl.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class VideoInfo {
+public class DownloadableInfo {
 
     @JsonProperty("webpage_url")
+    @JsonAlias("url")
     private String baseUrl;
     private String title;
     private List<Format> formats;

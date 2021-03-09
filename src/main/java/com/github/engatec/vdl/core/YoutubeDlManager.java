@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
-import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.model.DownloadableInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
@@ -42,7 +42,7 @@ public class YoutubeDlManager {
                 .start();
     }
 
-    public List<VideoInfo> fetchVideoInfo(String url) throws IOException {
+    public List<DownloadableInfo> fetchVideoInfo(String url) throws IOException {
         if (StringUtils.isBlank(url)) {
             throw new IllegalArgumentException("url must not be blank");
         }
@@ -52,15 +52,16 @@ public class YoutubeDlManager {
                 .dumpJson()
                 .ignoreErrors()
                 .noCheckCertificate()
+                .flatPlaylist()
                 .url(url)
                 .buildAsList();
 
         Process process = new ProcessBuilder(command).start();
         try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             List<String> jsonList = reader.lines().collect(Collectors.toList());
-            List<VideoInfo> videoInfoList = new ArrayList<>(jsonList.size());
+            List<DownloadableInfo> downloadableInfoList = new ArrayList<>(jsonList.size());
             for (String json : jsonList) {
-                videoInfoList.add(objectMapper.readValue(json, VideoInfo.class));
+                downloadableInfoList.add(objectMapper.readValue(json, DownloadableInfo.class));
             }
 
             // Log encountered errors that didn't result in exception
@@ -68,7 +69,7 @@ public class YoutubeDlManager {
                 logErrors(errorStream);
             }
 
-            return videoInfoList;
+            return downloadableInfoList;
         } catch (Exception e) {
             try (InputStream errorStream = process.getErrorStream()) {
                 logErrors(errorStream);

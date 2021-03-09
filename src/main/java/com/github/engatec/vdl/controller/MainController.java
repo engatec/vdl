@@ -208,6 +208,7 @@ public class MainController extends StageAwareController {
         });
 
         searchProgressIndicator.visibleProperty().bind(downloadableSearchService.runningProperty());
+        searchProgressIndicator.progressProperty().bind(downloadableSearchService.progressProperty());
 
         downloadableSearchService.restart();
     }

@@ -42,6 +42,13 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
+
+    // General options
+    public YoutubeDlCommandBuilder flatPlaylist() {
+        commandList.add("--flat-playlist");
+        return this;
+    }
+
     public YoutubeDlCommandBuilder ffmpegLocation(String location) {
         if (StringUtils.isBlank(location)) {
             return this;

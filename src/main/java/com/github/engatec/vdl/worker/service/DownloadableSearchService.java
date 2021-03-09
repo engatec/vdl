@@ -9,8 +9,8 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
 import com.github.engatec.vdl.exception.NoDownloadableFoundException;
+import com.github.engatec.vdl.model.DownloadableInfo;
 import com.github.engatec.vdl.model.Format;
-import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
@@ -19,6 +19,7 @@ import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
@@ -50,21 +51,38 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
         return new Task<>() {
             @Override
             protected List<MultiFormatDownloadable> call() throws Exception {
-                List<VideoInfo> videoInfoList = YoutubeDlManager.INSTANCE.fetchVideoInfo(getUrl());
-                if (CollectionUtils.isEmpty(videoInfoList)) {
+                List<DownloadableInfo> downloadableInfoList = YoutubeDlManager.INSTANCE.fetchVideoInfo(getUrl());
+                if (CollectionUtils.isEmpty(downloadableInfoList)) {
                     throw new NoDownloadableFoundException();
                 }
 
-                return videoInfoList.stream()
-                        .map(DownloadableSearchService.this::prepareDownloadable)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
+                List<MultiFormatDownloadable> downloadables = new ArrayList<>(downloadableInfoList.size());
+                for (DownloadableInfo item : downloadableInfoList) {
+                    if (CollectionUtils.isEmpty(item.getFormats())) { // Empty formats mean this is a playlist, so search again for the actual data
+                        List<DownloadableInfo> infos = YoutubeDlManager.INSTANCE.fetchVideoInfo(item.getBaseUrl());
+                        downloadables.addAll(
+                                ListUtils.emptyIfNull(infos).stream()
+                                        .map(DownloadableSearchService.this::prepareDownloadable)
+                                        .filter(Objects::nonNull)
+                                        .collect(Collectors.toList())
+                        );
+                    } else {
+                        MultiFormatDownloadable downloadable = prepareDownloadable(item);
+                        if (downloadable != null) {
+                            downloadables.add(downloadable);
+                        }
+                    }
+
+                    updateProgress(downloadables.size(), downloadableInfoList.size());
+                }
+
+                return downloadables;
             }
         };
     }
 
-    private MultiFormatDownloadable prepareDownloadable(VideoInfo videoInfo) {
-        List<Format> formats = videoInfo.getFormats();
+    private MultiFormatDownloadable prepareDownloadable(DownloadableInfo downloadableInfo) {
+        List<Format> formats = downloadableInfo.getFormats();
         if (CollectionUtils.isEmpty(formats)) {
             return null;
         }
@@ -98,6 +116,6 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
                         .reversed()
         );
 
-        return new MultiFormatDownloadable(videoInfo.getTitle(), videoInfo.getBaseUrl(), videoList, audioList);
+        return new MultiFormatDownloadable(downloadableInfo.getTitle(), downloadableInfo.getBaseUrl(), videoList, audioList);
     }
 }
