@@ -42,7 +42,7 @@ public class YoutubeDlManager {
                 .start();
     }
 
-    public List<DownloadableInfo> fetchVideoInfo(String url) throws IOException {
+    public List<DownloadableInfo> fetchDownloadableInfo(String url) throws IOException {
         if (StringUtils.isBlank(url)) {
             throw new IllegalArgumentException("url must not be blank");
         }

@@ -51,15 +51,24 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
         return new Task<>() {
             @Override
             protected List<MultiFormatDownloadable> call() throws Exception {
-                List<DownloadableInfo> downloadableInfoList = YoutubeDlManager.INSTANCE.fetchVideoInfo(getUrl());
-                if (CollectionUtils.isEmpty(downloadableInfoList)) {
+                List<DownloadableInfo> foundItems = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(getUrl());
+                if (CollectionUtils.isEmpty(foundItems)) {
                     throw new NoDownloadableFoundException();
                 }
 
-                List<MultiFormatDownloadable> downloadables = new ArrayList<>(downloadableInfoList.size());
-                for (DownloadableInfo item : downloadableInfoList) {
+                int totalItemsCount = foundItems.size();
+                List<MultiFormatDownloadable> downloadables = new ArrayList<>(totalItemsCount);
+                for (DownloadableInfo item : foundItems) {
+                    if (Thread.interrupted()) {
+                        cancel();
+                    }
+
+                    if (isCancelled()) {
+                        break;
+                    }
+
                     if (CollectionUtils.isEmpty(item.getFormats())) { // Empty formats mean this is a playlist, so search again for the actual data
-                        List<DownloadableInfo> infos = YoutubeDlManager.INSTANCE.fetchVideoInfo(item.getBaseUrl());
+                        List<DownloadableInfo> infos = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(item.getBaseUrl());
                         downloadables.addAll(
                                 ListUtils.emptyIfNull(infos).stream()
                                         .map(DownloadableSearchService.this::prepareDownloadable)
@@ -73,7 +82,9 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
                         }
                     }
 
-                    updateProgress(downloadables.size(), downloadableInfoList.size());
+                    int currentItemsCount = downloadables.size();
+                    updateMessage(String.format(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.main.search.playlist.progress"), currentItemsCount, totalItemsCount));
+                    updateProgress(currentItemsCount, totalItemsCount);
                 }
 
                 return downloadables;

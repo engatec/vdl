@@ -32,14 +32,17 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -77,6 +80,11 @@ public class MainController extends StageAwareController {
     @FXML private Button searchBtn;
     @FXML private ProgressIndicator searchProgressIndicator;
 
+    @FXML private HBox playlistSearchProgressWrapperHBox;
+    @FXML private ProgressBar playlistSearchProgressBar;
+    @FXML private Label playlistSearchLabel;
+    @FXML private Button playlistSearchCancelBtn;
+
     private MainController() {
     }
 
@@ -104,6 +112,7 @@ public class MainController extends StageAwareController {
         I18n.bindLocaleProperty(checkYoutubeDlUpdatesMenuItem.textProperty(), "menu.help.update.youtubedl");
         I18n.bindLocaleProperty(aboutMenuItem.textProperty(), "menu.help.about");
         I18n.bindLocaleProperty(searchBtn.textProperty(), "search");
+        I18n.bindLocaleProperty(playlistSearchCancelBtn.textProperty(), "button.cancel");
     }
 
     private void initSearchBindings() {
@@ -113,12 +122,16 @@ public class MainController extends StageAwareController {
         searchProgressIndicator.prefWidthProperty().bind(searchBtn.widthProperty());
         searchProgressIndicator.managedProperty().bind(searchProgressIndicator.visibleProperty());
         searchProgressIndicator.setVisible(false);
-        searchBtn.setOnAction(this::handleSearchEvent);
+        searchBtn.setOnAction(this::handleSearchBtnClick);
         videoUrlTextField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                handleSearchEvent(event);
+                handleSearchBtnClick(event);
             }
         });
+
+        playlistSearchProgressWrapperHBox.managedProperty().bind(searchProgressIndicator.visibleProperty());
+        playlistSearchProgressWrapperHBox.visibleProperty().bind(searchProgressIndicator.visibleProperty());
+        playlistSearchCancelBtn.setOnAction(this::handlePlaylistSearchCancelBtnClick);
     }
 
     private void initMenuItems() {
@@ -168,7 +181,7 @@ public class MainController extends StageAwareController {
         event.consume();
     }
 
-    private void handleSearchEvent(Event event) {
+    private void handleSearchBtnClick(Event event) {
         contentScrollPane.setContent(null);
 
         boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
@@ -179,6 +192,11 @@ public class MainController extends StageAwareController {
             searchDownloadables();
         }
 
+        event.consume();
+    }
+
+    private void handlePlaylistSearchCancelBtnClick(ActionEvent event) {
+        downloadableSearchService.cancel();
         event.consume();
     }
 
@@ -208,7 +226,8 @@ public class MainController extends StageAwareController {
         });
 
         searchProgressIndicator.visibleProperty().bind(downloadableSearchService.runningProperty());
-        searchProgressIndicator.progressProperty().bind(downloadableSearchService.progressProperty());
+        playlistSearchProgressBar.progressProperty().bind(downloadableSearchService.progressProperty());
+        playlistSearchLabel.textProperty().bind(downloadableSearchService.messageProperty());
 
         downloadableSearchService.restart();
     }
