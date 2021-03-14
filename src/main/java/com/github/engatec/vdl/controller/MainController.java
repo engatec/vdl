@@ -241,7 +241,6 @@ public class MainController extends StageAwareController {
 
     private void updateContentPane(List<MultiFormatDownloadable> downloadables, Integer totalItems) {
         for (MultiFormatDownloadable downloadable : downloadables) {
-            // TODO: some more context menu items
             DownloadableItemComponentController node = new DownloadableItemComponent(stage, downloadable).load();
             node.setExpanded(totalItems == 1);
             contentVBox.getChildren().add(node);
