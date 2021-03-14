@@ -1,6 +1,7 @@
 package com.github.engatec.vdl.core;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,7 +32,7 @@ public class ApplicationContext {
     private final ExecutorService queueExecutor;
 
     public ApplicationContext() {
-        sharedExecutor = Executors.newSingleThreadExecutor();
+        sharedExecutor = Executors.newFixedThreadPool(2);
         queueExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
     }
 
@@ -75,20 +76,17 @@ public class ApplicationContext {
     }
 
     public void shutdownExecutors() {
-        shutdownSharedExecutor();
-        shutdownQueueExecutor();
+        for (ExecutorService executor : List.of(sharedExecutor, queueExecutor)) {
+            shutdownExecutor(executor);
+        }
     }
 
-    private void shutdownSharedExecutor() {
-        sharedExecutor.shutdownNow();
-    }
-
-    private void shutdownQueueExecutor() {
+    private void shutdownExecutor(ExecutorService executor) {
         try {
-            queueExecutor.shutdownNow();
-            boolean successfulTermination = queueExecutor.awaitTermination(10, TimeUnit.SECONDS);
+            executor.shutdownNow();
+            boolean successfulTermination = executor.awaitTermination(10, TimeUnit.SECONDS);
             if (!successfulTermination) {
-                LOGGER.warn("Queue executor shutdown abruptly after 10 seconds");
+                LOGGER.warn("Executor shutdown abruptly after 10 seconds");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

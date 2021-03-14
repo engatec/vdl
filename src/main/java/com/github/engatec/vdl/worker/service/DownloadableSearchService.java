@@ -3,6 +3,7 @@ package com.github.engatec.vdl.worker.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -14,6 +15,9 @@ import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
+import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
@@ -28,6 +32,7 @@ import static java.util.Comparator.nullsFirst;
 public class DownloadableSearchService extends Service<List<MultiFormatDownloadable>> {
 
     private final StringProperty url = new SimpleStringProperty();
+    private final ObjectProperty<BiConsumer<List<MultiFormatDownloadable>, Integer>> onDownloadableReadyCallback = new SimpleObjectProperty<>();
 
     public DownloadableSearchService() {
         super();
@@ -46,6 +51,18 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
         this.url.set(url);
     }
 
+    public BiConsumer<List<MultiFormatDownloadable>, Integer> getOnDownloadableReadyCallback() {
+        return onDownloadableReadyCallback.get();
+    }
+
+    public ObjectProperty<BiConsumer<List<MultiFormatDownloadable>, Integer>> onDownloadableReadyCallbackProperty() {
+        return onDownloadableReadyCallback;
+    }
+
+    public void setOnDownloadableReadyCallback(BiConsumer<List<MultiFormatDownloadable>, Integer> onDownloadableReadyCallback) {
+        this.onDownloadableReadyCallback.set(onDownloadableReadyCallback);
+    }
+
     @Override
     protected Task<List<MultiFormatDownloadable>> createTask() {
         return new Task<>() {
@@ -57,7 +74,7 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
                 }
 
                 int totalItemsCount = foundItems.size();
-                List<MultiFormatDownloadable> downloadables = new ArrayList<>(totalItemsCount);
+                List<MultiFormatDownloadable> allDownloadables = new ArrayList<>(totalItemsCount);
                 for (DownloadableInfo item : foundItems) {
                     if (Thread.interrupted()) {
                         cancel();
@@ -67,66 +84,69 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
                         break;
                     }
 
+                    List<MultiFormatDownloadable> currentDownloadables = new ArrayList<>(totalItemsCount);
                     if (CollectionUtils.isEmpty(item.getFormats())) { // Empty formats mean this is a playlist, so search again for the actual data
                         List<DownloadableInfo> infos = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(item.getBaseUrl());
-                        downloadables.addAll(
+                        currentDownloadables.addAll(
                                 ListUtils.emptyIfNull(infos).stream()
-                                        .map(DownloadableSearchService.this::prepareDownloadable)
+                                        .map(this::prepareDownloadable)
                                         .filter(Objects::nonNull)
                                         .collect(Collectors.toList())
                         );
                     } else {
                         MultiFormatDownloadable downloadable = prepareDownloadable(item);
                         if (downloadable != null) {
-                            downloadables.add(downloadable);
+                            currentDownloadables.add(downloadable);
                         }
                     }
 
-                    int currentItemsCount = downloadables.size();
-                    updateMessage(String.format(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.main.search.playlist.progress"), currentItemsCount, totalItemsCount));
-                    updateProgress(currentItemsCount, totalItemsCount);
+                    allDownloadables.addAll(currentDownloadables);
+                    int downloadedItemsCount = allDownloadables.size();
+                    updateMessage(String.format(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.main.search.playlist.progress"), downloadedItemsCount, totalItemsCount));
+                    updateProgress(downloadedItemsCount, totalItemsCount);
+                    Platform.runLater(() -> getOnDownloadableReadyCallback().accept(currentDownloadables, totalItemsCount));
                 }
 
-                return downloadables;
+                return allDownloadables;
+            }
+
+            private MultiFormatDownloadable prepareDownloadable(DownloadableInfo downloadableInfo) {
+                List<Format> formats = downloadableInfo.getFormats();
+                if (CollectionUtils.isEmpty(formats)) {
+                    return null;
+                }
+
+                List<Video> videoList = new ArrayList<>();
+                List<Audio> audioList = new ArrayList<>();
+                final String codecAbsenseAttr = YoutubeDlAttr.NO_CODEC.getValue();
+
+                for (Format format : formats) {
+                    String acodec = format.getAcodec();
+                    String vcodec = format.getVcodec();
+                    if (codecAbsenseAttr.equals(vcodec)) {
+                        audioList.add(new Audio(format));
+                    } else if (codecAbsenseAttr.equals(acodec)) {
+                        videoList.add(new Video(format));
+                    } else {
+                        videoList.add(new Video(format, new Audio(format)));
+                    }
+                }
+
+                videoList.sort(
+                        comparing(Video::getWidth, nullsFirst(naturalOrder()))
+                                .thenComparing(Video::getHeight, nullsFirst(naturalOrder()))
+                                .thenComparing(Video::getFilesize, nullsFirst(naturalOrder()))
+                                .reversed()
+                );
+
+                audioList.sort(
+                        comparing(Audio::getBitrate, nullsFirst(naturalOrder()))
+                                .thenComparing(Audio::getFilesize, nullsFirst(naturalOrder()))
+                                .reversed()
+                );
+
+                return new MultiFormatDownloadable(downloadableInfo.getTitle(), downloadableInfo.getBaseUrl(), videoList, audioList);
             }
         };
-    }
-
-    private MultiFormatDownloadable prepareDownloadable(DownloadableInfo downloadableInfo) {
-        List<Format> formats = downloadableInfo.getFormats();
-        if (CollectionUtils.isEmpty(formats)) {
-            return null;
-        }
-
-        List<Video> videoList = new ArrayList<>();
-        List<Audio> audioList = new ArrayList<>();
-        final String codecAbsenseAttr = YoutubeDlAttr.NO_CODEC.getValue();
-
-        for (Format format : formats) {
-            String acodec = format.getAcodec();
-            String vcodec = format.getVcodec();
-            if (codecAbsenseAttr.equals(vcodec)) {
-                audioList.add(new Audio(format));
-            } else if (codecAbsenseAttr.equals(acodec)) {
-                videoList.add(new Video(format));
-            } else {
-                videoList.add(new Video(format, new Audio(format)));
-            }
-        }
-
-        videoList.sort(
-                comparing(Video::getWidth, nullsFirst(naturalOrder()))
-                        .thenComparing(Video::getHeight, nullsFirst(naturalOrder()))
-                        .thenComparing(Video::getFilesize, nullsFirst(naturalOrder()))
-                        .reversed()
-        );
-
-        audioList.sort(
-                comparing(Audio::getBitrate, nullsFirst(naturalOrder()))
-                        .thenComparing(Audio::getFilesize, nullsFirst(naturalOrder()))
-                        .reversed()
-        );
-
-        return new MultiFormatDownloadable(downloadableInfo.getTitle(), downloadableInfo.getBaseUrl(), videoList, audioList);
     }
 }

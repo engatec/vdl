@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller;
+package com.github.engatec.vdl.controller.components;
 
 import java.util.Map;
 
@@ -26,6 +26,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -35,11 +36,13 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 
-public class VideoDownloadGridController {
+public class DownloadableItemComponentController extends TitledPane {
 
-    private Stage parent;
+    private final Stage parent;
+    private final MultiFormatDownloadable downloadable;
+    private final Map<String, String> videoExtToAudioExtMap;
 
-    @FXML private GridPane rootGridPane;
+    @FXML private GridPane formatGridPane;
 
     @FXML private Label resolutionTitleLabel;
     @FXML private Label sizeTitleLabel;
@@ -47,14 +50,7 @@ public class VideoDownloadGridController {
     @FXML private Label extensionTitleLabel;
     @FXML private Label audioTitleLabel;
 
-    private MultiFormatDownloadable downloadable;
-
-    private Map<String, String> videoExtToAudioExtMap;
-
-    private VideoDownloadGridController() {
-    }
-
-    public VideoDownloadGridController(Stage parent, MultiFormatDownloadable downloadable) {
+    public DownloadableItemComponentController(Stage parent, MultiFormatDownloadable downloadable) {
         this.parent = parent;
         this.downloadable = downloadable;
 
@@ -88,7 +84,7 @@ public class VideoDownloadGridController {
                 video.getAudio() != null || audioObservableList.isEmpty() ? createAudioUnmodifiableComboBox() : createAudioComboBox(video, audioObservableList),
                 createButtonPane(video)
         };
-        rootGridPane.addRow(rootGridPane.getRowCount(), nodes);
+        formatGridPane.addRow(formatGridPane.getRowCount(), nodes);
     }
 
     private Label createResolutionLabel(Video video) {

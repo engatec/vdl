@@ -3,13 +3,13 @@ package com.github.engatec.vdl.controller;
 import java.nio.file.Files;
 import java.util.List;
 
-import com.github.engatec.vdl.controller.components.DownloadableItemsComponentController;
+import com.github.engatec.vdl.component.DownloadableItemComponent;
+import com.github.engatec.vdl.controller.components.DownloadableItemComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
-import com.github.engatec.vdl.core.UiComponent;
-import com.github.engatec.vdl.core.UiManager;
 import com.github.engatec.vdl.core.UpdateManager;
 import com.github.engatec.vdl.core.command.DownloadCommand;
+import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.core.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.Language;
@@ -27,10 +27,12 @@ import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
+import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -39,6 +41,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
@@ -46,7 +49,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,6 +63,7 @@ public class MainController extends StageAwareController {
     @FXML private VBox rootControlVBox;
 
     @FXML private ScrollPane contentScrollPane;
+    @FXML private VBox contentVBox;
 
     @FXML private Menu fileMenu;
     @FXML private MenuItem downloadQueueMenuItem;
@@ -98,6 +101,7 @@ public class MainController extends StageAwareController {
         initSearchBindings();
         initMenuItems();
         initDragAndDrop();
+        initScrollPaneUpdate();
 
         stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(videoUrlTextField, searchBtn));
     }
@@ -182,7 +186,7 @@ public class MainController extends StageAwareController {
     }
 
     private void handleSearchBtnClick(Event event) {
-        contentScrollPane.setContent(null);
+        contentVBox.getChildren().clear();
 
         boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
         boolean skipDownloadableDetailsSearch = cfgMgr.getValue(new SkipDownloadableDetailsSearchConfigItem());
@@ -208,13 +212,16 @@ public class MainController extends StageAwareController {
 
     private void searchDownloadables() {
         downloadableSearchService.setUrl(videoUrlTextField.getText());
+        downloadableSearchService.setOnDownloadableReadyCallback(this::updateContentPane);
 
         downloadableSearchService.setOnSucceeded(it -> {
             List<MultiFormatDownloadable> downloadables = (List<MultiFormatDownloadable>) it.getSource().getValue();
-            loadContentPane(downloadables);
 
             boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
-            if (autodownloadEnabled && downloadables.size() == 1) {
+            if (downloadables.size() > 1 && autodownloadEnabled) {
+                setDownloadablesMassContextMenu(downloadables);
+            }
+            if (autodownloadEnabled && contentVBox.getChildren().size() == 1) {
                 Platform.runLater(this::performAutoDownload); // runLater is to release the service and trigger runningProperty to be false
             }
         });
@@ -232,25 +239,32 @@ public class MainController extends StageAwareController {
         downloadableSearchService.restart();
     }
 
-    private void loadContentPane(List<MultiFormatDownloadable> downloadables) {
-        boolean hasVideos = false;
-        for (MultiFormatDownloadable item : downloadables) {
-            if (CollectionUtils.isNotEmpty(item.getVideos())) {
-                hasVideos = true;
-                break;
-            }
+    private void updateContentPane(List<MultiFormatDownloadable> downloadables, Integer totalItems) {
+        for (MultiFormatDownloadable downloadable : downloadables) {
+            // TODO: some more context menu items
+            DownloadableItemComponentController node = new DownloadableItemComponent(stage, downloadable).load();
+            node.setExpanded(totalItems == 1);
+            contentVBox.getChildren().add(node);
         }
+    }
 
-        if (hasVideos) {
-            Parent videoComponent = UiManager.loadComponent(
-                    UiComponent.DOWNLOADABLE_ITEMS_COMPONENT,
-                    param -> new DownloadableItemsComponentController(
-                            stage,
-                            downloadables,
-                            (downloadable) -> UiManager.loadComponent(UiComponent.VIDEO_DOWNLOAD_GRID, param1 -> new VideoDownloadGridController(stage, downloadable))
-                    )
-            );
-            contentScrollPane.setContent(videoComponent);
+    private void setDownloadablesMassContextMenu(List<MultiFormatDownloadable> downloadables) {
+        for (Node node : contentVBox.getChildren()) {
+            MenuItem addToQueueAllMenuItem = new MenuItem(appCtx.getResourceBundle().getString("component.downloadgrid.queue.addall"));
+            addToQueueAllMenuItem.setOnAction(e -> {
+                AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
+                    String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
+                    for (MultiFormatDownloadable item : downloadables) {
+                        CustomFormatDownloadable customFormatDownloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
+                        customFormatDownloadable.setPostprocessingSteps(item.getPostprocessingSteps());
+                        customFormatDownloadable.setDownloadPath(path);
+                        new EnqueueCommand(customFormatDownloadable).execute();
+                    }
+                });
+                e.consume();
+            });
+
+            ((DownloadableItemComponentController) node).getContextMenu().getItems().add(addToQueueAllMenuItem);
         }
     }
 
@@ -270,6 +284,23 @@ public class MainController extends StageAwareController {
                 e.setDropCompleted(true);
             }
             e.consume();
+        });
+    }
+
+    /**
+     * A hack!
+     * This is to forcibly redraw scrollpane if no scrollbar is visible,
+     * otherwise dynamically added playlist items not visible until the search is over or srollbar appears (whichever happens first).
+     */
+    private void initScrollPaneUpdate() {
+        var snapshotParams = new SnapshotParameters();
+        var writableImage = new WritableImage(1, 1);
+        contentVBox.getChildren().addListener((ListChangeListener<Node>) c -> {
+            double scrollPaneHeight = contentScrollPane.getHeight();
+            double contentVBoxHeight = contentVBox.getHeight();
+            if (Double.compare(contentVBoxHeight, scrollPaneHeight) < 0) {
+                contentScrollPane.snapshot(snapshotParams, writableImage);
+            }
         });
     }
 }

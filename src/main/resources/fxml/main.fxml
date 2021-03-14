@@ -13,7 +13,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox fx:id="rootControlVBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="650.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.MainController">
+<VBox fx:id="rootControlVBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="650.0" styleClass="no-border" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.MainController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -43,7 +43,7 @@
             </Menu>
       </menus>
     </MenuBar>
-      <VBox prefHeight="331.0" prefWidth="610.0" spacing="8.0" VBox.vgrow="ALWAYS">
+      <VBox prefHeight="331.0" prefWidth="610.0" spacing="8.0" styleClass="no-border" VBox.vgrow="ALWAYS">
          <children>
             <HBox spacing="8.0">
                <children>
@@ -58,8 +58,11 @@
             </HBox>
             <ScrollPane fx:id="contentScrollPane" fitToHeight="true" fitToWidth="true" styleClass="no-border" VBox.vgrow="ALWAYS">
                <padding>
-                  <Insets bottom="8.0" top="8.0" />
+                  <Insets bottom="8.0" />
                </padding>
+               <content>
+                  <VBox fx:id="contentVBox" spacing="4.0" styleClass="no-border" />
+               </content>
             </ScrollPane>
             <HBox fx:id="playlistSearchProgressWrapperHBox" alignment="CENTER_LEFT" spacing="8.0">
                <children>

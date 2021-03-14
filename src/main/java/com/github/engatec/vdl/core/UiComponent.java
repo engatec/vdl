@@ -4,9 +4,7 @@ public enum UiComponent {
 
     MAIN("/fxml/main.fxml"),
     PREFERENCES_GENERAL("/fxml/preferences/preferences-general.fxml"),
-    PREFERENCES_YOUTUBE_DL("/fxml/preferences/preferences-youtubedl.fxml"),
-    VIDEO_DOWNLOAD_GRID("/fxml/video-download-grid.fxml"),
-    DOWNLOADABLE_ITEMS_COMPONENT("/fxml/downloadable-items-component.fxml");
+    PREFERENCES_YOUTUBE_DL("/fxml/preferences/preferences-youtubedl.fxml");
 
     private final String fxml;
 
