@@ -13,7 +13,6 @@ public class PostprocessingStage extends AppStage {
 
     public PostprocessingStage(Downloadable downloadable) {
         this.downloadable = downloadable;
-        load();
         stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.postprocessing.title"));
     }
 

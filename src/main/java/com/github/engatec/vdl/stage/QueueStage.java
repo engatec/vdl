@@ -6,10 +6,6 @@ import javafx.util.Callback;
 
 public class QueueStage extends AppStage {
 
-    public QueueStage() {
-        load();
-    }
-
     @Override
     protected String getFxmlPath() {
         return "/fxml/queue/queue.fxml";

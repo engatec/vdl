@@ -13,7 +13,6 @@ public class ProgressDialogStage extends AppStage {
     public ProgressDialogStage(String title, Task<?> task) {
         this.title = title;
         this.task = task;
-        load();
         stage.setResizable(false);
     }
 

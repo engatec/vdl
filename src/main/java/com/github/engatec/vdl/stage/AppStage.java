@@ -14,12 +14,21 @@ import javafx.util.Callback;
 
 public abstract class AppStage {
 
-    protected Stage stage = new Stage();
+    protected Stage stage;
 
     protected abstract String getFxmlPath();
     protected abstract Callback<Class<?>, Object> getControllerFactory(Stage stage);
 
-    protected void load() {
+    protected AppStage() {
+        this(new Stage());
+    }
+
+    protected AppStage(Stage stage) {
+        this.stage = stage;
+        load();
+    }
+
+    private void load() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(getFxmlPath()), ApplicationContext.INSTANCE.getResourceBundle());
         loader.setControllerFactory(getControllerFactory(stage));
 

@@ -7,7 +7,6 @@ import javafx.util.Callback;
 public class PreferencesStage extends AppStage {
 
     public PreferencesStage() {
-        load();
         stage.setMinWidth(700);
         stage.setMinHeight(400);
     }

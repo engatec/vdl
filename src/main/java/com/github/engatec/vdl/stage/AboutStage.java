@@ -7,7 +7,6 @@ import javafx.util.Callback;
 public class AboutStage extends AppStage {
 
     public AboutStage() {
-        load();
         stage.setResizable(false);
     }
 

@@ -11,7 +11,6 @@ public class DownloadingProgressStage extends AppStage {
 
     public DownloadingProgressStage(Downloadable downloadable) {
         this.downloadable = downloadable;
-        load();
         stage.setResizable(false);
     }
 

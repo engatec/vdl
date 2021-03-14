@@ -18,7 +18,6 @@ public class FragmentStage extends AppStage {
     public FragmentStage(FragmentCutPostprocessing model, Consumer<? super Postprocessing> okClickCallback) {
         this.model = model;
         this.okClickCallback = okClickCallback;
-        load();
         stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.postprocessing.fragment"));
         stage.setResizable(false);
     }

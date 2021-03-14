@@ -18,7 +18,6 @@ public class ExtractAudioStage extends AppStage {
     public ExtractAudioStage(ExtractAudioPostprocessing model, Consumer<? super Postprocessing> okClickCallback) {
         this.model = model;
         this.okClickCallback = okClickCallback;
-        load();
         stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.postprocessing.extractaudio"));
         stage.setResizable(false);
     }
