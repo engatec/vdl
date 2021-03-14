@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox spacing="8.0" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.preferences.GeneralPreferencesController">
+<fx:root type="javafx.scene.layout.VBox" spacing="8.0" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox spacing="8.0">
          <children>
@@ -56,4 +56,4 @@
    <padding>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
    </padding>
-</VBox>
+</fx:root>

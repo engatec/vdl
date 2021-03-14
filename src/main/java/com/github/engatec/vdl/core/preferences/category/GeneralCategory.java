@@ -1,8 +1,6 @@
 package com.github.engatec.vdl.core.preferences.category;
 
-import com.github.engatec.vdl.controller.preferences.GeneralPreferencesController;
-import com.github.engatec.vdl.core.UiComponent;
-import com.github.engatec.vdl.core.UiManager;
+import com.github.engatec.vdl.component.preferences.GeneralPreferencesComponent;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.propertyholder.GeneralPropertyHolder;
 import com.github.engatec.vdl.model.preferences.general.AlwaysAskDownloadPathConfigItem;
@@ -27,7 +25,7 @@ public class GeneralCategory extends Category {
     public Node buildCategoryUi(Stage stage) {
         if (super.node == null) {
             readPreferences();
-            super.node = UiManager.loadComponent(UiComponent.PREFERENCES_GENERAL, param -> new GeneralPreferencesController(stage, propertyHolder));
+            super.node = new GeneralPreferencesComponent(stage, propertyHolder).load();
         }
         return node;
     }

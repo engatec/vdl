@@ -1,8 +1,6 @@
 package com.github.engatec.vdl.core.preferences.category;
 
-import com.github.engatec.vdl.controller.preferences.YoutubedlPreferencesController;
-import com.github.engatec.vdl.core.UiComponent;
-import com.github.engatec.vdl.core.UiManager;
+import com.github.engatec.vdl.component.preferences.YoutubeDlPreferencesComponent;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.propertyholder.YoutubedlPropertyHolder;
 import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
@@ -23,7 +21,7 @@ public class YoutubeDlCategory extends Category {
     public Node buildCategoryUi(Stage stage) {
         if (super.node == null) {
             readPreferences();
-            super.node = UiManager.loadComponent(UiComponent.PREFERENCES_YOUTUBE_DL, param -> new YoutubedlPreferencesController(stage, propertyHolder));
+            super.node = new YoutubeDlPreferencesComponent(stage, propertyHolder).load();
         }
         return node;
     }

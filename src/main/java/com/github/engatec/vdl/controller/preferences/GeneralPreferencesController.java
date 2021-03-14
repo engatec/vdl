@@ -3,7 +3,6 @@ package com.github.engatec.vdl.controller.preferences;
 import java.io.File;
 import java.util.ResourceBundle;
 
-import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.data.AutodownloadFormat;
 import com.github.engatec.vdl.core.preferences.data.PredefinedFormatCreator;
@@ -31,9 +30,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 
-public class GeneralPreferencesController extends StageAwareController {
+public class GeneralPreferencesController extends VBox {
 
-    private GeneralPropertyHolder propertyHolder;
+    private final Stage stage;
+    private final GeneralPropertyHolder propertyHolder;
 
     private final ToggleGroup downloadPathRadioGroup = new ToggleGroup();
     @FXML private RadioButton downloadPathRadioBtn;
@@ -49,11 +49,8 @@ public class GeneralPreferencesController extends StageAwareController {
     @FXML private TextField autodownloadFormatTextField;
     @FXML private CheckBox skipDownloadableDetailsSearchCheckBox;
 
-    private GeneralPreferencesController() {
-    }
-
     public GeneralPreferencesController(Stage stage, GeneralPropertyHolder propertyHolder) {
-        super(stage);
+        this.stage = stage;
         this.propertyHolder = propertyHolder;
     }
 

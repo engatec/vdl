@@ -2,9 +2,7 @@ package com.github.engatec.vdl.core;
 
 public enum UiComponent {
 
-    MAIN("/fxml/main.fxml"),
-    PREFERENCES_GENERAL("/fxml/preferences/preferences-general.fxml"),
-    PREFERENCES_YOUTUBE_DL("/fxml/preferences/preferences-youtubedl.fxml");
+    MAIN("/fxml/main.fxml");
 
     private final String fxml;
 

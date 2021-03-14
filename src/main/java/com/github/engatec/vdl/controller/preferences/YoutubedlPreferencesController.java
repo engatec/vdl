@@ -2,7 +2,6 @@ package com.github.engatec.vdl.controller.preferences;
 
 import java.io.File;
 
-import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.propertyholder.YoutubedlPropertyHolder;
 import com.github.engatec.vdl.ui.Icons;
@@ -16,11 +15,15 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class YoutubedlPreferencesController extends StageAwareController {
+public class YoutubedlPreferencesController extends VBox {
+
+    private final Stage stage;
+    private final YoutubedlPropertyHolder propertyHolder;
 
     @FXML private CheckBox noMTimeCheckBox;
 
@@ -28,13 +31,8 @@ public class YoutubedlPreferencesController extends StageAwareController {
     @FXML private TextField configFileTextField;
     @FXML private Button configFileChooseBtn;
 
-    private YoutubedlPropertyHolder propertyHolder;
-
-    private YoutubedlPreferencesController() {
-    }
-
     public YoutubedlPreferencesController(Stage stage, YoutubedlPropertyHolder propertyHolder) {
-        super(stage);
+        this.stage = stage;
         this.propertyHolder = propertyHolder;
     }
 
