@@ -8,13 +8,11 @@ import com.github.engatec.vdl.core.preferences.data.AutodownloadFormat;
 import com.github.engatec.vdl.core.preferences.data.PredefinedFormatCreator;
 import com.github.engatec.vdl.core.preferences.propertyholder.GeneralPropertyHolder;
 import com.github.engatec.vdl.ui.Icons;
-import com.github.engatec.vdl.util.Svg;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -23,11 +21,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 
 public class GeneralPreferencesController extends VBox {
@@ -132,13 +128,7 @@ public class GeneralPreferencesController extends VBox {
         }
         selectionModel.select(itemToSelect);
 
-        Group infoIcon = Icons.info();
-        Svg.scale(infoIcon, 0.8);
-        Tooltip tooltip = new Tooltip(resourceBundle.getString("preferences.general.autodownload.checkbox.skipdetailssearch.tooltip"));
-        tooltip.setShowDelay(Duration.ZERO);
-        tooltip.setShowDuration(Duration.INDEFINITE);
-        Tooltip.install(infoIcon, tooltip);
-        skipDownloadableDetailsSearchCheckBox.setGraphic(infoIcon);
+        skipDownloadableDetailsSearchCheckBox.setGraphic(Icons.infoWithTooltip("preferences.general.autodownload.checkbox.skipdetailssearch.tooltip"));
         skipDownloadableDetailsSearchCheckBox.setContentDisplay(ContentDisplay.RIGHT);
     }
 }

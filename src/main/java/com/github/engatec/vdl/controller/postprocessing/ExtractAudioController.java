@@ -4,21 +4,16 @@ import java.util.Locale;
 import java.util.function.Consumer;
 
 import com.github.engatec.vdl.controller.StageAwareController;
-import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.ui.Icons;
-import com.github.engatec.vdl.util.Svg;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.apache.commons.lang3.StringUtils;
 
 public class ExtractAudioController extends StageAwareController {
@@ -83,13 +78,7 @@ public class ExtractAudioController extends StageAwareController {
     }
 
     private void addInfoIcon() {
-        Group infoIcon = Icons.info();
-        Svg.scale(infoIcon, 0.8);
-        Tooltip tooltip = new Tooltip(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.postprocessing.extractaudio.quality.tooltip"));
-        tooltip.setShowDelay(Duration.ZERO);
-        tooltip.setShowDuration(Duration.INDEFINITE);
-        Tooltip.install(infoIcon, tooltip);
-        contentGridPane.add(infoIcon, 2, 1);
+        contentGridPane.add(Icons.infoWithTooltip("stage.postprocessing.extractaudio.quality.tooltip"), 2, 1);
     }
 
     private void applyModel() {

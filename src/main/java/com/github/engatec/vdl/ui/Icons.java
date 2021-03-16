@@ -1,7 +1,10 @@
 package com.github.engatec.vdl.ui;
 
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.util.Svg;
 import javafx.scene.Group;
+import javafx.scene.control.Tooltip;
+import javafx.util.Duration;
 
 public class Icons {
 
@@ -17,6 +20,16 @@ public class Icons {
                         .fill(rgb)
                         .build()
         );
+    }
+
+    public static Group infoWithTooltip(String key) {
+        Group infoIcon = Icons.info();
+        Svg.scale(infoIcon, 0.8);
+        Tooltip tooltip = new Tooltip(ApplicationContext.INSTANCE.getResourceBundle().getString(key));
+        tooltip.setShowDelay(Duration.ZERO);
+        tooltip.setShowDuration(Duration.INDEFINITE);
+        Tooltip.install(infoIcon, tooltip);
+        return infoIcon;
     }
 
     public static Group download() {

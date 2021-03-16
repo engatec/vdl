@@ -22,3 +22,8 @@
 .no-border {
     -fx-box-border: transparent;
 }
+
+.preferences-category-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 12;
+}
