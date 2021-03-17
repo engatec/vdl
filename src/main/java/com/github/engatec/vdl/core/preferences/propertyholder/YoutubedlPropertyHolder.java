@@ -7,22 +7,8 @@ import javafx.beans.property.StringProperty;
 
 public class YoutubedlPropertyHolder {
 
-    private final BooleanProperty noMTime = new SimpleBooleanProperty();
-
     private final BooleanProperty useConfigFile = new SimpleBooleanProperty();
     private final StringProperty configFilePath = new SimpleStringProperty();
-
-    public boolean isNoMTime() {
-        return noMTime.get();
-    }
-
-    public BooleanProperty noMTimeProperty() {
-        return noMTime;
-    }
-
-    public void setNoMTime(boolean noMTime) {
-        this.noMTime.set(noMTime);
-    }
 
     public boolean isUseConfigFile() {
         return useConfigFile.get();

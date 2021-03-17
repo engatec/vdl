@@ -4,7 +4,6 @@ import com.github.engatec.vdl.component.preferences.YoutubeDlPreferencesComponen
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.propertyholder.YoutubedlPropertyHolder;
 import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
-import com.github.engatec.vdl.model.preferences.youtubedl.NoMTimeConfigItem;
 import com.github.engatec.vdl.model.preferences.youtubedl.UseConfigFileConfigItem;
 import javafx.scene.Node;
 import javafx.stage.Stage;
@@ -30,7 +29,6 @@ public class YoutubeDlCategory extends Category {
     public void readPreferences() {
         ConfigManager config = ConfigManager.INSTANCE;
         propertyHolder = new YoutubedlPropertyHolder();
-        propertyHolder.setNoMTime(config.getValue(new NoMTimeConfigItem()));
         propertyHolder.setUseConfigFile(config.getValue(new UseConfigFileConfigItem()));
         propertyHolder.setConfigFilePath(config.getValue(new ConfigFilePathConfigItem()));
     }
@@ -42,7 +40,6 @@ public class YoutubeDlCategory extends Category {
         }
 
         ConfigManager config = ConfigManager.INSTANCE;
-        config.setValue(new NoMTimeConfigItem(), propertyHolder.isNoMTime());
         config.setValue(new UseConfigFileConfigItem(), propertyHolder.isUseConfigFile());
         config.setValue(new ConfigFilePathConfigItem(), propertyHolder.getConfigFilePath());
     }

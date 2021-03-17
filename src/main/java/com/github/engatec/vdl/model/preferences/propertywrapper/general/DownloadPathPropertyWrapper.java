@@ -1,18 +1,18 @@
 package com.github.engatec.vdl.model.preferences.propertywrapper.general;
 
 import com.github.engatec.vdl.model.preferences.ConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
+import com.github.engatec.vdl.model.preferences.general.DownloadPathConfigItem;
 import com.github.engatec.vdl.model.preferences.propertywrapper.ConfigItemPropertyWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class AutoDownloadFormatPropertyWrapper extends ConfigItemPropertyWrapper<StringProperty, String> {
+public class DownloadPathPropertyWrapper extends ConfigItemPropertyWrapper<StringProperty, String> {
 
-    private static final ConfigItem<String> CONFIG_ITEM = new AutoDownloadFormatConfigItem();
+    private static final ConfigItem<String> CONFIG_ITEM = new DownloadPathConfigItem();
 
     private final StringProperty property = new SimpleStringProperty();
 
-    public AutoDownloadFormatPropertyWrapper() {
+    public DownloadPathPropertyWrapper() {
         restore();
     }
 

@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.preferences.category.Category;
 import com.github.engatec.vdl.core.preferences.category.GeneralCategory;
 import com.github.engatec.vdl.core.preferences.category.YoutubeDlCategory;
@@ -37,7 +38,8 @@ public class PreferencesController extends StageAwareController {
 
     @FXML
     public void initialize() {
-        this.stage.setTitle(resourceBundle.getString("preferences.title"));
+        stage.setTitle(resourceBundle.getString("preferences.title"));
+        stage.setOnCloseRequest(event -> discardChanges());
 
         okBtn.setOnAction(this::handleOkBtnClick);
         cancelBtn.setOnAction(this::handleCancelBtnClick);
@@ -73,8 +75,13 @@ public class PreferencesController extends StageAwareController {
     }
 
     private void handleCancelBtnClick(ActionEvent event) {
+        discardChanges();
         stage.close();
         event.consume();
+    }
+
+    private void discardChanges() {
+        ConfigRegistry.restorePreviousValues();
     }
 
     private void handleOkBtnClick(ActionEvent event) {
@@ -84,6 +91,7 @@ public class PreferencesController extends StageAwareController {
     }
 
     private void saveSettings() {
+        ConfigRegistry.saveAll();
         for (TreeItem<Category> child : preferencesCategoryTreeView.getRoot().getChildren()) {
             child.getValue().savePreferences();
         }

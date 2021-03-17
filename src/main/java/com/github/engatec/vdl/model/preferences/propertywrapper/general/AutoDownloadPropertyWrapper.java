@@ -1,6 +1,5 @@
 package com.github.engatec.vdl.model.preferences.propertywrapper.general;
 
-import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.preferences.ConfigItem;
 import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
 import com.github.engatec.vdl.model.preferences.propertywrapper.ConfigItemPropertyWrapper;
@@ -14,8 +13,7 @@ public class AutoDownloadPropertyWrapper extends ConfigItemPropertyWrapper<Boole
     private final BooleanProperty property = new SimpleBooleanProperty();
 
     public AutoDownloadPropertyWrapper() {
-        Boolean value = ConfigManager.INSTANCE.getValue(CONFIG_ITEM);
-        property.setValue(value);
+        restore();
     }
 
     @Override

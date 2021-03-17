@@ -16,13 +16,14 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.DownloadableInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
+import com.github.engatec.vdl.model.preferences.propertywrapper.youtubedl.NoMTimePropertyWrapper;
 import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
-import com.github.engatec.vdl.model.preferences.youtubedl.NoMTimeConfigItem;
 import com.github.engatec.vdl.model.preferences.youtubedl.UseConfigFileConfigItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -117,7 +118,7 @@ public class YoutubeDlManager {
                 .noCheckCertificate()
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
-        if (cfg.getValue(new NoMTimeConfigItem())) {
+        if (ConfigRegistry.get(NoMTimePropertyWrapper.class).getValue()) {
             commandBuilder.noMTime();
         }
 

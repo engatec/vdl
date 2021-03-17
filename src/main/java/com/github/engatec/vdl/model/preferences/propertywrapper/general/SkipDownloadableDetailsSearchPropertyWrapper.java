@@ -1,18 +1,18 @@
 package com.github.engatec.vdl.model.preferences.propertywrapper.general;
 
 import com.github.engatec.vdl.model.preferences.ConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AlwaysAskDownloadPathConfigItem;
+import com.github.engatec.vdl.model.preferences.general.SkipDownloadableDetailsSearchConfigItem;
 import com.github.engatec.vdl.model.preferences.propertywrapper.ConfigItemPropertyWrapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class AlwaysAskDownloadPathPropertyWrapper extends ConfigItemPropertyWrapper<BooleanProperty, Boolean> {
+public class SkipDownloadableDetailsSearchPropertyWrapper extends ConfigItemPropertyWrapper<BooleanProperty, Boolean> {
 
-    private static final ConfigItem<Boolean> CONFIG_ITEM = new AlwaysAskDownloadPathConfigItem();
+    private static final ConfigItem<Boolean> CONFIG_ITEM = new SkipDownloadableDetailsSearchConfigItem();
 
     private final BooleanProperty property = new SimpleBooleanProperty();
 
-    public AlwaysAskDownloadPathPropertyWrapper() {
+    public SkipDownloadableDetailsSearchPropertyWrapper() {
         restore();
     }
 

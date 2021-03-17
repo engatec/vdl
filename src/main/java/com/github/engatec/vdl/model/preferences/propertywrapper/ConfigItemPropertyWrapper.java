@@ -13,7 +13,12 @@ public abstract class ConfigItemPropertyWrapper<P, V> {
 
     public abstract void setValue(V v);
 
-    public void store() {
+    public void restore() {
+        V value = ConfigManager.INSTANCE.getValue(getConfigItem());
+        setValue(value);
+    }
+
+    public void save() {
         ConfigManager.INSTANCE.setValue(getConfigItem(), getValue());
     }
 }
