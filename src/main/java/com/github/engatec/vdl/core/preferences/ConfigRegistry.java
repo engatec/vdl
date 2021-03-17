@@ -3,52 +3,52 @@ package com.github.engatec.vdl.core.preferences;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.engatec.vdl.model.preferences.propertywrapper.ConfigItemPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.general.AlwaysAskDownloadPathPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.general.AutoDownloadFormatPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.general.AutoDownloadPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.general.AutoSearchFromClipboardPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.general.DownloadPathPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.general.LanguagePropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.general.SkipDownloadableDetailsSearchPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.youtubedl.ConfigFilePathPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.youtubedl.NoMTimePropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.youtubedl.ProxyUrlPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.propertywrapper.youtubedl.UseConfigFilePropertyWrapper;
+import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 
 public class ConfigRegistry {
 
-    private static final Map<Class<? extends ConfigItemPropertyWrapper<?, ?>>, ConfigItemPropertyWrapper<?, ?>> REGISTRY = new HashMap<>();
+    private static final Map<Class<? extends ConfigItemWrapper<?, ?>>, ConfigItemWrapper<?, ?>> REGISTRY = new HashMap<>();
 
     static {
         /* General */
-        REGISTRY.put(AlwaysAskDownloadPathPropertyWrapper.class, new AlwaysAskDownloadPathPropertyWrapper());
-        REGISTRY.put(AutoDownloadFormatPropertyWrapper.class, new AutoDownloadFormatPropertyWrapper());
-        REGISTRY.put(AutoDownloadPropertyWrapper.class, new AutoDownloadPropertyWrapper());
-        REGISTRY.put(AutoSearchFromClipboardPropertyWrapper.class, new AutoSearchFromClipboardPropertyWrapper());
-        REGISTRY.put(DownloadPathPropertyWrapper.class, new DownloadPathPropertyWrapper());
-        REGISTRY.put(LanguagePropertyWrapper.class, new LanguagePropertyWrapper());
-        REGISTRY.put(SkipDownloadableDetailsSearchPropertyWrapper.class, new SkipDownloadableDetailsSearchPropertyWrapper());
+        REGISTRY.put(AlwaysAskDownloadPathPref.class, new AlwaysAskDownloadPathPref());
+        REGISTRY.put(AutoDownloadFormatPref.class, new AutoDownloadFormatPref());
+        REGISTRY.put(AutoDownloadPref.class, new AutoDownloadPref());
+        REGISTRY.put(AutoSearchFromClipboardPref.class, new AutoSearchFromClipboardPref());
+        REGISTRY.put(DownloadPathPref.class, new DownloadPathPref());
+        REGISTRY.put(LanguagePref.class, new LanguagePref());
+        REGISTRY.put(SkipDownloadableDetailsSearchPref.class, new SkipDownloadableDetailsSearchPref());
 
         /* YoutubeDl */
-        REGISTRY.put(ConfigFilePathPropertyWrapper.class, new ConfigFilePathPropertyWrapper());
-        REGISTRY.put(NoMTimePropertyWrapper.class, new NoMTimePropertyWrapper());
-        REGISTRY.put(ProxyUrlPropertyWrapper.class, new ProxyUrlPropertyWrapper());
-        REGISTRY.put(UseConfigFilePropertyWrapper.class, new UseConfigFilePropertyWrapper());
+        REGISTRY.put(ConfigFilePathPref.class, new ConfigFilePathPref());
+        REGISTRY.put(NoMTimePref.class, new NoMTimePref());
+        REGISTRY.put(ProxyUrlPref.class, new ProxyUrlPref());
+        REGISTRY.put(UseConfigFilePref.class, new UseConfigFilePref());
     }
 
-    public static <T extends ConfigItemPropertyWrapper<?, ?>> T get(Class<T> propertyWrapperClass) {
+    public static <T extends ConfigItemWrapper<?, ?>> T get(Class<T> propertyWrapperClass) {
         return (T) REGISTRY.get(propertyWrapperClass);
     }
 
     public static void restorePreviousValues() {
-        for (ConfigItemPropertyWrapper<?, ?> value : REGISTRY.values()) {
+        for (ConfigItemWrapper<?, ?> value : REGISTRY.values()) {
             value.restore();
         }
     }
 
     public static void saveAll() {
-        for (ConfigItemPropertyWrapper<?, ?> value : REGISTRY.values()) {
+        for (ConfigItemWrapper<?, ?> value : REGISTRY.values()) {
             value.save();
         }
     }

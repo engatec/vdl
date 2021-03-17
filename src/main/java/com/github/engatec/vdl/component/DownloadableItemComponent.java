@@ -5,11 +5,11 @@ import java.util.ResourceBundle;
 import com.github.engatec.vdl.controller.components.DownloadableItemComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.command.EnqueueCommand;
-import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref;
 import com.github.engatec.vdl.stage.postprocessing.PostprocessingStage;
 import com.github.engatec.vdl.util.AppUtils;
 import javafx.scene.control.ContextMenu;
@@ -56,11 +56,11 @@ public class DownloadableItemComponent extends AppComponent<DownloadableItemComp
         });
         ctxMenu.getItems().add(postprocessingMenuItem);
 
-        boolean autodownloadEnabled = ConfigManager.INSTANCE.getValue(new AutoDownloadConfigItem());
+        boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
         if (autodownloadEnabled) {
             MenuItem addToQueueMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.queue.add"));
             addToQueueMenuItem.setOnAction(e -> {
-                String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
+                String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();
                 CustomFormatDownloadable customFormatDownloadable = new CustomFormatDownloadable(downloadable.getBaseUrl(), format);
                 customFormatDownloadable.setPostprocessingSteps(downloadable.getPostprocessingSteps());
                 AppUtils.executeCommandResolvingPath(stage, new EnqueueCommand(customFormatDownloadable), customFormatDownloadable::setDownloadPath);

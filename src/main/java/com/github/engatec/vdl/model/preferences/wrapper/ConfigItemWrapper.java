@@ -1,9 +1,9 @@
-package com.github.engatec.vdl.model.preferences.propertywrapper;
+package com.github.engatec.vdl.model.preferences.wrapper;
 
 import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.model.preferences.ConfigItem;
 
-public abstract class ConfigItemPropertyWrapper<P, V> {
+public abstract class ConfigItemWrapper<P, V> {
 
     protected abstract ConfigItem<V> getConfigItem();
 

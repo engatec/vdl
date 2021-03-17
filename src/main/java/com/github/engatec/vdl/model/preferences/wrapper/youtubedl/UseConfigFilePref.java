@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.model.preferences.propertywrapper.general;
+package com.github.engatec.vdl.model.preferences.wrapper.youtubedl;
 
 import com.github.engatec.vdl.model.preferences.ConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
-import com.github.engatec.vdl.model.preferences.propertywrapper.ConfigItemPropertyWrapper;
+import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
+import com.github.engatec.vdl.model.preferences.youtubedl.UseConfigFileConfigItem;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class AutoDownloadPropertyWrapper extends ConfigItemPropertyWrapper<BooleanProperty, Boolean> {
+public class UseConfigFilePref extends ConfigItemWrapper<BooleanProperty, Boolean> {
 
-    private static final ConfigItem<Boolean> CONFIG_ITEM = new AutoDownloadConfigItem();
+    private static final ConfigItem<Boolean> CONFIG_ITEM = new UseConfigFileConfigItem();
 
     private final BooleanProperty property = new SimpleBooleanProperty();
 
-    public AutoDownloadPropertyWrapper() {
+    public UseConfigFilePref() {
         restore();
     }
 

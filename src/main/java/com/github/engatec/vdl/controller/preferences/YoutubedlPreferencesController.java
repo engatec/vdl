@@ -4,7 +4,7 @@ import java.io.File;
 
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.preferences.propertyholder.YoutubedlPropertyHolder;
-import com.github.engatec.vdl.model.preferences.propertywrapper.youtubedl.NoMTimePropertyWrapper;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.ui.Icons;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
@@ -45,7 +45,7 @@ public class YoutubedlPreferencesController extends VBox {
     }
 
     private void bindPropertyHolder() {
-        noMTimeCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(NoMTimePropertyWrapper.class).getProperty());
+        noMTimeCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(NoMTimePref.class).getProperty());
 
         useConfigFileCheckBox.selectedProperty().bindBidirectional(propertyHolder.useConfigFileProperty());
         configFileTextField.textProperty().bindBidirectional(propertyHolder.configFilePathProperty());

@@ -8,9 +8,9 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.github.engatec.vdl.core.command.Command;
-import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.model.preferences.general.AlwaysAskDownloadPathConfigItem;
-import com.github.engatec.vdl.model.preferences.general.DownloadPathConfigItem;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.ui.Dialogs;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -40,9 +40,8 @@ public class AppUtils {
     }
 
     private static Path doResolveDownloadPath(Stage stage) {
-        ConfigManager cfg = ConfigManager.INSTANCE;
-        Path downloadPath = Paths.get(cfg.getValue(new DownloadPathConfigItem()));
-        boolean askPath = cfg.getValue(new AlwaysAskDownloadPathConfigItem());
+        Path downloadPath = Paths.get(ConfigRegistry.get(DownloadPathPref.class).getValue());
+        boolean askPath = ConfigRegistry.get(AlwaysAskDownloadPathPref.class).getValue();
         if (askPath) {
             var directoryChooser = new DirectoryChooser();
             File selectedDirectory = directoryChooser.showDialog(stage);

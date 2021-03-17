@@ -22,7 +22,7 @@ import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.DownloadableInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
-import com.github.engatec.vdl.model.preferences.propertywrapper.youtubedl.NoMTimePropertyWrapper;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
 import com.github.engatec.vdl.model.preferences.youtubedl.UseConfigFileConfigItem;
 import org.apache.commons.lang3.StringUtils;
@@ -118,7 +118,7 @@ public class YoutubeDlManager {
                 .noCheckCertificate()
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
-        if (ConfigRegistry.get(NoMTimePropertyWrapper.class).getValue()) {
+        if (ConfigRegistry.get(NoMTimePref.class).getValue()) {
             commandBuilder.noMTime();
         }
 

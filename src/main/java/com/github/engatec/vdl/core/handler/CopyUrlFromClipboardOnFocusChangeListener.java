@@ -3,8 +3,8 @@ package com.github.engatec.vdl.core.handler;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.model.preferences.general.AutoSearchFromClipboardConfigItem;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
@@ -30,7 +30,7 @@ public class CopyUrlFromClipboardOnFocusChangeListener implements ChangeListener
             return;
         }
 
-        if (!ConfigManager.INSTANCE.getValue(new AutoSearchFromClipboardConfigItem())) {
+        if (!ConfigRegistry.get(AutoSearchFromClipboardPref.class).getValue()) {
             return;
         }
 

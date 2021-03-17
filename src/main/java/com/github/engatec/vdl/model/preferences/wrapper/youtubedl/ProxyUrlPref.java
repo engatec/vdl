@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.model.preferences.propertywrapper.youtubedl;
+package com.github.engatec.vdl.model.preferences.wrapper.youtubedl;
 
 import com.github.engatec.vdl.model.preferences.ConfigItem;
-import com.github.engatec.vdl.model.preferences.propertywrapper.ConfigItemPropertyWrapper;
+import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
 import com.github.engatec.vdl.model.preferences.youtubedl.ProxyUrlConfigItem;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class ProxyUrlPropertyWrapper extends ConfigItemPropertyWrapper<StringProperty, String> {
+public class ProxyUrlPref extends ConfigItemWrapper<StringProperty, String> {
 
     private static final ConfigItem<String> CONFIG_ITEM = new ProxyUrlConfigItem();
 
     private final StringProperty property = new SimpleStringProperty();
 
-    public ProxyUrlPropertyWrapper() {
+    public ProxyUrlPref() {
         restore();
     }
 

@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.model.preferences.propertywrapper.general;
+package com.github.engatec.vdl.model.preferences.wrapper.general;
 
 import com.github.engatec.vdl.model.preferences.ConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AlwaysAskDownloadPathConfigItem;
-import com.github.engatec.vdl.model.preferences.propertywrapper.ConfigItemPropertyWrapper;
+import com.github.engatec.vdl.model.preferences.general.AutoSearchFromClipboardConfigItem;
+import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class AlwaysAskDownloadPathPropertyWrapper extends ConfigItemPropertyWrapper<BooleanProperty, Boolean> {
+public class AutoSearchFromClipboardPref extends ConfigItemWrapper<BooleanProperty, Boolean> {
 
-    private static final ConfigItem<Boolean> CONFIG_ITEM = new AlwaysAskDownloadPathConfigItem();
+    private static final ConfigItem<Boolean> CONFIG_ITEM = new AutoSearchFromClipboardConfigItem();
 
     private final BooleanProperty property = new SimpleBooleanProperty();
 
-    public AlwaysAskDownloadPathPropertyWrapper() {
+    public AutoSearchFromClipboardPref() {
         restore();
     }
 

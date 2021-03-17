@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.model.preferences.propertywrapper.youtubedl;
+package com.github.engatec.vdl.model.preferences.wrapper.general;
 
 import com.github.engatec.vdl.model.preferences.ConfigItem;
-import com.github.engatec.vdl.model.preferences.propertywrapper.ConfigItemPropertyWrapper;
-import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
+import com.github.engatec.vdl.model.preferences.general.DownloadPathConfigItem;
+import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class ConfigFilePathPropertyWrapper extends ConfigItemPropertyWrapper<StringProperty, String> {
+public class DownloadPathPref extends ConfigItemWrapper<StringProperty, String> {
 
-    private static final ConfigItem<String> CONFIG_ITEM = new ConfigFilePathConfigItem();
+    private static final ConfigItem<String> CONFIG_ITEM = new DownloadPathConfigItem();
 
     private final StringProperty property = new SimpleStringProperty();
 
-    public ConfigFilePathPropertyWrapper() {
+    public DownloadPathPref() {
         restore();
     }
 

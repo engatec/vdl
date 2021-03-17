@@ -12,14 +12,15 @@ import com.github.engatec.vdl.core.command.DownloadCommand;
 import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.core.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadConfigItem;
-import com.github.engatec.vdl.model.preferences.general.AutoDownloadFormatConfigItem;
-import com.github.engatec.vdl.model.preferences.general.LanguageConfigItem;
-import com.github.engatec.vdl.model.preferences.general.SkipDownloadableDetailsSearchConfigItem;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
 import com.github.engatec.vdl.stage.AboutStage;
 import com.github.engatec.vdl.stage.PreferencesStage;
 import com.github.engatec.vdl.stage.QueueStage;
@@ -162,7 +163,9 @@ public class MainController extends StageAwareController {
 
     private void handleLanguageChange(ActionEvent event, Language language) {
         appCtx.setLanguage(language);
-        cfgMgr.setValue(new LanguageConfigItem(), language.getLocaleLanguage());
+        LanguagePref languagePref = ConfigRegistry.get(LanguagePref.class);
+        languagePref.setValue(language.getLocaleLanguage());
+        languagePref.save();
         event.consume();
     }
 
@@ -188,8 +191,8 @@ public class MainController extends StageAwareController {
     private void handleSearchBtnClick(Event event) {
         contentVBox.getChildren().clear();
 
-        boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
-        boolean skipDownloadableDetailsSearch = cfgMgr.getValue(new SkipDownloadableDetailsSearchConfigItem());
+        boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
+        boolean skipDownloadableDetailsSearch = ConfigRegistry.get(SkipDownloadableDetailsSearchPref.class).getValue();
         if (autodownloadEnabled && skipDownloadableDetailsSearch) {
             performAutoDownload();
         } else {
@@ -205,7 +208,7 @@ public class MainController extends StageAwareController {
     }
 
     private void performAutoDownload() {
-        final String format = cfgMgr.getValue(new AutoDownloadFormatConfigItem());
+        final String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();
         Downloadable downloadable = new CustomFormatDownloadable(videoUrlTextField.getText(), format);
         AppUtils.executeCommandResolvingPath(stage, new DownloadCommand(stage, downloadable), downloadable::setDownloadPath);
     }
@@ -217,7 +220,7 @@ public class MainController extends StageAwareController {
         downloadableSearchService.setOnSucceeded(it -> {
             List<MultiFormatDownloadable> downloadables = (List<MultiFormatDownloadable>) it.getSource().getValue();
 
-            boolean autodownloadEnabled = cfgMgr.getValue(new AutoDownloadConfigItem());
+            boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
             if (downloadables.size() > 1 && autodownloadEnabled) {
                 setDownloadablesMassContextMenu(downloadables);
             }
@@ -252,7 +255,7 @@ public class MainController extends StageAwareController {
             MenuItem addToQueueAllMenuItem = new MenuItem(appCtx.getResourceBundle().getString("component.downloadgrid.queue.addall"));
             addToQueueAllMenuItem.setOnAction(e -> {
                 AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
-                    String format = ConfigManager.INSTANCE.getValue(new AutoDownloadFormatConfigItem());
+                    String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();
                     for (MultiFormatDownloadable item : downloadables) {
                         CustomFormatDownloadable customFormatDownloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
                         customFormatDownloadable.setPostprocessingSteps(item.getPostprocessingSteps());

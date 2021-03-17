@@ -4,9 +4,15 @@ import java.io.File;
 import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.preferences.data.AutodownloadFormat;
 import com.github.engatec.vdl.core.preferences.data.PredefinedFormatCreator;
-import com.github.engatec.vdl.core.preferences.propertyholder.GeneralPropertyHolder;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
 import com.github.engatec.vdl.ui.Icons;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
@@ -29,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 public class GeneralPreferencesController extends VBox {
 
     private final Stage stage;
-    private final GeneralPropertyHolder propertyHolder;
 
     private final ToggleGroup downloadPathRadioGroup = new ToggleGroup();
     @FXML private RadioButton downloadPathRadioBtn;
@@ -45,9 +50,8 @@ public class GeneralPreferencesController extends VBox {
     @FXML private TextField autodownloadFormatTextField;
     @FXML private CheckBox skipDownloadableDetailsSearchCheckBox;
 
-    public GeneralPreferencesController(Stage stage, GeneralPropertyHolder propertyHolder) {
+    public GeneralPreferencesController(Stage stage) {
         this.stage = stage;
-        this.propertyHolder = propertyHolder;
     }
 
     @FXML
@@ -59,14 +63,14 @@ public class GeneralPreferencesController extends VBox {
     }
 
     private void bindPropertyHolder() {
-        askPathRadioBtn.selectedProperty().bindBidirectional(propertyHolder.alwaysAskPathProperty());
-        downloadPathTextField.textProperty().bindBidirectional(propertyHolder.downloadPathProperty());
+        askPathRadioBtn.selectedProperty().bindBidirectional(ConfigRegistry.get(AlwaysAskDownloadPathPref.class).getProperty());
+        downloadPathTextField.textProperty().bindBidirectional(ConfigRegistry.get(DownloadPathPref.class).getProperty());
 
-        autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(propertyHolder.autoSearchFromClipboardProperty());
+        autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(AutoSearchFromClipboardPref.class).getProperty());
 
-        autodownloadCheckBox.selectedProperty().bindBidirectional(propertyHolder.autoDownloadProperty());
-        autodownloadFormatTextField.textProperty().bindBidirectional(propertyHolder.autodownloadFormatProperty());
-        skipDownloadableDetailsSearchCheckBox.selectedProperty().bindBidirectional(propertyHolder.skipDownloadableDetailsSearchProperty());
+        autodownloadCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(AutoDownloadPref.class).getProperty());
+        autodownloadFormatTextField.textProperty().bindBidirectional(ConfigRegistry.get(AutoDownloadFormatPref.class).getProperty());
+        skipDownloadableDetailsSearchCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(SkipDownloadableDetailsSearchPref.class).getProperty());
     }
 
     private void handleDownloadPathChoose(ActionEvent event) {
@@ -104,7 +108,7 @@ public class GeneralPreferencesController extends VBox {
                 new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher480p"), PredefinedFormatCreator.create("480"))
         ));
 
-        String formatFromPreferences = propertyHolder.autodownloadFormatProperty().getValueSafe();
+        String formatFromPreferences = ConfigRegistry.get(AutoDownloadFormatPref.class).getProperty().getValueSafe();
         ObservableList<AutodownloadFormat> comboboxItems = autodownloadFormatComboBox.getItems();
         String customFormatValue = comboboxItems.stream()
                 .filter(it -> it.getValue().equals(formatFromPreferences))
@@ -114,7 +118,9 @@ public class GeneralPreferencesController extends VBox {
         comboboxItems.add(new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.custom"), customFormatValue));
 
         SingleSelectionModel<AutodownloadFormat> selectionModel = autodownloadFormatComboBox.getSelectionModel();
-        selectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) -> propertyHolder.setAutodownloadFormat(newValue.getValue()));
+        selectionModel.selectedItemProperty().addListener((observable, oldValue, newValue) ->
+                ConfigRegistry.get(AutoDownloadFormatPref.class).setValue(newValue.getValue())
+        );
         autodownloadFormatTextField.visibleProperty().bind(selectionModel.selectedIndexProperty().isEqualTo(comboboxItems.size() - 1));
 
         int itemToSelect = 0;

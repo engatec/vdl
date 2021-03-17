@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.model.preferences.propertywrapper.general;
+package com.github.engatec.vdl.model.preferences.wrapper.general;
 
 import com.github.engatec.vdl.model.preferences.ConfigItem;
 import com.github.engatec.vdl.model.preferences.general.SkipDownloadableDetailsSearchConfigItem;
-import com.github.engatec.vdl.model.preferences.propertywrapper.ConfigItemPropertyWrapper;
+import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class SkipDownloadableDetailsSearchPropertyWrapper extends ConfigItemPropertyWrapper<BooleanProperty, Boolean> {
+public class SkipDownloadableDetailsSearchPref extends ConfigItemWrapper<BooleanProperty, Boolean> {
 
     private static final ConfigItem<Boolean> CONFIG_ITEM = new SkipDownloadableDetailsSearchConfigItem();
 
     private final BooleanProperty property = new SimpleBooleanProperty();
 
-    public SkipDownloadableDetailsSearchPropertyWrapper() {
+    public SkipDownloadableDetailsSearchPref() {
         restore();
     }
 
