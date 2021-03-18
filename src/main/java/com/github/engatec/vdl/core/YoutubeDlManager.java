@@ -6,23 +6,23 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
-import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.CacheRemoveProcessBuilder;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadProcessBuilder;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadWithConfigFileProcessBuilder;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadableInfoFetchProcessBuilder;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.VersionFetchProcessBuilder;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuilder;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlUpdateProcessBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.DownloadableInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.model.postprocessing.Postprocessing;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -36,27 +36,10 @@ public class YoutubeDlManager {
 
     private final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    private Process runCommand(List<String> command) throws IOException {
-        return new ProcessBuilder(command)
-                .redirectErrorStream(true)
-                .start();
-    }
-
     public List<DownloadableInfo> fetchDownloadableInfo(String url) throws IOException {
-        if (StringUtils.isBlank(url)) {
-            throw new IllegalArgumentException("url must not be blank");
-        }
-
-        List<String> command = YoutubeDlCommandBuilder.newInstance()
-                .noDebug()
-                .dumpJson()
-                .ignoreErrors()
-                .noCheckCertificate()
-                .flatPlaylist()
-                .url(url)
-                .buildAsList();
-
-        Process process = new ProcessBuilder(command).start();
+        var pb = new DownloadableInfoFetchProcessBuilder(url);
+        List<String> command = pb.buildCommand();
+        Process process = pb.buildProcess(command);
         try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             List<String> jsonList = reader.lines().collect(Collectors.toList());
             List<DownloadableInfo> downloadableInfoList = new ArrayList<>(jsonList.size());
@@ -100,70 +83,18 @@ public class YoutubeDlManager {
 
     public Process download(Downloadable downloadable) throws IOException {
         Boolean useConfigFile = ConfigRegistry.get(UseConfigFilePref.class).getValue();
-        return useConfigFile ? downloadWithConfigFile(downloadable) : downloadNoConfigFile(downloadable);
-    }
-
-    private Process downloadNoConfigFile(Downloadable downloadable) throws IOException {
-        YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
-
-        commandBuilder
-                .noDebug()
-                .formatId(downloadable.getFormatId())
-                .outputPath(downloadable.getDownloadPath(), downloadable.getTitle())
-                .ignoreConfig()
-                .ignoreErrors()
-                .noCheckCertificate()
-                .ffmpegLocation(ApplicationContext.APP_DIR);
-
-        if (ConfigRegistry.get(NoMTimePref.class).getValue()) {
-            commandBuilder.noMTime();
-        }
-
-        for (Postprocessing pp : downloadable.getPostprocessingSteps()) {
-            commandBuilder.addAll(pp.getCommandList());
-        }
-
-        List<String> command = commandBuilder
-                .url(downloadable.getBaseUrl())
-                .buildAsList();
-
-        return runCommand(command);
-    }
-
-    private Process downloadWithConfigFile(Downloadable downloadable) throws IOException {
-        String configLocation = ConfigRegistry.get(ConfigFilePathPref.class).getValue();
-
-        YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance().configLocation(configLocation);
-
-        String configFile = StringUtils.EMPTY;
-        try (Stream<String> lines = Files.lines(Path.of(configLocation))) {
-            configFile = lines.map(it -> StringUtils.substringBefore(it, "#")).filter(StringUtils::isNotBlank).collect(Collectors.joining(StringUtils.SPACE));
-        } catch (Exception ignored) {
-            // Couldn't open config file. Youtube-dl will show the error
-        }
-
-        if (!configFile.contains("-f ") && !configFile.contains("--format ")) {
-            commandBuilder.formatId(downloadable.getFormatId());
-        }
-
-        if (!configFile.contains("-o ") && !configFile.contains("--output ")) {
-            commandBuilder.outputPath(downloadable.getDownloadPath(), downloadable.getTitle());
-        }
-
-        List<String> command = commandBuilder
-                .ffmpegLocation(ApplicationContext.APP_DIR)
-                .url(downloadable.getBaseUrl())
-                .buildAsList();
-
-        return runCommand(command);
+        YoutubeDlProcessBuilder pb = useConfigFile ? new DownloadWithConfigFileProcessBuilder(downloadable) : new DownloadProcessBuilder(downloadable);
+        List<String> command = pb.buildCommand();
+        return pb.buildProcess(command);
     }
 
     public String getYoutubeDlVersion() {
         String version = null;
 
-        List<String> command = YoutubeDlCommandBuilder.newInstance().version().buildAsList();
         try {
-            Process process = new ProcessBuilder(command).start();
+            var pb = new VersionFetchProcessBuilder();
+            List<String> command = pb.buildCommand();
+            Process process = pb.buildProcess(command);
             try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 version = reader.lines().findFirst().orElseThrow(YoutubeDlProcessException::new);
             } catch (Exception e) {
@@ -179,7 +110,11 @@ public class YoutubeDlManager {
     }
 
     public void checkYoutubeDlUpdates() throws IOException, InterruptedException {
-        runCommand(YoutubeDlCommandBuilder.newInstance().removeCache().buildAsList()).waitFor();
-        runCommand(YoutubeDlCommandBuilder.newInstance().update().buildAsList()).waitFor();
+        List<YoutubeDlProcessBuilder> processBuilders = List.of(new CacheRemoveProcessBuilder(), new YoutubeDlUpdateProcessBuilder());
+        for (YoutubeDlProcessBuilder pb : processBuilders) {
+            List<String> command = pb.buildCommand();
+            Process process = pb.buildProcess(command);
+            process.waitFor();
+        }
     }
 }
