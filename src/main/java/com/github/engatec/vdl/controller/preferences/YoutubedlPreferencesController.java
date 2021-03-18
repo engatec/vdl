@@ -3,8 +3,9 @@ package com.github.engatec.vdl.controller.preferences;
 import java.io.File;
 
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
-import com.github.engatec.vdl.core.preferences.propertyholder.YoutubedlPropertyHolder;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.ui.Icons;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
@@ -22,7 +23,6 @@ import javafx.stage.Stage;
 public class YoutubedlPreferencesController extends VBox {
 
     private final Stage stage;
-    private final YoutubedlPropertyHolder propertyHolder;
 
     @FXML private CheckBox noMTimeCheckBox;
 
@@ -32,9 +32,8 @@ public class YoutubedlPreferencesController extends VBox {
 
     @FXML private AnchorPane proxyUrlHintPane;
 
-    public YoutubedlPreferencesController(Stage stage, YoutubedlPropertyHolder propertyHolder) {
+    public YoutubedlPreferencesController(Stage stage) {
         this.stage = stage;
-        this.propertyHolder = propertyHolder;
     }
 
     @FXML
@@ -47,8 +46,8 @@ public class YoutubedlPreferencesController extends VBox {
     private void bindPropertyHolder() {
         noMTimeCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(NoMTimePref.class).getProperty());
 
-        useConfigFileCheckBox.selectedProperty().bindBidirectional(propertyHolder.useConfigFileProperty());
-        configFileTextField.textProperty().bindBidirectional(propertyHolder.configFilePathProperty());
+        useConfigFileCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(UseConfigFilePref.class).getProperty());
+        configFileTextField.textProperty().bindBidirectional(ConfigRegistry.get(ConfigFilePathPref.class).getProperty());
     }
 
     private void initNetworkSettings() {

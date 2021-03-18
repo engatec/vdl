@@ -37,8 +37,8 @@ public class ConfigRegistry {
         REGISTRY.put(UseConfigFilePref.class, new UseConfigFilePref());
     }
 
-    public static <T extends ConfigItemWrapper<?, ?>> T get(Class<T> propertyWrapperClass) {
-        return (T) REGISTRY.get(propertyWrapperClass);
+    public static <T extends ConfigItemWrapper<?, ?>> T get(Class<T> clazz) {
+        return (T) REGISTRY.get(clazz);
     }
 
     public static void restorePreviousValues() {

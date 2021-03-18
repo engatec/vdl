@@ -9,8 +9,6 @@ public abstract class Category {
     protected Node node;
 
     public abstract Node buildCategoryUi(Stage stage);
-    public abstract void readPreferences();
-    public abstract void savePreferences();
 
     public Category(String title) {
         this.title = title;

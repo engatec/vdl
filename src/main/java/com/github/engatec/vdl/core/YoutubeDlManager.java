@@ -15,16 +15,15 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.DownloadableInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
-import com.github.engatec.vdl.model.preferences.youtubedl.ConfigFilePathConfigItem;
-import com.github.engatec.vdl.model.preferences.youtubedl.UseConfigFileConfigItem;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -100,13 +99,11 @@ public class YoutubeDlManager {
     }
 
     public Process download(Downloadable downloadable) throws IOException {
-        Boolean useConfigFile = ConfigManager.INSTANCE.getValue(new UseConfigFileConfigItem());
+        Boolean useConfigFile = ConfigRegistry.get(UseConfigFilePref.class).getValue();
         return useConfigFile ? downloadWithConfigFile(downloadable) : downloadNoConfigFile(downloadable);
     }
 
     private Process downloadNoConfigFile(Downloadable downloadable) throws IOException {
-        ConfigManager cfg = ConfigManager.INSTANCE;
-
         YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
 
         commandBuilder
@@ -134,7 +131,7 @@ public class YoutubeDlManager {
     }
 
     private Process downloadWithConfigFile(Downloadable downloadable) throws IOException {
-        String configLocation = ConfigManager.INSTANCE.getValue(new ConfigFilePathConfigItem());
+        String configLocation = ConfigRegistry.get(ConfigFilePathPref.class).getValue();
 
         YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance().configLocation(configLocation);
 

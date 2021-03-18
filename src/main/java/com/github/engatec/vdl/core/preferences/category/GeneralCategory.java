@@ -13,17 +13,8 @@ public class GeneralCategory extends Category {
     @Override
     public Node buildCategoryUi(Stage stage) {
         if (super.node == null) {
-            readPreferences();
             super.node = new GeneralPreferencesComponent(stage).load();
         }
         return node;
-    }
-
-    @Override
-    public void readPreferences() {
-    }
-
-    @Override
-    public void savePreferences() {
     }
 }

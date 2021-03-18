@@ -59,7 +59,7 @@ public class PreferencesController extends StageAwareController {
             Node categoryUi = newValue.getValue().buildCategoryUi(stage);
             preferencesScrollPane.setContent(categoryUi);
         });
-        selectionModel.select(0);
+        selectionModel.selectFirst();
     }
 
     private TreeItem<Category> createRoot() {
@@ -108,8 +108,5 @@ public class PreferencesController extends StageAwareController {
 
     private void saveSettings() {
         ConfigRegistry.saveAll();
-        for (TreeItem<Category> child : preferencesCategoryTreeView.getRoot().getChildren()) {
-            child.getValue().savePreferences();
-        }
     }
 }
