@@ -1,5 +1,6 @@
 package com.github.engatec.vdl;
 
+import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.QueueManager;
@@ -19,7 +20,7 @@ public class Main extends Application {
 
     @Override
     public void stop() {
-        ApplicationContext.INSTANCE.shutdownExecutors();
+        AppExecutors.shutdownExecutors();
     }
 
     public static void main(String[] args) {

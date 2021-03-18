@@ -1,6 +1,7 @@
 package com.github.engatec.vdl.controller;
 
 
+import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.worker.DownloadTask;
@@ -76,7 +77,7 @@ public class DownloadingProgressController extends StageAwareController {
             event.consume();
         });
 
-        ApplicationContext.INSTANCE.runTaskAsync(task);
+        AppExecutors.runTaskAsync(task);
     }
 
     private void setDownloadingResult(String mesageKey) {

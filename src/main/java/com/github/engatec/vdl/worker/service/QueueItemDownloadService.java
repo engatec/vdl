@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.model.DownloadStatus;
@@ -47,7 +48,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
         super();
         this.queueItem = queueItem;
         maxOverallProgress = MAX_PROGRESS_PER_ITEM * (StringUtils.countMatches(StringUtils.substringBefore(queueItem.getFormatId(), FORMAT_SEPARATOR), '+') + 1);
-        setExecutor(ApplicationContext.INSTANCE.getQueueExecutor());
+        setExecutor(AppExecutors.QUEUE_EXECUTOR);
 
         queueItem.progressProperty().bind(progressProperty());
         valueProperty().addListener((observable, oldValue, newValue) -> {

@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.controller.dialog;
 
 import com.github.engatec.vdl.controller.StageAwareController;
-import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.AppExecutors;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -47,7 +47,7 @@ public class ProgressDialogController extends StageAwareController {
             task.cancel();
             e.consume();
         });
-        ApplicationContext.INSTANCE.runTaskAsync(task);
+        AppExecutors.runTaskAsync(task);
     }
 
     private void close(Event e) {

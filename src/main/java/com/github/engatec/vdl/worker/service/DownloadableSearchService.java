@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
@@ -36,7 +37,7 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
 
     public DownloadableSearchService() {
         super();
-        setExecutor(ApplicationContext.INSTANCE.getSharedExecutor());
+        setExecutor(AppExecutors.COMMON_EXECUTOR);
     }
 
     public String getUrl() {
