@@ -25,10 +25,13 @@ public abstract class AppStage {
 
     protected AppStage(Stage stage) {
         this.stage = stage;
-        load();
     }
 
-    private void load() {
+    protected void init() {
+        loadFxml();
+    }
+
+    private void loadFxml() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(getFxmlPath()), ApplicationContext.INSTANCE.getResourceBundle());
         loader.setControllerFactory(getControllerFactory(stage));
 

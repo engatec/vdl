@@ -7,12 +7,18 @@ import javafx.util.Callback;
 public class AboutStage extends AppStage {
 
     public AboutStage() {
-        stage.setResizable(false);
+        init();
     }
 
     @Override
     protected String getFxmlPath() {
         return "/fxml/about.fxml";
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        stage.setResizable(false);
     }
 
     @Override

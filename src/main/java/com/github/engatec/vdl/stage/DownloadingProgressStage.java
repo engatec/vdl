@@ -11,6 +11,12 @@ public class DownloadingProgressStage extends AppStage {
 
     public DownloadingProgressStage(Downloadable downloadable) {
         this.downloadable = downloadable;
+        init();
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         stage.setResizable(false);
     }
 

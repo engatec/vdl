@@ -13,6 +13,12 @@ public class MainStage extends AppStage {
 
     public MainStage(Stage stage) {
         super(stage);
+        init();
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         stage.setTitle("VDL - Video downloader");
         stage.setOnCloseRequest(this::handleCloseRequest);
     }

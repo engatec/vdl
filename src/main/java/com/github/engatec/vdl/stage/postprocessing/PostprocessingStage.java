@@ -13,6 +13,12 @@ public class PostprocessingStage extends AppStage {
 
     public PostprocessingStage(Downloadable downloadable) {
         this.downloadable = downloadable;
+        init();
+    }
+
+    @Override
+    protected void init() {
+        super.init();
         stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.postprocessing.title"));
     }
 
