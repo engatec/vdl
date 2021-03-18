@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.stage.postprocessing;
+package com.github.engatec.vdl.ui.stage.postprocessing;
 
 import java.util.function.Consumer;
 
@@ -6,7 +6,7 @@ import com.github.engatec.vdl.controller.postprocessing.FragmentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.postprocessing.FragmentCutPostprocessing;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
-import com.github.engatec.vdl.stage.AppStage;
+import com.github.engatec.vdl.ui.stage.AppStage;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 

@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.core.command;
 
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.stage.DownloadingProgressStage;
+import com.github.engatec.vdl.ui.stage.DownloadingProgressStage;
 import javafx.stage.Stage;
 
 public class DownloadCommand implements Command {

@@ -6,7 +6,7 @@ import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
-import com.github.engatec.vdl.stage.MainStage;
+import com.github.engatec.vdl.ui.stage.MainStage;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

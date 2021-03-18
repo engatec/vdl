@@ -1,7 +1,7 @@
-package com.github.engatec.vdl.component.preferences;
+package com.github.engatec.vdl.ui.component.preferences;
 
-import com.github.engatec.vdl.component.AppComponent;
 import com.github.engatec.vdl.controller.preferences.YoutubedlPreferencesController;
+import com.github.engatec.vdl.ui.component.AppComponent;
 import javafx.stage.Stage;
 
 public class YoutubeDlPreferencesComponent extends AppComponent<YoutubedlPreferencesController> {

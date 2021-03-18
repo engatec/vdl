@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.component;
+package com.github.engatec.vdl.ui.component;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -10,7 +10,7 @@ import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
-import com.github.engatec.vdl.stage.postprocessing.PostprocessingStageFactory;
+import com.github.engatec.vdl.ui.stage.postprocessing.PostprocessingStageFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

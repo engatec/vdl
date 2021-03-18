@@ -1,9 +1,9 @@
-package com.github.engatec.vdl.stage.postprocessing;
+package com.github.engatec.vdl.ui.stage.postprocessing;
 
 import com.github.engatec.vdl.controller.postprocessing.PostprocessingController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.stage.AppStage;
+import com.github.engatec.vdl.ui.stage.AppStage;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 

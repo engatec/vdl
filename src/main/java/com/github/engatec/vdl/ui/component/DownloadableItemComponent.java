@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.component;
+package com.github.engatec.vdl.ui.component;
 
 import java.util.ResourceBundle;
 
@@ -10,7 +10,7 @@ import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref;
-import com.github.engatec.vdl.stage.postprocessing.PostprocessingStage;
+import com.github.engatec.vdl.ui.stage.postprocessing.PostprocessingStage;
 import com.github.engatec.vdl.util.AppUtils;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;

@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.stage.ProgressDialogStage;
+import com.github.engatec.vdl.ui.stage.ProgressDialogStage;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
