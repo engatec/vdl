@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
+import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
 import org.apache.commons.lang3.StringUtils;
 
 public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuilder {
@@ -19,11 +20,15 @@ public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuil
 
     @Override
     public List<String> buildCommand() {
-        return YoutubeDlCommandBuilder.newInstance()
+        YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance()
                 .dumpJson()
                 .ignoreErrors()
                 .noCheckCertificate()
-                .flatPlaylist()
+                .flatPlaylist();
+
+        YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
+
+        return commandBuilder
                 .url(url)
                 .buildAsList();
     }

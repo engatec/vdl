@@ -7,7 +7,10 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <fx:root spacing="8.0" stylesheets="@../../styles.css" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -17,15 +20,27 @@
             <Separator HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <VBox>
+      <VBox spacing="8.0">
          <children>
-            <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <GridPane alignment="CENTER_LEFT" hgap="8.0" vgap="8.0">
+              <columnConstraints>
+                <ColumnConstraints minWidth="10.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+                  <ColumnConstraints minWidth="10.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
                   <Label text="%preferences.youtubedl.network.proxy.label" />
-                  <TextField HBox.hgrow="ALWAYS" />
-                  <AnchorPane fx:id="proxyUrlHintPane" />
+                  <TextField fx:id="proxyUrlTextField" GridPane.columnIndex="1" />
+                  <AnchorPane fx:id="proxyUrlHintPane" GridPane.columnIndex="2" />
+                  <Label text="%preferences.youtubedl.network.socket.timeout.label" GridPane.rowIndex="1" />
+                  <TextField fx:id="socketTimoutTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
-            </HBox>
+            </GridPane>
          </children>
          <padding>
             <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />

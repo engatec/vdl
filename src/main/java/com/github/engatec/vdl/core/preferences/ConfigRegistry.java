@@ -14,6 +14,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadable
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 
 public class ConfigRegistry {
@@ -34,6 +35,7 @@ public class ConfigRegistry {
         REGISTRY.put(ConfigFilePathPref.class, new ConfigFilePathPref());
         REGISTRY.put(NoMTimePref.class, new NoMTimePref());
         REGISTRY.put(ProxyUrlPref.class, new ProxyUrlPref());
+        REGISTRY.put(SocketTimeoutPref.class, new SocketTimeoutPref());
         REGISTRY.put(UseConfigFilePref.class, new UseConfigFilePref());
     }
 

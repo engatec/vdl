@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.util.List;
 
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
+import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
 
 public class VersionFetchProcessBuilder implements YoutubeDlProcessBuilder {
 
     @Override
     public List<String> buildCommand() {
-        return YoutubeDlCommandBuilder.newInstance()
-                .version()
-                .buildAsList();
+        YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance().version();
+        YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
+        return commandBuilder.buildAsList();
     }
 
     @Override

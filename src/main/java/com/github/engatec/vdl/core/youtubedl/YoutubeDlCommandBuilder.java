@@ -43,9 +43,47 @@ public class YoutubeDlCommandBuilder {
     }
 
 
-    // General options
+    /* General options */
+    public YoutubeDlCommandBuilder version() {
+        commandList.add("--version");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder update() {
+        commandList.add("-U");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder ignoreErrors() {
+        commandList.add("-i");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder ignoreConfig() {
+        commandList.add("--ignore-config");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder configLocation(String path) {
+        commandList.add("--config-location");
+        commandList.add(path);
+        return this;
+    }
+
     public YoutubeDlCommandBuilder flatPlaylist() {
         commandList.add("--flat-playlist");
+        return this;
+    }
+
+    /* Network options */
+    public YoutubeDlCommandBuilder proxy(String url) {
+        commandList.add("--proxy");
+        commandList.add(url);
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder socketTimeout(int seconds) {
+        commandList.add("--socket-timeout");
         return this;
     }
 
@@ -95,34 +133,8 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
-    public YoutubeDlCommandBuilder update() {
-        commandList.add("-U");
-        return this;
-    }
-
-    public YoutubeDlCommandBuilder version() {
-        commandList.add("--version");
-        return this;
-    }
-
     public YoutubeDlCommandBuilder noMTime() {
         commandList.add("--no-mtime");
-        return this;
-    }
-
-    public YoutubeDlCommandBuilder configLocation(String path) {
-        commandList.add("--config-location");
-        commandList.add(path);
-        return this;
-    }
-
-    public YoutubeDlCommandBuilder ignoreConfig() {
-        commandList.add("--ignore-config");
-        return this;
-    }
-
-    public YoutubeDlCommandBuilder ignoreErrors() {
-        commandList.add("-i");
         return this;
     }
 
