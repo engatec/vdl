@@ -12,9 +12,12 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 
 public class ConfigRegistry {
@@ -37,6 +40,9 @@ public class ConfigRegistry {
         REGISTRY.put(ProxyUrlPref.class, new ProxyUrlPref());
         REGISTRY.put(SocketTimeoutPref.class, new SocketTimeoutPref());
         REGISTRY.put(UseConfigFilePref.class, new UseConfigFilePref());
+        REGISTRY.put(SourceAddressPref.class, new SourceAddressPref());
+        REGISTRY.put(ForceIpV4Pref.class, new ForceIpV4Pref());
+        REGISTRY.put(ForceIpV6Pref.class, new ForceIpV6Pref());
     }
 
     public static <T extends ConfigItemWrapper<?, ?>> T get(Class<T> clazz) {

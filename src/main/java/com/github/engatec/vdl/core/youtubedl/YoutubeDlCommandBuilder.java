@@ -84,8 +84,27 @@ public class YoutubeDlCommandBuilder {
 
     public YoutubeDlCommandBuilder socketTimeout(int seconds) {
         commandList.add("--socket-timeout");
+        commandList.add(String.valueOf(seconds));
         return this;
     }
+
+    public YoutubeDlCommandBuilder sourceAddress(String ip) {
+        commandList.add("--source-address");
+        commandList.add(ip);
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder forceIpV4() {
+        commandList.add("--force-ipv4");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder forceIpV6() {
+        commandList.add("--force-ipv6");
+        return this;
+    }
+
+
 
     public YoutubeDlCommandBuilder ffmpegLocation(String location) {
         if (StringUtils.isBlank(location)) {

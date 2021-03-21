@@ -31,7 +31,7 @@
               <rowConstraints>
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
                   <Label text="%preferences.youtubedl.network.proxy.label" />
@@ -39,8 +39,20 @@
                   <AnchorPane fx:id="proxyUrlHintPane" GridPane.columnIndex="2" />
                   <Label text="%preferences.youtubedl.network.socket.timeout.label" GridPane.rowIndex="1" />
                   <TextField fx:id="socketTimoutTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label text="%preferences.youtubedl.network.sourceaddress.label" GridPane.rowIndex="2" />
+                  <TextField fx:id="sourceAddressTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <AnchorPane fx:id="sourceAddressHintPane" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                </children>
             </GridPane>
+            <HBox spacing="12.0">
+               <children>
+                  <CheckBox fx:id="forceIpV4CheckBox" mnemonicParsing="false" text="%preferences.youtubedl.network.forceipv4.label" />
+                  <CheckBox fx:id="forceIpV6CheckBox" mnemonicParsing="false" text="%preferences.youtubedl.network.forceipv6.label" />
+               </children>
+               <VBox.margin>
+                  <Insets top="4.0" />
+               </VBox.margin>
+            </HBox>
          </children>
          <padding>
             <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />

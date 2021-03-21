@@ -1,8 +1,11 @@
 package com.github.engatec.vdl.core.youtubedl;
 
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +28,21 @@ public class YoutubeDlCommandHelper {
             } catch (NumberFormatException e) {
                 LOGGER.warn(e.getMessage(), e);
             }
+        }
+
+        String sourceAddress = StringUtils.strip(ConfigRegistry.get(SourceAddressPref.class).getValue());
+        if (StringUtils.isNotBlank(sourceAddress)) {
+            commandBuilder.sourceAddress(sourceAddress);
+        }
+
+        Boolean forceIpV4 = ConfigRegistry.get(ForceIpV4Pref.class).getValue();
+        if (forceIpV4) {
+            commandBuilder.forceIpV4();
+        }
+
+        Boolean forceIpV6 = ConfigRegistry.get(ForceIpV6Pref.class).getValue();
+        if (forceIpV6) {
+            commandBuilder.forceIpV6();
         }
     }
 }
