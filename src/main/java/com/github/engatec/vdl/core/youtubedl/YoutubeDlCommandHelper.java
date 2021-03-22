@@ -44,5 +44,9 @@ public class YoutubeDlCommandHelper {
         if (forceIpV6) {
             commandBuilder.forceIpV6();
         }
+
+        if (forceIpV4 && forceIpV6) {
+            LOGGER.warn("Both forceIpV4 and forceIpV6 settings enabled!");
+        }
     }
 }
