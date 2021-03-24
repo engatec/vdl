@@ -104,7 +104,18 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
+    /* Authentication Options */
+    public YoutubeDlCommandBuilder username(String username) {
+        commandList.add("-u");
+        commandList.add(username);
+        return this;
+    }
 
+    public YoutubeDlCommandBuilder password(String password) {
+        commandList.add("-p");
+        commandList.add(password);
+        return this;
+    }
 
     public YoutubeDlCommandBuilder ffmpegLocation(String location) {
         if (StringUtils.isBlank(location)) {

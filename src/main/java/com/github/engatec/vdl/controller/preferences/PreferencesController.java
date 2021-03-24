@@ -88,6 +88,14 @@ public class PreferencesController extends StageAwareController {
     }
 
     private void handleOkBtnClick(ActionEvent event) {
+        for (TreeItem<Category> item : preferencesCategoryTreeView.getRoot().getChildren()) {
+            if (item.getValue().hasErrors()) {
+                preferencesCategoryTreeView.getSelectionModel().select(item);
+                event.consume();
+                return;
+            }
+        }
+
         fixState();
         saveSettings();
         stage.close();

@@ -1,9 +1,14 @@
 package com.github.engatec.vdl.controller.preferences;
 
 import java.io.File;
+import java.util.ResourceBundle;
 
+import com.github.engatec.fxcontrols.TextFieldExt;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.handler.textformatter.IntegerTextFormatter;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
@@ -14,6 +19,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressP
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.ui.Icons;
 import com.github.engatec.vdl.util.PaneUtils;
+import com.github.engatec.vdl.validation.InputForm;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,14 +28,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
-public class YoutubedlPreferencesController extends VBox {
+public class YoutubedlPreferencesController extends VBox implements InputForm {
 
     private final Stage stage;
 
@@ -41,9 +47,11 @@ public class YoutubedlPreferencesController extends VBox {
     @FXML private TextField sourceAddressTextField;
     @FXML private AnchorPane sourceAddressHintPane;
 
-    private final ToggleGroup ipvSelectionToggleGroup = new ToggleGroup();
     @FXML private CheckBox forceIpV4CheckBox;
     @FXML private CheckBox forceIpV6CheckBox;
+
+    @FXML private TextFieldExt usernameTextField;
+    @FXML private TextFieldExt passwordTextField;
 
     @FXML private CheckBox noMTimeCheckBox;
 
@@ -58,6 +66,7 @@ public class YoutubedlPreferencesController extends VBox {
     @FXML
     public void initialize() {
         initNetworkSettings();
+        initAuthenticationSettings();
         initConfigFileSettings();
         bindPropertyHolder();
     }
@@ -68,6 +77,9 @@ public class YoutubedlPreferencesController extends VBox {
         sourceAddressTextField.textProperty().bindBidirectional(ConfigRegistry.get(SourceAddressPref.class).getProperty());
         forceIpV4CheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(ForceIpV4Pref.class).getProperty());
         forceIpV6CheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(ForceIpV6Pref.class).getProperty());
+
+        usernameTextField.textProperty().bindBidirectional(ConfigRegistry.get(AuthUsernamePref.class).getProperty());
+        passwordTextField.textProperty().bindBidirectional(ConfigRegistry.get(AuthPasswordPref.class).getProperty());
 
         noMTimeCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(NoMTimePref.class).getProperty());
 
@@ -96,6 +108,11 @@ public class YoutubedlPreferencesController extends VBox {
         });
     }
 
+    private void initAuthenticationSettings() {
+        usernameTextField.textProperty().addListener((observable, oldValue, newValue) -> usernameTextField.clearError());
+        passwordTextField.textProperty().addListener((observable, oldValue, newValue) -> passwordTextField.clearError());
+    }
+
     private void initConfigFileSettings() {
         useConfigFileCheckBox.setGraphic(Icons.infoWithTooltip("preferences.youtubedl.checkbox.configitem.tooltip"));
         useConfigFileCheckBox.setContentDisplay(ContentDisplay.RIGHT);
@@ -114,5 +131,23 @@ public class YoutubedlPreferencesController extends VBox {
             configFileTextField.setText(path);
         }
         event.consume();
+    }
+
+    @Override
+    public boolean hasErrors() {
+        boolean hasErrors = false;
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
+        if (StringUtils.isBlank(usernameTextField.getText()) && StringUtils.isNotBlank(passwordTextField.getText())) {
+            usernameTextField.setError(resourceBundle.getString("preferences.youtubedl.authentication.username.error"));
+            hasErrors = true;
+        }
+
+        if (StringUtils.isBlank(passwordTextField.getText()) && StringUtils.isNotBlank(usernameTextField.getText())) {
+            passwordTextField.setError(resourceBundle.getString("preferences.youtubedl.authentication.password.error"));
+            hasErrors = true;
+        }
+
+        return hasErrors;
     }
 }

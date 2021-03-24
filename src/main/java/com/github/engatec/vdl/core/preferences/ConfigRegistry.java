@@ -11,6 +11,8 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromCl
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
@@ -43,6 +45,8 @@ public class ConfigRegistry {
         REGISTRY.put(SourceAddressPref.class, new SourceAddressPref());
         REGISTRY.put(ForceIpV4Pref.class, new ForceIpV4Pref());
         REGISTRY.put(ForceIpV6Pref.class, new ForceIpV6Pref());
+        REGISTRY.put(AuthUsernamePref.class, new AuthUsernamePref());
+        REGISTRY.put(AuthPasswordPref.class, new AuthPasswordPref());
     }
 
     public static <T extends ConfigItemWrapper<?, ?>> T get(Class<T> clazz) {

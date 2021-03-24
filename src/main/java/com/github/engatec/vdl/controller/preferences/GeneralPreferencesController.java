@@ -14,6 +14,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromCl
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
 import com.github.engatec.vdl.ui.Icons;
+import com.github.engatec.vdl.validation.InputForm;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,7 +33,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
-public class GeneralPreferencesController extends VBox {
+public class GeneralPreferencesController extends VBox implements InputForm {
 
     private final Stage stage;
 
@@ -136,5 +137,10 @@ public class GeneralPreferencesController extends VBox {
 
         skipDownloadableDetailsSearchCheckBox.setGraphic(Icons.infoWithTooltip("preferences.general.autodownload.checkbox.skipdetailssearch.tooltip"));
         skipDownloadableDetailsSearchCheckBox.setContentDisplay(ContentDisplay.RIGHT);
+    }
+
+    @Override
+    public boolean hasErrors() {
+        return false;
     }
 }

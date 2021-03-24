@@ -34,6 +34,7 @@ public class DownloadProcessBuilder implements YoutubeDlProcessBuilder {
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
         YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
+        YoutubeDlCommandHelper.setAuthenticationOptions(commandBuilder);
 
         if (ConfigRegistry.get(NoMTimePref.class).getValue()) {
             commandBuilder.noMTime();

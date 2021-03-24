@@ -59,4 +59,23 @@ public class YoutubeDlCommandBuilderTests {
             doAssertions(command, "--force-ipv6");
         }
     }
+
+    @Nested
+    @DisplayName("Authentication options")
+    class AuthenticationOptions {
+
+        @Test
+        void shouldCreateUsername() {
+            String username = "usr";
+            List<String> command = YoutubeDlCommandBuilder.newInstance().username(username).buildAsList();
+            doAssertions(command, "-u", username);
+        }
+
+        @Test
+        void shouldCreatePassword() {
+            String password = "pass";
+            List<String> command = YoutubeDlCommandBuilder.newInstance().password(password).buildAsList();
+            doAssertions(command, "-p", password);
+        }
+    }
 }

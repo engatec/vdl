@@ -27,6 +27,7 @@ public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuil
                 .flatPlaylist();
 
         YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
+        YoutubeDlCommandHelper.setAuthenticationOptions(commandBuilder);
 
         return commandBuilder
                 .url(url)

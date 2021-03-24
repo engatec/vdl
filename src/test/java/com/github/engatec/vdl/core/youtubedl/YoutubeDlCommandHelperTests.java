@@ -3,6 +3,8 @@ package com.github.engatec.vdl.core.youtubedl;
 import java.util.List;
 
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
@@ -30,7 +32,7 @@ public class YoutubeDlCommandHelperTests {
     }
 
     @Nested
-    @DisplayName("Network Options")
+    @DisplayName("Network options")
     class NetworkOptions {
 
         @BeforeEach
@@ -100,6 +102,37 @@ public class YoutubeDlCommandHelperTests {
                     .hasSize(8)
                     .contains("--proxy", "--socket-timeout", "--source-address", "--force-ipv4")
                     .doesNotContain("--force-ipv6");
+        }
+    }
+
+    @Nested
+    @DisplayName("Authenticated options")
+    class AuthenticationOptions {
+
+        @BeforeEach
+        void setUp() {
+            ConfigRegistry.get(AuthUsernamePref.class).restore();
+            ConfigRegistry.get(AuthPasswordPref.class).restore();
+        }
+
+        private List<String> buildCommand() {
+            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
+            YoutubeDlCommandHelper.setAuthenticationOptions(commandBuilder);
+            return commandBuilder.buildAsList();
+        }
+
+        @Test
+        void shouldSetUsername() {
+            String username = "usr";
+            ConfigRegistry.get(AuthUsernamePref.class).getProperty().setValue(username);
+            doAssertions(buildCommand(), "-u", username);
+        }
+
+        @Test
+        void shouldSetPassword() {
+            String password = "pass";
+            ConfigRegistry.get(AuthPasswordPref.class).getProperty().setValue(password);
+            doAssertions(buildCommand(), "-p", password);
         }
     }
 }

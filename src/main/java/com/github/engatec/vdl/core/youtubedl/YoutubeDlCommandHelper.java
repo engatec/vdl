@@ -1,27 +1,31 @@
 package com.github.engatec.vdl.core.youtubedl;
 
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.strip;
 
 public class YoutubeDlCommandHelper {
 
     private static final Logger LOGGER = LogManager.getLogger(YoutubeDlCommandHelper.class);
 
     public static void setNetworkOptions(YoutubeDlCommandBuilder commandBuilder) {
-        String proxyUrl = StringUtils.strip(ConfigRegistry.get(ProxyUrlPref.class).getValue());
-        if (StringUtils.isNotBlank(proxyUrl)) {
+        String proxyUrl = strip(ConfigRegistry.get(ProxyUrlPref.class).getValue());
+        if (isNotBlank(proxyUrl)) {
             commandBuilder.proxy(proxyUrl);
         }
 
-        String socketTimeout = StringUtils.strip(ConfigRegistry.get(SocketTimeoutPref.class).getValue());
-        if (StringUtils.isNotBlank(socketTimeout)) {
+        String socketTimeout = strip(ConfigRegistry.get(SocketTimeoutPref.class).getValue());
+        if (isNotBlank(socketTimeout)) {
             try {
                 int timeout = Integer.parseInt(socketTimeout);
                 commandBuilder.socketTimeout(timeout);
@@ -30,8 +34,8 @@ public class YoutubeDlCommandHelper {
             }
         }
 
-        String sourceAddress = StringUtils.strip(ConfigRegistry.get(SourceAddressPref.class).getValue());
-        if (StringUtils.isNotBlank(sourceAddress)) {
+        String sourceAddress = strip(ConfigRegistry.get(SourceAddressPref.class).getValue());
+        if (isNotBlank(sourceAddress)) {
             commandBuilder.sourceAddress(sourceAddress);
         }
 
@@ -47,6 +51,18 @@ public class YoutubeDlCommandHelper {
 
         if (forceIpV4 && forceIpV6) {
             LOGGER.warn("Both forceIpV4 and forceIpV6 settings enabled!");
+        }
+    }
+
+    public static void setAuthenticationOptions(YoutubeDlCommandBuilder commandBuilder) {
+        String username = strip(ConfigRegistry.get(AuthUsernamePref.class).getValue());
+        if (isNotBlank(username)) {
+            commandBuilder.username(username);
+        }
+
+        String password = strip(ConfigRegistry.get(AuthPasswordPref.class).getValue());
+        if (isNotBlank(password)) {
+            commandBuilder.password(password);
         }
     }
 }
