@@ -7,7 +7,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -27,22 +26,19 @@
               <columnConstraints>
                 <ColumnConstraints minWidth="10.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-                  <ColumnConstraints minWidth="10.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints vgrow="NEVER" />
-                <RowConstraints vgrow="NEVER" />
-                <RowConstraints vgrow="NEVER" />
+                <RowConstraints valignment="BASELINE" vgrow="NEVER" />
+                <RowConstraints valignment="BASELINE" vgrow="NEVER" />
+                <RowConstraints valignment="BASELINE" vgrow="NEVER" />
               </rowConstraints>
                <children>
                   <Label text="%preferences.youtubedl.network.proxy.label" />
-                  <TextField fx:id="proxyUrlTextField" GridPane.columnIndex="1" />
-                  <AnchorPane fx:id="proxyUrlHintPane" GridPane.columnIndex="2" />
+                  <TextFieldExt fx:id="proxyUrlTextField" GridPane.columnIndex="1" />
                   <Label text="%preferences.youtubedl.network.socket.timeout.label" GridPane.rowIndex="1" />
-                  <TextField fx:id="socketTimoutTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextFieldExt fx:id="socketTimoutTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label text="%preferences.youtubedl.network.sourceaddress.label" GridPane.rowIndex="2" />
-                  <TextField fx:id="sourceAddressTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <AnchorPane fx:id="sourceAddressHintPane" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <TextFieldExt fx:id="sourceAddressTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                </children>
             </GridPane>
             <HBox spacing="12.0">
@@ -74,7 +70,6 @@
                <columnConstraints>
                   <ColumnConstraints minWidth="10.0" />
                   <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-                  <ColumnConstraints minWidth="10.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints valignment="BASELINE" vgrow="NEVER" />

@@ -14,7 +14,9 @@ public class PreferencesStage extends AppStage {
     protected void init() {
         super.init();
         stage.setMinWidth(700);
+        stage.setWidth(800);
         stage.setMinHeight(400);
+        stage.setHeight(500);
     }
 
     @Override

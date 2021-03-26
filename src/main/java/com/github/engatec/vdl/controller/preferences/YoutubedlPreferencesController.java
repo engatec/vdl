@@ -18,34 +18,29 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutP
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.ui.Icons;
-import com.github.engatec.vdl.util.PaneUtils;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.InetAddressValidator;
+import org.apache.commons.validator.routines.UrlValidator;
 
 public class YoutubedlPreferencesController extends VBox implements InputForm {
 
     private final Stage stage;
 
-    @FXML private TextField proxyUrlTextField;
-    @FXML private AnchorPane proxyUrlHintPane;
-
-    @FXML private TextField socketTimoutTextField;
-
-    @FXML private TextField sourceAddressTextField;
-    @FXML private AnchorPane sourceAddressHintPane;
+    @FXML private TextFieldExt proxyUrlTextField;
+    @FXML private TextFieldExt socketTimoutTextField;
+    @FXML private TextFieldExt sourceAddressTextField;
 
     @FXML private CheckBox forceIpV4CheckBox;
     @FXML private CheckBox forceIpV6CheckBox;
@@ -88,13 +83,16 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
     }
 
     private void initNetworkSettings() {
-        Group proxyUrlHintIcon = Icons.infoWithTooltip("preferences.youtubedl.network.proxy.hint");
-        proxyUrlHintPane.getChildren().add(PaneUtils.fillAnchorPane(proxyUrlHintIcon));
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
+        proxyUrlTextField.textProperty().addListener((observable, oldValue, newValue) -> proxyUrlTextField.clearError());
+        proxyUrlTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.proxy.hint"));
 
         socketTimoutTextField.setTextFormatter(new IntegerTextFormatter());
+        socketTimoutTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.socket.timeout.hint"));
 
-        Group sourceAddressHintIcon = Icons.infoWithTooltip("preferences.youtubedl.network.sourceaddress.hint");
-        sourceAddressHintPane.getChildren().add(PaneUtils.fillAnchorPane(sourceAddressHintIcon));
+        sourceAddressTextField.textProperty().addListener((observable, oldValue, newValue) -> sourceAddressTextField.clearError());
+        sourceAddressTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.sourceaddress.hint"));
 
         forceIpV4CheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (BooleanUtils.isTrue(newValue)) {
@@ -137,6 +135,19 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
     public boolean hasErrors() {
         boolean hasErrors = false;
         ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
+        String proxyUrl = proxyUrlTextField.getText();
+        if (StringUtils.isNotBlank(proxyUrl) && !new UrlValidator(new String[] {"http", "https", "socks4", "socks5"}).isValid(proxyUrl)) {
+            proxyUrlTextField.setError(resourceBundle.getString("preferences.youtubedl.network.proxy.error"));
+            hasErrors = true;
+        }
+
+        String sourceAddressText = sourceAddressTextField.getText();
+        InetAddressValidator ipValidator = InetAddressValidator.getInstance();
+        if (StringUtils.isNotBlank(sourceAddressText) && !(ipValidator.isValidInet4Address(sourceAddressText) || ipValidator.isValidInet6Address(sourceAddressText))) {
+            sourceAddressTextField.setError(resourceBundle.getString("preferences.youtubedl.network.sourceaddress.error"));
+            hasErrors = true;
+        }
 
         if (StringUtils.isBlank(usernameTextField.getText()) && StringUtils.isNotBlank(passwordTextField.getText())) {
             usernameTextField.setError(resourceBundle.getString("preferences.youtubedl.authentication.username.error"));
