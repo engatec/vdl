@@ -15,8 +15,13 @@ class Context {
     private final TextFieldExt sourceAddressTextField;
     private final CheckBox forceIpV4CheckBox;
     private final CheckBox forceIpV6CheckBox;
+
     private final TextFieldExt usernameTextField;
     private final TextFieldExt passwordTextField;
+    private final TextField twoFactorTextField;
+    private final TextFieldExt videoPasswordTextField;
+    private final CheckBox netrcCheckbox;
+
     private final CheckBox noMTimeCheckBox;
     private final CheckBox useConfigFileCheckBox;
     private final TextField configFileTextField;
@@ -31,6 +36,9 @@ class Context {
             CheckBox forceIpV6CheckBox,
             TextFieldExt usernameTextField,
             TextFieldExt passwordTextField,
+            TextField twoFactorTextField,
+            TextFieldExt videoPasswordTextField,
+            CheckBox netrcCheckbox,
             CheckBox noMTimeCheckBox,
             CheckBox useConfigFileCheckBox,
             TextField configFileTextField,
@@ -44,6 +52,9 @@ class Context {
         this.forceIpV6CheckBox = forceIpV6CheckBox;
         this.usernameTextField = usernameTextField;
         this.passwordTextField = passwordTextField;
+        this.twoFactorTextField = twoFactorTextField;
+        this.videoPasswordTextField = videoPasswordTextField;
+        this.netrcCheckbox = netrcCheckbox;
         this.noMTimeCheckBox = noMTimeCheckBox;
         this.useConfigFileCheckBox = useConfigFileCheckBox;
         this.configFileTextField = configFileTextField;
@@ -80,6 +91,18 @@ class Context {
 
     TextFieldExt getPasswordTextField() {
         return passwordTextField;
+    }
+
+    TextField getTwoFactorTextField() {
+        return twoFactorTextField;
+    }
+
+    TextFieldExt getVideoPasswordTextField() {
+        return videoPasswordTextField;
+    }
+
+    CheckBox getNetrcCheckbox() {
+        return netrcCheckbox;
     }
 
     CheckBox getNoMTimeCheckBox() {

@@ -77,5 +77,25 @@ public class YoutubeDlCommandBuilderTests {
             List<String> command = YoutubeDlCommandBuilder.newInstance().password(password).buildAsList();
             doAssertions(command, "-p", password);
         }
+
+        @Test
+        void shouldCreateTwoFactorCode() {
+            String code = "pass";
+            List<String> command = YoutubeDlCommandBuilder.newInstance().twoFactor(code).buildAsList();
+            doAssertions(command, "-2", code);
+        }
+
+        @Test
+        void shouldCreateNetrc() {
+            List<String> command = YoutubeDlCommandBuilder.newInstance().useNetrc().buildAsList();
+            doAssertions(command, "--netrc");
+        }
+
+        @Test
+        void shouldCreateVideoPassword() {
+            String password = "pass";
+            List<String> command = YoutubeDlCommandBuilder.newInstance().videoPassword(password).buildAsList();
+            doAssertions(command, "--video-password", password);
+        }
     }
 }

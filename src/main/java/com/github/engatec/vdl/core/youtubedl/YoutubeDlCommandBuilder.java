@@ -117,6 +117,23 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
+    public YoutubeDlCommandBuilder twoFactor(String code) {
+        commandList.add("-2");
+        commandList.add(code);
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder useNetrc() {
+        commandList.add("--netrc");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder videoPassword(String videoPassword) {
+        commandList.add("--video-password");
+        commandList.add(videoPassword);
+        return this;
+    }
+
     public YoutubeDlCommandBuilder ffmpegLocation(String location) {
         if (StringUtils.isBlank(location)) {
             return this;

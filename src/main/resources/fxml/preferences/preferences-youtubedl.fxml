@@ -20,7 +20,7 @@
             <Separator HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <VBox spacing="8.0">
+      <VBox spacing="12.0">
          <children>
             <GridPane alignment="CENTER_LEFT" hgap="8.0" vgap="8.0" VBox.vgrow="NEVER">
               <columnConstraints>
@@ -47,7 +47,7 @@
                   <CheckBox fx:id="forceIpV6CheckBox" mnemonicParsing="false" text="%preferences.youtubedl.network.forceipv6.label" />
                </children>
                <VBox.margin>
-                  <Insets top="4.0" />
+                  <Insets />
                </VBox.margin>
             </HBox>
          </children>
@@ -64,7 +64,7 @@
             <Insets top="8.0" />
          </VBox.margin>
       </HBox>
-      <VBox spacing="8.0">
+      <VBox spacing="12.0">
          <children>
             <GridPane hgap="8.0" vgap="8.0" VBox.vgrow="NEVER">
                <columnConstraints>
@@ -74,15 +74,25 @@
                <rowConstraints>
                   <RowConstraints valignment="BASELINE" vgrow="NEVER" />
                   <RowConstraints valignment="BASELINE" vgrow="NEVER" />
-                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                  <RowConstraints valignment="BASELINE" vgrow="NEVER" />
+                  <RowConstraints valignment="BASELINE" vgrow="NEVER" />
                </rowConstraints>
                <children>
                   <Label text="%preferences.youtubedl.authentication.username.label" />
                   <TextFieldExt fx:id="usernameTextField" GridPane.columnIndex="1" />
                   <Label text="%preferences.youtubedl.authentication.password.label" GridPane.rowIndex="1" />
                   <TextFieldExt fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label text="%preferences.youtubedl.authentication.twofactor.label" GridPane.rowIndex="2" />
+                  <TextField fx:id="twoFactorTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="%preferences.youtubedl.authentication.videopassword.label" GridPane.rowIndex="3" />
+                  <TextFieldExt fx:id="videoPasswordTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
             </GridPane>
+            <CheckBox fx:id="netrcCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.authentication.netrc.label">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </CheckBox>
          </children>
          <padding>
             <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />

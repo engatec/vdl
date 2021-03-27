@@ -16,11 +16,14 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePr
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
 
 public class ConfigRegistry {
 
@@ -47,6 +50,9 @@ public class ConfigRegistry {
         REGISTRY.put(ForceIpV6Pref.class, new ForceIpV6Pref());
         REGISTRY.put(AuthUsernamePref.class, new AuthUsernamePref());
         REGISTRY.put(AuthPasswordPref.class, new AuthPasswordPref());
+        REGISTRY.put(TwoFactorCodePref.class, new TwoFactorCodePref());
+        REGISTRY.put(NetrcPref.class, new NetrcPref());
+        REGISTRY.put(VideoPasswordPref.class, new VideoPasswordPref());
     }
 
     public static <T extends ConfigItemWrapper<?, ?>> T get(Class<T> clazz) {

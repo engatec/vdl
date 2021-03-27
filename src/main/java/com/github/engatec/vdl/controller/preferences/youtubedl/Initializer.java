@@ -42,8 +42,11 @@ class Initializer {
     }
 
     private static void initAuthenticationSettings(Context ctx) {
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
         ctx.getUsernameTextField().textProperty().addListener((observable, oldValue, newValue) -> ctx.getUsernameTextField().clearError());
         ctx.getPasswordTextField().textProperty().addListener((observable, oldValue, newValue) -> ctx.getPasswordTextField().clearError());
+        ctx.getVideoPasswordTextField().setHint(resourceBundle.getString("preferences.youtubedl.authentication.videopassword.hint"));
     }
 
     private static void initConfigFileSettings(Context ctx) {
