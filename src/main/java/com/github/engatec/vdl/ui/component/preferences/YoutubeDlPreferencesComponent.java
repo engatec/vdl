@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.component.preferences;
 
-import com.github.engatec.vdl.controller.preferences.YoutubedlPreferencesController;
+import com.github.engatec.vdl.controller.preferences.youtubedl.YoutubedlPreferencesController;
 import com.github.engatec.vdl.ui.component.AppComponent;
 import javafx.stage.Stage;
 
