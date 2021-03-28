@@ -252,7 +252,7 @@ public class MainController extends StageAwareController {
 
     private void setDownloadablesMassContextMenu(List<MultiFormatDownloadable> downloadables) {
         for (Node node : contentVBox.getChildren()) {
-            MenuItem addToQueueAllMenuItem = new MenuItem(appCtx.getResourceBundle().getString("component.downloadgrid.queue.addall"));
+            MenuItem addToQueueAllMenuItem = new MenuItem(appCtx.getResourceBundle().getString("component.downloadgrid.contextmenu.queue.addall"));
             addToQueueAllMenuItem.setOnAction(e -> {
                 AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
                     String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();

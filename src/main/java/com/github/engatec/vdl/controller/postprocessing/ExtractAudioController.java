@@ -1,9 +1,9 @@
 package com.github.engatec.vdl.controller.postprocessing;
 
-import java.util.Locale;
 import java.util.function.Consumer;
 
 import com.github.engatec.vdl.controller.StageAwareController;
+import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.ui.Icons;
@@ -14,7 +14,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
 
 public class ExtractAudioController extends StageAwareController {
 
@@ -25,33 +24,11 @@ public class ExtractAudioController extends StageAwareController {
 
     @FXML private GridPane contentGridPane;
 
-    @FXML private ComboBox<Format> formatComboBox;
+    @FXML private ComboBox<AudioFormat> formatComboBox;
     @FXML private Slider qualitySlider;
 
     @FXML private Button okButton;
     @FXML private Button cancelButton;
-
-    private enum Format {
-        MP3, AAC, M4A, FLAC, OPUS, VORBIS, WAV;
-
-        public static Format getByString(String value) {
-            if (StringUtils.isBlank(value)) {
-                return MP3;
-            }
-
-            for (Format format : values()) {
-                if (value.equalsIgnoreCase(format.name())) {
-                    return format;
-                }
-            }
-            return MP3;
-        }
-
-        @Override
-        public String toString() {
-            return name().toLowerCase(Locale.ROOT);
-        }
-    }
 
     private ExtractAudioController() {
     }
@@ -66,7 +43,7 @@ public class ExtractAudioController extends StageAwareController {
     public void initialize() {
         addInfoIcon();
 
-        formatComboBox.getItems().addAll(Format.values());
+        formatComboBox.getItems().addAll(AudioFormat.values());
         formatComboBox.getSelectionModel().selectFirst();
 
         qualitySlider.setValue(DEFAULT_QUALITY_VALUE);
@@ -86,7 +63,7 @@ public class ExtractAudioController extends StageAwareController {
             return;
         }
 
-        formatComboBox.getSelectionModel().select(Format.getByString(model.getFormat()));
+        formatComboBox.getSelectionModel().select(AudioFormat.getByString(model.getFormat()));
         qualitySlider.setValue(model.getQuality());
     }
 
