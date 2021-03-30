@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -19,11 +20,16 @@
             <TableColumn fx:id="downloadPathTableColumn" prefWidth="180.0" text="%stage.queue.table.column.downloadpath" />
         </columns>
       </TableView>
-      <HBox spacing="8.0">
+      <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
             <Button fx:id="startDownloadBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.downloadall" />
             <Button fx:id="removeFinishedBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.removefinished" />
             <Button fx:id="removeAllBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.removeall" />
+            <CheckBox fx:id="autostartDownloadCheckbox" mnemonicParsing="false" text="%stage.queue.checkbox.autostart">
+               <HBox.margin>
+                  <Insets left="8.0" />
+               </HBox.margin>
+            </CheckBox>
             <AnchorPane HBox.hgrow="ALWAYS">
                <children>
                   <Button fx:id="closeBtn" mnemonicParsing="false" styleClass="control-btn" text="%stage.queue.btn.close" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />

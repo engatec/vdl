@@ -5,13 +5,16 @@ import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.QueueAutostartDownloadPref;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -38,6 +41,7 @@ public class QueueController extends StageAwareController {
     @FXML private Button startDownloadBtn;
     @FXML private Button removeFinishedBtn;
     @FXML private Button removeAllBtn;
+    @FXML private CheckBox autostartDownloadCheckbox;
     @FXML private Button closeBtn;
 
     private QueueController() {
@@ -64,6 +68,7 @@ public class QueueController extends StageAwareController {
         startDownloadBtn.setOnAction(this::handleStartDownloadButtonClick);
         removeFinishedBtn.setOnAction(this::handleRemoveFinishedButtonClick);
         removeAllBtn.setOnAction(this::handleRemoveAllButtonClick);
+        autostartDownloadCheckbox.selectedProperty().bindBidirectional(ConfigRegistry.get(QueueAutostartDownloadPref.class).getProperty());
         closeBtn.setOnAction(this::handleCloseButtonClick);
 
         downloadQueueTableView.setRowFactory(tableView -> {

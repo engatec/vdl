@@ -10,8 +10,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.QueueAutostartDownloadPref;
 import com.github.engatec.vdl.worker.service.QueueItemDownloadService;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -36,16 +38,29 @@ public class QueueManager {
         queueItems.addListener((ListChangeListener<QueueItem>) change -> {
             while (change.next()) {
                 for (QueueItem removedItem : change.getRemoved()) {
-                    itemServiceMap.remove(removedItem);
+                    Service<?> service = itemServiceMap.remove(removedItem);
+                    if (service != null) {
+                        service.cancel();
+                    }
                 }
             }
         });
     }
 
     public void addItem(QueueItem item) {
-        // Add most recent item rather then allow to have multiple same items in the queue
+        Service<?> service = itemServiceMap.get(item);
+        if (service != null && service.isRunning()) { // Ooops, item's being downloaded already
+            return;
+        }
+
+        // Add most recent item rather than allow to have multiple same items in the queue
         queueItems.remove(item);
         queueItems.add(item);
+
+        Boolean autoStartDownload = ConfigRegistry.get(QueueAutostartDownloadPref.class).getValue();
+        if (autoStartDownload) {
+            startDownload(item);
+        }
     }
 
     public void removeItem(QueueItem item) {

@@ -11,6 +11,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromCl
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.QueueAutostartDownloadPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
@@ -53,6 +54,9 @@ public class ConfigRegistry {
         REGISTRY.put(TwoFactorCodePref.class, new TwoFactorCodePref());
         REGISTRY.put(NetrcPref.class, new NetrcPref());
         REGISTRY.put(VideoPasswordPref.class, new VideoPasswordPref());
+
+        /* Misc */
+        REGISTRY.put(QueueAutostartDownloadPref.class, new QueueAutostartDownloadPref());
     }
 
     public static <T extends ConfigItemWrapper<?, ?>> T get(Class<T> clazz) {
