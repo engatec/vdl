@@ -23,6 +23,23 @@ public class YoutubeDlCommandBuilderTests {
     }
 
     @Nested
+    @DisplayName("General options")
+    class GeneralOptions {
+
+        @Test
+        void shouldCreateMarkWatched() {
+            List<String> command = YoutubeDlCommandBuilder.newInstance().markWatched().buildAsList();
+            doAssertions(command, "--mark-watched");
+        }
+
+        @Test
+        void shouldCreateNoMTime() {
+            List<String> command = YoutubeDlCommandBuilder.newInstance().noMTime().buildAsList();
+            doAssertions(command, "--no-mtime");
+        }
+    }
+
+    @Nested
     @DisplayName("Network options")
     class NetworkOptions {
 

@@ -7,7 +7,9 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPr
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
@@ -35,6 +37,41 @@ public class YoutubeDlCommandHelperTests {
     }
 
     @Nested
+    @DisplayName("General options")
+    class GeneralOptions {
+
+        @BeforeEach
+        void setUp() {
+            ConfigRegistry.get(MarkWatchedPref.class).restore();
+            ConfigRegistry.get(NoMTimePref.class).getProperty().setValue(false); // it's true by default, so set it to false
+        }
+
+        private List<String> buildCommand() {
+            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
+            YoutubeDlCommandHelper.setGeneralOptions(commandBuilder);
+            return commandBuilder.buildAsList();
+        }
+
+        @Test
+        void shouldHaveNoSettingsByDefault() {
+            List<String> command = buildCommand();
+            assertThat(command).hasSize(1);
+        }
+
+        @Test
+        void shouldSetMarkWatched() {
+            ConfigRegistry.get(MarkWatchedPref.class).getProperty().setValue(true);
+            doAssertions(buildCommand(), "--mark-watched");
+        }
+
+        @Test
+        void shouldSetNoMTime() {
+            ConfigRegistry.get(NoMTimePref.class).getProperty().setValue(true);
+            doAssertions(buildCommand(), "--no-mtime");
+        }
+    }
+
+    @Nested
     @DisplayName("Network options")
     class NetworkOptions {
 
@@ -55,9 +92,7 @@ public class YoutubeDlCommandHelperTests {
 
         @Test
         void shouldHaveNoSettingsByDefault() {
-            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
-            YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
-            List<String> command = commandBuilder.buildAsList();
+            List<String> command = buildCommand();
             assertThat(command).hasSize(1);
         }
 
@@ -128,6 +163,12 @@ public class YoutubeDlCommandHelperTests {
         }
 
         @Test
+        void shouldHaveNoSettingsByDefault() {
+            List<String> command = buildCommand();
+            assertThat(command).hasSize(1);
+        }
+
+        @Test
         void shouldSetUsername() {
             String username = "usr";
             ConfigRegistry.get(AuthUsernamePref.class).getProperty().setValue(username);
@@ -142,10 +183,20 @@ public class YoutubeDlCommandHelperTests {
         }
 
         @Test
-        void shouldSetTwoFactorCode() {
+        void shouldNotSetTwoFactorCode_noUsernameOrPassword() {
             String code = "pass";
             ConfigRegistry.get(TwoFactorCodePref.class).getProperty().setValue(code);
-            doAssertions(buildCommand(), "-2", code);
+            assertThat(buildCommand()).hasSize(1).doesNotContain("-2");
+        }
+
+        @Test
+        void shouldSetTwoFactorCode() {
+            String code = "pass";
+            ConfigRegistry.get(AuthUsernamePref.class).getProperty().setValue("usr");
+            ConfigRegistry.get(AuthPasswordPref.class).getProperty().setValue("pass");
+            ConfigRegistry.get(TwoFactorCodePref.class).getProperty().setValue(code);
+            assertThat(buildCommand()).hasSize(7)
+                    .contains("-2", "-u", "-p");
         }
 
         @Test
@@ -159,6 +210,19 @@ public class YoutubeDlCommandHelperTests {
             String code = "pass";
             ConfigRegistry.get(VideoPasswordPref.class).getProperty().setValue(code);
             doAssertions(buildCommand(), "--video-password", code);
+        }
+
+        @Test
+        void shouldSetMultiple() {
+            ConfigRegistry.get(AuthUsernamePref.class).getProperty().setValue("usr");
+            ConfigRegistry.get(AuthPasswordPref.class).getProperty().setValue("pass");
+            ConfigRegistry.get(TwoFactorCodePref.class).getProperty().setValue("pass");
+            ConfigRegistry.get(VideoPasswordPref.class).getProperty().setValue("pass");
+            List<String> command = buildCommand();
+            assertThat(command)
+                    .hasSize(9)
+                    .contains("-u", "-p", "-2", "--video-password")
+                    .doesNotContain("--netrc");
         }
     }
 }

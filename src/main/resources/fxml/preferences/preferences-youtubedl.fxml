@@ -16,9 +16,41 @@
    <children>
       <HBox alignment="BASELINE_LEFT" spacing="8.0">
          <children>
+            <Label styleClass="preferences-category-title" text="%preferences.youtubedl.general.title" />
+            <Separator HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <VBox spacing="12.0">
+         <padding>
+            <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />
+         </padding>
+         <children>
+            <CheckBox fx:id="markWatchedCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.general.markwatched.label" />
+            <CheckBox fx:id="noMTimeCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nomtime.label" wrapText="true">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.checkbox.configitem" wrapText="true" />
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+               <children>
+                  <TextField fx:id="configFileTextField" editable="false" minWidth="150.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="configFileChooseBtn" mnemonicParsing="false" styleClass="control-btn" text="%preferences.youtubedl.btn.choose" />
+               </children>
+               <VBox.margin>
+                  <Insets left="8.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+      <HBox alignment="BASELINE_LEFT" spacing="8.0">
+         <children>
             <Label styleClass="preferences-category-title" text="%preferences.youtubedl.network.title" />
             <Separator HBox.hgrow="ALWAYS" />
          </children>
+         <VBox.margin>
+            <Insets top="8.0" />
+         </VBox.margin>
       </HBox>
       <VBox spacing="12.0">
          <children>
@@ -98,21 +130,6 @@
             <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />
          </padding>
       </VBox>
-      <CheckBox fx:id="noMTimeCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nomtime.label" wrapText="true">
-         <VBox.margin>
-            <Insets bottom="8.0" />
-         </VBox.margin>
-      </CheckBox>
-      <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.checkbox.configitem" wrapText="true" />
-      <HBox alignment="CENTER_LEFT" spacing="8.0">
-         <children>
-            <TextField fx:id="configFileTextField" editable="false" minWidth="150.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="configFileChooseBtn" mnemonicParsing="false" styleClass="control-btn" text="%preferences.youtubedl.btn.choose" />
-         </children>
-         <VBox.margin>
-            <Insets left="8.0" />
-         </VBox.margin>
-      </HBox>
    </children>
    <padding>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

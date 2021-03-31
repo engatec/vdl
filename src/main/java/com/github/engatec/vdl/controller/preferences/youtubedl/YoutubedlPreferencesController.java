@@ -28,6 +28,7 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
     @FXML private TextFieldExt videoPasswordTextField;
     @FXML private CheckBox netrcCheckbox;
 
+    @FXML private CheckBox markWatchedCheckbox;
     @FXML private CheckBox noMTimeCheckBox;
 
     @FXML private CheckBox useConfigFileCheckBox;
@@ -52,6 +53,7 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
                 twoFactorTextField,
                 videoPasswordTextField,
                 netrcCheckbox,
+                markWatchedCheckbox,
                 noMTimeCheckBox,
                 useConfigFileCheckBox,
                 configFileTextField,

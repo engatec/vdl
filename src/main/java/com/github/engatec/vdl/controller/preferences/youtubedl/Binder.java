@@ -6,6 +6,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePr
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
@@ -30,6 +31,7 @@ class Binder {
         ctx.getVideoPasswordTextField().textProperty().bindBidirectional(ConfigRegistry.get(VideoPasswordPref.class).getProperty());
         ctx.getNetrcCheckbox().selectedProperty().bindBidirectional(ConfigRegistry.get(NetrcPref.class).getProperty());
 
+        ctx.getMarkWatchedCheckbox().selectedProperty().bindBidirectional(ConfigRegistry.get(MarkWatchedPref.class).getProperty());
         ctx.getNoMTimeCheckBox().selectedProperty().bindBidirectional(ConfigRegistry.get(NoMTimePref.class).getProperty());
 
         ctx.getUseConfigFileCheckBox().selectedProperty().bindBidirectional(ConfigRegistry.get(UseConfigFilePref.class).getProperty());

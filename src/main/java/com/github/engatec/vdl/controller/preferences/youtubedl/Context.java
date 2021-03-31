@@ -22,6 +22,7 @@ class Context {
     private final TextFieldExt videoPasswordTextField;
     private final CheckBox netrcCheckbox;
 
+    private final CheckBox markWatchedCheckbox;
     private final CheckBox noMTimeCheckBox;
     private final CheckBox useConfigFileCheckBox;
     private final TextField configFileTextField;
@@ -39,6 +40,7 @@ class Context {
             TextField twoFactorTextField,
             TextFieldExt videoPasswordTextField,
             CheckBox netrcCheckbox,
+            CheckBox markWatchedCheckbox,
             CheckBox noMTimeCheckBox,
             CheckBox useConfigFileCheckBox,
             TextField configFileTextField,
@@ -55,6 +57,7 @@ class Context {
         this.twoFactorTextField = twoFactorTextField;
         this.videoPasswordTextField = videoPasswordTextField;
         this.netrcCheckbox = netrcCheckbox;
+        this.markWatchedCheckbox = markWatchedCheckbox;
         this.noMTimeCheckBox = noMTimeCheckBox;
         this.useConfigFileCheckBox = useConfigFileCheckBox;
         this.configFileTextField = configFileTextField;
@@ -103,6 +106,10 @@ class Context {
 
     CheckBox getNetrcCheckbox() {
         return netrcCheckbox;
+    }
+
+    public CheckBox getMarkWatchedCheckbox() {
+        return markWatchedCheckbox;
     }
 
     CheckBox getNoMTimeCheckBox() {

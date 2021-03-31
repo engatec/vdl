@@ -12,9 +12,15 @@ import org.apache.commons.lang3.BooleanUtils;
 class Initializer {
 
     static void initialize(Context ctx) {
+        initGeneralSettings(ctx);
         initNetworkSettings(ctx);
         initAuthenticationSettings(ctx);
         initConfigFileSettings(ctx);
+    }
+
+    private static void initGeneralSettings(Context ctx) {
+        ctx.getMarkWatchedCheckbox().setGraphic(Icons.infoWithTooltip("preferences.youtubedl.general.markwatched.tooltip"));
+        ctx.getMarkWatchedCheckbox().setContentDisplay(ContentDisplay.RIGHT);
     }
 
     private static void initNetworkSettings(Context ctx) {

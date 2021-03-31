@@ -5,7 +5,9 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPr
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
@@ -20,6 +22,18 @@ import static org.apache.commons.lang3.StringUtils.strip;
 public class YoutubeDlCommandHelper {
 
     private static final Logger LOGGER = LogManager.getLogger(YoutubeDlCommandHelper.class);
+
+    public static void setGeneralOptions(YoutubeDlCommandBuilder commandBuilder) {
+        Boolean markWatched = ConfigRegistry.get(MarkWatchedPref.class).getValue();
+        if (markWatched) {
+            commandBuilder.markWatched();
+        }
+
+        Boolean noMTime = ConfigRegistry.get(NoMTimePref.class).getValue();
+        if (noMTime) {
+            commandBuilder.noMTime();
+        }
+    }
 
     public static void setNetworkOptions(YoutubeDlCommandBuilder commandBuilder) {
         String proxyUrl = strip(ConfigRegistry.get(ProxyUrlPref.class).getValue());

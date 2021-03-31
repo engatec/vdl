@@ -180,6 +180,11 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
+    public YoutubeDlCommandBuilder markWatched() {
+        commandList.add("--mark-watched");
+        return this;
+    }
+
     public YoutubeDlCommandBuilder noMTime() {
         commandList.add("--no-mtime");
         return this;
