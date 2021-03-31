@@ -44,7 +44,11 @@ public class YoutubeDlManager {
             List<String> jsonList = reader.lines().collect(Collectors.toList());
             List<DownloadableInfo> downloadableInfoList = new ArrayList<>(jsonList.size());
             for (String json : jsonList) {
-                downloadableInfoList.add(objectMapper.readValue(json, DownloadableInfo.class));
+                DownloadableInfo downloadableInfo = objectMapper.readValue(json, DownloadableInfo.class);
+                if (StringUtils.isBlank(downloadableInfo.getBaseUrl())) {
+                    downloadableInfo.setBaseUrl(downloadableInfo.getUrl());
+                }
+                downloadableInfoList.add(downloadableInfo);
             }
 
             // Log encountered errors that didn't result in exception
