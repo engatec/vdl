@@ -7,9 +7,12 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPr
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -113,6 +116,9 @@ public class YoutubeDlCommandHelperTests {
         void setUp() {
             ConfigRegistry.get(AuthUsernamePref.class).restore();
             ConfigRegistry.get(AuthPasswordPref.class).restore();
+            ConfigRegistry.get(TwoFactorCodePref.class).restore();
+            ConfigRegistry.get(NetrcPref.class).restore();
+            ConfigRegistry.get(VideoPasswordPref.class).restore();
         }
 
         private List<String> buildCommand() {
@@ -133,6 +139,26 @@ public class YoutubeDlCommandHelperTests {
             String password = "pass";
             ConfigRegistry.get(AuthPasswordPref.class).getProperty().setValue(password);
             doAssertions(buildCommand(), "-p", password);
+        }
+
+        @Test
+        void shouldSetTwoFactorCode() {
+            String code = "pass";
+            ConfigRegistry.get(TwoFactorCodePref.class).getProperty().setValue(code);
+            doAssertions(buildCommand(), "-2", code);
+        }
+
+        @Test
+        void shouldSetNetrc() {
+            ConfigRegistry.get(NetrcPref.class).getProperty().setValue(true);
+            doAssertions(buildCommand(), "--netrc");
+        }
+
+        @Test
+        void shouldSetVideoPassword() {
+            String code = "pass";
+            ConfigRegistry.get(VideoPasswordPref.class).getProperty().setValue(code);
+            doAssertions(buildCommand(), "--video-password", code);
         }
     }
 }

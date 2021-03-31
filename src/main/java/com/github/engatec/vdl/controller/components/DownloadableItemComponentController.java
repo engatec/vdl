@@ -194,7 +194,7 @@ public class DownloadableItemComponentController extends TitledPane {
     protected Button createAddToQueueButton() {
         Group svg = Icons.queue();
         Button addToQueueBtn = new Button();
-        initButtonLookAndFeel(addToQueueBtn, svg, "component.downloadgrid.queue.add");
+        initButtonLookAndFeel(addToQueueBtn, svg, "component.downloadgrid.contextmenu.queue.add");
         return addToQueueBtn;
     }
 

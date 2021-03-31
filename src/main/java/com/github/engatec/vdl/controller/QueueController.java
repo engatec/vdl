@@ -1,21 +1,20 @@
 package com.github.engatec.vdl.controller;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
-import com.github.engatec.vdl.worker.service.QueueItemDownloadService;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.QueueAutostartDownloadPref;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -25,15 +24,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class QueueController extends StageAwareController {
 
-    private static final Logger LOGGER = LogManager.getLogger(QueueController.class);
-
-    private final ObservableList<QueueItem> data = QueueManager.INSTANCE.getQueueItems();
-    private final Map<QueueItem, Service<?>> itemServiceMap = new HashMap<>();
+    private final QueueManager queueManager = QueueManager.INSTANCE;
+    private final ObservableList<QueueItem> data = queueManager.getQueueItems();
 
     @FXML private TableView<QueueItem> downloadQueueTableView;
     @FXML private TableColumn<QueueItem, DownloadStatus> statusTableColumn;
@@ -46,6 +41,7 @@ public class QueueController extends StageAwareController {
     @FXML private Button startDownloadBtn;
     @FXML private Button removeFinishedBtn;
     @FXML private Button removeAllBtn;
+    @FXML private CheckBox autostartDownloadCheckbox;
     @FXML private Button closeBtn;
 
     private QueueController() {
@@ -72,6 +68,7 @@ public class QueueController extends StageAwareController {
         startDownloadBtn.setOnAction(this::handleStartDownloadButtonClick);
         removeFinishedBtn.setOnAction(this::handleRemoveFinishedButtonClick);
         removeAllBtn.setOnAction(this::handleRemoveAllButtonClick);
+        autostartDownloadCheckbox.selectedProperty().bindBidirectional(ConfigRegistry.get(QueueAutostartDownloadPref.class).getProperty());
         closeBtn.setOnAction(this::handleCloseButtonClick);
 
         downloadQueueTableView.setRowFactory(tableView -> {
@@ -92,30 +89,25 @@ public class QueueController extends StageAwareController {
 
         MenuItem runNowMenuItem = new MenuItem(resourceBundle.getString("stage.queue.table.contextmenu.runnow"));
         runNowMenuItem.setOnAction(e -> {
-            itemServiceMap.computeIfAbsent(row.getItem(), QueueItemDownloadService::new).start();
+            queueManager.startDownload(row.getItem());
             e.consume();
         });
 
         MenuItem cancelMenuItem = new MenuItem(resourceBundle.getString("stage.queue.table.contextmenu.cancel"));
         cancelMenuItem.setOnAction(e -> {
-            Service<?> service = itemServiceMap.get(row.getItem());
-            if (service == null) {
-                LOGGER.error("No service associated with the queue item");
-            } else {
-                service.cancel();
-            }
+            queueManager.cancelDownload(row.getItem());
             e.consume();
         });
 
         MenuItem resumeMenuItem = new MenuItem(resourceBundle.getString("stage.queue.table.contextmenu.resume"));
         resumeMenuItem.setOnAction(e -> {
-            itemServiceMap.computeIfAbsent(row.getItem(), QueueItemDownloadService::new).restart();
+            queueManager.resumeDownload(row.getItem());
             e.consume();
         });
 
         MenuItem deleteMenuItem = new MenuItem(resourceBundle.getString("stage.queue.table.contextmenu.delete"));
         deleteMenuItem.setOnAction(e -> {
-            data.remove(row.getItem());
+            queueManager.removeItem(row.getItem());
             e.consume();
         });
 
@@ -144,19 +136,19 @@ public class QueueController extends StageAwareController {
     private void handleStartDownloadButtonClick(ActionEvent event) {
         for (QueueItem item : data) {
             if (item.getStatus() == DownloadStatus.READY) {
-                itemServiceMap.computeIfAbsent(item, QueueItemDownloadService::new).start();
+                queueManager.startDownload(item);
             }
         }
         event.consume();
     }
 
     private void handleRemoveFinishedButtonClick(ActionEvent event) {
-        data.removeIf(item -> item.getStatus() == DownloadStatus.FINISHED);
+        queueManager.removeFinished();
         event.consume();
     }
 
     private void handleRemoveAllButtonClick(ActionEvent event) {
-        data.clear();
+        queueManager.removeAll();
         event.consume();
     }
 

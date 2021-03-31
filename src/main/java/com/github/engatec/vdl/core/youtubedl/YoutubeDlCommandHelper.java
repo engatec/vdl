@@ -5,9 +5,12 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPr
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,6 +66,23 @@ public class YoutubeDlCommandHelper {
         String password = strip(ConfigRegistry.get(AuthPasswordPref.class).getValue());
         if (isNotBlank(password)) {
             commandBuilder.password(password);
+        }
+
+        if (isNotBlank(username) && isNotBlank(password)) {
+            String twoFactorCode = ConfigRegistry.get(TwoFactorCodePref.class).getValue();
+            if (isNotBlank(twoFactorCode)) {
+                commandBuilder.twoFactor(twoFactorCode);
+            }
+        }
+
+        Boolean netrc = ConfigRegistry.get(NetrcPref.class).getValue();
+        if (netrc) {
+            commandBuilder.useNetrc();
+        }
+
+        String videoPassword = ConfigRegistry.get(VideoPasswordPref.class).getValue();
+        if (isNotBlank(videoPassword)) {
+            commandBuilder.videoPassword(videoPassword);
         }
     }
 }

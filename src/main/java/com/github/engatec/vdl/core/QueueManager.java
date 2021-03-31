@@ -3,15 +3,22 @@ package com.github.engatec.vdl.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.QueueAutostartDownloadPref;
+import com.github.engatec.vdl.worker.service.QueueItemDownloadService;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,14 +32,47 @@ public class QueueManager {
     private static final String FILENAME = "queue.vdl";
 
     private final ObservableList<QueueItem> queueItems = FXCollections.observableList(new LinkedList<>());
+    private final Map<QueueItem, Service<?>> itemServiceMap = new HashMap<>();
 
     private QueueManager() {
+        queueItems.addListener((ListChangeListener<QueueItem>) change -> {
+            while (change.next()) {
+                for (QueueItem removedItem : change.getRemoved()) {
+                    Service<?> service = itemServiceMap.remove(removedItem);
+                    if (service != null) {
+                        service.cancel();
+                    }
+                }
+            }
+        });
     }
 
     public void addItem(QueueItem item) {
-        // Add most recent item rather then allow to have multiple same items in the queue
+        Service<?> service = itemServiceMap.get(item);
+        if (service != null && service.isRunning()) { // Ooops, item's being downloaded already
+            return;
+        }
+
+        // Add most recent item rather than allow to have multiple same items in the queue
         queueItems.remove(item);
         queueItems.add(item);
+
+        Boolean autoStartDownload = ConfigRegistry.get(QueueAutostartDownloadPref.class).getValue();
+        if (autoStartDownload) {
+            startDownload(item);
+        }
+    }
+
+    public void removeItem(QueueItem item) {
+        queueItems.remove(item);
+    }
+
+    public void removeFinished() {
+        queueItems.removeIf(item -> item.getStatus() == DownloadStatus.FINISHED);
+    }
+
+    public void removeAll() {
+        queueItems.clear();
     }
 
     public ObservableList<QueueItem> getQueueItems() {
@@ -78,5 +118,22 @@ public class QueueManager {
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e);
         }
+    }
+
+    public void startDownload(QueueItem item) {
+        itemServiceMap.computeIfAbsent(item, QueueItemDownloadService::new).start();
+    }
+
+    public void cancelDownload(QueueItem item) {
+        Service<?> service = itemServiceMap.get(item);
+        if (service == null) {
+            LOGGER.warn("No service associated with the queue item");
+        } else {
+            service.cancel();
+        }
+    }
+
+    public void resumeDownload(QueueItem item) {
+        itemServiceMap.computeIfAbsent(item, QueueItemDownloadService::new).restart();
     }
 }
