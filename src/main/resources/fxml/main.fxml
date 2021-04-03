@@ -19,7 +19,8 @@
       <menus>
         <Menu fx:id="fileMenu" mnemonicParsing="false" text="%menu.file">
           <items>
-                  <MenuItem fx:id="downloadQueueMenuItem" mnemonicParsing="false" text="%menu.file.queue" />
+                  <MenuItem fx:id="queueMenuItem" mnemonicParsing="false" text="%menu.file.queue" />
+                  <MenuItem fx:id="historyMenuItem" mnemonicParsing="false" text="%menu.file.history" />
             <MenuItem fx:id="preferencesMenuItem" mnemonicParsing="false" text="%menu.file.preferences" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" text="%menu.file.exit" />
@@ -43,7 +44,7 @@
             </Menu>
       </menus>
     </MenuBar>
-      <VBox prefHeight="331.0" prefWidth="610.0" spacing="8.0" styleClass="no-border" VBox.vgrow="ALWAYS">
+      <VBox prefHeight="331.0" prefWidth="610.0" spacing="8.0" VBox.vgrow="ALWAYS">
          <children>
             <HBox spacing="8.0">
                <children>
@@ -61,7 +62,7 @@
                   <Insets bottom="8.0" />
                </padding>
                <content>
-                  <VBox fx:id="contentVBox" spacing="4.0" styleClass="no-border" />
+                  <VBox fx:id="contentVBox" spacing="4.0" />
                </content>
             </ScrollPane>
             <HBox fx:id="playlistSearchProgressWrapperHBox" alignment="CENTER_LEFT" spacing="8.0">

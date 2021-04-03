@@ -23,18 +23,18 @@
     -fx-box-border: transparent;
 }
 
+.scroll-pane:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.table-view:focused {
+    -fx-background-color: -fx-box-border, -fx-control-inner-background;
+    -fx-background-insets: 0, 1;
+    -fx-padding: 1;
+}
+
 .preferences-category-title {
     -fx-font-weight: bold;
     -fx-font-size: 12;
-}
-
-.controls-error-text {
-    -fx-text-fill: #b00020;
-}
-
-.controls-error-highlight {
-    -fx-background-color: #b00020, -fx-text-box-border, -fx-control-inner-background;
-    -fx-background-insets: -0.4, 1, 2;
-    -fx-background-radius: 3.4, 2, 2;
-    -fx-prompt-text-fill: transparent;
 }

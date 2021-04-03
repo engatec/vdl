@@ -9,7 +9,6 @@ import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.UpdateManager;
 import com.github.engatec.vdl.core.command.DownloadCommand;
 import com.github.engatec.vdl.core.command.EnqueueCommand;
-import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.Language;
@@ -23,6 +22,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadable
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.DownloadableItemComponent;
 import com.github.engatec.vdl.ui.stage.AboutStage;
+import com.github.engatec.vdl.ui.stage.HistoryStage;
 import com.github.engatec.vdl.ui.stage.PreferencesStage;
 import com.github.engatec.vdl.ui.stage.QueueStage;
 import com.github.engatec.vdl.util.AppUtils;
@@ -58,7 +58,6 @@ public class MainController extends StageAwareController {
     private static final Logger LOGGER = LogManager.getLogger(MainController.class);
 
     private final ApplicationContext appCtx = ApplicationContext.INSTANCE;
-    private final ConfigManager cfgMgr = ConfigManager.INSTANCE;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
 
     @FXML private VBox rootControlVBox;
@@ -67,7 +66,8 @@ public class MainController extends StageAwareController {
     @FXML private VBox contentVBox;
 
     @FXML private Menu fileMenu;
-    @FXML private MenuItem downloadQueueMenuItem;
+    @FXML private MenuItem queueMenuItem;
+    @FXML private MenuItem historyMenuItem;
     @FXML private MenuItem preferencesMenuItem;
     @FXML private MenuItem exitMenuItem;
 
@@ -109,7 +109,8 @@ public class MainController extends StageAwareController {
 
     private void initLocaleBindings() {
         I18n.bindLocaleProperty(fileMenu.textProperty(), "menu.file");
-        I18n.bindLocaleProperty(downloadQueueMenuItem.textProperty(), "menu.file.queue");
+        I18n.bindLocaleProperty(queueMenuItem.textProperty(), "menu.file.queue");
+        I18n.bindLocaleProperty(historyMenuItem.textProperty(), "menu.file.history");
         I18n.bindLocaleProperty(preferencesMenuItem.textProperty(), "menu.file.preferences");
         I18n.bindLocaleProperty(exitMenuItem.textProperty(), "menu.file.exit");
         I18n.bindLocaleProperty(languageMenu.textProperty(), "menu.language");
@@ -144,7 +145,8 @@ public class MainController extends StageAwareController {
         preferencesMenuItem.setOnAction(this::handlePreferencesMenuItemClick);
         checkYoutubeDlUpdatesMenuItem.setOnAction(this::handleYoutubeDlUpdatesMenuItemClick);
         aboutMenuItem.setOnAction(this::handleAboutMenuItemClick);
-        downloadQueueMenuItem.setOnAction(this::handleDownloadQueueMenuItemClick);
+        queueMenuItem.setOnAction(this::handleQueueMenuItemClick);
+        historyMenuItem.setOnAction(this::handleHistoryMenuItemClick);
 
         langEnMenuItem.setOnAction(event -> handleLanguageChange(event, Language.ENGLISH));
         langRuMenuItem.setOnAction(event -> handleLanguageChange(event, Language.RUSSIAN));
@@ -183,8 +185,13 @@ public class MainController extends StageAwareController {
         event.consume();
     }
 
-    private void handleDownloadQueueMenuItemClick(ActionEvent event) {
+    private void handleQueueMenuItemClick(ActionEvent event) {
         new QueueStage().modal(stage).showAndWait();
+        event.consume();
+    }
+
+    private void handleHistoryMenuItemClick(ActionEvent event) {
+        new HistoryStage().modal(stage).showAndWait();
         event.consume();
     }
 

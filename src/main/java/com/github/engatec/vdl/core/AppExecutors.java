@@ -14,7 +14,7 @@ public class AppExecutors {
     private static final Logger LOGGER = LogManager.getLogger(AppExecutors.class);
 
     public static final ExecutorService COMMON_EXECUTOR = Executors.newFixedThreadPool(2);
-    public static final ExecutorService MULTI_URL_SEARCH_EXECUTOR = Executors.newFixedThreadPool(3);
+    public static final ExecutorService BACKGROUND_EXECUTOR = Executors.newSingleThreadExecutor();
     public static final ExecutorService QUEUE_EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 
     public static <T> void runTaskAsync(Task<T> task) {
@@ -22,7 +22,7 @@ public class AppExecutors {
     }
 
     public static void shutdownExecutors() {
-        for (ExecutorService executor : List.of(COMMON_EXECUTOR, MULTI_URL_SEARCH_EXECUTOR, QUEUE_EXECUTOR)) {
+        for (ExecutorService executor : List.of(COMMON_EXECUTOR, BACKGROUND_EXECUTOR, QUEUE_EXECUTOR)) {
             shutdownExecutor(executor);
         }
     }

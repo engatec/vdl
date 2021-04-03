@@ -1,15 +1,17 @@
 package com.github.engatec.vdl.ui.stage;
 
-import com.github.engatec.vdl.controller.QueueController;
+import com.github.engatec.vdl.controller.history.HistoryController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-public class QueueStage extends AppStage {
+public class HistoryStage extends AppStage {
 
-    public QueueStage() {
+    public HistoryStage() {
         init();
-        stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.queue.title"));
+        stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.title"));
+        stage.setWidth(900);
+        stage.setHeight(600);
     }
 
     @Override
@@ -19,11 +21,11 @@ public class QueueStage extends AppStage {
 
     @Override
     protected String getFxmlPath() {
-        return "/fxml/queue/queue.fxml";
+        return "/fxml/history/history.fxml";
     }
 
     @Override
     protected Callback<Class<?>, Object> getControllerFactory(Stage stage) {
-        return param -> new QueueController(stage);
+        return param -> new HistoryController(stage);
     }
 }

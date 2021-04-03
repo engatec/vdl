@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +24,9 @@ import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuil
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlUpdateProcessBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.DownloadableInfo;
+import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +39,7 @@ public class YoutubeDlManager {
     public static final YoutubeDlManager INSTANCE = new YoutubeDlManager();
 
     private final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
     public List<DownloadableInfo> fetchDownloadableInfo(String url) throws IOException {
         var pb = new DownloadableInfoFetchProcessBuilder(url);
@@ -86,6 +91,12 @@ public class YoutubeDlManager {
     }
 
     public Process download(Downloadable downloadable) throws IOException {
+        if (ConfigRegistry.get(HistoryEntriesNumberPref.class).getValue() > 0) { // TODO: Think about eventbus instead
+            HistoryManager.INSTANCE.addHistoryItem(
+                    new HistoryItem(downloadable.getTitle(), downloadable.getBaseUrl(), downloadable.getDownloadPath(), LocalDateTime.now().format(dateTimeFormatter))
+            );
+        }
+
         Boolean useConfigFile = ConfigRegistry.get(UseConfigFilePref.class).getValue();
         YoutubeDlProcessBuilder pb = useConfigFile ? new DownloadWithConfigFileProcessBuilder(downloadable) : new DownloadProcessBuilder(downloadable);
         List<String> command = pb.buildCommand();

@@ -2,6 +2,7 @@ package com.github.engatec.vdl;
 
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -15,20 +16,21 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        setLanguage();
+        QueueManager.INSTANCE.restoreQueue();
         new MainStage(stage).show();
     }
 
     @Override
     public void stop() {
         AppExecutors.shutdownExecutors();
+        QueueManager.INSTANCE.persistQueue();
+        HistoryManager.INSTANCE.persistHistory();
     }
 
     public static void main(String[] args) {
         Janitor.cleanUp();
-        setLanguage();
-        QueueManager.INSTANCE.restoreQueue();
         launch(args);
-        QueueManager.INSTANCE.persistQueue();
     }
 
     private static void setLanguage() {
