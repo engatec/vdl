@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class CustomFormatDownloadable extends BaseDownloadable {
 
-    private final String formatId;
+    private String formatId;
 
     public CustomFormatDownloadable(String baseUrl, String formatId) {
         super(StringUtils.EMPTY, baseUrl);
@@ -14,5 +14,9 @@ public class CustomFormatDownloadable extends BaseDownloadable {
     @Override
     public String getFormatId() {
         return formatId;
+    }
+
+    public void setFormatId(String formatId) {
+        this.formatId = formatId;
     }
 }

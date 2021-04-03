@@ -11,6 +11,8 @@ import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.ui.Dialogs;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -18,7 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,10 +75,10 @@ class Initializer {
         TableView<HistoryItem> historyTableView = ctx.getHistoryTableView();
         historyTableView.setPlaceholder(new Label(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.table.placeholder")));
 
-        ctx.getTitleTableColumn().setCellValueFactory(new PropertyValueFactory<>("title"));
-        ctx.getUrlTableColumn().setCellValueFactory(new PropertyValueFactory<>("url"));
-        ctx.getLocationTableColumn().setCellValueFactory(new PropertyValueFactory<>("path"));
-        ctx.getDtmTableColumn().setCellValueFactory(new PropertyValueFactory<>("dtm"));
+        ctx.getTitleTableColumn().setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getTitle()));
+        ctx.getUrlTableColumn().setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getUrl()));
+        ctx.getLocationTableColumn().setCellValueFactory(it -> new ReadOnlyObjectWrapper<>(it.getValue().getPath()));
+        ctx.getDtmTableColumn().setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getDtm()));
 
         historyTableView.setItems(FXCollections.observableList(HistoryManager.INSTANCE.getHistoryItems()));
         historyTableView.setRowFactory(tableView -> {

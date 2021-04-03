@@ -64,11 +64,12 @@ public class HistoryManager {
 
     public synchronized void persistHistory() {
         flushToDisk(getHistoryItems());
+        newItems.clear();
     }
 
     public synchronized void clearHistory() {
-        newItems.clear();
         flushToDisk(List.of());
+        newItems.clear();
     }
 
     private synchronized void flushToDisk(List<HistoryItem> historyItems) {

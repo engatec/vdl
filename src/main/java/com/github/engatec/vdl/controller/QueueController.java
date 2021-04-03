@@ -10,6 +10,8 @@ import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.QueueAutostartDownloadPref;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,7 +24,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ProgressBarTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 public class QueueController extends StageAwareController {
@@ -33,6 +34,7 @@ public class QueueController extends StageAwareController {
     @FXML private TableView<QueueItem> downloadQueueTableView;
     @FXML private TableColumn<QueueItem, DownloadStatus> statusTableColumn;
     @FXML private TableColumn<QueueItem, Double> progressTableColumn;
+    @FXML private TableColumn<QueueItem, String> titleTableColumn;
     @FXML private TableColumn<QueueItem, String> urlTableColumn;
     @FXML private TableColumn<QueueItem, String> sizeTableColumn;
     @FXML private TableColumn<QueueItem, String> throughputTableColumn;
@@ -55,13 +57,14 @@ public class QueueController extends StageAwareController {
     public void initialize() {
         downloadQueueTableView.setPlaceholder(new Label(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.queue.table.placeholder")));
 
-        statusTableColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-        urlTableColumn.setCellValueFactory(new PropertyValueFactory<>("baseUrl"));
-        sizeTableColumn.setCellValueFactory(new PropertyValueFactory<>("size"));
-        throughputTableColumn.setCellValueFactory(new PropertyValueFactory<>("throughput"));
-        downloadPathTableColumn.setCellValueFactory(new PropertyValueFactory<>("downloadPath"));
+        statusTableColumn.setCellValueFactory(it -> it.getValue().statusProperty());
+        titleTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getTitle()));
+        urlTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getBaseUrl()));
+        sizeTableColumn.setCellValueFactory(it -> it.getValue().sizeProperty());
+        throughputTableColumn.setCellValueFactory(it -> it.getValue().throughputProperty());
+        downloadPathTableColumn.setCellValueFactory(it -> new ReadOnlyObjectWrapper<>(it.getValue().getDownloadPath()));
 
-        progressTableColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
+        progressTableColumn.setCellValueFactory(it -> it.getValue().progressProperty().asObject());
         progressTableColumn.setCellFactory(ProgressBarTableCell.forTableColumn());
         downloadQueueTableView.setItems(data);
 

@@ -38,7 +38,7 @@
       </TableView>
       <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
          <children>
-            <Button fx:id="closeBtn" mnemonicParsing="false" text="%stage.history.btn.close" />
+            <Button fx:id="closeBtn" mnemonicParsing="false" styleClass="control-btn" text="%stage.history.btn.close" />
          </children>
          <padding>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

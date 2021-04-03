@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
+import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import javafx.beans.property.DoubleProperty;
@@ -14,7 +16,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.StringUtils;
 
 public class QueueItem implements Downloadable {
 
@@ -23,13 +24,15 @@ public class QueueItem implements Downloadable {
     private final StringProperty size = new SimpleStringProperty();
     private final StringProperty throughput = new SimpleStringProperty();
 
-    private String baseUrl;
-    private Path downloadPath;
-    private String formatId;
-
-    private List<Postprocessing> postprocessingSteps;
+    @JsonIgnore
+    private final BaseDownloadable downloadable;
 
     public QueueItem() {
+        downloadable = new CustomFormatDownloadable(null, null);
+    }
+
+    public QueueItem(BaseDownloadable downloadable) {
+        this.downloadable = downloadable;
     }
 
     public DownloadStatus getStatus() {
@@ -82,46 +85,51 @@ public class QueueItem implements Downloadable {
 
     @Override
     public Path getDownloadPath() {
-        return downloadPath;
+        return downloadable.getDownloadPath();
     }
 
     @Override
     public void setDownloadPath(Path downloadPath) {
-        this.downloadPath = downloadPath;
+        downloadable.setDownloadPath(downloadPath);
     }
 
     @Override
     public String getFormatId() {
-        return formatId;
+        return downloadable.getFormatId();
     }
 
     public void setFormatId(String formatId) {
-        this.formatId = formatId;
+        if (downloadable instanceof CustomFormatDownloadable) {
+            ((CustomFormatDownloadable) downloadable).setFormatId(formatId);
+        }
     }
 
-    @JsonIgnore
     @Override
     public String getTitle() {
-        return StringUtils.EMPTY;
+        return downloadable.getTitle();
+    }
+
+    public void setTitle(String title) {
+        downloadable.setTitle(title);
     }
 
     @Override
     public String getBaseUrl() {
-        return baseUrl;
+        return downloadable.getBaseUrl();
     }
 
     public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+        downloadable.setBaseUrl(baseUrl);
     }
 
     @Override
     public List<Postprocessing> getPostprocessingSteps() {
-        return ListUtils.emptyIfNull(postprocessingSteps);
+        return downloadable.getPostprocessingSteps();
     }
 
     @Override
     public void setPostprocessingSteps(List<Postprocessing> items) {
-        postprocessingSteps = List.copyOf(ListUtils.emptyIfNull(items));
+        downloadable.setPostprocessingSteps(List.copyOf(ListUtils.emptyIfNull(items)));
     }
 
     @Override
@@ -133,11 +141,11 @@ public class QueueItem implements Downloadable {
             return false;
         }
         QueueItem queueItem = (QueueItem) o;
-        return baseUrl.equals(queueItem.baseUrl);
+        return getBaseUrl().equals(queueItem.getBaseUrl());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(baseUrl);
+        return Objects.hash(getBaseUrl());
     }
 }

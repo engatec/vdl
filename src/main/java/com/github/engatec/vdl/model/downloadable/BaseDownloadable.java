@@ -24,9 +24,17 @@ public abstract class BaseDownloadable implements Downloadable {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public String getBaseUrl() {
         return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     @Override

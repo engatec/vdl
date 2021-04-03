@@ -2,23 +2,18 @@ package com.github.engatec.vdl.core.command;
 
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.QueueItem;
-import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 
 public class EnqueueCommand implements Command {
 
-    private final Downloadable downloadable;
+    private final BaseDownloadable downloadable;
 
-    public EnqueueCommand(Downloadable downloadable) {
+    public EnqueueCommand(BaseDownloadable downloadable) {
         this.downloadable = downloadable;
     }
 
     @Override
     public void execute() {
-        var item = new QueueItem();
-        item.setBaseUrl(downloadable.getBaseUrl());
-        item.setFormatId(downloadable.getFormatId());
-        item.setDownloadPath(downloadable.getDownloadPath());
-        item.setPostprocessingSteps(downloadable.getPostprocessingSteps());
-        QueueManager.INSTANCE.addItem(item);
+        QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
     }
 }
