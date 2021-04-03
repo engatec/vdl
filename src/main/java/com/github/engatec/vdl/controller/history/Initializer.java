@@ -28,6 +28,8 @@ class Initializer {
     private static final Logger LOGGER = LogManager.getLogger(Initializer.class);
 
     static void initialize(Context ctx) {
+        ctx.getStage().setOnCloseRequest(Handler::handleCloseRequest);
+
         initEntriesNumberComboBox(ctx.getEntriesNumberComboBox());
         initHistoryTableView(ctx);
 
