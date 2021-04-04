@@ -3,6 +3,7 @@ package com.github.engatec.vdl.core.youtubedl;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import org.apache.commons.lang3.StringUtils;
@@ -164,9 +165,7 @@ public class YoutubeDlCommandBuilder {
     }
 
     public YoutubeDlCommandBuilder outputPath(Path path, String title) {
-        if (path == null) {
-            throw new IllegalArgumentException("path must not be null");
-        }
+        Objects.requireNonNull(path, "path must not be null");
 
         title = StringUtils.length(title) > MAX_TITLE_LENGTH ? "%(id)s" : "%(title)s";
 
@@ -197,6 +196,13 @@ public class YoutubeDlCommandBuilder {
 
     public YoutubeDlCommandBuilder noMTime() {
         commandList.add("--no-mtime");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder cookiesFile(Path path) {
+        Objects.requireNonNull(path, "path must not be null");
+        commandList.add("--cookies");
+        commandList.add(path.toString());
         return this;
     }
 

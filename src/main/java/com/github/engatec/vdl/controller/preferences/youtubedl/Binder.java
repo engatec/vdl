@@ -4,6 +4,7 @@ import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
@@ -12,6 +13,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
@@ -37,6 +39,9 @@ class Binder {
         ctx.getNoContinueCheckbox().selectedProperty().bindBidirectional(ConfigRegistry.get(NoContinuePref.class).getProperty());
         ctx.getNoPartCheckBox().selectedProperty().bindBidirectional(ConfigRegistry.get(NoPartPref.class).getProperty());
         ctx.getNoMTimeCheckBox().selectedProperty().bindBidirectional(ConfigRegistry.get(NoMTimePref.class).getProperty());
+
+        ctx.getReadCookiesCheckbox().selectedProperty().bindBidirectional(ConfigRegistry.get(ReadCookiesPref.class).getProperty());
+        ctx.getCookiesFileChooser().pathProperty().bindBidirectional(ConfigRegistry.get(CookiesFileLocationPref.class).getProperty());
 
         ctx.getUseConfigFileCheckBox().selectedProperty().bindBidirectional(ConfigRegistry.get(UseConfigFilePref.class).getProperty());
         ctx.getConfigFileTextField().textProperty().bindBidirectional(ConfigRegistry.get(ConfigFilePathPref.class).getProperty());

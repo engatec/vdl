@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.github.engatec.fxcontrols.FxFileChooser?>
 <?import com.github.engatec.fxcontrols.FxTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -33,6 +34,12 @@
             </CheckBox>
             <CheckBox fx:id="noContinueCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.nocontinue.checkbox" wrapText="true" />
             <CheckBox fx:id="noPartCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nopart.checkbox" wrapText="true" />
+            <CheckBox fx:id="readCookiesCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.readcookies.checkbox" />
+            <FxFileChooser fx:id="cookiesFileChooser">
+               <VBox.margin>
+                  <Insets left="8.0" />
+               </VBox.margin>
+            </FxFileChooser>
             <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.configfile.checkbox" wrapText="true" />
             <HBox alignment="CENTER_LEFT" spacing="8.0">
                <children>

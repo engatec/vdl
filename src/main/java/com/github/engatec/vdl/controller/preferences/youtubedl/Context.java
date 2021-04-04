@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.controller.preferences.youtubedl;
 
+import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.fxcontrols.FxTextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -26,6 +27,10 @@ class Context {
     private final CheckBox noContinueCheckbox;
     private final CheckBox noPartCheckBox;
     private final CheckBox noMTimeCheckBox;
+
+    private final CheckBox readCookiesCheckbox;
+    private final FxFileChooser cookiesFileChooser;
+
     private final CheckBox useConfigFileCheckBox;
     private final TextField configFileTextField;
     private final Button configFileChooseBtn;
@@ -46,6 +51,8 @@ class Context {
             CheckBox noContinueCheckbox,
             CheckBox noPartCheckBox,
             CheckBox noMTimeCheckBox,
+            CheckBox readCookiesCheckbox,
+            FxFileChooser cookiesFileChooser,
             CheckBox useConfigFileCheckBox,
             TextField configFileTextField,
             Button configFileChooseBtn
@@ -65,6 +72,8 @@ class Context {
         this.noContinueCheckbox = noContinueCheckbox;
         this.noPartCheckBox = noPartCheckBox;
         this.noMTimeCheckBox = noMTimeCheckBox;
+        this.readCookiesCheckbox = readCookiesCheckbox;
+        this.cookiesFileChooser = cookiesFileChooser;
         this.useConfigFileCheckBox = useConfigFileCheckBox;
         this.configFileTextField = configFileTextField;
         this.configFileChooseBtn = configFileChooseBtn;
@@ -128,6 +137,14 @@ class Context {
 
     CheckBox getNoMTimeCheckBox() {
         return noMTimeCheckBox;
+    }
+
+    CheckBox getReadCookiesCheckbox() {
+        return readCookiesCheckbox;
+    }
+
+    FxFileChooser getCookiesFileChooser() {
+        return cookiesFileChooser;
     }
 
     CheckBox getUseConfigFileCheckBox() {

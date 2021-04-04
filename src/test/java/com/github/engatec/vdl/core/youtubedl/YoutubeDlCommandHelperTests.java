@@ -5,6 +5,7 @@ import java.util.List;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
@@ -13,10 +14,12 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -44,10 +47,12 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            ConfigRegistry.get(MarkWatchedPref.class).restore();
-            ConfigRegistry.get(NoContinuePref.class).restore();
-            ConfigRegistry.get(NoPartPref.class).restore();
-            ConfigRegistry.get(NoMTimePref.class).getProperty().setValue(false); // it's true by default, so set it to false
+            ConfigRegistry.get(MarkWatchedPref.class).setValue(false);
+            ConfigRegistry.get(NoContinuePref.class).setValue(false);
+            ConfigRegistry.get(NoPartPref.class).setValue(false);
+            ConfigRegistry.get(NoMTimePref.class).setValue(false);
+            ConfigRegistry.get(ReadCookiesPref.class).setValue(false);
+            ConfigRegistry.get(CookiesFileLocationPref.class).setValue(StringUtils.EMPTY);
         }
 
         private List<String> buildCommand() {
@@ -85,6 +90,24 @@ public class YoutubeDlCommandHelperTests {
             ConfigRegistry.get(NoMTimePref.class).getProperty().setValue(true);
             doAssertions(buildCommand(), "--no-mtime");
         }
+
+        @Test
+        void shouldSetCookies() {
+            String path = "path";
+            ConfigRegistry.get(ReadCookiesPref.class).getProperty().setValue(true);
+            ConfigRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(path);
+            doAssertions(buildCommand(), "--cookies", path);
+        }
+
+        @Test
+        void shouldNoSetCookies() {
+            String path = "path";
+            ConfigRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(path);
+            List<String> command = buildCommand();
+            assertThat(command)
+                    .hasSize(1)
+                    .doesNotContain("--cookies");
+        }
     }
 
     @Nested
@@ -93,11 +116,11 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            ConfigRegistry.get(ProxyUrlPref.class).restore();
-            ConfigRegistry.get(SocketTimeoutPref.class).restore();
-            ConfigRegistry.get(SourceAddressPref.class).restore();
-            ConfigRegistry.get(ForceIpV4Pref.class).restore();
-            ConfigRegistry.get(ForceIpV6Pref.class).restore();
+            ConfigRegistry.get(ProxyUrlPref.class).setValue(StringUtils.EMPTY);
+            ConfigRegistry.get(SocketTimeoutPref.class).setValue(StringUtils.EMPTY);
+            ConfigRegistry.get(SourceAddressPref.class).setValue(StringUtils.EMPTY);
+            ConfigRegistry.get(ForceIpV4Pref.class).setValue(false);
+            ConfigRegistry.get(ForceIpV6Pref.class).setValue(false);
         }
 
         private List<String> buildCommand() {
@@ -165,11 +188,11 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            ConfigRegistry.get(AuthUsernamePref.class).restore();
-            ConfigRegistry.get(AuthPasswordPref.class).restore();
-            ConfigRegistry.get(TwoFactorCodePref.class).restore();
-            ConfigRegistry.get(NetrcPref.class).restore();
-            ConfigRegistry.get(VideoPasswordPref.class).restore();
+            ConfigRegistry.get(AuthUsernamePref.class).setValue(StringUtils.EMPTY);
+            ConfigRegistry.get(AuthPasswordPref.class).setValue(StringUtils.EMPTY);
+            ConfigRegistry.get(TwoFactorCodePref.class).setValue(StringUtils.EMPTY);
+            ConfigRegistry.get(NetrcPref.class).setValue(false);
+            ConfigRegistry.get(VideoPasswordPref.class).setValue(StringUtils.EMPTY);
         }
 
         private List<String> buildCommand() {

@@ -1,8 +1,11 @@
 package com.github.engatec.vdl.core.youtubedl;
 
+import java.nio.file.Path;
+
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
@@ -11,6 +14,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
@@ -44,6 +48,12 @@ public class YoutubeDlCommandHelper {
         Boolean noMTime = ConfigRegistry.get(NoMTimePref.class).getValue();
         if (noMTime) {
             commandBuilder.noMTime();
+        }
+
+        Boolean readCookies = ConfigRegistry.get(ReadCookiesPref.class).getValue();
+        if (readCookies) {
+            String cookiesFileLocation = ConfigRegistry.get(CookiesFileLocationPref.class).getValue();
+            commandBuilder.cookiesFile(Path.of(cookiesFileLocation));
         }
     }
 

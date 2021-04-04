@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.core.youtubedl;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -48,6 +49,13 @@ public class YoutubeDlCommandBuilderTests {
         void shouldCreateNoMTime() {
             List<String> command = YoutubeDlCommandBuilder.newInstance().noMTime().buildAsList();
             doAssertions(command, "--no-mtime");
+        }
+
+        @Test
+        void shouldCreateCookies() {
+            Path path = Path.of("path");
+            List<String> command = YoutubeDlCommandBuilder.newInstance().cookiesFile(path).buildAsList();
+            doAssertions(command, "--cookies", path.toString());
         }
     }
 

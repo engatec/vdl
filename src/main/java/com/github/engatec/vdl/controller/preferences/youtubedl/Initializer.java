@@ -2,6 +2,7 @@ package com.github.engatec.vdl.controller.preferences.youtubedl;
 
 import java.util.ResourceBundle;
 
+import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.handler.textformatter.IntegerTextFormatter;
 import com.github.engatec.vdl.ui.Icons;
@@ -19,8 +20,14 @@ class Initializer {
     }
 
     private static void initGeneralSettings(Context ctx) {
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
         ctx.getMarkWatchedCheckbox().setGraphic(Icons.infoWithTooltip("preferences.youtubedl.general.markwatched.tooltip"));
         ctx.getMarkWatchedCheckbox().setContentDisplay(ContentDisplay.RIGHT);
+
+        FxFileChooser cookiesFileChooser = ctx.getCookiesFileChooser();
+        cookiesFileChooser.setButtonText(resourceBundle.getString("button.filechoose"));
+        cookiesFileChooser.disableProperty().bind(ctx.getReadCookiesCheckbox().selectedProperty().not());
     }
 
     private static void initNetworkSettings(Context ctx) {

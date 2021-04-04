@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.controller.preferences.youtubedl;
 
+import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.fxcontrols.FxTextField;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.fxml.FXML;
@@ -33,6 +34,9 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
     @FXML private CheckBox noPartCheckBox;
     @FXML private CheckBox noMTimeCheckBox;
 
+    @FXML private CheckBox readCookiesCheckbox;
+    @FXML private FxFileChooser cookiesFileChooser;
+
     @FXML private CheckBox useConfigFileCheckBox;
     @FXML private TextField configFileTextField;
     @FXML private Button configFileChooseBtn;
@@ -59,6 +63,8 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
                 noContinueCheckbox,
                 noPartCheckBox,
                 noMTimeCheckBox,
+                readCookiesCheckbox,
+                cookiesFileChooser,
                 useConfigFileCheckBox,
                 configFileTextField,
                 configFileChooseBtn
