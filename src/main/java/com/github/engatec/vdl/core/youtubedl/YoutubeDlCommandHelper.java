@@ -7,7 +7,9 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
@@ -27,6 +29,16 @@ public class YoutubeDlCommandHelper {
         Boolean markWatched = ConfigRegistry.get(MarkWatchedPref.class).getValue();
         if (markWatched) {
             commandBuilder.markWatched();
+        }
+
+        Boolean noContinue = ConfigRegistry.get(NoContinuePref.class).getValue();
+        if (noContinue) {
+            commandBuilder.noContinue();
+        }
+
+        Boolean noPart = ConfigRegistry.get(NoPartPref.class).getValue();
+        if (noPart) {
+            commandBuilder.noPart();
         }
 
         Boolean noMTime = ConfigRegistry.get(NoMTimePref.class).getValue();

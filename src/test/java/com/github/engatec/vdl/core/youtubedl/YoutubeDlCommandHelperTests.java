@@ -9,7 +9,9 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
@@ -43,6 +45,8 @@ public class YoutubeDlCommandHelperTests {
         @BeforeEach
         void setUp() {
             ConfigRegistry.get(MarkWatchedPref.class).restore();
+            ConfigRegistry.get(NoContinuePref.class).restore();
+            ConfigRegistry.get(NoPartPref.class).restore();
             ConfigRegistry.get(NoMTimePref.class).getProperty().setValue(false); // it's true by default, so set it to false
         }
 
@@ -62,6 +66,18 @@ public class YoutubeDlCommandHelperTests {
         void shouldSetMarkWatched() {
             ConfigRegistry.get(MarkWatchedPref.class).getProperty().setValue(true);
             doAssertions(buildCommand(), "--mark-watched");
+        }
+
+        @Test
+        void shouldSetNoContinue() {
+            ConfigRegistry.get(NoContinuePref.class).getProperty().setValue(true);
+            doAssertions(buildCommand(), "--no-continue");
+        }
+
+        @Test
+        void shouldSetNoPart() {
+            ConfigRegistry.get(NoPartPref.class).getProperty().setValue(true);
+            doAssertions(buildCommand(), "--no-part");
         }
 
         @Test

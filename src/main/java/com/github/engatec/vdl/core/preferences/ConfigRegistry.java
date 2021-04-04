@@ -20,7 +20,9 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
@@ -45,6 +47,8 @@ public class ConfigRegistry {
         /* YoutubeDl */
         REGISTRY.put(ConfigFilePathPref.class, new ConfigFilePathPref());
         REGISTRY.put(MarkWatchedPref.class, new MarkWatchedPref());
+        REGISTRY.put(NoContinuePref.class, new NoContinuePref());
+        REGISTRY.put(NoPartPref.class, new NoPartPref());
         REGISTRY.put(NoMTimePref.class, new NoMTimePref());
         REGISTRY.put(ProxyUrlPref.class, new ProxyUrlPref());
         REGISTRY.put(SocketTimeoutPref.class, new SocketTimeoutPref());

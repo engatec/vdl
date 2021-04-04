@@ -23,6 +23,8 @@ class Context {
     private final CheckBox netrcCheckbox;
 
     private final CheckBox markWatchedCheckbox;
+    private final CheckBox noContinueCheckbox;
+    private final CheckBox noPartCheckBox;
     private final CheckBox noMTimeCheckBox;
     private final CheckBox useConfigFileCheckBox;
     private final TextField configFileTextField;
@@ -41,6 +43,8 @@ class Context {
             TextFieldExt videoPasswordTextField,
             CheckBox netrcCheckbox,
             CheckBox markWatchedCheckbox,
+            CheckBox noContinueCheckbox,
+            CheckBox noPartCheckBox,
             CheckBox noMTimeCheckBox,
             CheckBox useConfigFileCheckBox,
             TextField configFileTextField,
@@ -58,13 +62,15 @@ class Context {
         this.videoPasswordTextField = videoPasswordTextField;
         this.netrcCheckbox = netrcCheckbox;
         this.markWatchedCheckbox = markWatchedCheckbox;
+        this.noContinueCheckbox = noContinueCheckbox;
+        this.noPartCheckBox = noPartCheckBox;
         this.noMTimeCheckBox = noMTimeCheckBox;
         this.useConfigFileCheckBox = useConfigFileCheckBox;
         this.configFileTextField = configFileTextField;
         this.configFileChooseBtn = configFileChooseBtn;
     }
 
-    public Stage getStage() {
+    Stage getStage() {
         return stage;
     }
 
@@ -108,8 +114,16 @@ class Context {
         return netrcCheckbox;
     }
 
-    public CheckBox getMarkWatchedCheckbox() {
+    CheckBox getMarkWatchedCheckbox() {
         return markWatchedCheckbox;
+    }
+
+    CheckBox getNoContinueCheckbox() {
+        return noContinueCheckbox;
+    }
+
+    CheckBox getNoPartCheckBox() {
+        return noPartCheckBox;
     }
 
     CheckBox getNoMTimeCheckBox() {

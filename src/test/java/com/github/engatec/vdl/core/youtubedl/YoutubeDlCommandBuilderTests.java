@@ -33,6 +33,18 @@ public class YoutubeDlCommandBuilderTests {
         }
 
         @Test
+        void shouldCreateNoContinue() {
+            List<String> command = YoutubeDlCommandBuilder.newInstance().noContinue().buildAsList();
+            doAssertions(command, "--no-continue");
+        }
+
+        @Test
+        void shouldCreateNoPart() {
+            List<String> command = YoutubeDlCommandBuilder.newInstance().noPart().buildAsList();
+            doAssertions(command, "--no-part");
+        }
+
+        @Test
         void shouldCreateNoMTime() {
             List<String> command = YoutubeDlCommandBuilder.newInstance().noMTime().buildAsList();
             doAssertions(command, "--no-mtime");

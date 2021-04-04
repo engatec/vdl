@@ -185,6 +185,16 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
+    public YoutubeDlCommandBuilder noContinue() {
+        commandList.add("--no-continue");
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder noPart() {
+        commandList.add("--no-part");
+        return this;
+    }
+
     public YoutubeDlCommandBuilder noMTime() {
         commandList.add("--no-mtime");
         return this;

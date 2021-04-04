@@ -25,12 +25,14 @@
             <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />
          </padding>
          <children>
-            <CheckBox fx:id="markWatchedCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.general.markwatched.label" />
+            <CheckBox fx:id="markWatchedCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.general.markwatched.label" wrapText="true" />
             <CheckBox fx:id="noMTimeCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nomtime.label" wrapText="true">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </CheckBox>
+            <CheckBox fx:id="noContinueCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.nocontinue.checkbox" wrapText="true" />
+            <CheckBox fx:id="noPartCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nopart.checkbox" wrapText="true" />
             <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.configfile.checkbox" wrapText="true" />
             <HBox alignment="CENTER_LEFT" spacing="8.0">
                <children>

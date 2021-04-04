@@ -29,6 +29,8 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
     @FXML private CheckBox netrcCheckbox;
 
     @FXML private CheckBox markWatchedCheckbox;
+    @FXML private CheckBox noContinueCheckbox;
+    @FXML private CheckBox noPartCheckBox;
     @FXML private CheckBox noMTimeCheckBox;
 
     @FXML private CheckBox useConfigFileCheckBox;
@@ -54,6 +56,8 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
                 videoPasswordTextField,
                 netrcCheckbox,
                 markWatchedCheckbox,
+                noContinueCheckbox,
+                noPartCheckBox,
                 noMTimeCheckBox,
                 useConfigFileCheckBox,
                 configFileTextField,
