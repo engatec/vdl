@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.controller.preferences.youtubedl;
 
-import com.github.engatec.fxcontrols.TextFieldExt;
+import com.github.engatec.fxcontrols.FxTextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -10,16 +10,16 @@ class Context {
 
     private final Stage stage;
 
-    private final TextFieldExt proxyUrlTextField;
-    private final TextFieldExt socketTimoutTextField;
-    private final TextFieldExt sourceAddressTextField;
+    private final FxTextField proxyUrlTextField;
+    private final FxTextField socketTimoutTextField;
+    private final FxTextField sourceAddressTextField;
     private final CheckBox forceIpV4CheckBox;
     private final CheckBox forceIpV6CheckBox;
 
-    private final TextFieldExt usernameTextField;
-    private final TextFieldExt passwordTextField;
+    private final FxTextField usernameTextField;
+    private final FxTextField passwordTextField;
     private final TextField twoFactorTextField;
-    private final TextFieldExt videoPasswordTextField;
+    private final FxTextField videoPasswordTextField;
     private final CheckBox netrcCheckbox;
 
     private final CheckBox markWatchedCheckbox;
@@ -32,15 +32,15 @@ class Context {
 
     Context(
             Stage stage,
-            TextFieldExt proxyUrlTextField,
-            TextFieldExt socketTimoutTextField,
-            TextFieldExt sourceAddressTextField,
+            FxTextField proxyUrlTextField,
+            FxTextField socketTimoutTextField,
+            FxTextField sourceAddressTextField,
             CheckBox forceIpV4CheckBox,
             CheckBox forceIpV6CheckBox,
-            TextFieldExt usernameTextField,
-            TextFieldExt passwordTextField,
+            FxTextField usernameTextField,
+            FxTextField passwordTextField,
             TextField twoFactorTextField,
-            TextFieldExt videoPasswordTextField,
+            FxTextField videoPasswordTextField,
             CheckBox netrcCheckbox,
             CheckBox markWatchedCheckbox,
             CheckBox noContinueCheckbox,
@@ -74,15 +74,15 @@ class Context {
         return stage;
     }
 
-    TextFieldExt getProxyUrlTextField() {
+    FxTextField getProxyUrlTextField() {
         return proxyUrlTextField;
     }
 
-    TextFieldExt getSocketTimoutTextField() {
+    FxTextField getSocketTimoutTextField() {
         return socketTimoutTextField;
     }
 
-    TextFieldExt getSourceAddressTextField() {
+    FxTextField getSourceAddressTextField() {
         return sourceAddressTextField;
     }
 
@@ -94,11 +94,11 @@ class Context {
         return forceIpV6CheckBox;
     }
 
-    TextFieldExt getUsernameTextField() {
+    FxTextField getUsernameTextField() {
         return usernameTextField;
     }
 
-    TextFieldExt getPasswordTextField() {
+    FxTextField getPasswordTextField() {
         return passwordTextField;
     }
 
@@ -106,7 +106,7 @@ class Context {
         return twoFactorTextField;
     }
 
-    TextFieldExt getVideoPasswordTextField() {
+    FxTextField getVideoPasswordTextField() {
         return videoPasswordTextField;
     }
 

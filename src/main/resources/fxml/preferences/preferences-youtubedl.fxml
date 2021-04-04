@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.github.engatec.fxcontrols.TextFieldExt?>
+<?import com.github.engatec.fxcontrols.FxTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -68,11 +68,11 @@
               </rowConstraints>
                <children>
                   <Label text="%preferences.youtubedl.network.proxy.label" />
-                  <TextFieldExt fx:id="proxyUrlTextField" GridPane.columnIndex="1" />
+                  <FxTextField fx:id="proxyUrlTextField" GridPane.columnIndex="1" />
                   <Label text="%preferences.youtubedl.network.socket.timeout.label" GridPane.rowIndex="1" />
-                  <TextFieldExt fx:id="socketTimoutTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <FxTextField fx:id="socketTimoutTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label text="%preferences.youtubedl.network.sourceaddress.label" GridPane.rowIndex="2" />
-                  <TextFieldExt fx:id="sourceAddressTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <FxTextField fx:id="sourceAddressTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                </children>
             </GridPane>
             <HBox spacing="12.0">
@@ -113,13 +113,13 @@
                </rowConstraints>
                <children>
                   <Label text="%preferences.youtubedl.authentication.username.label" />
-                  <TextFieldExt fx:id="usernameTextField" GridPane.columnIndex="1" />
+                  <FxTextField fx:id="usernameTextField" GridPane.columnIndex="1" />
                   <Label text="%preferences.youtubedl.authentication.password.label" GridPane.rowIndex="1" />
-                  <TextFieldExt fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <FxTextField fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label text="%preferences.youtubedl.authentication.twofactor.label" GridPane.rowIndex="2" />
                   <TextField fx:id="twoFactorTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label text="%preferences.youtubedl.authentication.videopassword.label" GridPane.rowIndex="3" />
-                  <TextFieldExt fx:id="videoPasswordTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <FxTextField fx:id="videoPasswordTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
             </GridPane>
             <CheckBox fx:id="netrcCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.authentication.netrc.label">

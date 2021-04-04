@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.controller.preferences.youtubedl;
 
-import com.github.engatec.fxcontrols.TextFieldExt;
+import com.github.engatec.fxcontrols.FxTextField;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,17 +15,17 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
 
     private Context ctx;
 
-    @FXML private TextFieldExt proxyUrlTextField;
-    @FXML private TextFieldExt socketTimoutTextField;
-    @FXML private TextFieldExt sourceAddressTextField;
+    @FXML private FxTextField proxyUrlTextField;
+    @FXML private FxTextField socketTimoutTextField;
+    @FXML private FxTextField sourceAddressTextField;
 
     @FXML private CheckBox forceIpV4CheckBox;
     @FXML private CheckBox forceIpV6CheckBox;
 
-    @FXML private TextFieldExt usernameTextField;
-    @FXML private TextFieldExt passwordTextField;
+    @FXML private FxTextField usernameTextField;
+    @FXML private FxTextField passwordTextField;
     @FXML private TextField twoFactorTextField;
-    @FXML private TextFieldExt videoPasswordTextField;
+    @FXML private FxTextField videoPasswordTextField;
     @FXML private CheckBox netrcCheckbox;
 
     @FXML private CheckBox markWatchedCheckbox;
