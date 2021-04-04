@@ -31,11 +31,11 @@
                   <Insets />
                </VBox.margin>
             </CheckBox>
-            <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.checkbox.configitem" wrapText="true" />
+            <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.configfile.checkbox" wrapText="true" />
             <HBox alignment="CENTER_LEFT" spacing="8.0">
                <children>
                   <TextField fx:id="configFileTextField" editable="false" minWidth="150.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="configFileChooseBtn" mnemonicParsing="false" styleClass="control-btn" text="%preferences.youtubedl.btn.choose" />
+                  <Button fx:id="configFileChooseBtn" mnemonicParsing="false" styleClass="control-btn" text="%preferences.youtubedl.configfile.btn.choose" />
                </children>
                <VBox.margin>
                   <Insets left="8.0" />

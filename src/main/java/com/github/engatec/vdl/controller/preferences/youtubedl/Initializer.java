@@ -56,7 +56,7 @@ class Initializer {
     }
 
     private static void initConfigFileSettings(Context ctx) {
-        ctx.getUseConfigFileCheckBox().setGraphic(Icons.infoWithTooltip("preferences.youtubedl.checkbox.configitem.tooltip"));
+        ctx.getUseConfigFileCheckBox().setGraphic(Icons.infoWithTooltip("preferences.youtubedl.configfile.tooltip"));
         ctx.getUseConfigFileCheckBox().setContentDisplay(ContentDisplay.RIGHT);
 
         BooleanBinding configFileCheckBoxUnselected = ctx.getUseConfigFileCheckBox().selectedProperty().not();
