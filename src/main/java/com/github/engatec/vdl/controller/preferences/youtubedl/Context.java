@@ -2,7 +2,6 @@ package com.github.engatec.vdl.controller.preferences.youtubedl;
 
 import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.fxcontrols.FxTextField;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -32,8 +31,7 @@ class Context {
     private final FxFileChooser cookiesFileChooser;
 
     private final CheckBox useConfigFileCheckBox;
-    private final TextField configFileTextField;
-    private final Button configFileChooseBtn;
+    private final FxFileChooser configFileChooser;
 
     Context(
             Stage stage,
@@ -54,8 +52,7 @@ class Context {
             CheckBox readCookiesCheckbox,
             FxFileChooser cookiesFileChooser,
             CheckBox useConfigFileCheckBox,
-            TextField configFileTextField,
-            Button configFileChooseBtn
+            FxFileChooser configFileChooser
     ) {
         this.stage = stage;
         this.proxyUrlTextField = proxyUrlTextField;
@@ -75,8 +72,7 @@ class Context {
         this.readCookiesCheckbox = readCookiesCheckbox;
         this.cookiesFileChooser = cookiesFileChooser;
         this.useConfigFileCheckBox = useConfigFileCheckBox;
-        this.configFileTextField = configFileTextField;
-        this.configFileChooseBtn = configFileChooseBtn;
+        this.configFileChooser = configFileChooser;
     }
 
     Stage getStage() {
@@ -151,11 +147,7 @@ class Context {
         return useConfigFileCheckBox;
     }
 
-    TextField getConfigFileTextField() {
-        return configFileTextField;
-    }
-
-    Button getConfigFileChooseBtn() {
-        return configFileChooseBtn;
+    FxFileChooser getConfigFileChooser() {
+        return configFileChooser;
     }
 }

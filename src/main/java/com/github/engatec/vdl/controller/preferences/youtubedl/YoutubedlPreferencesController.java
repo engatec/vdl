@@ -4,7 +4,6 @@ import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.fxcontrols.FxTextField;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -38,8 +37,7 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
     @FXML private FxFileChooser cookiesFileChooser;
 
     @FXML private CheckBox useConfigFileCheckBox;
-    @FXML private TextField configFileTextField;
-    @FXML private Button configFileChooseBtn;
+    @FXML private FxFileChooser configFileChooser;
 
     public YoutubedlPreferencesController(Stage stage) {
         this.stage = stage;
@@ -66,8 +64,7 @@ public class YoutubedlPreferencesController extends VBox implements InputForm {
                 readCookiesCheckbox,
                 cookiesFileChooser,
                 useConfigFileCheckBox,
-                configFileTextField,
-                configFileChooseBtn
+                configFileChooser
         );
 
         Initializer.initialize(ctx);

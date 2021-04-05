@@ -17,6 +17,6 @@ public class GeneralPreferencesComponent extends AppComponent<GeneralPreferences
 
     @Override
     protected GeneralPreferencesController getController() {
-        return new GeneralPreferencesController(stage);
+        return new GeneralPreferencesController();
     }
 }

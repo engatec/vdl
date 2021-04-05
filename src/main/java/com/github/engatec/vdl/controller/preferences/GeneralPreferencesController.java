@@ -1,8 +1,8 @@
 package com.github.engatec.vdl.controller.preferences;
 
-import java.io.File;
 import java.util.ResourceBundle;
 
+import com.github.engatec.fxcontrols.FxDirectoryChooser;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.preferences.data.AutodownloadFormat;
@@ -15,12 +15,9 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref
 import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
 import com.github.engatec.vdl.ui.Icons;
 import com.github.engatec.vdl.validation.InputForm;
-import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
@@ -29,19 +26,14 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 public class GeneralPreferencesController extends VBox implements InputForm {
 
-    private final Stage stage;
-
     private final ToggleGroup downloadPathRadioGroup = new ToggleGroup();
     @FXML private RadioButton downloadPathRadioBtn;
     @FXML private RadioButton askPathRadioBtn;
-    @FXML private TextField downloadPathTextField;
-    @FXML private Button chooseDownloadPathBtn;
+    @FXML private FxDirectoryChooser downloadPathDirectoryChooser;
 
     @FXML private CheckBox autoSearchFromClipboardCheckBox;
 
@@ -50,10 +42,6 @@ public class GeneralPreferencesController extends VBox implements InputForm {
     @FXML private ComboBox<AutodownloadFormat> autodownloadFormatComboBox;
     @FXML private TextField autodownloadFormatTextField;
     @FXML private CheckBox skipDownloadableDetailsSearchCheckBox;
-
-    public GeneralPreferencesController(Stage stage) {
-        this.stage = stage;
-    }
 
     @FXML
     public void initialize() {
@@ -65,7 +53,7 @@ public class GeneralPreferencesController extends VBox implements InputForm {
 
     private void bindPropertyHolder() {
         askPathRadioBtn.selectedProperty().bindBidirectional(ConfigRegistry.get(AlwaysAskDownloadPathPref.class).getProperty());
-        downloadPathTextField.textProperty().bindBidirectional(ConfigRegistry.get(DownloadPathPref.class).getProperty());
+        downloadPathDirectoryChooser.pathProperty().bindBidirectional(ConfigRegistry.get(DownloadPathPref.class).getProperty());
 
         autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(AutoSearchFromClipboardPref.class).getProperty());
 
@@ -74,24 +62,11 @@ public class GeneralPreferencesController extends VBox implements InputForm {
         skipDownloadableDetailsSearchCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(SkipDownloadableDetailsSearchPref.class).getProperty());
     }
 
-    private void handleDownloadPathChoose(ActionEvent event) {
-        var directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(stage);
-        if (selectedDirectory != null) {
-            String path = selectedDirectory.getAbsolutePath();
-            downloadPathTextField.setText(path);
-        }
-        event.consume();
-    }
-
     private void initDownloadPathSettings() {
-        chooseDownloadPathBtn.setOnAction(this::handleDownloadPathChoose);
-
         downloadPathRadioBtn.setToggleGroup(downloadPathRadioGroup);
         askPathRadioBtn.setToggleGroup(downloadPathRadioGroup);
-        BooleanProperty downloadPathRadioBtnSelectedProperty = downloadPathRadioBtn.selectedProperty();
-        downloadPathTextField.disableProperty().bind(downloadPathRadioBtnSelectedProperty.not());
-        chooseDownloadPathBtn.disableProperty().bind(downloadPathRadioBtnSelectedProperty.not());
+        downloadPathDirectoryChooser.setButtonText(ApplicationContext.INSTANCE.getResourceBundle().getString("button.directorychoose"));
+        downloadPathDirectoryChooser.disableProperty().bind(downloadPathRadioBtn.selectedProperty().not());
         downloadPathRadioBtn.setSelected(true); // Set default value to trigger ToggleGroup. It will be overriden during PropertyHolder binding
     }
 

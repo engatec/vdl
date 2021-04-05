@@ -44,6 +44,6 @@ class Binder {
         ctx.getCookiesFileChooser().pathProperty().bindBidirectional(ConfigRegistry.get(CookiesFileLocationPref.class).getProperty());
 
         ctx.getUseConfigFileCheckBox().selectedProperty().bindBidirectional(ConfigRegistry.get(UseConfigFilePref.class).getProperty());
-        ctx.getConfigFileTextField().textProperty().bindBidirectional(ConfigRegistry.get(ConfigFilePathPref.class).getProperty());
+        ctx.getConfigFileChooser().pathProperty().bindBidirectional(ConfigRegistry.get(ConfigFilePathPref.class).getProperty());
     }
 }

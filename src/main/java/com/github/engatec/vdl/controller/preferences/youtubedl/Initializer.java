@@ -6,7 +6,6 @@ import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.handler.textformatter.IntegerTextFormatter;
 import com.github.engatec.vdl.ui.Icons;
-import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.ContentDisplay;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -63,12 +62,13 @@ class Initializer {
     }
 
     private static void initConfigFileSettings(Context ctx) {
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
         ctx.getUseConfigFileCheckBox().setGraphic(Icons.infoWithTooltip("preferences.youtubedl.configfile.tooltip"));
         ctx.getUseConfigFileCheckBox().setContentDisplay(ContentDisplay.RIGHT);
 
-        BooleanBinding configFileCheckBoxUnselected = ctx.getUseConfigFileCheckBox().selectedProperty().not();
-        ctx.getConfigFileTextField().disableProperty().bind(configFileCheckBoxUnselected);
-        ctx.getConfigFileChooseBtn().disableProperty().bind(configFileCheckBoxUnselected);
-        ctx.getConfigFileChooseBtn().setOnAction(event -> Handler.handleConfigFileChooseBtnClick(ctx, event));
+        FxFileChooser configFileChooser = ctx.getConfigFileChooser();
+        configFileChooser.setButtonText(resourceBundle.getString("button.filechoose"));
+        configFileChooser.disableProperty().bind(ctx.getUseConfigFileCheckBox().selectedProperty().not());
     }
 }

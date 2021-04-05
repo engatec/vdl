@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.github.engatec.fxcontrols.FxDirectoryChooser?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<fx:root type="javafx.scene.layout.VBox" spacing="8.0" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root spacing="8.0" stylesheets="@../../styles.css" type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox spacing="8.0">
          <children>
             <HBox alignment="CENTER_LEFT" spacing="8.0">
                <children>
                   <RadioButton fx:id="downloadPathRadioBtn" mnemonicParsing="false" text="%preferences.label.download.path" wrapText="true" />
-                  <TextField fx:id="downloadPathTextField" editable="false" minWidth="150.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="chooseDownloadPathBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%preferences.btn.download.choose" />
+                  <FxDirectoryChooser fx:id="downloadPathDirectoryChooser" minWidth="220.0" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <RadioButton fx:id="askPathRadioBtn" mnemonicParsing="false" text="%preferences.label.download.askpath" />
