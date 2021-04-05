@@ -15,7 +15,7 @@ public class AppExecutors {
 
     public static final ExecutorService COMMON_EXECUTOR = Executors.newFixedThreadPool(2);
     public static final ExecutorService BACKGROUND_EXECUTOR = Executors.newSingleThreadExecutor();
-    public static final ExecutorService QUEUE_EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+    public static final ExecutorService QUEUE_EXECUTOR = Executors.newFixedThreadPool(3);
 
     public static <T> void runTaskAsync(Task<T> task) {
         COMMON_EXECUTOR.submit(task);
