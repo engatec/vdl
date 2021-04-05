@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.core.youtubedl;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -53,7 +54,10 @@ public class YoutubeDlCommandHelper {
         Boolean readCookies = ConfigRegistry.get(ReadCookiesPref.class).getValue();
         if (readCookies) {
             String cookiesFileLocation = ConfigRegistry.get(CookiesFileLocationPref.class).getValue();
-            commandBuilder.cookiesFile(Path.of(cookiesFileLocation));
+            Path cookiesPath = Path.of(cookiesFileLocation);
+            if (Files.exists(cookiesPath) && Files.isReadable(cookiesPath)) {
+                commandBuilder.cookiesFile(Path.of(cookiesFileLocation));
+            }
         }
     }
 
