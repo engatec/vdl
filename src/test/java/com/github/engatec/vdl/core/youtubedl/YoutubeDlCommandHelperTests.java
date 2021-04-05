@@ -1,5 +1,7 @@
 package com.github.engatec.vdl.core.youtubedl;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -92,19 +94,29 @@ public class YoutubeDlCommandHelperTests {
         }
 
         @Test
-        void shouldSetCookies() {
-            String path = "path";
+        void shouldSetCookies() throws Exception {
+            Path tempFile = Files.createTempFile(null, null);
             ConfigRegistry.get(ReadCookiesPref.class).getProperty().setValue(true);
-            ConfigRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(path);
-            doAssertions(buildCommand(), "--cookies", path);
+            ConfigRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(tempFile.toString());
+            doAssertions(buildCommand(), "--cookies", tempFile.toString());
+            Files.deleteIfExists(tempFile);
         }
 
         @Test
-        void shouldNoSetCookies() {
+        void shouldNotSetCookies_fileNotExists() {
+            String path = "path";
+            ConfigRegistry.get(ReadCookiesPref.class).getProperty().setValue(true);
+            ConfigRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(path);
+            assertThat(buildCommand())
+                    .hasSize(1)
+                    .doesNotContain("--cookies");
+        }
+
+        @Test
+        void shouldNoSetCookies_readCookiesPropertyIsFalse() {
             String path = "path";
             ConfigRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(path);
-            List<String> command = buildCommand();
-            assertThat(command)
+            assertThat(buildCommand())
                     .hasSize(1)
                     .doesNotContain("--cookies");
         }
