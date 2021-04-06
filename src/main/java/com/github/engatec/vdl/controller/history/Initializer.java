@@ -1,6 +1,5 @@
 package com.github.engatec.vdl.controller.history;
 
-import java.awt.*;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
@@ -21,6 +20,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -101,7 +101,10 @@ class Initializer {
         openFolder.setOnAction(event -> {
             Path path = row.getItem().getPath();
             try {
-                Desktop.getDesktop().open(path.toFile());
+                // Avoid using Desktop from awt package to open folders as it's crap! It hangs or doesn't work on Linux and Mac
+                String command = SystemUtils.IS_OS_WINDOWS ? "explorer" :
+                        (SystemUtils.IS_OS_LINUX ? "xdg-open" : "open");
+                Runtime.getRuntime().exec(new String[] {command, path.toString()});
             } catch (Exception e) {
                 LOGGER.warn(e.getMessage(), e);
                 Dialogs.error("stage.history.ctxmenu.openfolder.error");
