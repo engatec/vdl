@@ -3,7 +3,7 @@
 }
 
 .control-btn {
-    -fx-pref-width: 70;
+    -fx-min-width: 70;
 }
 
 .grid-header-label {

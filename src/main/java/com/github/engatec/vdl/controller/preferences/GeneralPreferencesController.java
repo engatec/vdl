@@ -22,13 +22,14 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 
-public class GeneralPreferencesController extends VBox implements InputForm {
+public class GeneralPreferencesController extends ScrollPane implements InputForm {
 
     private final ToggleGroup downloadPathRadioGroup = new ToggleGroup();
     @FXML private RadioButton downloadPathRadioBtn;

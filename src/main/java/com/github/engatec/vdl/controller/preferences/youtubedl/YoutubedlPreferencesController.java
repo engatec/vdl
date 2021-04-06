@@ -5,11 +5,11 @@ import com.github.engatec.fxcontrols.FxTextField;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class YoutubedlPreferencesController extends VBox implements InputForm {
+public class YoutubedlPreferencesController extends ScrollPane implements InputForm {
 
     private final Stage stage;
 
