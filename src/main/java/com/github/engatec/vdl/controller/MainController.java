@@ -265,6 +265,7 @@ public class MainController extends StageAwareController {
                     String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();
                     for (MultiFormatDownloadable item : downloadables) {
                         CustomFormatDownloadable customFormatDownloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
+                        customFormatDownloadable.setTitle(item.getTitle());
                         customFormatDownloadable.setPostprocessingSteps(item.getPostprocessingSteps());
                         customFormatDownloadable.setDownloadPath(path);
                         new EnqueueCommand(customFormatDownloadable).execute();

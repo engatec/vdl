@@ -63,6 +63,7 @@ public class DownloadableItemComponent extends AppComponent<DownloadableItemComp
         MenuItem mp3DownloadMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.contextmenu.mp3download"));
         mp3DownloadMenuItem.setOnAction(e -> {
             CustomFormatDownloadable mp3Downloadable = new CustomFormatDownloadable(downloadable.getBaseUrl(), downloadable.getFormatId());
+            mp3Downloadable.setTitle(downloadable.getTitle());
             mp3Downloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(AudioFormat.MP3.toString(), 0)));
             AppUtils.executeCommandResolvingPath(stage, new DownloadCommand(stage, mp3Downloadable), mp3Downloadable::setDownloadPath);
             e.consume();
@@ -75,6 +76,7 @@ public class DownloadableItemComponent extends AppComponent<DownloadableItemComp
             addToQueueMenuItem.setOnAction(e -> {
                 String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();
                 CustomFormatDownloadable customFormatDownloadable = new CustomFormatDownloadable(downloadable.getBaseUrl(), format);
+                customFormatDownloadable.setTitle(downloadable.getTitle());
                 customFormatDownloadable.setPostprocessingSteps(downloadable.getPostprocessingSteps());
                 AppUtils.executeCommandResolvingPath(stage, new EnqueueCommand(customFormatDownloadable), customFormatDownloadable::setDownloadPath);
                 e.consume();
