@@ -13,7 +13,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
-import com.github.engatec.vdl.ui.Icons;
+import com.github.engatec.vdl.ui.SvgIcons;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -111,7 +111,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         }
         selectionModel.select(itemToSelect);
 
-        skipDownloadableDetailsSearchCheckBox.setGraphic(Icons.infoWithTooltip("preferences.general.autodownload.checkbox.skipdetailssearch.tooltip"));
+        skipDownloadableDetailsSearchCheckBox.setGraphic(SvgIcons.infoWithTooltip("preferences.general.autodownload.checkbox.skipdetailssearch.tooltip"));
         skipDownloadableDetailsSearchCheckBox.setContentDisplay(ContentDisplay.RIGHT);
     }
 

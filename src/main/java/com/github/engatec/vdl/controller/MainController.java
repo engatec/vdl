@@ -21,6 +21,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.DownloadableItemComponent;
+import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.stage.AboutStage;
 import com.github.engatec.vdl.ui.stage.HistoryStage;
 import com.github.engatec.vdl.ui.stage.PreferencesStage;
@@ -60,6 +61,8 @@ public class MainController extends StageAwareController {
     private final ApplicationContext appCtx = ApplicationContext.INSTANCE;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
 
+    @FXML private HBox mainHbox;
+
     @FXML private VBox rootControlVBox;
 
     @FXML private ScrollPane contentScrollPane;
@@ -98,6 +101,8 @@ public class MainController extends StageAwareController {
 
     @FXML
     public void initialize() {
+        mainHbox.getChildren().add(new SidebarComponent(stage).load());
+
         initLocaleBindings();
         initSearchBindings();
         initMenuItems();

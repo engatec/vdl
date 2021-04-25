@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.handler.textformatter.IntegerTextFormatter;
-import com.github.engatec.vdl.ui.Icons;
+import com.github.engatec.vdl.ui.SvgIcons;
 import javafx.scene.control.ContentDisplay;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -21,7 +21,7 @@ class Initializer {
     private static void initGeneralSettings(Context ctx) {
         ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
 
-        ctx.getMarkWatchedCheckbox().setGraphic(Icons.infoWithTooltip("preferences.youtubedl.general.markwatched.tooltip"));
+        ctx.getMarkWatchedCheckbox().setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.general.markwatched.tooltip"));
         ctx.getMarkWatchedCheckbox().setContentDisplay(ContentDisplay.RIGHT);
 
         FxFileChooser cookiesFileChooser = ctx.getCookiesFileChooser();
@@ -64,7 +64,7 @@ class Initializer {
     private static void initConfigFileSettings(Context ctx) {
         ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
 
-        ctx.getUseConfigFileCheckBox().setGraphic(Icons.infoWithTooltip("preferences.youtubedl.configfile.tooltip"));
+        ctx.getUseConfigFileCheckBox().setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.configfile.tooltip"));
         ctx.getUseConfigFileCheckBox().setContentDisplay(ContentDisplay.RIGHT);
 
         FxFileChooser configFileChooser = ctx.getConfigFileChooser();

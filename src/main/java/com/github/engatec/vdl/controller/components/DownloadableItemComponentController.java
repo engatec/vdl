@@ -10,7 +10,7 @@ import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Video;
-import com.github.engatec.vdl.ui.Icons;
+import com.github.engatec.vdl.ui.SvgIcons;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.LabelUtils;
 import com.github.engatec.vdl.util.Svg;
@@ -185,14 +185,14 @@ public class DownloadableItemComponentController extends TitledPane {
     }
 
     protected Button createDownloadButton() {
-        Group svg = Icons.download();
+        Group svg = SvgIcons.download();
         Button downloadBtn = new Button();
         initButtonLookAndFeel(downloadBtn, svg, "download");
         return downloadBtn;
     }
 
     protected Button createAddToQueueButton() {
-        Group svg = Icons.queue();
+        Group svg = SvgIcons.queue();
         Button addToQueueBtn = new Button();
         initButtonLookAndFeel(addToQueueBtn, svg, "component.downloadgrid.contextmenu.queue.add");
         return addToQueueBtn;

@@ -6,7 +6,7 @@ import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
-import com.github.engatec.vdl.ui.Icons;
+import com.github.engatec.vdl.ui.SvgIcons;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -55,7 +55,7 @@ public class ExtractAudioController extends StageAwareController {
     }
 
     private void addInfoIcon() {
-        contentGridPane.add(Icons.infoWithTooltip("stage.postprocessing.extractaudio.quality.tooltip"), 2, 1);
+        contentGridPane.add(SvgIcons.infoWithTooltip("stage.postprocessing.extractaudio.quality.tooltip"), 2, 1);
     }
 
     private void applyModel() {

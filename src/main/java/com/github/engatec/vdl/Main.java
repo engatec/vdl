@@ -10,12 +10,14 @@ import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.ui.stage.MainStage;
 import javafx.application.Application;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        loadFonts();
         setLanguage();
         QueueManager.INSTANCE.restoreQueue();
         new MainStage(stage).show();
@@ -33,7 +35,11 @@ public class Main extends Application {
         launch(args);
     }
 
-    private static void setLanguage() {
+    private void loadFonts() {
+        Font.loadFont(getClass().getResourceAsStream("/assets/fonts/Roboto-Regular.ttf"), 0);
+    }
+
+    private void setLanguage() {
         Language language = Language.getByLocaleLanguage(ConfigRegistry.get(LanguagePref.class).getValue());
         ApplicationContext.INSTANCE.setLanguage(language);
     }
