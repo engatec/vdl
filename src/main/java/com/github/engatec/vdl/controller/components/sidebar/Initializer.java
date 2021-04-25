@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.controller.components.sidebar;
 
-import com.github.engatec.vdl.ui.Icons;
+import com.github.engatec.vdl.ui.Icon;
 import javafx.scene.image.ImageView;
 
 class Initializer {
@@ -10,8 +10,8 @@ class Initializer {
     }
 
     private static void initGraphic(Context ctx) {
-        ctx.getSearchLabel().setGraphic(new ImageView(Icons.SEARCH_SMALL));
-        ctx.getDownloadsLabel().setGraphic(new ImageView(Icons.DOWNLOAD_SMALL));
-        ctx.getHistoryLabel().setGraphic(new ImageView(Icons.HISTORY_SMALL));
+        ctx.getSearchLabel().setGraphic(new ImageView(Icon.SEARCH_SMALL.getImage()));
+        ctx.getDownloadsLabel().setGraphic(new ImageView(Icon.DOWNLOAD_SMALL.getImage()));
+        ctx.getHistoryLabel().setGraphic(new ImageView(Icon.HISTORY_SMALL.getImage()));
     }
 }
