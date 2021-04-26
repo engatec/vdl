@@ -146,7 +146,7 @@ public class DownloadableSearchService extends Service<List<MultiFormatDownloada
                                 .reversed()
                 );
 
-                return new MultiFormatDownloadable(downloadableInfo.getTitle(), downloadableInfo.getBaseUrl(), videoList, audioList);
+                return new MultiFormatDownloadable(downloadableInfo.getTitle(), downloadableInfo.getDuration(), downloadableInfo.getBaseUrl(), videoList, audioList);
             }
         };
     }

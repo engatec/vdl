@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
-import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import javafx.beans.property.DoubleProperty;
@@ -28,7 +27,7 @@ public class QueueItem implements Downloadable {
     private final BaseDownloadable downloadable;
 
     public QueueItem() {
-        downloadable = new CustomFormatDownloadable(null, null);
+        downloadable = new BaseDownloadable(null, null);
     }
 
     public QueueItem(BaseDownloadable downloadable) {
@@ -99,14 +98,17 @@ public class QueueItem implements Downloadable {
     }
 
     public void setFormatId(String formatId) {
-        if (downloadable instanceof CustomFormatDownloadable) {
-            ((CustomFormatDownloadable) downloadable).setFormatId(formatId);
-        }
+        downloadable.setFormatId(formatId);
     }
 
     @Override
     public String getTitle() {
         return downloadable.getTitle();
+    }
+
+    @Override
+    public Integer getDuration() {
+        return downloadable.getDuration();
     }
 
     public void setTitle(String title) {

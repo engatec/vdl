@@ -3,7 +3,7 @@ package com.github.engatec.vdl.controller;
 import java.nio.file.Files;
 import java.util.List;
 
-import com.github.engatec.vdl.controller.components.DownloadableItemComponentController;
+import com.github.engatec.vdl.controller.components.DownloadableItemComponentControllerLegacy;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.UpdateManager;
@@ -12,7 +12,7 @@ import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.Language;
-import com.github.engatec.vdl.model.downloadable.CustomFormatDownloadable;
+import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
@@ -20,7 +20,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
 import com.github.engatec.vdl.ui.Dialogs;
-import com.github.engatec.vdl.ui.component.DownloadableItemComponent;
+import com.github.engatec.vdl.ui.component.DownloadableItemComponentLegacy;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.stage.AboutStage;
 import com.github.engatec.vdl.ui.stage.HistoryStage;
@@ -221,7 +221,7 @@ public class MainController extends StageAwareController {
 
     private void performAutoDownload() {
         final String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();
-        Downloadable downloadable = new CustomFormatDownloadable(videoUrlTextField.getText(), format);
+        Downloadable downloadable = new BaseDownloadable(videoUrlTextField.getText(), format);
         AppUtils.executeCommandResolvingPath(stage, new DownloadCommand(stage, downloadable), downloadable::setDownloadPath);
     }
 
@@ -256,7 +256,7 @@ public class MainController extends StageAwareController {
 
     private void updateContentPane(List<MultiFormatDownloadable> downloadables, Integer totalItems) {
         for (MultiFormatDownloadable downloadable : downloadables) {
-            DownloadableItemComponentController node = new DownloadableItemComponent(stage, downloadable).load();
+            DownloadableItemComponentControllerLegacy node = new DownloadableItemComponentLegacy(stage, downloadable).load();
             node.setExpanded(totalItems == 1);
             contentVBox.getChildren().add(node);
         }
@@ -269,7 +269,7 @@ public class MainController extends StageAwareController {
                 AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
                     String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();
                     for (MultiFormatDownloadable item : downloadables) {
-                        CustomFormatDownloadable customFormatDownloadable = new CustomFormatDownloadable(item.getBaseUrl(), format);
+                        BaseDownloadable customFormatDownloadable = new BaseDownloadable(item.getBaseUrl(), format);
                         customFormatDownloadable.setTitle(item.getTitle());
                         customFormatDownloadable.setPostprocessingSteps(item.getPostprocessingSteps());
                         customFormatDownloadable.setDownloadPath(path);
@@ -279,7 +279,7 @@ public class MainController extends StageAwareController {
                 e.consume();
             });
 
-            ((DownloadableItemComponentController) node).getContextMenu().getItems().add(addToQueueAllMenuItem);
+            ((DownloadableItemComponentControllerLegacy) node).getContextMenu().getItems().add(addToQueueAllMenuItem);
         }
     }
 

@@ -13,6 +13,7 @@ public class DownloadableInfo {
     // videos downloading on some resources. A better option is to check whether baseUrl property is blank after deserialization and if yes set it from url property.
     private String url;
     private String title;
+    private Integer duration;
     private List<Format> formats;
 
     public String getBaseUrl() {
@@ -37,6 +38,14 @@ public class DownloadableInfo {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 
     public List<Format> getFormats() {

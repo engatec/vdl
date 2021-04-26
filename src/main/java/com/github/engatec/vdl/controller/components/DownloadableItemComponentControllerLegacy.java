@@ -36,7 +36,7 @@ import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 
-public class DownloadableItemComponentController extends TitledPane {
+public class DownloadableItemComponentControllerLegacy extends TitledPane {
 
     private final Stage parent;
     private final MultiFormatDownloadable downloadable;
@@ -50,7 +50,7 @@ public class DownloadableItemComponentController extends TitledPane {
     @FXML private Label extensionTitleLabel;
     @FXML private Label audioTitleLabel;
 
-    public DownloadableItemComponentController(Stage parent, MultiFormatDownloadable downloadable) {
+    public DownloadableItemComponentControllerLegacy(Stage parent, MultiFormatDownloadable downloadable) {
         this.parent = parent;
         this.downloadable = downloadable;
 

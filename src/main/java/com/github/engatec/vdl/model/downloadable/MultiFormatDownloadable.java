@@ -9,10 +9,8 @@ public class MultiFormatDownloadable extends BaseDownloadable {
     private final List<Video> videos;
     private final List<Audio> audios;
 
-    private String formatId;
-
-    public MultiFormatDownloadable(String title, String baseUrl, List<Video> videos, List<Audio> audios) {
-        super(title, baseUrl);
+    public MultiFormatDownloadable(String title, Integer duration, String baseUrl, List<Video> videos, List<Audio> audios) {
+        super(title, duration, baseUrl);
         this.videos = videos;
         this.audios = audios;
     }
@@ -23,14 +21,5 @@ public class MultiFormatDownloadable extends BaseDownloadable {
 
     public List<Audio> getAudios() {
         return ListUtils.emptyIfNull(audios);
-    }
-
-    @Override
-    public String getFormatId() {
-        return formatId;
-    }
-
-    public void setFormatId(String formatId) {
-        this.formatId = formatId;
     }
 }
