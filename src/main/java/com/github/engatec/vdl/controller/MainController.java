@@ -12,6 +12,7 @@ import com.github.engatec.vdl.core.command.EnqueueCommand;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.Language;
+import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
@@ -20,6 +21,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.component.DownloadableItemComponent;
 import com.github.engatec.vdl.ui.component.DownloadableItemComponentLegacy;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.stage.AboutStage;
@@ -227,18 +229,18 @@ public class MainController extends StageAwareController {
 
     private void searchDownloadables() {
         downloadableSearchService.setUrl(videoUrlTextField.getText());
-        downloadableSearchService.setOnDownloadableReadyCallback(this::updateContentPane);
+        downloadableSearchService.setOnInfoFetchedCallback(this::updateContentPane);
 
         downloadableSearchService.setOnSucceeded(it -> {
-            List<MultiFormatDownloadable> downloadables = (List<MultiFormatDownloadable>) it.getSource().getValue();
+            List<VideoInfo> downloadables = (List<VideoInfo>) it.getSource().getValue();
 
-            boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
+            /*boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
             if (downloadables.size() > 1 && autodownloadEnabled) {
                 setDownloadablesMassContextMenu(downloadables);
             }
             if (autodownloadEnabled && contentVBox.getChildren().size() == 1) {
                 Platform.runLater(this::performAutoDownload); // runLater is to release the service and trigger runningProperty to be false
-            }
+            }*/
         });
 
         downloadableSearchService.setOnFailed(it -> {
@@ -254,12 +256,13 @@ public class MainController extends StageAwareController {
         downloadableSearchService.restart();
     }
 
-    private void updateContentPane(List<MultiFormatDownloadable> downloadables, Integer totalItems) {
-        for (MultiFormatDownloadable downloadable : downloadables) {
+    private void updateContentPane(List<VideoInfo> downloadables, Integer totalItems) {
+        mainHbox.getChildren().add(new DownloadableItemComponent(stage, downloadables.get(0)).load());
+        /*for (MultiFormatDownloadable downloadable : downloadables) {
             DownloadableItemComponentControllerLegacy node = new DownloadableItemComponentLegacy(stage, downloadable).load();
             node.setExpanded(totalItems == 1);
             contentVBox.getChildren().add(node);
-        }
+        }*/
     }
 
     private void setDownloadablesMassContextMenu(List<MultiFormatDownloadable> downloadables) {

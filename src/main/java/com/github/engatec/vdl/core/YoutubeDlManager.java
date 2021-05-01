@@ -23,7 +23,7 @@ import com.github.engatec.vdl.core.youtubedl.processbuilder.VersionFetchProcessB
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlUpdateProcessBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
-import com.github.engatec.vdl.model.DownloadableInfo;
+import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
@@ -41,19 +41,19 @@ public class YoutubeDlManager {
     private final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
-    public List<DownloadableInfo> fetchDownloadableInfo(String url) throws IOException {
+    public List<VideoInfo> fetchDownloadableInfo(String url) throws IOException {
         var pb = new DownloadableInfoFetchProcessBuilder(url);
         List<String> command = pb.buildCommand();
         Process process = pb.buildProcess(command);
         try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             List<String> jsonList = reader.lines().collect(Collectors.toList());
-            List<DownloadableInfo> downloadableInfoList = new ArrayList<>(jsonList.size());
+            List<VideoInfo> videoInfoList = new ArrayList<>(jsonList.size());
             for (String json : jsonList) {
-                DownloadableInfo downloadableInfo = objectMapper.readValue(json, DownloadableInfo.class);
-                if (StringUtils.isBlank(downloadableInfo.getBaseUrl())) {
-                    downloadableInfo.setBaseUrl(downloadableInfo.getUrl());
+                VideoInfo videoInfo = objectMapper.readValue(json, VideoInfo.class);
+                if (StringUtils.isBlank(videoInfo.getBaseUrl())) {
+                    videoInfo.setBaseUrl(videoInfo.getUrl());
                 }
-                downloadableInfoList.add(downloadableInfo);
+                videoInfoList.add(videoInfo);
             }
 
             // Log encountered errors that didn't result in exception
@@ -61,7 +61,7 @@ public class YoutubeDlManager {
                 logErrors(errorStream);
             }
 
-            return downloadableInfoList;
+            return videoInfoList;
         } catch (Exception e) {
             try (InputStream errorStream = process.getErrorStream()) {
                 logErrors(errorStream);

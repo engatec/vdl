@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class DownloadableInfo {
+public class VideoInfo {
 
     @JsonProperty("webpage_url")
     private String baseUrl;
