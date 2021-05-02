@@ -23,8 +23,8 @@ import com.github.engatec.vdl.core.youtubedl.processbuilder.VersionFetchProcessB
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlUpdateProcessBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
-import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.HistoryItem;
+import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
