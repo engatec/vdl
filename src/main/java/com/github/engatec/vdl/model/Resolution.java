@@ -4,24 +4,27 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum Resolution {
 
-    UHD_8K(4320, "8K Ultra HD"),
-    UHD_4K(2160, "4K Ultra HD"),
-    QHD(1440, "2K Quad HD"),
-    FULL_HD(1080, "Full HD"),
-    HD(720, "HD"),
-    SD(480, "SD");
+    // Don't trust the resolutions will be common ones, so make assumptions with ranges
+    UHD_8K(3200, 5000, "8K Ultra HD"), // 4320
+    UHD_4K(1800, 3200, "4K Ultra HD"), // 2160
+    QHD(1300, 1800, "2K Quad HD"), // 1440
+    FULL_HD(960, 1300, "Full HD"), // 1080
+    HD(680, 960, "HD"), // 720
+    SD(420, 680, "SD"); // 480
 
-    private final int height;
+    private final int minHeight;
+    private final int maxHeight;
     private final String description;
 
-    Resolution(int height, String description) {
-        this.height = height;
+    Resolution(int minHeight, int maxHeight, String description) {
+        this.minHeight = minHeight;
+        this.maxHeight = maxHeight;
         this.description = description;
     }
 
     public static String getDescriptionByHeight(int height) {
-        int maxHeight = values()[0].height;
-        int minHeight = values()[values().length - 1].height;
+        int maxHeight = values()[0].maxHeight;
+        int minHeight = values()[values().length - 1].minHeight;
 
         if (height > maxHeight) {
             return "Ultra HD";
@@ -32,7 +35,7 @@ public enum Resolution {
         }
 
         for (Resolution item : values()) {
-            if (item.height - 100 <= height && height <= item.height + 100) {
+            if (item.minHeight <= height && height < item.maxHeight) {
                 return item.description;
             }
         }

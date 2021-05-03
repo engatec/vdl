@@ -19,7 +19,6 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.StringUtils;
 
 public class DownloadableSearchService extends Service<List<VideoInfo>> {
 
@@ -54,7 +53,7 @@ public class DownloadableSearchService extends Service<List<VideoInfo>> {
         return new Task<>() {
             @Override
             protected List<VideoInfo> call() throws Exception {
-                List<VideoInfo> allItems = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(getUrl());
+                List<VideoInfo> allItems = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(List.of(getUrl()));
                 if (CollectionUtils.isEmpty(allItems)) {
                     throw new NoDownloadableFoundException();
                 }
@@ -82,7 +81,7 @@ public class DownloadableSearchService extends Service<List<VideoInfo>> {
                         break;
                     }
 
-                    List<VideoInfo> chunk = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(String.join(StringUtils.SPACE, urls));
+                    List<VideoInfo> chunk = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(urls);
                     readyItems.addAll(chunk);
                     perfomProgressUpdate(chunk, readyItems.size(), totalCount);
                 }

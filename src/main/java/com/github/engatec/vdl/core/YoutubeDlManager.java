@@ -41,8 +41,8 @@ public class YoutubeDlManager {
     private final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
-    public List<VideoInfo> fetchDownloadableInfo(String url) throws IOException {
-        var pb = new DownloadableInfoFetchProcessBuilder(url);
+    public List<VideoInfo> fetchDownloadableInfo(List<String> urls) throws IOException {
+        var pb = new DownloadableInfoFetchProcessBuilder(urls);
         List<String> command = pb.buildCommand();
         Process process = pb.buildProcess(command);
         try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {

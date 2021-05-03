@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.components;
+package com.github.engatec.vdl.controller.component;
 
 import java.util.Map;
 

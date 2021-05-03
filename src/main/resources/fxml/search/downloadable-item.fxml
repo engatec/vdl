@@ -15,8 +15,8 @@
       </HBox>
       <HBox spacing="4.0">
          <children>
-            <ComboBox fx:id="formatsComboBox" />
-            <Button fx:id="allFormatsButton" mnemonicParsing="false" text="?" />
+            <ComboBox fx:id="formatsComboBox" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Button fx:id="allFormatsButton" mnemonicParsing="false" />
          </children>
       </HBox>
    </children>

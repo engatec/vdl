@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.github.engatec.vdl.core.ApplicationContext;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class YoutubeDlCommandBuilder {
@@ -35,11 +36,12 @@ public class YoutubeDlCommandBuilder {
     /**
      * If present - must be the latest before .build()
      */
-    public YoutubeDlCommandBuilder url(String url) {
-        if (StringUtils.isBlank(url)) {
-            throw new IllegalArgumentException("url must not be blank");
+    public YoutubeDlCommandBuilder urls(List<String> urls) {
+        if (CollectionUtils.isEmpty(urls)) {
+            throw new IllegalArgumentException("urls must not be empty");
         }
-        commandList.add(url);
+        commandList.add("--"); // Telling the shell that the command options are over and further only urls or ids go (it fixes the issue when youtube video id starts with dash)
+        commandList.addAll(urls);
         return this;
     }
 

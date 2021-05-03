@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.components.sidebar;
+package com.github.engatec.vdl.controller.component.sidebar;
 
 import javafx.scene.control.Label;
 

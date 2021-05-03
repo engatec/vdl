@@ -3,17 +3,13 @@ package com.github.engatec.vdl.ui.component;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.github.engatec.vdl.controller.components.DownloadableItemComponentControllerLegacy;
+import com.github.engatec.vdl.controller.component.DownloadableItemComponentControllerLegacy;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.command.DownloadCommand;
-import com.github.engatec.vdl.core.command.EnqueueCommand;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref;
 import com.github.engatec.vdl.ui.stage.postprocessing.PostprocessingStage;
 import com.github.engatec.vdl.util.AppUtils;
 import javafx.scene.control.ContextMenu;
@@ -70,7 +66,7 @@ public class DownloadableItemComponentLegacy extends AppComponent<DownloadableIt
         });
         ctxMenu.getItems().add(mp3DownloadMenuItem);
 
-        boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
+        /*boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
         if (autodownloadEnabled) {
             MenuItem addToQueueMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.contextmenu.queue.add"));
             addToQueueMenuItem.setOnAction(e -> {
@@ -82,7 +78,7 @@ public class DownloadableItemComponentLegacy extends AppComponent<DownloadableIt
                 e.consume();
             });
             ctxMenu.getItems().add(addToQueueMenuItem);
-        }
+        }*/
 
         return ctxMenu;
     }

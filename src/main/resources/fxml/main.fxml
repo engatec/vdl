@@ -1,86 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.ProgressIndicator?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<HBox fx:id="mainHbox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.MainController">
+<?import javafx.scene.layout.StackPane?>
+<HBox fx:id="rootNode" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.stage.main.MainController">
    <children>
-      <VBox fx:id="rootControlVBox" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="650.0" stylesheets="@../styles.css">
-        <children>
-          <MenuBar VBox.vgrow="NEVER">
-            <menus>
-              <Menu fx:id="fileMenu" mnemonicParsing="false" text="%menu.file">
-                <items>
-                        <MenuItem fx:id="queueMenuItem" mnemonicParsing="false" text="%menu.file.queue" />
-                        <MenuItem fx:id="historyMenuItem" mnemonicParsing="false" text="%menu.file.history" />
-                  <MenuItem fx:id="preferencesMenuItem" mnemonicParsing="false" text="%menu.file.preferences" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" text="%menu.file.exit" />
-                </items>
-              </Menu>
-              <Menu fx:id="languageMenu" mnemonicParsing="false" text="%menu.language">
-                <items>
-                  <MenuItem fx:id="langEnMenuItem" mnemonicParsing="false" text="%menu.language.en" />
-                    <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="langRuMenuItem" mnemonicParsing="false" text="%menu.language.ru" />
-                    <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="langUkMenuItem" mnemonicParsing="false" text="%menu.language.uk" />
-                </items>
-              </Menu>
-                  <Menu fx:id="helpMenu" mnemonicParsing="false" text="%menu.help">
-                    <items>
-                        <MenuItem fx:id="checkYoutubeDlUpdatesMenuItem" mnemonicParsing="false" text="%menu.help.update.youtubedl" />
-                        <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="%menu.help.about" />
-                    </items>
-                  </Menu>
-            </menus>
-          </MenuBar>
-            <VBox prefHeight="331.0" prefWidth="610.0" spacing="8.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <HBox spacing="8.0">
-                     <children>
-                        <TextField fx:id="videoUrlTextField" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="searchBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn" text="%search">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </Button>
-                        <ProgressIndicator fx:id="searchProgressIndicator" minHeight="-Infinity" minWidth="-Infinity" prefHeight="22.0" prefWidth="22.0" />
-                     </children>
-                  </HBox>
-                  <ScrollPane fx:id="contentScrollPane" fitToHeight="true" fitToWidth="true" styleClass="no-border" VBox.vgrow="ALWAYS">
-                     <padding>
-                        <Insets bottom="8.0" />
-                     </padding>
-                     <content>
-                        <VBox fx:id="contentVBox" spacing="4.0" />
-                     </content>
-                  </ScrollPane>
-                  <HBox fx:id="playlistSearchProgressWrapperHBox" alignment="CENTER_LEFT" spacing="8.0">
-                     <children>
-                        <ProgressBar fx:id="playlistSearchProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
-                        <Label fx:id="playlistSearchLabel" text="Label" />
-                        <Button fx:id="playlistSearchCancelBtn" mnemonicParsing="false" styleClass="control-btn" text="%button.cancel" />
-                     </children>
-                  </HBox>
-               </children>
-               <padding>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-               </padding>
-            </VBox>
-        </children>
-      </VBox>
+      <StackPane fx:id="navigationPane" maxHeight="1.7976931348623157E308" />
+      <StackPane fx:id="contentPane" HBox.hgrow="ALWAYS" />
    </children>
 </HBox>

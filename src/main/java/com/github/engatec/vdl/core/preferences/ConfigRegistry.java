@@ -6,11 +6,9 @@ import java.util.Map;
 import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.SkipDownloadableDetailsSearchPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.QueueAutostartDownloadPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
@@ -40,11 +38,9 @@ public class ConfigRegistry {
         /* General */
         REGISTRY.put(AlwaysAskDownloadPathPref.class, new AlwaysAskDownloadPathPref());
         REGISTRY.put(AutoDownloadFormatPref.class, new AutoDownloadFormatPref());
-        REGISTRY.put(AutoDownloadPref.class, new AutoDownloadPref());
         REGISTRY.put(AutoSearchFromClipboardPref.class, new AutoSearchFromClipboardPref());
         REGISTRY.put(DownloadPathPref.class, new DownloadPathPref());
         REGISTRY.put(LanguagePref.class, new LanguagePref());
-        REGISTRY.put(SkipDownloadableDetailsSearchPref.class, new SkipDownloadableDetailsSearchPref());
 
         /* YoutubeDl */
         REGISTRY.put(ConfigFilePathPref.class, new ConfigFilePathPref());

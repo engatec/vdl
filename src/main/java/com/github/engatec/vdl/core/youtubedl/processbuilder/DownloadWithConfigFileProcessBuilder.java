@@ -47,7 +47,7 @@ public class DownloadWithConfigFileProcessBuilder implements YoutubeDlProcessBui
 
         return commandBuilder
                 .ffmpegLocation(ApplicationContext.APP_DIR)
-                .url(downloadable.getBaseUrl())
+                .urls(List.of(downloadable.getBaseUrl()))
                 .buildAsList();
     }
 

@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.component;
 
-import com.github.engatec.vdl.controller.components.downloadableitem.DownloadableItemComponentController;
+import com.github.engatec.vdl.controller.component.DownloadableItemComponentController;
 import com.github.engatec.vdl.model.VideoInfo;
 import javafx.stage.Stage;
 

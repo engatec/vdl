@@ -10,7 +10,6 @@ import com.github.engatec.vdl.core.preferences.category.Category;
 import com.github.engatec.vdl.core.preferences.category.GeneralCategory;
 import com.github.engatec.vdl.core.preferences.category.YoutubeDlCategory;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadPref;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -106,11 +105,6 @@ public class PreferencesController extends StageAwareController {
         AutoDownloadFormatPref autoDownloadFormat = ConfigRegistry.get(AutoDownloadFormatPref.class);
         if (StringUtils.isBlank(autoDownloadFormat.getValue())) {
             autoDownloadFormat.setValue(StringUtils.EMPTY); // Reset the field if user entered multiple space characters
-        }
-
-        AutoDownloadPref autoDownload = ConfigRegistry.get(AutoDownloadPref.class);
-        if (autoDownload.getValue() && StringUtils.isBlank(autoDownloadFormat.getValue())) {
-            autoDownload.setValue(false);
         }
     }
 

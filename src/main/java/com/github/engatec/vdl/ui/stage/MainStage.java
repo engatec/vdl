@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.stage;
 
-import com.github.engatec.vdl.controller.MainController;
+import com.github.engatec.vdl.controller.stage.main.MainController;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.ui.Dialogs;
 import javafx.scene.control.ButtonBar;
@@ -11,6 +11,11 @@ import javafx.util.Callback;
 
 public class MainStage extends AppStage {
 
+    private static final int STAGE_MIN_WIDTH = 500;
+    private static final int STAGE_MIN_HEIGHT = 300;
+    private static final int STAGE_PREF_WIDTH = 800;
+    private static final int STAGE_PREF_HEIGHT = 600;
+
     public MainStage(Stage stage) {
         super(stage);
         init();
@@ -20,6 +25,10 @@ public class MainStage extends AppStage {
     protected void init() {
         super.init();
         stage.setTitle("VDL - Video downloader");
+        stage.setWidth(STAGE_PREF_WIDTH);
+        stage.setHeight(STAGE_PREF_HEIGHT);
+        stage.setMinWidth(STAGE_MIN_WIDTH);
+        stage.setMinHeight(STAGE_MIN_HEIGHT);
         stage.setOnCloseRequest(this::handleCloseRequest);
     }
 

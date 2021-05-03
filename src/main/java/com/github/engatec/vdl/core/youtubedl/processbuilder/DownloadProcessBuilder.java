@@ -42,7 +42,7 @@ public class DownloadProcessBuilder implements YoutubeDlProcessBuilder {
         }
 
         return commandBuilder
-                .url(downloadable.getBaseUrl())
+                .urls(List.of(downloadable.getBaseUrl()))
                 .buildAsList();
     }
 

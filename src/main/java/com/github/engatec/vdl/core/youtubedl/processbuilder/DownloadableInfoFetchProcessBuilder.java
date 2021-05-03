@@ -5,17 +5,17 @@ import java.util.List;
 
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuilder {
 
-    private final String url;
+    private final List<String> urls;
 
-    public DownloadableInfoFetchProcessBuilder(String url) {
-        if (StringUtils.isBlank(url)) {
-            throw new IllegalArgumentException("url must not be blank");
+    public DownloadableInfoFetchProcessBuilder(List<String> urls) {
+        if (CollectionUtils.isEmpty(urls)) {
+            throw new IllegalArgumentException("urls must not be empty");
         }
-        this.url = url;
+        this.urls = urls;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuil
         YoutubeDlCommandHelper.setAuthenticationOptions(commandBuilder);
 
         return commandBuilder
-                .url(url)
+                .urls(urls)
                 .buildAsList();
     }
 
