@@ -12,15 +12,16 @@ import com.github.engatec.vdl.ui.Icon;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
-public class DownloadableItemComponentController extends VBox {
+public class DownloadableItemComponentController extends HBox {
 
     private final VideoInfo videoInfo;
 
@@ -28,6 +29,7 @@ public class DownloadableItemComponentController extends VBox {
     @FXML private Label durationLabel;
     @FXML private ComboBox<String> formatsComboBox;
     @FXML private Button allFormatsButton;
+    @FXML private CheckBox itemSelectedCheckBox;
 
     public DownloadableItemComponentController(VideoInfo videoInfo) {
         this.videoInfo = videoInfo;

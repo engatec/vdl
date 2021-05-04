@@ -22,7 +22,7 @@ import org.apache.commons.collections4.ListUtils;
 
 public class DownloadableSearchService extends Service<List<VideoInfo>> {
 
-    private static final int CONCURRENT_PLAYLIST_ITEMS_FETCH_COUNT = 10;
+    private static final int CONCURRENT_PLAYLIST_ITEMS_FETCH_COUNT = 5;
 
     private final StringProperty url = new SimpleStringProperty();
     private final ObjectProperty<BiConsumer<List<VideoInfo>, Integer>> onInfoFetchedCallback = new SimpleObjectProperty<>();
