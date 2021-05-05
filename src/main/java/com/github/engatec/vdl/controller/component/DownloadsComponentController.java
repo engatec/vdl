@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller;
+package com.github.engatec.vdl.controller.component;
 
 import java.nio.file.Path;
 import java.util.ResourceBundle;
@@ -24,9 +24,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ProgressBarTableCell;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 
-public class QueueController extends StageAwareController {
+public class DownloadsComponentController extends VBox {
 
     private final QueueManager queueManager = QueueManager.INSTANCE;
     private final ObservableList<QueueItem> data = queueManager.getQueueItems();
@@ -44,18 +45,10 @@ public class QueueController extends StageAwareController {
     @FXML private Button removeFinishedBtn;
     @FXML private Button removeAllBtn;
     @FXML private CheckBox autostartDownloadCheckbox;
-    @FXML private Button closeBtn;
-
-    private QueueController() {
-    }
-
-    public QueueController(Stage stage) {
-        super(stage);
-    }
 
     @FXML
     public void initialize() {
-        downloadQueueTableView.setPlaceholder(new Label(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.queue.table.placeholder")));
+        downloadQueueTableView.setPlaceholder(new Label(StringUtils.EMPTY));
 
         statusTableColumn.setCellValueFactory(it -> it.getValue().statusProperty());
         titleTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getTitle()));
@@ -72,7 +65,6 @@ public class QueueController extends StageAwareController {
         removeFinishedBtn.setOnAction(this::handleRemoveFinishedButtonClick);
         removeAllBtn.setOnAction(this::handleRemoveAllButtonClick);
         autostartDownloadCheckbox.selectedProperty().bindBidirectional(ConfigRegistry.get(QueueAutostartDownloadPref.class).getProperty());
-        closeBtn.setOnAction(this::handleCloseButtonClick);
 
         downloadQueueTableView.setRowFactory(tableView -> {
             TableRow<QueueItem> row = new TableRow<>();
@@ -125,7 +117,7 @@ public class QueueController extends StageAwareController {
 
             runNowMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.READY, newValue.statusProperty()));
             cancelMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-                    newValue.getStatus() == DownloadStatus.IN_PROGRESS || newValue.getStatus() == DownloadStatus.SCHEDULED,
+                            newValue.getStatus() == DownloadStatus.IN_PROGRESS || newValue.getStatus() == DownloadStatus.SCHEDULED,
                     newValue.statusProperty())
             );
             resumeMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.CANCELLED, newValue.statusProperty()));
@@ -152,11 +144,6 @@ public class QueueController extends StageAwareController {
 
     private void handleRemoveAllButtonClick(ActionEvent event) {
         queueManager.removeAll();
-        event.consume();
-    }
-
-    private void handleCloseButtonClick(ActionEvent event) {
-        stage.close();
         event.consume();
     }
 }

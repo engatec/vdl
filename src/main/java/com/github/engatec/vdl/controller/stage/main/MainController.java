@@ -3,6 +3,7 @@ package com.github.engatec.vdl.controller.stage.main;
 import java.nio.file.Files;
 
 import com.github.engatec.vdl.controller.StageAwareController;
+import com.github.engatec.vdl.controller.component.DownloadsComponentController;
 import com.github.engatec.vdl.controller.component.SearchComponentController;
 import com.github.engatec.vdl.controller.component.sidebar.SidebarComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -11,14 +12,16 @@ import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.component.DownloadsComponent;
 import com.github.engatec.vdl.ui.component.SearchComponent;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.stage.AboutStage;
 import com.github.engatec.vdl.ui.stage.HistoryStage;
 import com.github.engatec.vdl.ui.stage.PreferencesStage;
-import com.github.engatec.vdl.ui.stage.QueueStage;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -38,6 +41,7 @@ public class MainController extends StageAwareController {
 
     private SidebarComponentController sideBar;
     private SearchComponentController search;
+    private DownloadsComponentController downloads;
 
     /*@FXML private HBox mainHbox;
 
@@ -79,20 +83,43 @@ public class MainController extends StageAwareController {
 
     @FXML
     public void initialize() {
-        sideBar = new SidebarComponent(stage).load();
+        initSideBar();
         navigationPane.getChildren().add(sideBar);
 
         search = new SearchComponent(stage).load();
+        downloads = new DownloadsComponent(stage).load();
+
         contentPane.getChildren().add(search);
 
 
-        initLocaleBindings();
+        /*initLocaleBindings();
         initSearchBindings();
         initMenuItems();
         initDragAndDrop();
-        initScrollPaneUpdate();
+        initScrollPaneUpdate();*/
 
         // stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(videoUrlTextField, searchBtn));
+    }
+
+    private void initSideBar() {
+        sideBar = new SidebarComponent(stage).load();
+
+        sideBar.setOnSearchClickListener(() -> {
+            ObservableList<Node> contentPaneItems = contentPane.getChildren();
+            contentPaneItems.clear();
+            contentPaneItems.add(search);
+        });
+
+        sideBar.setOnDownloadsClickListener(() -> {
+            ObservableList<Node> contentPaneItems = contentPane.getChildren();
+            contentPaneItems.clear();
+            contentPaneItems.add(downloads);
+        });
+
+        sideBar.setOnHistoryClickListener(() -> {
+            ObservableList<Node> contentPaneItems = contentPane.getChildren();
+            contentPaneItems.clear();
+        });
     }
 
     private void setAnchors() {
@@ -172,8 +199,8 @@ public class MainController extends StageAwareController {
     }
 
     private void handleQueueMenuItemClick(ActionEvent event) {
-        new QueueStage().modal(stage).showAndWait();
-        event.consume();
+        /*new DownloadsComponent().modal(stage).showAndWait();
+        event.consume();*/
     }
 
     private void handleHistoryMenuItemClick(ActionEvent event) {

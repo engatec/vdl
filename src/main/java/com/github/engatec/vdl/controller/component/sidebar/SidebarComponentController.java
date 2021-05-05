@@ -16,4 +16,22 @@ public class SidebarComponentController extends VBox {
         Initializer.initialize(ctx);
         Binder.bind(ctx);
     }
+
+    public void setOnSearchClickListener(Runnable onSearchClickListener) {
+        searchLabel.setOnMouseClicked(event -> {
+            onSearchClickListener.run();
+        });
+    }
+
+    public void setOnDownloadsClickListener(Runnable onSearchClickListener) {
+        downloadsLabel.setOnMouseClicked(event -> {
+            onSearchClickListener.run();
+        });
+    }
+
+    public void setOnHistoryClickListener(Runnable onSearchClickListener) {
+        historyLabel.setOnMouseClicked(event -> {
+            onSearchClickListener.run();
+        });
+    }
 }
