@@ -2,7 +2,9 @@ package com.github.engatec.vdl.controller.component;
 
 import java.util.List;
 
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.ui.CheckBoxGroup;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.DownloadableItemComponent;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
@@ -22,6 +24,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,6 +42,7 @@ public class SearchComponentController extends VBox {
     @FXML private Label searchProgressLabel;
 
     @FXML private CheckBox selectAllCheckBox;
+    private CheckBoxGroup checkBoxGroup;
 
     @FXML private VBox contentNode;
 
@@ -46,6 +50,13 @@ public class SearchComponentController extends VBox {
 
     @FXML
     public void initialize() {
+        checkBoxGroup = new CheckBoxGroup(selectAllCheckBox);
+        checkBoxGroup.setOnSelectionUpdateListener(selectedCount -> {
+            String downloadLabelText = ApplicationContext.INSTANCE.getResourceBundle().getString("download") + (selectAllCheckBox.isVisible() ? " (" + selectedCount + ")" : StringUtils.EMPTY);
+            downloadButton.setText(downloadLabelText);
+            downloadButton.setVisible(selectedCount > 0);
+        });
+
         initSearchControl();
         initSearchService();
 
@@ -105,6 +116,7 @@ public class SearchComponentController extends VBox {
         selectAllCheckBox.setManaged(false);
         selectAllCheckBox.setVisible(false);
         contentNode.getChildren().clear();
+        checkBoxGroup.clear();
         downloadableSearchService.setUrl(urlTextField.getText());
         downloadableSearchService.restart();
         event.consume();
@@ -121,12 +133,15 @@ public class SearchComponentController extends VBox {
         }
 
         for (VideoInfo downloadable : downloadables) {
-            DownloadableItemComponentController load = new DownloadableItemComponent((Stage) urlTextField.getScene().getWindow(), downloadable).load();
             ObservableList<Node> contentItems = contentNode.getChildren();
             if (CollectionUtils.isNotEmpty(contentItems)) {
                 contentItems.add(new Separator());
             }
-            contentItems.add(load);
+            DownloadableItemComponentController controller = new DownloadableItemComponent((Stage) urlTextField.getScene().getWindow(), downloadable).load();
+            controller.setSelectable(totalItems > 1);
+            controller.setSelected(true);
+            checkBoxGroup.add(controller.getItemSelectedCheckBox());
+            contentItems.add(controller);
         }
     }
 }

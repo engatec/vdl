@@ -9,6 +9,7 @@ import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.Resolution;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.Icon;
+import com.github.engatec.vdl.ui.Tooltips;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -29,6 +30,7 @@ public class DownloadableItemComponentController extends HBox {
     @FXML private Label durationLabel;
     @FXML private ComboBox<String> formatsComboBox;
     @FXML private Button allFormatsButton;
+    @FXML private Button audioButton;
     @FXML private CheckBox itemSelectedCheckBox;
 
     public DownloadableItemComponentController(VideoInfo videoInfo) {
@@ -37,11 +39,19 @@ public class DownloadableItemComponentController extends HBox {
 
     @FXML
     public void initialize() {
-        allFormatsButton.setGraphic(new ImageView(Icon.MORE_HORIZ_SMALL.getImage()));
-        formatsComboBox.prefHeightProperty().bind(allFormatsButton.heightProperty());
-
+        initControlButtons();
         initLabels();
         initFormats();
+    }
+
+    private void initControlButtons() {
+        audioButton.setGraphic(new ImageView(Icon.AUDIOTRACK_SMALL.getImage()));
+        audioButton.setTooltip(Tooltips.createNew("download.audio"));
+
+        allFormatsButton.setGraphic(new ImageView(Icon.FILTER_LIST_SMALL.getImage()));
+        allFormatsButton.setTooltip(Tooltips.createNew("format.all"));
+
+        formatsComboBox.prefHeightProperty().bind(allFormatsButton.heightProperty());
     }
 
     private void initLabels() {
@@ -66,5 +76,22 @@ public class DownloadableItemComponentController extends HBox {
         }
 
         formatsComboBox.getSelectionModel().selectFirst();
+    }
+
+    public void setSelectable(boolean selectable) {
+        itemSelectedCheckBox.setVisible(selectable);
+        itemSelectedCheckBox.setManaged(selectable);
+    }
+
+    public boolean isSelected() {
+        return itemSelectedCheckBox.isSelected();
+    }
+
+    public void setSelected(boolean selected) {
+        itemSelectedCheckBox.setSelected(selected);
+    }
+
+    public CheckBox getItemSelectedCheckBox() {
+        return itemSelectedCheckBox;
     }
 }
