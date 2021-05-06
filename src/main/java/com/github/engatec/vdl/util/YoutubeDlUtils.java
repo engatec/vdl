@@ -1,12 +1,12 @@
-package com.github.engatec.vdl.core.preferences.data;
+package com.github.engatec.vdl.util;
 
 import java.util.StringJoiner;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class PredefinedFormatCreator {
+public class YoutubeDlUtils {
 
-    public static String create(String height) {
+    public static String createFormat(Integer height) {
         String h = StringUtils.EMPTY;
         if (height != null) {
             h = "[height<=" + height + "]";

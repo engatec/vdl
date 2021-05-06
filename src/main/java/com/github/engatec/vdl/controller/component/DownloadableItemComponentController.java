@@ -10,6 +10,8 @@ import com.github.engatec.vdl.model.Resolution;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.Tooltips;
+import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
+import com.github.engatec.vdl.util.YoutubeDlUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -28,7 +30,7 @@ public class DownloadableItemComponentController extends HBox {
 
     @FXML private Label titleLabel;
     @FXML private Label durationLabel;
-    @FXML private ComboBox<String> formatsComboBox;
+    @FXML private ComboBox<ComboBoxValueHolder<String>> formatsComboBox;
     @FXML private Button allFormatsButton;
     @FXML private Button audioButton;
     @FXML private CheckBox itemSelectedCheckBox;
@@ -70,12 +72,27 @@ public class DownloadableItemComponentController extends HBox {
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
 
-        ObservableList<String> comboBoxItems = formatsComboBox.getItems();
+        ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
         for (Integer height : commonAvailableFormats) {
-            comboBoxItems.add(height + "p " + Resolution.getDescriptionByHeight(height));
+            ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), YoutubeDlUtils.createFormat(height));
+            comboBoxItems.add(item);
         }
 
         formatsComboBox.getSelectionModel().selectFirst();
+
+        adjustWidth();
+    }
+
+    /**
+     * A small hack to make comboboxes the same width no matter when they get rendered
+     */
+    private void adjustWidth() {
+        formatsComboBox.getItems().add(new ComboBoxValueHolder<>("99999p 8K Ultra HD", StringUtils.EMPTY));
+        formatsComboBox.setOnShowing(e -> {
+            ObservableList<ComboBoxValueHolder<String>> items = formatsComboBox.getItems();
+            items.remove(items.size() - 1);
+            formatsComboBox.setOnShowing(null);
+        });
     }
 
     public void setSelectable(boolean selectable) {

@@ -6,12 +6,12 @@ import com.github.engatec.fxcontrols.FxDirectoryChooser;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.preferences.data.AutodownloadFormat;
-import com.github.engatec.vdl.core.preferences.data.PredefinedFormatCreator;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.ui.SvgIcons;
+import com.github.engatec.vdl.util.YoutubeDlUtils;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -75,12 +75,12 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         autodownloadSettingsWrapperVBox.disableProperty().bind(autodownloadCheckBox.selectedProperty().not());
 
         autodownloadFormatComboBox.setItems(FXCollections.observableArrayList(
-                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.best"), PredefinedFormatCreator.create(null)),
-                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher2160p"), PredefinedFormatCreator.create("2160")),
-                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher1440p"), PredefinedFormatCreator.create("1440")),
-                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher1080p"), PredefinedFormatCreator.create("1080")),
-                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher720p"), PredefinedFormatCreator.create("720")),
-                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher480p"), PredefinedFormatCreator.create("480"))
+                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.best"), YoutubeDlUtils.createFormat(null)),
+                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher2160p"), YoutubeDlUtils.createFormat(2160)),
+                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher1440p"), YoutubeDlUtils.createFormat(1440)),
+                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher1080p"), YoutubeDlUtils.createFormat(1080)),
+                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher720p"), YoutubeDlUtils.createFormat(720)),
+                new AutodownloadFormat(resourceBundle.getString("preferences.general.data.autodownload.format.nothigher480p"), YoutubeDlUtils.createFormat(480))
         ));
 
         String formatFromPreferences = ConfigRegistry.get(AutoDownloadFormatPref.class).getProperty().getValueSafe();

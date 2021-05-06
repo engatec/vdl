@@ -10,10 +10,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.QueueAutostartDownloadPref;
 import com.github.engatec.vdl.worker.service.QueueItemDownloadService;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -57,10 +55,7 @@ public class QueueManager {
         queueItems.remove(item);
         queueItems.add(item);
 
-        Boolean autoStartDownload = ConfigRegistry.get(QueueAutostartDownloadPref.class).getValue();
-        if (autoStartDownload) {
-            startDownload(item);
-        }
+        startDownload(item);
     }
 
     public void removeItem(QueueItem item) {

@@ -5,10 +5,8 @@ import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.QueueAutostartDownloadPref;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -16,7 +14,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -41,10 +38,9 @@ public class DownloadsComponentController extends VBox {
     @FXML private TableColumn<QueueItem, String> throughputTableColumn;
     @FXML private TableColumn<QueueItem, Path> downloadPathTableColumn;
 
-    @FXML private Button startDownloadBtn;
-    @FXML private Button removeFinishedBtn;
+    @FXML private Button startAllBtn;
+    @FXML private Button stopAllBtn;
     @FXML private Button removeAllBtn;
-    @FXML private CheckBox autostartDownloadCheckbox;
 
     @FXML
     public void initialize() {
@@ -61,10 +57,9 @@ public class DownloadsComponentController extends VBox {
         progressTableColumn.setCellFactory(ProgressBarTableCell.forTableColumn());
         downloadQueueTableView.setItems(data);
 
-        startDownloadBtn.setOnAction(this::handleStartDownloadButtonClick);
-        removeFinishedBtn.setOnAction(this::handleRemoveFinishedButtonClick);
+        startAllBtn.setOnAction(this::handleStartAllButtonClick);
+        stopAllBtn.setOnAction(this::handleStopAllButtonClick);
         removeAllBtn.setOnAction(this::handleRemoveAllButtonClick);
-        autostartDownloadCheckbox.selectedProperty().bindBidirectional(ConfigRegistry.get(QueueAutostartDownloadPref.class).getProperty());
 
         downloadQueueTableView.setRowFactory(tableView -> {
             TableRow<QueueItem> row = new TableRow<>();
@@ -128,7 +123,7 @@ public class DownloadsComponentController extends VBox {
         return ctxMenu;
     }
 
-    private void handleStartDownloadButtonClick(ActionEvent event) {
+    private void handleStartAllButtonClick(ActionEvent event) {
         for (QueueItem item : data) {
             if (item.getStatus() == DownloadStatus.READY) {
                 queueManager.startDownload(item);
@@ -137,8 +132,13 @@ public class DownloadsComponentController extends VBox {
         event.consume();
     }
 
-    private void handleRemoveFinishedButtonClick(ActionEvent event) {
-        queueManager.removeFinished();
+    private void handleStopAllButtonClick(ActionEvent event) {
+        for (QueueItem item : data) {
+            DownloadStatus status = item.getStatus();
+            if (status == DownloadStatus.SCHEDULED || status == DownloadStatus.IN_PROGRESS) {
+                queueManager.cancelDownload(item);
+            }
+        }
         event.consume();
     }
 

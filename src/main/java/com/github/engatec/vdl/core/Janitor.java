@@ -18,8 +18,8 @@ public class Janitor {
 
     private static void cleanUpOldConfig() {
         ConfigManager cfg = ConfigManager.INSTANCE;
-
         cfg.remove("general.autodownload");
         cfg.remove("general.skipDownloadableDetailsSearch");
+        cfg.remove("misc.queueAutostartDownload");
     }
 }
