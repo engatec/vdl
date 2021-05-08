@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.component;
+package com.github.engatec.vdl.controller.component.search;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.CheckBoxGroup;
 import com.github.engatec.vdl.ui.Dialogs;
-import com.github.engatec.vdl.ui.component.DownloadableItemComponent;
+import com.github.engatec.vdl.ui.component.search.DownloadableItemComponent;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.collections.ObservableList;

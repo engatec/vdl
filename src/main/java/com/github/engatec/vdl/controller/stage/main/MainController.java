@@ -4,7 +4,7 @@ import java.nio.file.Files;
 
 import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.controller.component.DownloadsComponentController;
-import com.github.engatec.vdl.controller.component.SearchComponentController;
+import com.github.engatec.vdl.controller.component.search.SearchComponentController;
 import com.github.engatec.vdl.controller.component.sidebar.SidebarComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.UpdateManager;
@@ -13,8 +13,8 @@ import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.DownloadsComponent;
-import com.github.engatec.vdl.ui.component.SearchComponent;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
+import com.github.engatec.vdl.ui.component.search.SearchComponent;
 import com.github.engatec.vdl.ui.stage.AboutStage;
 import com.github.engatec.vdl.ui.stage.HistoryStage;
 import com.github.engatec.vdl.ui.stage.PreferencesStage;

@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.component;
+package com.github.engatec.vdl.controller.component.search;
 
 import java.util.Comparator;
 import java.util.List;

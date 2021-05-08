@@ -1,7 +1,8 @@
-package com.github.engatec.vdl.ui.component;
+package com.github.engatec.vdl.ui.component.search;
 
-import com.github.engatec.vdl.controller.component.DownloadableItemComponentController;
+import com.github.engatec.vdl.controller.component.search.DownloadableItemComponentController;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.ui.component.AppComponent;
 import javafx.stage.Stage;
 
 public class DownloadableItemComponent extends AppComponent<DownloadableItemComponentController> {
