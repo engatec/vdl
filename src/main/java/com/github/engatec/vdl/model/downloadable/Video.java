@@ -7,6 +7,8 @@ import org.apache.commons.lang3.ObjectUtils;
 
 public class Video {
 
+    public static final String VIDEO_AUDIO_FORMAT_SEPARATOR = "+";
+
     private final Format format;
     private Audio audio;
 
@@ -22,7 +24,7 @@ public class Video {
     public String getFormatId() {
         String formatId = getId();
         if (audio != null && !Objects.equals(formatId, audio.getFormatId())) {
-            formatId += "+" + audio.getFormatId();
+            formatId += VIDEO_AUDIO_FORMAT_SEPARATOR + audio.getFormatId();
         }
         return formatId;
     }

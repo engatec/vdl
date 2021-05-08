@@ -94,44 +94,6 @@ public class DownloadableSearchService extends Service<List<VideoInfo>> {
                 updateProgress(readyCount, totalCount);
                 Platform.runLater(() -> getOnInfoFetchedCallback().accept(chunk, totalCount));
             }
-
-            /*private MultiFormatDownloadable prepareDownloadable(VideoInfo videoInfo) {
-                List<Format> formats = videoInfo.getFormats();
-                if (CollectionUtils.isEmpty(formats)) {
-                    return null;
-                }
-
-                List<Video> videoList = new ArrayList<>();
-                List<Audio> audioList = new ArrayList<>();
-                final String codecAbsenseAttr = YoutubeDlAttr.NO_CODEC.getValue();
-
-                for (Format format : formats) {
-                    String acodec = format.getAcodec();
-                    String vcodec = format.getVcodec();
-                    if (codecAbsenseAttr.equals(vcodec)) {
-                        audioList.add(new Audio(format));
-                    } else if (codecAbsenseAttr.equals(acodec)) {
-                        videoList.add(new Video(format));
-                    } else {
-                        videoList.add(new Video(format, new Audio(format)));
-                    }
-                }
-
-                videoList.sort(
-                        comparing(Video::getWidth, nullsFirst(naturalOrder()))
-                                .thenComparing(Video::getHeight, nullsFirst(naturalOrder()))
-                                .thenComparing(Video::getFilesize, nullsFirst(naturalOrder()))
-                                .reversed()
-                );
-
-                audioList.sort(
-                        comparing(Audio::getBitrate, nullsFirst(naturalOrder()))
-                                .thenComparing(Audio::getFilesize, nullsFirst(naturalOrder()))
-                                .reversed()
-                );
-
-                return new MultiFormatDownloadable(videoInfo.getTitle(), videoInfo.getDuration(), videoInfo.getBaseUrl(), videoList, audioList);
-            }*/
         };
     }
 }

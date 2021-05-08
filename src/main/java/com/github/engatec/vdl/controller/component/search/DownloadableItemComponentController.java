@@ -11,6 +11,7 @@ import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
+import com.github.engatec.vdl.ui.stage.FormatsStage;
 import com.github.engatec.vdl.util.YoutubeDlUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,13 +21,18 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 public class DownloadableItemComponentController extends HBox {
 
+    private static final String CUSTOM_FORMAT_LABEL = "Custom format";
+
+    private final Stage stage;
     private final VideoInfo videoInfo;
+    private String customFormat;
 
     @FXML private Label titleLabel;
     @FXML private Label durationLabel;
@@ -35,7 +41,8 @@ public class DownloadableItemComponentController extends HBox {
     @FXML private Button audioButton;
     @FXML private CheckBox itemSelectedCheckBox;
 
-    public DownloadableItemComponentController(VideoInfo videoInfo) {
+    public DownloadableItemComponentController(Stage stage, VideoInfo videoInfo) {
+        this.stage = stage;
         this.videoInfo = videoInfo;
     }
 
@@ -52,6 +59,17 @@ public class DownloadableItemComponentController extends HBox {
 
         allFormatsButton.setGraphic(new ImageView(Icon.FILTER_LIST_SMALL.getImage()));
         allFormatsButton.setTooltip(Tooltips.createNew("format.all"));
+        allFormatsButton.setOnAction(e -> {
+            new FormatsStage(videoInfo, customFormat, formatId -> {
+                customFormat = formatId;
+                ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
+                comboBoxItems.stream().filter(it -> it.getKey().equals(CUSTOM_FORMAT_LABEL)).findFirst().ifPresent(comboBoxItems::remove);
+                ComboBoxValueHolder<String> valueHolder = new ComboBoxValueHolder<>(CUSTOM_FORMAT_LABEL, customFormat);
+                comboBoxItems.add(valueHolder);
+                formatsComboBox.getSelectionModel().select(valueHolder);
+            }).modal(stage).show();
+            e.consume();
+        });
 
         formatsComboBox.prefHeightProperty().bind(allFormatsButton.heightProperty());
     }
@@ -87,10 +105,11 @@ public class DownloadableItemComponentController extends HBox {
      * A small hack to make comboboxes the same width no matter when they get rendered
      */
     private void adjustWidth() {
-        formatsComboBox.getItems().add(new ComboBoxValueHolder<>("99999p 8K Ultra HD", StringUtils.EMPTY));
+        ComboBoxValueHolder<String> dummyItem = new ComboBoxValueHolder<>("99999p 8K Ultra HD", StringUtils.EMPTY);
+        formatsComboBox.getItems().add(dummyItem);
         formatsComboBox.setOnShowing(e -> {
             ObservableList<ComboBoxValueHolder<String>> items = formatsComboBox.getItems();
-            items.remove(items.size() - 1);
+            items.remove(dummyItem);
             formatsComboBox.setOnShowing(null);
         });
     }

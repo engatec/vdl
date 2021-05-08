@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.stage.main;
+package com.github.engatec.vdl.controller.stage;
 
 import java.nio.file.Files;
 

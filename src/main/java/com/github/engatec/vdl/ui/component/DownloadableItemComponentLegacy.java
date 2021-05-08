@@ -1,51 +1,17 @@
 package com.github.engatec.vdl.ui.component;
 
-import java.util.List;
-import java.util.ResourceBundle;
-
-import com.github.engatec.vdl.controller.component.DownloadableItemComponentControllerLegacy;
-import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.command.DownloadCommand;
-import com.github.engatec.vdl.model.AudioFormat;
-import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
-import com.github.engatec.vdl.model.downloadable.MultiFormatDownloadable;
-import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
-import com.github.engatec.vdl.ui.stage.postprocessing.PostprocessingStage;
-import com.github.engatec.vdl.util.AppUtils;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.stage.Stage;
 
-public class DownloadableItemComponentLegacy extends AppComponent<DownloadableItemComponentControllerLegacy> {
+public class DownloadableItemComponentLegacy {
 
-    private final MultiFormatDownloadable downloadable;
+    /*private final MultiFormatDownloadable downloadable;
 
     public DownloadableItemComponentLegacy(Stage stage, MultiFormatDownloadable downloadable) {
-        super(stage);
         this.downloadable = downloadable;
-    }
-
-    @Override
-    protected String getFxmlPath() {
-        return "/fxml/downloadable-item-component.fxml";
-    }
-
-    @Override
-    protected DownloadableItemComponentControllerLegacy getController() {
-        return new DownloadableItemComponentControllerLegacy(stage, downloadable);
-    }
-
-    @Override
-    public DownloadableItemComponentControllerLegacy load() {
-        DownloadableItemComponentControllerLegacy item = super.load();
-        item.setText(downloadable.getTitle());
-        item.getStyleClass().add("no-border");
-        item.setContextMenu(createContextMenu());
-        return item;
-    }
+    }*/
 
     private ContextMenu createContextMenu() {
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+        /*ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
 
         ContextMenu ctxMenu = new ContextMenu();
 
@@ -66,7 +32,7 @@ public class DownloadableItemComponentLegacy extends AppComponent<DownloadableIt
         });
         ctxMenu.getItems().add(mp3DownloadMenuItem);
 
-        /*boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
+        *//*boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
         if (autodownloadEnabled) {
             MenuItem addToQueueMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.contextmenu.queue.add"));
             addToQueueMenuItem.setOnAction(e -> {
@@ -78,8 +44,9 @@ public class DownloadableItemComponentLegacy extends AppComponent<DownloadableIt
                 e.consume();
             });
             ctxMenu.getItems().add(addToQueueMenuItem);
-        }*/
+        }*//*
 
-        return ctxMenu;
+        return ctxMenu;*/
+        return null;
     }
 }

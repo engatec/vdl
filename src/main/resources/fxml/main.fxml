@@ -2,7 +2,7 @@
 
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<HBox fx:id="rootNode" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.stage.main.MainController">
+<HBox fx:id="rootNode" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.stage.MainController">
    <children>
       <StackPane fx:id="navigationPane" maxHeight="1.7976931348623157E308" />
       <StackPane fx:id="contentPane" HBox.hgrow="ALWAYS" />

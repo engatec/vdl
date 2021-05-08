@@ -10,6 +10,10 @@ public class ComboBoxValueHolder<T> {
         this.value = value;
     }
 
+    public String getKey() {
+        return key;
+    }
+
     public T getValue() {
         return value;
     }

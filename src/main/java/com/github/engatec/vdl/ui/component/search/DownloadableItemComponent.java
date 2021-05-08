@@ -21,6 +21,6 @@ public class DownloadableItemComponent extends AppComponent<DownloadableItemComp
 
     @Override
     protected DownloadableItemComponentController getController() {
-        return new DownloadableItemComponentController(videoInfo);
+        return new DownloadableItemComponentController(stage, videoInfo);
     }
 }

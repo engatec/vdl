@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.stage;
 
-import com.github.engatec.vdl.controller.stage.main.MainController;
+import com.github.engatec.vdl.controller.stage.MainController;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.ui.Dialogs;
 import javafx.scene.control.ButtonBar;
