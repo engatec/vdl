@@ -10,8 +10,6 @@ public interface Downloadable extends Postprocessable {
 
     String getTitle();
 
-    Integer getDuration();
-
     String getBaseUrl();
 
     Path getDownloadPath();

@@ -1,12 +1,18 @@
 package com.github.engatec.vdl.controller.component.search;
 
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.ui.CheckBoxGroup;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.search.DownloadableItemComponent;
+import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.collections.ObservableList;
@@ -32,6 +38,7 @@ public class SearchComponentController extends VBox {
 
     private static final Logger LOGGER = LogManager.getLogger(SearchComponentController.class);
 
+    private final Stage stage;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
 
     @FXML private TextField urlTextField;
@@ -48,6 +55,10 @@ public class SearchComponentController extends VBox {
 
     @FXML private Button downloadButton;
 
+    public SearchComponentController(Stage stage) {
+        this.stage = stage;
+    }
+
     @FXML
     public void initialize() {
         checkBoxGroup = new CheckBoxGroup(selectAllCheckBox);
@@ -62,6 +73,7 @@ public class SearchComponentController extends VBox {
 
         searchButton.setOnAction(this::handleSearchButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
+        downloadButton.setOnAction(this::handleDownloadButtonClick);
     }
 
     private void initSearchControl() {
@@ -143,5 +155,18 @@ public class SearchComponentController extends VBox {
             checkBoxGroup.add(controller.getItemSelectedCheckBox());
             contentItems.add(controller);
         }
+    }
+
+    private void handleDownloadButtonClick(ActionEvent e) {
+        Optional<Path> downloadPathOptional = AppUtils.resolveDownloadPath(stage);
+        downloadPathOptional.ifPresent(path -> contentNode.getChildren().stream()
+                .filter(it -> it instanceof DownloadableItemComponentController)
+                .map(it -> (DownloadableItemComponentController) it)
+                .filter(DownloadableItemComponentController::isSelected)
+                .forEach(it -> {
+                    Downloadable downloadable = it.getDownloadable();
+                    downloadable.setDownloadPath(path);
+                    QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
+                }));
     }
 }

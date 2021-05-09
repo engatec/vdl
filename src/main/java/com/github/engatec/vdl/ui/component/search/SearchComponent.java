@@ -17,6 +17,6 @@ public class SearchComponent extends AppComponent<SearchComponentController> {
 
     @Override
     protected SearchComponentController getController() {
-        return new SearchComponentController();
+        return new SearchComponentController(stage);
     }
 }

@@ -16,6 +16,9 @@ public class BaseDownloadable implements Downloadable {
 
     protected List<Postprocessing> postprocessingSteps;
 
+    public BaseDownloadable() {
+    }
+
     public BaseDownloadable(String title, String baseUrl) {
         this(title, null, baseUrl);
     }
@@ -42,15 +45,6 @@ public class BaseDownloadable implements Downloadable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    @Override
-    public Integer getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Integer duration) {
-        this.duration = duration;
     }
 
     @Override

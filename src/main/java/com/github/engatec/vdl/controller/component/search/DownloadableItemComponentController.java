@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.Resolution;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
@@ -129,5 +131,13 @@ public class DownloadableItemComponentController extends HBox {
 
     public CheckBox getItemSelectedCheckBox() {
         return itemSelectedCheckBox;
+    }
+
+    public Downloadable getDownloadable() {
+        BaseDownloadable downloadable = new BaseDownloadable();
+        downloadable.setFormatId(formatsComboBox.getSelectionModel().getSelectedItem().getValue());
+        downloadable.setTitle(titleLabel.getText());
+        downloadable.setBaseUrl(videoInfo.getBaseUrl());
+        return downloadable;
     }
 }
