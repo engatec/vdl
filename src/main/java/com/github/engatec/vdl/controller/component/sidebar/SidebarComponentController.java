@@ -1,13 +1,17 @@
 package com.github.engatec.vdl.controller.component.sidebar;
 
+import java.util.function.Consumer;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 
 public class SidebarComponentController extends VBox {
 
     @FXML private Label searchLabel;
     @FXML private Label downloadsLabel;
+    @FXML private Label queueItemsCountLabel;
     @FXML private Label historyLabel;
 
     @FXML
@@ -33,5 +37,9 @@ public class SidebarComponentController extends VBox {
         historyLabel.setOnMouseClicked(event -> {
             onSearchClickListener.run();
         });
+    }
+
+    public Consumer<Long> getOnQueueItemsChangeListener() {
+        return count -> queueItemsCountLabel.setText(count == 0 ? StringUtils.EMPTY : "(" + count + ")");
     }
 }

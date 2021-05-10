@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,11 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.github.engatec.vdl.model.DownloadStatus.FINISHED;
+import static com.github.engatec.vdl.model.DownloadStatus.IN_PROGRESS;
+import static com.github.engatec.vdl.model.DownloadStatus.READY;
+import static com.github.engatec.vdl.model.DownloadStatus.SCHEDULED;
+
 public class QueueManager {
 
     private static final Logger LOGGER = LogManager.getLogger(QueueManager.class);
@@ -32,6 +38,8 @@ public class QueueManager {
     private final ObservableList<QueueItem> queueItems = FXCollections.observableList(new LinkedList<>());
     private final Map<QueueItem, Service<?>> itemServiceMap = new HashMap<>();
 
+    private Consumer<Long> onQueueItemsChangeListener;
+
     private QueueManager() {
         queueItems.addListener((ListChangeListener<QueueItem>) change -> {
             while (change.next()) {
@@ -42,6 +50,8 @@ public class QueueManager {
                     }
                 }
             }
+
+            notifyItemsChanged(change.getList());
         });
     }
 
@@ -63,7 +73,7 @@ public class QueueManager {
     }
 
     public void removeFinished() {
-        queueItems.removeIf(item -> item.getStatus() == DownloadStatus.FINISHED);
+        queueItems.removeIf(item -> item.getStatus() == FINISHED);
     }
 
     public void removeAll() {
@@ -75,7 +85,7 @@ public class QueueManager {
     }
 
     public boolean hasItemsInProgress() {
-        return queueItems.stream().anyMatch(it -> it.getStatus() == DownloadStatus.IN_PROGRESS);
+        return queueItems.stream().anyMatch(it -> it.getStatus() == IN_PROGRESS);
     }
 
     public void persistQueue() {
@@ -90,8 +100,8 @@ public class QueueManager {
     private void fixState(List<QueueItem> items) {
         for (QueueItem item : ListUtils.emptyIfNull(items)) {
             DownloadStatus status = item.getStatus();
-            if (status == DownloadStatus.SCHEDULED) {
-                item.setStatus(DownloadStatus.READY); // Should be safe to turn SCHEDULED into READY as it hadn't started when the app shut down
+            if (status == SCHEDULED) {
+                item.setStatus(READY); // Should be safe to turn SCHEDULED into READY as it hadn't started when the app shut down
             }
             if (item.getProgress() < 0) {
                 item.setProgress(0);
@@ -130,5 +140,24 @@ public class QueueManager {
 
     public void resumeDownload(QueueItem item) {
         itemServiceMap.computeIfAbsent(item, QueueItemDownloadService::new).restart();
+    }
+
+    public void setOnQueueItemsChangeListener(Consumer<Long> onQueueItemsChangeListener) {
+        this.onQueueItemsChangeListener = onQueueItemsChangeListener;
+        notifyItemsChanged(queueItems);
+    }
+
+    private void notifyItemsChanged(ObservableList<? extends QueueItem> list) {
+        if (onQueueItemsChangeListener == null) {
+            return;
+        }
+
+        long activeItems = list.stream()
+                .filter(it -> {
+                    DownloadStatus status = it.getStatus();
+                    return status == READY || status == SCHEDULED || status == IN_PROGRESS;
+                })
+                .count();
+        onQueueItemsChangeListener.accept(activeItems);
     }
 }

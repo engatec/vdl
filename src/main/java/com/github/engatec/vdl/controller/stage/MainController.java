@@ -7,6 +7,7 @@ import com.github.engatec.vdl.controller.component.DownloadsComponentController;
 import com.github.engatec.vdl.controller.component.search.SearchComponentController;
 import com.github.engatec.vdl.controller.component.sidebar.SidebarComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.UpdateManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
@@ -85,6 +86,7 @@ public class MainController extends StageAwareController {
     public void initialize() {
         initSideBar();
         navigationPane.getChildren().add(sideBar);
+        QueueManager.INSTANCE.setOnQueueItemsChangeListener(sideBar.getOnQueueItemsChangeListener());
 
         search = new SearchComponent(stage).load();
         downloads = new DownloadsComponent(stage).load();

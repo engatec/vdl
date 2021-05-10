@@ -45,12 +45,16 @@
     -fx-font-size: 12;
 }
 
-.sidebar > .label {
+.sidebar-label {
     -fx-graphic-text-gap: 16;
     -fx-opacity: 0.6;
 }
 
-.sidebar > .label:hover {
+.sidebar-label > .label {
+    -fx-graphic-text-gap: 16;
+}
+
+.sidebar-label:hover {
     -fx-opacity: 1;
     -fx-cursor: hand;
 }

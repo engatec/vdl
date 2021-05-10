@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
@@ -93,6 +94,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     protected void succeeded() {
         updateQueueItem(DownloadStatus.FINISHED, null, StringUtils.EMPTY);
         updateProgress(1);
+        QueueManager.INSTANCE.removeItem(queueItem);
     }
 
     @Override
