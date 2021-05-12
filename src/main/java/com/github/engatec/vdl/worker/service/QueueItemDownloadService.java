@@ -1,7 +1,10 @@
 package com.github.engatec.vdl.worker.service;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -11,11 +14,14 @@ import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.YoutubeDlManager;
+import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.worker.data.QueueItemDownloadProgressData;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +32,8 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
 
     private static final String SIZE_SEPARATOR = " / ";
     private static final String FORMAT_SEPARATOR = "/";
+
+    private static final String ERROR_PREFIX = "ERROR:";
 
     private static final String GROUP_PROGRESS = "progress";
     private static final String GROUP_SIZE = "size";
@@ -106,8 +114,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     protected void failed() {
         updateQueueItem(DownloadStatus.FAILED, null, StringUtils.EMPTY);
         updateProgress(0);
-        Throwable ex = getException();
-        LOGGER.error(ex.getMessage(), ex);
+        LOGGER.error(getException().getMessage());
     }
 
     private void updateQueueItem(DownloadStatus status, String size, String throughput) {
@@ -135,7 +142,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                 var progressData = new QueueItemDownloadProgressData();
                 AtomicInteger progressModificator = new AtomicInteger(0);
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
-                try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding()))) {
+                try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
                         if (Thread.interrupted()) {
                             cancel();
@@ -163,20 +170,40 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                         }
                     });
                 }
+
+                checkErrors(process.getErrorStream());
+
                 return null;
             }
-        };
-    }
 
-    /**
-     * Method updates latest not finished item size
-     */
-    private String calculateSizeString(String currentlyDisplayed, String youtubeDlParsed) {
-        String finishedItemsSize = StringUtils.substringBeforeLast(currentlyDisplayed, SIZE_SEPARATOR);
-        if (Objects.equals(currentlyDisplayed, finishedItemsSize)) { // There's no yet finished item
-            return youtubeDlParsed;
-        } else {
-            return finishedItemsSize + SIZE_SEPARATOR + youtubeDlParsed;
-        }
+            /**
+             * Method updates latest not finished item size
+             */
+            private String calculateSizeString(String currentlyDisplayed, String youtubeDlParsed) {
+                String finishedItemsSize = StringUtils.substringBeforeLast(currentlyDisplayed, SIZE_SEPARATOR);
+                if (Objects.equals(currentlyDisplayed, finishedItemsSize)) { // There's no yet finished item
+                    return youtubeDlParsed;
+                } else {
+                    return finishedItemsSize + SIZE_SEPARATOR + youtubeDlParsed;
+                }
+            }
+
+            private void checkErrors(InputStream errorStream) throws IOException {
+                List<String> errLines = IOUtils.readLines(errorStream, ApplicationContext.INSTANCE.getSystemCharset());
+                if (CollectionUtils.isNotEmpty(errLines)) {
+                    String msg = String.join(System.lineSeparator(), errLines);
+                    // ErrorStream aggregates not only errors, but warnings as well. Don't care much about warnings so they will be just logged and ignored, but errors are showstoppers
+                    boolean hasErrors = errLines.stream()
+                            .filter(StringUtils::isNotBlank)
+                            .map(StringUtils::strip)
+                            .anyMatch(it -> it.startsWith(ERROR_PREFIX));
+                    if (hasErrors) {
+                        throw new YoutubeDlProcessException(msg);
+                    } else {
+                        LOGGER.warn(msg);
+                    }
+                }
+            }
+        };
     }
 }

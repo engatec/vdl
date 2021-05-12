@@ -58,8 +58,6 @@ public class DownloadProcessBuilder implements YoutubeDlProcessBuilder {
 
     @Override
     public Process buildProcess(List<String> command) throws IOException {
-        return new ProcessBuilder(command)
-                .redirectErrorStream(true)
-                .start();
+        return new ProcessBuilder(command).start();
     }
 }

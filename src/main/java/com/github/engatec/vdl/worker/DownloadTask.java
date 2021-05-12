@@ -27,7 +27,7 @@ public class DownloadTask extends Task<Void> {
     @Override
     protected Void call() throws Exception {
         Process process = YoutubeDlManager.INSTANCE.download(downloadable);
-        try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemEncoding()))) {
+        try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset()))) {
             reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
                 if (Thread.interrupted()) {
                     cancel();

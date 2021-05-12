@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.core;
 
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
@@ -31,8 +32,9 @@ public class ApplicationContext {
         return resourceBundleProperty;
     }
 
-    public String getSystemEncoding() {
-        return StringUtils.defaultIfBlank(System.getProperty("sun.jnu.encoding"), System.getProperty("file.encoding"));
+    public Charset getSystemCharset() {
+        String encoding = System.getProperty("sun.jnu.encoding");
+        return Charset.isSupported(encoding) ? Charset.forName(encoding) : Charset.defaultCharset();
     }
 
     public Path getYoutubeDlPath() {

@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
-import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,6 +26,7 @@ import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,21 +72,11 @@ public class YoutubeDlManager {
 
     private void logErrors(InputStream errorStream) {
         try {
-            if (errorStream.available() <= 0) {
-                return;
-            }
+            IOUtils.readLines(errorStream, ApplicationContext.INSTANCE.getSystemCharset())
+                    .forEach(LOGGER::error);
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-
-        InputStreamReader is;
-        try {
-            is = new InputStreamReader(errorStream, ApplicationContext.INSTANCE.getSystemEncoding());
-        } catch (UnsupportedEncodingException e) {
-            is = new InputStreamReader(errorStream);
             LOGGER.warn(e.getMessage(), e);
         }
-        new BufferedReader(is).lines().forEach(LOGGER::error);
     }
 
     public Process download(Downloadable downloadable) throws IOException {
