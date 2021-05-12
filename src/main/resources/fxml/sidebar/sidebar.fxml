@@ -7,15 +7,21 @@
 <fx:root maxHeight="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="32.0" styleClass="sidebar" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="searchLabel" styleClass="sidebar-label" text="%sidebar.search" />
-      <HBox alignment="CENTER_LEFT" spacing="4.0" styleClass="sidebar-label">
+      <HBox fx:id="downloadsLabelWrapperNode" alignment="CENTER_LEFT" spacing="4.0" styleClass="sidebar-label">
          <children>
             <Label fx:id="downloadsLabel" text="%sidebar.downloads" />
             <Label fx:id="queueItemsCountLabel" />
          </children>
       </HBox>
       <Label fx:id="historyLabel" styleClass="sidebar-label" text="%sidebar.history" />
+      <HBox fx:id="sidebarWidthCorrectionNode" alignment="CENTER_LEFT" spacing="4.0" styleClass="sidebar-label" visible="false">
+         <children>
+            <Label fx:id="dummyWidthLabel" text="%sidebar.downloads" />
+            <Label text="(999)" />
+         </children>
+      </HBox>
    </children>
    <padding>
-      <Insets bottom="8.0" left="32.0" right="48.0" top="32.0" />
+      <Insets bottom="8.0" left="32.0" right="24.0" top="32.0" />
    </padding>
 </fx:root>

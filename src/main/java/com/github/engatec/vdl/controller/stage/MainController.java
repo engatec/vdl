@@ -4,8 +4,8 @@ import java.nio.file.Files;
 
 import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.controller.component.DownloadsComponentController;
+import com.github.engatec.vdl.controller.component.SidebarComponentController;
 import com.github.engatec.vdl.controller.component.search.SearchComponentController;
-import com.github.engatec.vdl.controller.component.sidebar.SidebarComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.UpdateManager;
