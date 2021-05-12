@@ -38,7 +38,7 @@ public class QueueManager {
     private final ObservableList<QueueItem> queueItems = FXCollections.observableList(new LinkedList<>());
     private final Map<QueueItem, Service<?>> itemServiceMap = new HashMap<>();
 
-    private Consumer<Long> onQueueItemsChangeListener;
+    private Consumer<Integer> onQueueItemsChangeListener;
 
     private QueueManager() {
         queueItems.addListener((ListChangeListener<QueueItem>) change -> {
@@ -142,7 +142,7 @@ public class QueueManager {
         itemServiceMap.computeIfAbsent(item, QueueItemDownloadService::new).restart();
     }
 
-    public void setOnQueueItemsChangeListener(Consumer<Long> onQueueItemsChangeListener) {
+    public void setOnQueueItemsChangeListener(Consumer<Integer> onQueueItemsChangeListener) {
         this.onQueueItemsChangeListener = onQueueItemsChangeListener;
         notifyItemsChanged(queueItems);
     }
@@ -152,12 +152,6 @@ public class QueueManager {
             return;
         }
 
-        long activeItems = list.stream()
-                .filter(it -> {
-                    DownloadStatus status = it.getStatus();
-                    return status == READY || status == SCHEDULED || status == IN_PROGRESS;
-                })
-                .count();
-        onQueueItemsChangeListener.accept(activeItems);
+        onQueueItemsChangeListener.accept(list.size());
     }
 }

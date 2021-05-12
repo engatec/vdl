@@ -24,22 +24,25 @@ public class SidebarComponentController extends VBox {
     public void setOnSearchClickListener(Runnable onSearchClickListener) {
         searchLabel.setOnMouseClicked(event -> {
             onSearchClickListener.run();
+            event.consume();
         });
     }
 
     public void setOnDownloadsClickListener(Runnable onSearchClickListener) {
         downloadsLabel.setOnMouseClicked(event -> {
             onSearchClickListener.run();
+            event.consume();
         });
     }
 
     public void setOnHistoryClickListener(Runnable onSearchClickListener) {
         historyLabel.setOnMouseClicked(event -> {
             onSearchClickListener.run();
+            event.consume();
         });
     }
 
-    public Consumer<Long> getOnQueueItemsChangeListener() {
+    public Consumer<Integer> getOnQueueItemsChangeListener() {
         return count -> queueItemsCountLabel.setText(count == 0 ? StringUtils.EMPTY : "(" + count + ")");
     }
 }

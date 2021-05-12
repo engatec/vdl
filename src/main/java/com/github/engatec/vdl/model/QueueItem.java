@@ -27,7 +27,7 @@ public class QueueItem implements Downloadable {
     private final Downloadable downloadable;
 
     public QueueItem() {
-        downloadable = new BaseDownloadable();
+        this(new BaseDownloadable());
     }
 
     public QueueItem(Downloadable downloadable) {
