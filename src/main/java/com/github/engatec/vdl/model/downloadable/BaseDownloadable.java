@@ -10,7 +10,6 @@ public class BaseDownloadable implements Downloadable {
 
     protected String formatId;
     protected String title;
-    protected Integer duration;
     protected String baseUrl;
     protected Path downloadPath;
 
@@ -19,21 +18,12 @@ public class BaseDownloadable implements Downloadable {
     public BaseDownloadable() {
     }
 
-    public BaseDownloadable(String title, String baseUrl) {
-        this(title, null, baseUrl);
-    }
-
-    public BaseDownloadable(String title, Integer duration, String baseUrl) {
-        this.title = title;
-        this.duration = duration;
-        this.baseUrl = baseUrl;
-    }
-
     @Override
     public String getFormatId() {
         return formatId;
     }
 
+    @Override
     public void setFormatId(String formatId) {
         this.formatId = formatId;
     }
@@ -43,6 +33,7 @@ public class BaseDownloadable implements Downloadable {
         return title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -52,6 +43,7 @@ public class BaseDownloadable implements Downloadable {
         return baseUrl;
     }
 
+    @Override
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
