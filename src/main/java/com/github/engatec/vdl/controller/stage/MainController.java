@@ -1,10 +1,13 @@
 package com.github.engatec.vdl.controller.stage;
 
 import java.nio.file.Files;
+import java.util.Iterator;
 
 import com.github.engatec.vdl.controller.StageAwareController;
+import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.controller.component.DownloadsComponentController;
 import com.github.engatec.vdl.controller.component.SidebarComponentController;
+import com.github.engatec.vdl.controller.component.history.HistoryComponentController;
 import com.github.engatec.vdl.controller.component.search.SearchComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
@@ -14,10 +17,10 @@ import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.DownloadsComponent;
+import com.github.engatec.vdl.ui.component.HistoryComponent;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.component.search.SearchComponent;
 import com.github.engatec.vdl.ui.stage.AboutStage;
-import com.github.engatec.vdl.ui.stage.HistoryStage;
 import com.github.engatec.vdl.ui.stage.PreferencesStage;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -43,6 +46,7 @@ public class MainController extends StageAwareController {
     private SidebarComponentController sideBar;
     private SearchComponentController search;
     private DownloadsComponentController downloads;
+    private HistoryComponentController history;
 
     /*@FXML private HBox mainHbox;
 
@@ -105,23 +109,25 @@ public class MainController extends StageAwareController {
 
     private void initSideBar() {
         sideBar = new SidebarComponent(stage).load();
-
-        sideBar.setOnSearchClickListener(() -> {
-            ObservableList<Node> contentPaneItems = contentPane.getChildren();
-            contentPaneItems.clear();
-            contentPaneItems.add(search);
-        });
-
-        sideBar.setOnDownloadsClickListener(() -> {
-            ObservableList<Node> contentPaneItems = contentPane.getChildren();
-            contentPaneItems.clear();
-            contentPaneItems.add(downloads);
-        });
-
+        sideBar.setOnSearchClickListener(() -> loadComponent(search));
+        sideBar.setOnDownloadsClickListener(() -> loadComponent(downloads));
         sideBar.setOnHistoryClickListener(() -> {
-            ObservableList<Node> contentPaneItems = contentPane.getChildren();
-            contentPaneItems.clear();
+            if (history == null) {
+                history = new HistoryComponent(stage).load();
+            }
+            loadComponent(history);
         });
+    }
+
+    private <T extends Node & ComponentController> void loadComponent(T component) {
+        ObservableList<Node> contentPaneItems = contentPane.getChildren();
+        for (Iterator<Node> it = contentPaneItems.iterator(); it.hasNext();) {
+            ((ComponentController) it.next()).onVisibilityLost();
+            it.remove();
+        }
+
+        component.onBeforeVisible();
+        contentPaneItems.add(component);
     }
 
     private void setAnchors() {
@@ -206,8 +212,8 @@ public class MainController extends StageAwareController {
     }
 
     private void handleHistoryMenuItemClick(ActionEvent event) {
-        new HistoryStage().modal(stage).showAndWait();
-        event.consume();
+        /*new HistoryComponent().modal(stage).showAndWait();
+        event.consume();*/
     }
 
 

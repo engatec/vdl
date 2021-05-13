@@ -1,8 +1,10 @@
-package com.github.engatec.vdl.controller.history;
+package com.github.engatec.vdl.controller.component.history;
 
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
+import com.github.engatec.vdl.controller.component.ComponentController;
+import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -13,32 +15,44 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class Initializer {
+public class HistoryComponentController extends VBox implements ComponentController {
 
-    private static final Logger LOGGER = LogManager.getLogger(Initializer.class);
+    private static final Logger LOGGER = LogManager.getLogger(HistoryComponentController.class);
 
-    static void initialize(Context ctx) {
-        ctx.getStage().setOnCloseRequest(Handler::handleCloseRequest);
+    @FXML private TableView<HistoryItem> historyTableView;
+    @FXML private TableColumn<HistoryItem, String> titleTableColumn;
+    @FXML private TableColumn<HistoryItem, String> urlTableColumn;
+    @FXML private TableColumn<HistoryItem, Path> locationTableColumn;
+    @FXML private TableColumn<HistoryItem, String> dtmTableColumn;
 
-        initEntriesNumberComboBox(ctx.getEntriesNumberComboBox());
-        initHistoryTableView(ctx);
+    @FXML private ComboBox<Number> entriesNumberComboBox;
+    @FXML private Button clearHistoryBtn;
 
-        ctx.getClearHistoryBtn().setOnAction(e -> Handler.handleClearHistoryBtnClick(ctx, e));
-        ctx.getCloseBtn().setOnAction(e -> Handler.handleCloseBtnClick(ctx, e));
+    @FXML
+    public void initialize() {
+        initEntriesNumberComboBox();
+        initHistoryTableView();
+
+        clearHistoryBtn.setOnAction(this::handleClearHistoryBtnClick);
     }
 
-    private static void initEntriesNumberComboBox(ComboBox<Number> entriesNumberComboBox) {
+    private void initEntriesNumberComboBox() {
         final String DISABLE_HISTORY = ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.combobox.disablehistory");
 
         entriesNumberComboBox.setItems(FXCollections.observableArrayList(0, 10, 30, 50, 100, 1000));
@@ -71,16 +85,14 @@ class Initializer {
         entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty());
     }
 
-    private static void initHistoryTableView(Context ctx) {
-        TableView<HistoryItem> historyTableView = ctx.getHistoryTableView();
+    private void initHistoryTableView() {
         historyTableView.setPlaceholder(new Label(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.table.placeholder")));
 
-        ctx.getTitleTableColumn().setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getTitle()));
-        ctx.getUrlTableColumn().setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getUrl()));
-        ctx.getLocationTableColumn().setCellValueFactory(it -> new ReadOnlyObjectWrapper<>(it.getValue().getPath()));
-        ctx.getDtmTableColumn().setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getDtm()));
+        titleTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getTitle()));
+        urlTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getUrl()));
+        locationTableColumn.setCellValueFactory(it -> new ReadOnlyObjectWrapper<>(it.getValue().getPath()));
+        dtmTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getDtm()));
 
-        historyTableView.setItems(FXCollections.observableList(HistoryManager.INSTANCE.getHistoryItems()));
         historyTableView.setRowFactory(tableView -> {
             TableRow<HistoryItem> row = new TableRow<>();
             ContextMenu contextMenu = createContextMenu(row);
@@ -93,7 +105,7 @@ class Initializer {
         });
     }
 
-    private static ContextMenu createContextMenu(TableRow<HistoryItem> row) {
+    private ContextMenu createContextMenu(TableRow<HistoryItem> row) {
         ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
         ContextMenu ctxMenu = new ContextMenu();
 
@@ -114,5 +126,21 @@ class Initializer {
         ctxMenu.getItems().add(openFolder);
 
         return ctxMenu;
+    }
+
+    private void handleClearHistoryBtnClick(ActionEvent e) {
+        HistoryManager.INSTANCE.clearHistory();
+        historyTableView.setItems(null);
+        e.consume();
+    }
+
+    @Override
+    public void onBeforeVisible() {
+        historyTableView.setItems(FXCollections.observableList(HistoryManager.INSTANCE.getHistoryItems()));
+    }
+
+    @Override
+    public void onVisibilityLost() {
+        AppExecutors.BACKGROUND_EXECUTOR.submit(HistoryManager.INSTANCE::persistHistory); // To eliminate possible phantom entries from the hard drive if the user starts playing with max entries number
     }
 }

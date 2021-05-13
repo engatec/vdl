@@ -24,7 +24,7 @@ import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 
-public class DownloadsComponentController extends VBox {
+public class DownloadsComponentController extends VBox implements ComponentController {
 
     private final QueueManager queueManager = QueueManager.INSTANCE;
     private final ObservableList<QueueItem> data = queueManager.getQueueItems();

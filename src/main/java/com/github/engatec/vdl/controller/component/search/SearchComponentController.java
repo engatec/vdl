@@ -2,6 +2,7 @@ package com.github.engatec.vdl.controller.component.search;
 
 import java.util.List;
 
+import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.QueueItem;
@@ -32,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class SearchComponentController extends VBox {
+public class SearchComponentController extends VBox implements ComponentController {
 
     private static final Logger LOGGER = LogManager.getLogger(SearchComponentController.class);
 

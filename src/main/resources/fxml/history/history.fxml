@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<VBox prefHeight="400.0" prefWidth="600.0" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.history.HistoryController">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="4.0">
          <children>
@@ -21,28 +21,20 @@
                </children>
             </StackPane>
          </children>
-         <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-         </padding>
       </HBox>
-      <TableView fx:id="historyTableView" VBox.vgrow="ALWAYS">
+      <TableView fx:id="historyTableView" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS">
         <columns>
-          <TableColumn fx:id="titleTableColumn" prefWidth="75.0" text="%stage.history.table.header.title" />
-            <TableColumn fx:id="urlTableColumn" prefWidth="75.0" text="%stage.history.table.header.url" />
-            <TableColumn fx:id="locationTableColumn" prefWidth="75.0" text="%stage.history.table.header.location" />
-            <TableColumn fx:id="dtmTableColumn" prefWidth="75.0" text="%stage.history.table.header.dtm" />
+          <TableColumn fx:id="titleTableColumn" minWidth="30.0" prefWidth="75.0" text="%stage.history.table.header.title" />
+            <TableColumn fx:id="urlTableColumn" minWidth="30.0" prefWidth="75.0" text="%stage.history.table.header.url" />
+            <TableColumn fx:id="locationTableColumn" minWidth="30.0" prefWidth="75.0" text="%stage.history.table.header.location" />
+            <TableColumn fx:id="dtmTableColumn" minWidth="30.0" prefWidth="75.0" text="%stage.history.table.header.dtm" />
         </columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <HBox alignment="CENTER_RIGHT" VBox.vgrow="NEVER">
-         <children>
-            <Button fx:id="closeBtn" mnemonicParsing="false" styleClass="control-btn" text="%stage.history.btn.close" />
-         </children>
-         <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-         </padding>
-      </HBox>
    </children>
-</VBox>
+   <padding>
+      <Insets left="8.0" right="8.0" top="8.0" />
+   </padding>
+</fx:root>
