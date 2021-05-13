@@ -5,15 +5,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.Format;
+import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.Resolution;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.model.YoutubedlFormat;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
 import com.github.engatec.vdl.ui.stage.FormatsStage;
+import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.YoutubeDlUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -58,6 +64,16 @@ public class DownloadableItemComponentController extends HBox {
     private void initControlButtons() {
         audioButton.setGraphic(new ImageView(Icon.AUDIOTRACK_SMALL.getImage()));
         audioButton.setTooltip(Tooltips.createNew("download.audio"));
+        audioButton.setOnAction(e -> {
+            AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
+                Downloadable audioDownloadable = getDownloadable();
+                audioDownloadable.setDownloadPath(path);
+                audioDownloadable.setFormatId(YoutubedlFormat.BEST_AUDIO.getCmdValue()); // No need to download video if user only wants to extract audio
+                audioDownloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(AudioFormat.MP3.toString(), 0)));
+                QueueManager.INSTANCE.addItem(new QueueItem(audioDownloadable));
+            });
+            e.consume();
+        });
 
         allFormatsButton.setGraphic(new ImageView(Icon.FILTER_LIST_SMALL.getImage()));
         allFormatsButton.setTooltip(Tooltips.createNew("format.all"));

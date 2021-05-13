@@ -22,16 +22,6 @@ public class DownloadableItemComponentLegacy {
         });
         ctxMenu.getItems().add(postprocessingMenuItem);
 
-        MenuItem mp3DownloadMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.contextmenu.mp3download"));
-        mp3DownloadMenuItem.setOnAction(e -> {
-            BaseDownloadable mp3Downloadable = new BaseDownloadable(downloadable.getBaseUrl(), downloadable.getFormatId());
-            mp3Downloadable.setTitle(downloadable.getTitle());
-            mp3Downloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(AudioFormat.MP3.toString(), 0)));
-            AppUtils.executeCommandResolvingPath(stage, new DownloadCommand(stage, mp3Downloadable), mp3Downloadable::setDownloadPath);
-            e.consume();
-        });
-        ctxMenu.getItems().add(mp3DownloadMenuItem);
-
         *//*boolean autodownloadEnabled = ConfigRegistry.get(AutoDownloadPref.class).getValue();
         if (autodownloadEnabled) {
             MenuItem addToQueueMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.contextmenu.queue.add"));

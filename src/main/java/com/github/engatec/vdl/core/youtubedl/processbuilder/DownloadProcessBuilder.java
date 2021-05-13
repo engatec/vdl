@@ -7,9 +7,7 @@ import java.util.Objects;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
-import com.github.engatec.vdl.model.YoutubedlFormat;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 
 public class DownloadProcessBuilder implements YoutubeDlProcessBuilder {
@@ -26,7 +24,7 @@ public class DownloadProcessBuilder implements YoutubeDlProcessBuilder {
         YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
 
         commandBuilder
-                .formatId(resolveFormatId())
+                .formatId(downloadable.getFormatId())
                 .outputPath(downloadable.getDownloadPath(), downloadable.getTitle())
                 .ignoreConfig()
                 .ignoreErrors()
@@ -44,16 +42,6 @@ public class DownloadProcessBuilder implements YoutubeDlProcessBuilder {
         return commandBuilder
                 .urls(List.of(downloadable.getBaseUrl()))
                 .buildAsList();
-    }
-
-    /**
-     * No need to download video if user only wants to extract audio
-     */
-    private String resolveFormatId() {
-        boolean extractAudio = downloadable.getPostprocessingSteps().stream()
-                .map(Postprocessing::getClass)
-                .anyMatch(it -> it == ExtractAudioPostprocessing.class);
-        return extractAudio ? YoutubedlFormat.BEST_AUDIO.getCmdValue() : downloadable.getFormatId();
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.github.engatec.vdl.controller.component.search;
 
-import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
@@ -158,8 +156,7 @@ public class SearchComponentController extends VBox {
     }
 
     private void handleDownloadButtonClick(ActionEvent e) {
-        Optional<Path> downloadPathOptional = AppUtils.resolveDownloadPath(stage);
-        downloadPathOptional.ifPresent(path -> contentNode.getChildren().stream()
+        AppUtils.resolveDownloadPath(stage).ifPresent(path -> contentNode.getChildren().stream()
                 .filter(it -> it instanceof DownloadableItemComponentController)
                 .map(it -> (DownloadableItemComponentController) it)
                 .filter(DownloadableItemComponentController::isSelected)
@@ -167,6 +164,7 @@ public class SearchComponentController extends VBox {
                     Downloadable downloadable = it.getDownloadable();
                     downloadable.setDownloadPath(path);
                     QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
-                }));
+                })
+        );
     }
 }
