@@ -1,10 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<HBox fx:id="rootNode" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.stage.MainController">
+<?import javafx.scene.layout.VBox?>
+<HBox fx:id="rootNode" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.controller.stage.MainController">
    <children>
       <StackPane fx:id="navigationPane" maxHeight="1.7976931348623157E308" />
-      <StackPane fx:id="contentPane" HBox.hgrow="ALWAYS" />
+      <VBox HBox.hgrow="ALWAYS">
+         <children>
+            <HBox alignment="CENTER_RIGHT" spacing="12.0">
+               <children>
+                  <ImageView fx:id="preferencesButton" pickOnBounds="true" preserveRatio="true" styleClass="service-btn">
+                     <image>
+                        <Image url="@../assets/icons/settings_24dp.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="helpButton" pickOnBounds="true" preserveRatio="true" scaleX="0.9" scaleY="0.9" styleClass="service-btn">
+                     <image>
+                        <Image url="@../assets/icons/help_24dp.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <padding>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </padding>
+            </HBox>
+            <StackPane fx:id="contentPane" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
    </children>
 </HBox>

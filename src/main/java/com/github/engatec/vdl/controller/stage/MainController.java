@@ -26,6 +26,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -42,6 +43,9 @@ public class MainController extends StageAwareController {
     @FXML private HBox rootNode;
     @FXML private StackPane navigationPane;
     @FXML private StackPane contentPane;
+
+    @FXML private ImageView helpButton;
+    @FXML private ImageView preferencesButton;
 
     private SidebarComponentController sideBar;
     private SearchComponentController search;
@@ -88,6 +92,7 @@ public class MainController extends StageAwareController {
 
     @FXML
     public void initialize() {
+        initServiceBar();
         initSideBar();
         navigationPane.getChildren().add(sideBar);
         QueueManager.INSTANCE.setOnQueueItemsChangeListener(sideBar.getOnQueueItemsChangeListener());
@@ -105,6 +110,18 @@ public class MainController extends StageAwareController {
         initScrollPaneUpdate();*/
 
         // stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(videoUrlTextField, searchBtn));
+    }
+
+    private void initServiceBar() {
+        helpButton.setOnMouseClicked(e -> {
+            new AboutStage().modal(stage).showAndWait();
+            e.consume();
+        });
+
+        preferencesButton.setOnMouseClicked(e -> {
+            new PreferencesStage().modal(stage).showAndWait();
+            e.consume();
+        });
     }
 
     private void initSideBar() {
@@ -138,12 +155,10 @@ public class MainController extends StageAwareController {
         /*I18n.bindLocaleProperty(fileMenu.textProperty(), "menu.file");
         I18n.bindLocaleProperty(queueMenuItem.textProperty(), "menu.file.queue");
         I18n.bindLocaleProperty(historyMenuItem.textProperty(), "menu.file.history");
-        I18n.bindLocaleProperty(preferencesMenuItem.textProperty(), "menu.file.preferences");
         I18n.bindLocaleProperty(exitMenuItem.textProperty(), "menu.file.exit");
         I18n.bindLocaleProperty(languageMenu.textProperty(), "menu.language");
         I18n.bindLocaleProperty(helpMenu.textProperty(), "menu.help");
         I18n.bindLocaleProperty(checkYoutubeDlUpdatesMenuItem.textProperty(), "menu.help.update.youtubedl");
-        I18n.bindLocaleProperty(aboutMenuItem.textProperty(), "menu.help.about");
         I18n.bindLocaleProperty(searchBtn.textProperty(), "search");
         I18n.bindLocaleProperty(playlistSearchCancelBtn.textProperty(), "button.cancel");*/
     }
@@ -163,9 +178,7 @@ public class MainController extends StageAwareController {
 
     private void initMenuItems() {
         /*exitMenuItem.setOnAction(this::handleExitMenuItemClick);
-        preferencesMenuItem.setOnAction(this::handlePreferencesMenuItemClick);
         checkYoutubeDlUpdatesMenuItem.setOnAction(this::handleYoutubeDlUpdatesMenuItemClick);
-        aboutMenuItem.setOnAction(this::handleAboutMenuItemClick);
         queueMenuItem.setOnAction(this::handleQueueMenuItemClick);
         historyMenuItem.setOnAction(this::handleHistoryMenuItemClick);
 
@@ -177,11 +190,6 @@ public class MainController extends StageAwareController {
     private void handleExitMenuItemClick(ActionEvent event) {
         event.consume();
         stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-    }
-
-    private void handlePreferencesMenuItemClick(ActionEvent event) {
-        new PreferencesStage().modal(stage).showAndWait();
-        event.consume();
     }
 
     private void handleLanguageChange(ActionEvent event, Language language) {
@@ -198,11 +206,6 @@ public class MainController extends StageAwareController {
         } else {
             Dialogs.error("update.youtubedl.nopermissions");
         }
-        event.consume();
-    }
-
-    private void handleAboutMenuItemClick(ActionEvent event) {
-        new AboutStage().modal(stage).showAndWait();
         event.consume();
     }
 

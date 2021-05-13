@@ -64,3 +64,12 @@
     -fx-font-size: 12;
     -fx-opacity: 0.9;
 }
+
+.service-btn {
+    -fx-opacity: 0.6;
+}
+
+.service-btn:hover {
+    -fx-opacity: 0.9;
+    -fx-cursor: hand;
+}

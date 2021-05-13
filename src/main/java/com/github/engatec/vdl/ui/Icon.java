@@ -9,8 +9,10 @@ public enum Icon {
     AUDIOTRACK_SMALL("/assets/icons/audiotrack_18dp.png"),
     DOWNLOAD_SMALL("/assets/icons/download_icon_18dp.png"),
     FILTER_LIST_SMALL("/assets/icons/filter_list_18dp.png"),
+    HELP_MEDIUM("/assets/icons/help_24dp.png"),
     HISTORY_SMALL("/assets/icons/history_icon_18dp.png"),
-    SEARCH_SMALL("/assets/icons/search_icon_18dp.png");
+    SEARCH_SMALL("/assets/icons/search_icon_18dp.png"),
+    SETTINGS_MEDIUM("/assets/icons/settings_24dp.png");
 
     private final Image image;
 
