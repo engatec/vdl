@@ -11,17 +11,6 @@
 <?import javafx.scene.layout.VBox?>
 <fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <HBox alignment="CENTER_LEFT" spacing="4.0">
-         <children>
-            <Label text="%stage.history.entries.number.label" HBox.hgrow="NEVER" />
-            <ComboBox fx:id="entriesNumberComboBox" />
-            <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-               <children>
-                  <Button fx:id="clearHistoryBtn" mnemonicParsing="false" text="%stage.history.btn.clear" />
-               </children>
-            </StackPane>
-         </children>
-      </HBox>
       <TableView fx:id="historyTableView" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS">
         <columns>
           <TableColumn fx:id="titleTableColumn" minWidth="30.0" prefWidth="75.0" text="%stage.history.table.header.title" />
@@ -33,8 +22,19 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
+      <HBox alignment="CENTER_LEFT" spacing="4.0">
+         <children>
+            <Label text="%stage.history.entries.number.label" HBox.hgrow="NEVER" />
+            <ComboBox fx:id="entriesNumberComboBox" />
+            <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="clearHistoryBtn" mnemonicParsing="false" text="%stage.history.btn.clear" />
+               </children>
+            </StackPane>
+         </children>
+      </HBox>
    </children>
    <padding>
-      <Insets left="8.0" right="8.0" top="8.0" />
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
    </padding>
 </fx:root>
