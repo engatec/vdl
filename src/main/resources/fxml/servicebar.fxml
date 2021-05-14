@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<fx:root alignment="CENTER_RIGHT" spacing="12.0" stylesheets="@../styles.css" type="HBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="preferencesButton" pickOnBounds="true" preserveRatio="true" styleClass="service-btn">
+         <image>
+            <Image url="@../assets/icons/settings_24dp.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="helpButton" pickOnBounds="true" preserveRatio="true" scaleX="0.9" scaleY="0.9" styleClass="service-btn">
+         <image>
+            <Image url="@../assets/icons/help_24dp.png" />
+         </image>
+      </ImageView>
+   </children>
+   <padding>
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+   </padding>
+</fx:root>

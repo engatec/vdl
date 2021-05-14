@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<fx:root maxHeight="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="32.0" styleClass="sidebar" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="32.0" styleClass="sidebar" stylesheets="@../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="searchLabel" styleClass="sidebar-label" text="%sidebar.search" />
       <HBox fx:id="downloadsLabelWrapperNode" alignment="CENTER_LEFT" spacing="4.0" styleClass="sidebar-label">

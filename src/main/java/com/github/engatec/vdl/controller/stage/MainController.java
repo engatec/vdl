@@ -6,6 +6,7 @@ import java.util.Iterator;
 import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.controller.component.DownloadsComponentController;
+import com.github.engatec.vdl.controller.component.ServicebarComponentController;
 import com.github.engatec.vdl.controller.component.SidebarComponentController;
 import com.github.engatec.vdl.controller.component.history.HistoryComponentController;
 import com.github.engatec.vdl.controller.component.search.SearchComponentController;
@@ -18,15 +19,13 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.DownloadsComponent;
 import com.github.engatec.vdl.ui.component.HistoryComponent;
+import com.github.engatec.vdl.ui.component.ServicebarComponent;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.component.search.SearchComponent;
-import com.github.engatec.vdl.ui.stage.AboutStage;
-import com.github.engatec.vdl.ui.stage.PreferencesStage;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -43,11 +42,8 @@ public class MainController extends StageAwareController {
     @FXML private HBox rootNode;
     @FXML private StackPane navigationPane;
     @FXML private StackPane contentPane;
+    @FXML private StackPane servicebarPane;
 
-    @FXML private ImageView helpButton;
-    @FXML private ImageView preferencesButton;
-
-    private SidebarComponentController sideBar;
     private SearchComponentController search;
     private DownloadsComponentController downloads;
     private HistoryComponentController history;
@@ -92,14 +88,11 @@ public class MainController extends StageAwareController {
 
     @FXML
     public void initialize() {
-        initServiceBar();
         initSideBar();
-        navigationPane.getChildren().add(sideBar);
-        QueueManager.INSTANCE.setOnQueueItemsChangeListener(sideBar.getOnQueueItemsChangeListener());
+        initServiceBar();
 
         search = new SearchComponent(stage).load();
         downloads = new DownloadsComponent(stage).load();
-
         contentPane.getChildren().add(search);
 
 
@@ -112,28 +105,19 @@ public class MainController extends StageAwareController {
         // stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(videoUrlTextField, searchBtn));
     }
 
-    private void initServiceBar() {
-        helpButton.setOnMouseClicked(e -> {
-            new AboutStage().modal(stage).showAndWait();
-            e.consume();
-        });
-
-        preferencesButton.setOnMouseClicked(e -> {
-            new PreferencesStage().modal(stage).showAndWait();
-            e.consume();
-        });
-    }
-
     private void initSideBar() {
-        sideBar = new SidebarComponent(stage).load();
-        sideBar.setOnSearchClickListener(() -> loadComponent(search));
-        sideBar.setOnDownloadsClickListener(() -> loadComponent(downloads));
-        sideBar.setOnHistoryClickListener(() -> {
+        SidebarComponentController sidebar = new SidebarComponent(stage).load();
+        sidebar.setOnSearchClickListener(() -> loadComponent(search));
+        sidebar.setOnDownloadsClickListener(() -> loadComponent(downloads));
+        sidebar.setOnHistoryClickListener(() -> {
             if (history == null) {
                 history = new HistoryComponent(stage).load();
             }
             loadComponent(history);
         });
+
+        navigationPane.getChildren().add(sidebar);
+        QueueManager.INSTANCE.setOnQueueItemsChangeListener(sidebar.getOnQueueItemsChangeListener());
     }
 
     private <T extends Node & ComponentController> void loadComponent(T component) {
@@ -145,6 +129,11 @@ public class MainController extends StageAwareController {
 
         component.onBeforeVisible();
         contentPaneItems.add(component);
+    }
+
+    private void initServiceBar() {
+        ServicebarComponentController servicebar = new ServicebarComponent(stage).load();
+        servicebarPane.getChildren().add(servicebar);
     }
 
     private void setAnchors() {

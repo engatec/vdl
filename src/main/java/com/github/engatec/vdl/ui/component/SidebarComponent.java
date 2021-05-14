@@ -11,7 +11,7 @@ public class SidebarComponent extends AppComponent<SidebarComponentController> {
 
     @Override
     protected String getFxmlPath() {
-        return "/fxml/sidebar/sidebar.fxml";
+        return "/fxml/sidebar.fxml";
     }
 
     @Override
