@@ -133,46 +133,6 @@ public class MainController extends StageAwareController {
         servicebarPane.getChildren().add(servicebar);
     }
 
-    private void setAnchors() {
-
-    }
-
-    private void initLocaleBindings() {
-        /*I18n.bindLocaleProperty(fileMenu.textProperty(), "menu.file");
-        I18n.bindLocaleProperty(queueMenuItem.textProperty(), "menu.file.queue");
-        I18n.bindLocaleProperty(historyMenuItem.textProperty(), "menu.file.history");
-        I18n.bindLocaleProperty(exitMenuItem.textProperty(), "menu.file.exit");
-        I18n.bindLocaleProperty(languageMenu.textProperty(), "menu.language");
-        I18n.bindLocaleProperty(helpMenu.textProperty(), "menu.help");
-        I18n.bindLocaleProperty(checkYoutubeDlUpdatesMenuItem.textProperty(), "menu.help.update.youtubedl");
-        I18n.bindLocaleProperty(searchBtn.textProperty(), "search");
-        I18n.bindLocaleProperty(playlistSearchCancelBtn.textProperty(), "button.cancel");*/
-    }
-
-    private void initSearchBindings() {
-        /*searchBtn.managedProperty().bind(searchProgressIndicator.visibleProperty().not());
-        searchBtn.visibleProperty().bind(searchProgressIndicator.visibleProperty().not());
-        searchProgressIndicator.prefHeightProperty().bind(searchBtn.heightProperty());
-        searchProgressIndicator.prefWidthProperty().bind(searchBtn.widthProperty());
-        searchProgressIndicator.managedProperty().bind(searchProgressIndicator.visibleProperty());
-        searchProgressIndicator.setVisible(false);
-        searchBtn.setOnAction(this::handleSearchBtnClick);
-        playlistSearchProgressWrapperHBox.managedProperty().bind(searchProgressIndicator.visibleProperty());
-        playlistSearchProgressWrapperHBox.visibleProperty().bind(searchProgressIndicator.visibleProperty());
-        playlistSearchCancelBtn.setOnAction(this::handlePlaylistSearchCancelBtnClick);*/
-    }
-
-    private void initMenuItems() {
-        /*exitMenuItem.setOnAction(this::handleExitMenuItemClick);
-        checkYoutubeDlUpdatesMenuItem.setOnAction(this::handleYoutubeDlUpdatesMenuItemClick);
-        queueMenuItem.setOnAction(this::handleQueueMenuItemClick);
-        historyMenuItem.setOnAction(this::handleHistoryMenuItemClick);
-
-        langEnMenuItem.setOnAction(event -> handleLanguageChange(event, Language.ENGLISH));
-        langRuMenuItem.setOnAction(event -> handleLanguageChange(event, Language.RUSSIAN));
-        langUkMenuItem.setOnAction(event -> handleLanguageChange(event, Language.UKRAINIAN));*/
-    }
-
     private void handleExitMenuItemClick(ActionEvent event) {
         event.consume();
         stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));

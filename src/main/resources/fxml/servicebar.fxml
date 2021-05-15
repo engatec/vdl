@@ -7,7 +7,10 @@
 <?import javafx.scene.layout.HBox?>
 <fx:root alignment="CENTER_RIGHT" spacing="12.0" stylesheets="@../styles.css" type="HBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ComboBox fx:id="languageComboBox" />
+      <ComboBox fx:id="languageComboBox" styleClass="language-dropdown">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets></ComboBox>
       <ImageView fx:id="preferencesButton" pickOnBounds="true" preserveRatio="true" styleClass="service-btn">
          <image>
             <Image url="@../assets/icons/settings_24dp.png" />

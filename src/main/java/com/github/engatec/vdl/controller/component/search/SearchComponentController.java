@@ -63,7 +63,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     public void initialize() {
         checkBoxGroup = new CheckBoxGroup(selectAllCheckBox);
         checkBoxGroup.setOnSelectionUpdateListener(selectedCount -> {
-            // downloadsCountLabel visibility workaround due to a bug in JavaFX managed property (label becomes managed only after parent button re-renders)
+            // FIXME: downloadsCountLabel visibility workaround due to a bug in JavaFX managed property (label becomes managed only after parent button re-renders)
             if (selectAllCheckBox.isVisible()) {
                 downloadsCountLabel.setText("(" + selectedCount + ")");
                 downloadButton.setGraphicTextGap(2);
