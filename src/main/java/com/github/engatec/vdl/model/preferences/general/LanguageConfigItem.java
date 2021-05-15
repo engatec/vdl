@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class LanguageConfigItem extends GeneralConfigItem<String> {
 
-    private static final String DEFAULT = StringUtils.defaultIfBlank(Locale.getDefault().getLanguage(), Language.ENGLISH.getLocaleLanguage());
+    private static final String DEFAULT = StringUtils.defaultIfBlank(Locale.getDefault().getLanguage(), Language.ENGLISH.getLocaleCode());
 
     @Override
     protected String getName() {

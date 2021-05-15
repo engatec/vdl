@@ -4,32 +4,38 @@ import java.util.Locale;
 
 public enum Language {
 
-    ENGLISH("en"),
-    RUSSIAN("ru"),
-    UKRAINIAN("uk");
+    ENGLISH("en", "English"),
+    RUSSIAN("ru", "Русский"),
+    UKRAINIAN("uk", "Українська");
 
-    private final String localeLanguage;
+    private final String localeCode;
+    private final String localizedName;
 
-    Language(String localeLanguage) {
-        this.localeLanguage = localeLanguage;
+    Language(String localeCode, String localizedName) {
+        this.localizedName = localizedName;
+        this.localeCode = localeCode;
     }
 
     public Locale getLocale() {
-        return new Locale(localeLanguage);
+        return new Locale(localeCode);
     }
 
-    public String getLocaleLanguage() {
-        return localeLanguage;
+    public String getLocaleCode() {
+        return localeCode;
     }
 
-    public static Language getByLocaleLanguage(String localeLanguage) {
+    public static Language getByLocaleCode(String localeCode) {
         Language result = ENGLISH;
         for (Language value : values()) {
-            if (value.localeLanguage.equalsIgnoreCase(localeLanguage)) {
+            if (value.localeCode.equalsIgnoreCase(localeCode)) {
                 result = value;
                 break;
             }
         }
         return result;
+    }
+
+    public String getLocalizedName() {
+        return localizedName;
     }
 }

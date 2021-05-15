@@ -40,7 +40,7 @@ public class Main extends Application {
     }
 
     private void setLanguage() {
-        Language language = Language.getByLocaleLanguage(ConfigRegistry.get(LanguagePref.class).getValue());
+        Language language = Language.getByLocaleCode(ConfigRegistry.get(LanguagePref.class).getValue());
         ApplicationContext.INSTANCE.setLanguage(language);
     }
 }

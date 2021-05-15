@@ -184,7 +184,7 @@ public class MainController extends StageAwareController {
     private void handleLanguageChange(ActionEvent event, Language language) {
         appCtx.setLanguage(language);
         LanguagePref languagePref = ConfigRegistry.get(LanguagePref.class);
-        languagePref.setValue(language.getLocaleLanguage());
+        languagePref.setValue(language.getLocaleCode());
         languagePref.save();
         event.consume();
     }
