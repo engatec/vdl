@@ -15,6 +15,8 @@ import com.github.engatec.vdl.ui.Dialogs;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,6 +38,9 @@ import org.apache.logging.log4j.Logger;
 public class HistoryComponentController extends VBox implements ComponentController {
 
     private static final Logger LOGGER = LogManager.getLogger(HistoryComponentController.class);
+
+    // Observable to correctly change combobox value when new language is chosen
+    private final StringProperty disableHistoryStringProperty = new SimpleStringProperty(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.combobox.disablehistory"));
 
     @FXML private TableView<HistoryItem> historyTableView;
     @FXML private TableColumn<HistoryItem, String> titleTableColumn;
@@ -64,11 +69,16 @@ public class HistoryComponentController extends VBox implements ComponentControl
         I18n.bindLocaleProperty(urlTableColumn.textProperty(), "stage.history.table.header.url");
         I18n.bindLocaleProperty(locationTableColumn.textProperty(), "stage.history.table.header.location");
         I18n.bindLocaleProperty(dtmTableColumn.textProperty(), "stage.history.table.header.dtm");
+        I18n.bindLocaleProperty(disableHistoryStringProperty, "stage.history.combobox.disablehistory");
     }
 
     private void initEntriesNumberComboBox() {
-        final String DISABLE_HISTORY = ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.combobox.disablehistory");
+        updateEntriesNumberComboBox();
+        disableHistoryStringProperty.addListener((observable, oldValue, newValue) -> updateEntriesNumberComboBox());
+        entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty());
+    }
 
+    private void updateEntriesNumberComboBox() {
         entriesNumberComboBox.setItems(FXCollections.observableArrayList(0, 10, 30, 50, 100, 1000));
         entriesNumberComboBox.setConverter(new StringConverter<>() {
             @Override
@@ -77,26 +87,14 @@ public class HistoryComponentController extends VBox implements ComponentControl
                     return null;
                 }
 
-                int value = object.intValue();
-
-                if (value == 0) {
-                    return DISABLE_HISTORY;
-                }
-
-                return String.valueOf(object);
+                return object.intValue() == 0 ? disableHistoryStringProperty.getValue() : String.valueOf(object);
             }
 
             @Override
             public Number fromString(String string) {
-                if (DISABLE_HISTORY.equals(string)) {
-                    return 0;
-                }
-
-                return Integer.valueOf(string);
+                return disableHistoryStringProperty.getValue().equals(string) ? 0 : Integer.parseInt(string);
             }
         });
-
-        entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty());
     }
 
     private void initHistoryTableView() {
