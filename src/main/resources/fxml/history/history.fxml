@@ -24,7 +24,7 @@
       </TableView>
       <HBox alignment="CENTER_LEFT" spacing="4.0">
          <children>
-            <Label text="%stage.history.entries.number.label" HBox.hgrow="NEVER" />
+            <Label fx:id="entriesNumberLabel" text="%stage.history.entries.number.label" HBox.hgrow="NEVER" />
             <ComboBox fx:id="entriesNumberComboBox" />
             <StackPane alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                <children>

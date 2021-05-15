@@ -26,8 +26,8 @@
       </ScrollPane>
       <HBox alignment="CENTER_LEFT" spacing="8.0">
          <children>
-            <Button fx:id="startAllBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.downloadall" />
-            <Button fx:id="stopAllBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.removefinished" />
+            <Button fx:id="startAllBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.startall" />
+            <Button fx:id="stopAllBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.stopall" />
             <Button fx:id="removeAllBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%stage.queue.btn.removeall" />
          </children>
       </HBox>

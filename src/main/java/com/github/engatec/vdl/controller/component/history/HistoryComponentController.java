@@ -7,6 +7,7 @@ import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
+import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
@@ -27,6 +28,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +43,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
     @FXML private TableColumn<HistoryItem, Path> locationTableColumn;
     @FXML private TableColumn<HistoryItem, String> dtmTableColumn;
 
+    @FXML private Label entriesNumberLabel;
     @FXML private ComboBox<Number> entriesNumberComboBox;
     @FXML private Button clearHistoryBtn;
 
@@ -50,6 +53,17 @@ public class HistoryComponentController extends VBox implements ComponentControl
         initHistoryTableView();
 
         clearHistoryBtn.setOnAction(this::handleClearHistoryBtnClick);
+
+        bindLocale();
+    }
+
+    private void bindLocale() {
+        I18n.bindLocaleProperty(entriesNumberLabel.textProperty(), "stage.history.entries.number.label");
+        I18n.bindLocaleProperty(clearHistoryBtn.textProperty(), "stage.history.btn.clear");
+        I18n.bindLocaleProperty(titleTableColumn.textProperty(), "stage.history.table.header.title");
+        I18n.bindLocaleProperty(urlTableColumn.textProperty(), "stage.history.table.header.url");
+        I18n.bindLocaleProperty(locationTableColumn.textProperty(), "stage.history.table.header.location");
+        I18n.bindLocaleProperty(dtmTableColumn.textProperty(), "stage.history.table.header.dtm");
     }
 
     private void initEntriesNumberComboBox() {
@@ -86,7 +100,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
     }
 
     private void initHistoryTableView() {
-        historyTableView.setPlaceholder(new Label(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.table.placeholder")));
+        historyTableView.setPlaceholder(new Label(StringUtils.EMPTY));
 
         titleTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getTitle()));
         urlTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getUrl()));

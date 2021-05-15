@@ -3,7 +3,7 @@ package com.github.engatec.vdl.controller.component.search;
 import java.util.List;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
-import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.VideoInfo;
@@ -53,6 +53,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     @FXML private VBox contentNode;
 
     @FXML private Button downloadButton;
+    @FXML private Label downloadsCountLabel;
 
     public SearchComponentController(Stage stage) {
         this.stage = stage;
@@ -62,8 +63,14 @@ public class SearchComponentController extends VBox implements ComponentControll
     public void initialize() {
         checkBoxGroup = new CheckBoxGroup(selectAllCheckBox);
         checkBoxGroup.setOnSelectionUpdateListener(selectedCount -> {
-            String downloadLabelText = ApplicationContext.INSTANCE.getResourceBundle().getString("download") + (selectAllCheckBox.isVisible() ? " (" + selectedCount + ")" : StringUtils.EMPTY);
-            downloadButton.setText(downloadLabelText);
+            // downloadsCountLabel visibility workaround due to a bug in JavaFX managed property (label becomes managed only after parent button re-renders)
+            if (selectAllCheckBox.isVisible()) {
+                downloadsCountLabel.setText("(" + selectedCount + ")");
+                downloadButton.setGraphicTextGap(2);
+            } else {
+                downloadsCountLabel.setText(StringUtils.EMPTY);
+                downloadButton.setGraphicTextGap(0);
+            }
             downloadButton.setVisible(selectedCount > 0);
         });
 
@@ -73,6 +80,15 @@ public class SearchComponentController extends VBox implements ComponentControll
         searchButton.setOnAction(this::handleSearchButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
         downloadButton.setOnAction(this::handleDownloadButtonClick);
+
+        bindLocale();
+    }
+
+    private void bindLocale() {
+        I18n.bindLocaleProperty(searchButton.textProperty(), "search");
+        I18n.bindLocaleProperty(cancelButton.textProperty(), "cancel");
+        I18n.bindLocaleProperty(selectAllCheckBox.textProperty(), "search.selectall");
+        I18n.bindLocaleProperty(downloadButton.textProperty(), "download");
     }
 
     private void initSearchControl() {

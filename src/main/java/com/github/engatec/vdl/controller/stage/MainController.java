@@ -13,9 +13,6 @@ import com.github.engatec.vdl.controller.component.search.SearchComponentControl
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.UpdateManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
-import com.github.engatec.vdl.model.Language;
-import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.DownloadsComponent;
 import com.github.engatec.vdl.ui.component.HistoryComponent;
@@ -181,14 +178,6 @@ public class MainController extends StageAwareController {
         stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
-    private void handleLanguageChange(ActionEvent event, Language language) {
-        appCtx.setLanguage(language);
-        LanguagePref languagePref = ConfigRegistry.get(LanguagePref.class);
-        languagePref.setValue(language.getLocaleCode());
-        languagePref.save();
-        event.consume();
-    }
-
     private void handleYoutubeDlUpdatesMenuItemClick(ActionEvent event) {
         if (Files.isWritable(appCtx.getYoutubeDlPath())) {
             UpdateManager.updateYoutubeDl(stage);
@@ -197,17 +186,6 @@ public class MainController extends StageAwareController {
         }
         event.consume();
     }
-
-    private void handleQueueMenuItemClick(ActionEvent event) {
-        /*new DownloadsComponent().modal(stage).showAndWait();
-        event.consume();*/
-    }
-
-    private void handleHistoryMenuItemClick(ActionEvent event) {
-        /*new HistoryComponent().modal(stage).showAndWait();
-        event.consume();*/
-    }
-
 
     private void performAutoDownload() {
         /*final String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();
