@@ -108,6 +108,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     @Override
     protected void cancelled() {
         updateQueueItem(DownloadStatus.CANCELLED, StringUtils.EMPTY, StringUtils.EMPTY);
+        updateProgress(0);
     }
 
     @Override

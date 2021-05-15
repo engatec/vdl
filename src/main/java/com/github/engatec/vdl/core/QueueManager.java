@@ -22,7 +22,6 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.github.engatec.vdl.model.DownloadStatus.FINISHED;
 import static com.github.engatec.vdl.model.DownloadStatus.IN_PROGRESS;
 import static com.github.engatec.vdl.model.DownloadStatus.READY;
 import static com.github.engatec.vdl.model.DownloadStatus.SCHEDULED;
@@ -70,10 +69,6 @@ public class QueueManager {
 
     public void removeItem(QueueItem item) {
         queueItems.remove(item);
-    }
-
-    public void removeFinished() {
-        queueItems.removeIf(item -> item.getStatus() == FINISHED);
     }
 
     public void removeAll() {

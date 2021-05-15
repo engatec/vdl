@@ -1,9 +1,7 @@
 package com.github.engatec.vdl.controller.component;
 
 import java.nio.file.Path;
-import java.util.ResourceBundle;
 
-import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.DownloadStatus;
@@ -90,7 +88,6 @@ public class DownloadsComponentController extends VBox implements ComponentContr
     }
 
     private ContextMenu createContextMenu(TableRow<QueueItem> row) {
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
         ContextMenu ctxMenu = new ContextMenu();
 
         MenuItem cancelMenuItem = new MenuItem();
@@ -136,8 +133,11 @@ public class DownloadsComponentController extends VBox implements ComponentContr
 
     private void handleStartAllButtonClick(ActionEvent event) {
         for (QueueItem item : data) {
-            if (item.getStatus() == DownloadStatus.READY) {
+            DownloadStatus status = item.getStatus();
+            if (status == DownloadStatus.READY) {
                 queueManager.startDownload(item);
+            } else if (status == DownloadStatus.CANCELLED) {
+                queueManager.resumeDownload(item);
             }
         }
         event.consume();
