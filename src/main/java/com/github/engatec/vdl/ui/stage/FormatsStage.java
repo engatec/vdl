@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import com.github.engatec.vdl.controller.stage.FormatsController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.VideoInfo;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -26,6 +27,15 @@ public class FormatsStage extends AppStage {
         super.init();
         stage.setResizable(false);
         stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("format.select"));
+        stage.setOnShown(event -> {
+            double stageHeight = stage.getHeight();
+            double screenHeight = Screen.getPrimary().getBounds().getHeight();
+            if (stageHeight > screenHeight) {
+                stage.setHeight(screenHeight / 1.5);
+                stage.setWidth(stage.getWidth() + 30);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     @Override

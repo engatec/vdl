@@ -43,7 +43,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
     @FXML private TableColumn<HistoryItem, String> dtmTableColumn;
 
     @FXML private Label entriesNumberLabel;
-    @FXML private ComboBox<Number> entriesNumberComboBox;
+    @FXML private ComboBox<Integer> entriesNumberComboBox;
     @FXML private Button clearHistoryBtn;
 
     @FXML
@@ -60,21 +60,21 @@ public class HistoryComponentController extends VBox implements ComponentControl
         entriesNumberComboBox.setItems(FXCollections.observableArrayList(0, 10, 30, 50, 100, 1000));
         entriesNumberComboBox.setConverter(new StringConverter<>() {
             @Override
-            public String toString(Number object) {
+            public String toString(Integer object) {
                 if (object == null) {
                     return null;
                 }
 
-                return object.intValue() == 0 ? DISABLE_HISTORY : String.valueOf(object);
+                return object == 0 ? DISABLE_HISTORY : String.valueOf(object);
             }
 
             @Override
-            public Number fromString(String string) {
+            public Integer fromString(String string) {
                 return DISABLE_HISTORY.equals(string) ? 0 : Integer.parseInt(string);
             }
         });
 
-        entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty());
+        entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty().asObject());
     }
 
     private void initHistoryTableView() {

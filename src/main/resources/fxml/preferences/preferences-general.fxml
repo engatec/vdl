@@ -7,7 +7,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <fx:root stylesheets="@../../styles.css" type="javafx.scene.control.ScrollPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
@@ -41,28 +40,15 @@
                     <Insets bottom="8.0" top="8.0" />
                 </VBox.margin>
             </CheckBox>
-            <VBox spacing="8.0">
-                <children>
-                    <CheckBox fx:id="autodownloadCheckBox" mnemonicParsing="false" text="%preferences.general.autodownload.label" />
-                    <VBox fx:id="autodownloadSettingsWrapperVBox" spacing="12.0">
-                        <children>
-                            <HBox alignment="CENTER_LEFT" spacing="8.0">
-                                <children>
-                                    <ComboBox fx:id="autodownloadFormatComboBox" />
-                                    <TextField fx:id="autodownloadFormatTextField" HBox.hgrow="ALWAYS" />
-                                </children>
-                            </HBox>
-                            <CheckBox fx:id="skipDownloadableDetailsSearchCheckBox" mnemonicParsing="false" text="%preferences.general.autodownload.checkbox.skipdetailssearch" wrapText="true" />
-                        </children>
-                        <VBox.margin>
-                            <Insets left="16.0" top="4.0" />
-                        </VBox.margin>
-                    </VBox>
-                </children>
-                <VBox.margin>
-                    <Insets bottom="8.0" top="8.0" />
-                </VBox.margin>
-            </VBox>
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <children>
+               <Label text="%preferences.general.autoselectformat.label" />
+                        <ComboBox fx:id="autoSelectFormatComboBox" />
+                    </children>
+            <VBox.margin>
+               <Insets top="8.0" />
+            </VBox.margin>
+                </HBox>
         </children>
     </VBox>
    <padding>

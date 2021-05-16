@@ -28,7 +28,8 @@ public class LabelUtils {
     }
 
     public static String formatCodec(String codec) {
-        return StringUtils.defaultIfBlank(codec, N_A);
+        codec = StringUtils.defaultIfBlank(codec, N_A);
+        return StringUtils.substringBefore(codec, ".");
     }
 
     public static String formatAudio(Audio item) {

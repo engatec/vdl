@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
@@ -36,7 +36,7 @@ public class ConfigRegistry {
     static {
         /* General */
         REGISTRY.put(AlwaysAskDownloadPathPref.class, new AlwaysAskDownloadPathPref());
-        REGISTRY.put(AutoDownloadFormatPref.class, new AutoDownloadFormatPref());
+        REGISTRY.put(AutoSelectFormatPref.class, new AutoSelectFormatPref());
         REGISTRY.put(AutoSearchFromClipboardPref.class, new AutoSearchFromClipboardPref());
         REGISTRY.put(DownloadPathPref.class, new DownloadPathPref());
         REGISTRY.put(LanguagePref.class, new LanguagePref());

@@ -19,6 +19,10 @@ public enum Resolution {
         this.description = description;
     }
 
+    public int getHeight() {
+        return height;
+    }
+
     public static String getDescriptionByHeight(int height) {
         int maxHeight = values()[0].height;
         int minHeight = values()[values().length - 1].height;

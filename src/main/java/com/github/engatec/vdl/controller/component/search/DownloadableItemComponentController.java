@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.QueueItem;
@@ -15,6 +16,7 @@ import com.github.engatec.vdl.model.YoutubedlFormat;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
@@ -104,17 +106,28 @@ public class DownloadableItemComponentController extends HBox {
         List<Integer> commonAvailableFormats = ListUtils.emptyIfNull(videoInfo.getFormats()).stream()
                 .map(Format::getHeight)
                 .filter(Objects::nonNull)
+                .filter(it -> it > 0) // Should never happen, just a sanity check in case there's a bug in youtube-dl
                 .distinct()
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
 
         ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
+        Integer autoSelectFormat = ConfigRegistry.get(AutoSelectFormatPref.class).getValue();
+        ComboBoxValueHolder<String> selectedItem = null;
         for (Integer height : commonAvailableFormats) {
             ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), YoutubeDlUtils.createFormat(height));
             comboBoxItems.add(item);
+
+            if (selectedItem == null && height <= autoSelectFormat) {
+                selectedItem = item;
+            }
         }
 
-        formatsComboBox.getSelectionModel().selectFirst();
+        if (selectedItem == null) {
+            formatsComboBox.getSelectionModel().selectFirst();
+        } else {
+            formatsComboBox.getSelectionModel().select(selectedItem);
+        }
 
         adjustWidth();
     }
