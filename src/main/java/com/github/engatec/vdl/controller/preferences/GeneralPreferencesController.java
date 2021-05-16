@@ -1,16 +1,23 @@
 package com.github.engatec.vdl.controller.preferences;
 
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.engatec.fxcontrols.FxDirectoryChooser;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.preferences.data.AutodownloadFormat;
+import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoDownloadFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.SvgIcons;
+import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
 import com.github.engatec.vdl.util.YoutubeDlUtils;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.collections.FXCollections;
@@ -29,6 +36,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class GeneralPreferencesController extends ScrollPane implements InputForm {
 
+    @FXML private ComboBox<ComboBoxValueHolder<Language>> languageComboBox;
+
     private final ToggleGroup downloadPathRadioGroup = new ToggleGroup();
     @FXML private RadioButton downloadPathRadioBtn;
     @FXML private RadioButton askPathRadioBtn;
@@ -44,10 +53,35 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
 
     @FXML
     public void initialize() {
+        initLanguageSettings();
         initDownloadPathSettings();
         initAutodownloadSettings();
 
         bindPropertyHolder();
+    }
+
+    private void initLanguageSettings() {
+        List<ComboBoxValueHolder<Language>> languages = Stream.of(Language.values())
+                .map(it -> new ComboBoxValueHolder<>(it.getLocalizedName(), it))
+                .collect(Collectors.toList());
+        languageComboBox.getItems().addAll(languages);
+
+        Language currentLanguage = Language.getByLocaleCode(ConfigRegistry.get(LanguagePref.class).getValue());
+        languages.stream()
+                .filter(it -> it.getValue() == currentLanguage)
+                .findFirst()
+                .ifPresent(it -> languageComboBox.getSelectionModel().select(it));
+
+        languageComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                Language newLanguage = newValue.getValue();
+                ApplicationContext.INSTANCE.setLanguage(newLanguage);
+                LanguagePref languagePref = ConfigRegistry.get(LanguagePref.class);
+                languagePref.setValue(newLanguage.getLocaleCode());
+                languagePref.save();
+                Dialogs.info("preferences.general.language.dialog.info");
+            }
+        });
     }
 
     private void bindPropertyHolder() {

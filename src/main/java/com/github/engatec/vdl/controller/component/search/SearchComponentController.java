@@ -3,7 +3,6 @@ package com.github.engatec.vdl.controller.component.search;
 import java.util.List;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
-import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.VideoInfo;
@@ -80,15 +79,6 @@ public class SearchComponentController extends VBox implements ComponentControll
         searchButton.setOnAction(this::handleSearchButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
         downloadButton.setOnAction(this::handleDownloadButtonClick);
-
-        bindLocale();
-    }
-
-    private void bindLocale() {
-        I18n.bindLocaleProperty(searchButton.textProperty(), "search");
-        I18n.bindLocaleProperty(cancelButton.textProperty(), "cancel");
-        I18n.bindLocaleProperty(selectAllCheckBox.textProperty(), "search.selectall");
-        I18n.bindLocaleProperty(downloadButton.textProperty(), "download");
     }
 
     private void initSearchControl() {

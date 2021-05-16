@@ -5,8 +5,6 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.model.Language;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -18,18 +16,14 @@ public class ApplicationContext {
 
     public static final Path CONFIG_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
 
-    private final ObjectProperty<ResourceBundle> resourceBundleProperty = new SimpleObjectProperty<>();
+    private ResourceBundle resourceBundle;
 
     public void setLanguage(Language language) {
-        resourceBundleProperty.setValue(ResourceBundle.getBundle("lang", language.getLocale()));
+        resourceBundle = ResourceBundle.getBundle("lang", language.getLocale());
     }
 
     public ResourceBundle getResourceBundle() {
-        return resourceBundleProperty.get();
-    }
-
-    public ObjectProperty<ResourceBundle> getResourceBundleProperty() {
-        return resourceBundleProperty;
+        return resourceBundle;
     }
 
     public Charset getSystemCharset() {

@@ -2,7 +2,6 @@ package com.github.engatec.vdl.controller.component;
 
 import java.util.function.Consumer;
 
-import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.ui.Icon;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -25,7 +24,6 @@ public class SidebarComponentController extends VBox {
     public void initialize() {
         sidebarWidthCorrectionNode.setVisible(false);
         initGraphic();
-        bindLocale();
     }
 
     private void initGraphic() {
@@ -33,13 +31,6 @@ public class SidebarComponentController extends VBox {
         downloadsLabel.setGraphic(new ImageView(Icon.DOWNLOAD_SMALL.getImage()));
         historyLabel.setGraphic(new ImageView(Icon.HISTORY_SMALL.getImage()));
         dummyWidthLabel.setGraphic(new ImageView(Icon.DOWNLOAD_SMALL.getImage()));
-    }
-
-    private void bindLocale() {
-        I18n.bindLocaleProperty(searchLabel.textProperty(), "sidebar.search");
-        I18n.bindLocaleProperty(downloadsLabel.textProperty(), "sidebar.downloads");
-        I18n.bindLocaleProperty(historyLabel.textProperty(), "sidebar.history");
-        I18n.bindLocaleProperty(dummyWidthLabel.textProperty(), "sidebar.downloads");
     }
 
     public void setOnSearchClickListener(Runnable onSearchClickListener) {

@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
@@ -12,6 +13,15 @@
 <fx:root stylesheets="@../../styles.css" type="javafx.scene.control.ScrollPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <VBox spacing="8.0">
         <children>
+         <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <children>
+               <Label text="%preferences.general.language.label" />
+               <ComboBox fx:id="languageComboBox" />
+            </children>
+            <VBox.margin>
+               <Insets bottom="8.0" />
+            </VBox.margin>
+         </HBox>
             <VBox spacing="8.0">
                 <children>
                     <HBox alignment="CENTER_LEFT" spacing="8.0">

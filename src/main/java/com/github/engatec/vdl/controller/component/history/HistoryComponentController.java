@@ -7,7 +7,6 @@ import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
-import com.github.engatec.vdl.core.I18n;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
@@ -15,8 +14,6 @@ import com.github.engatec.vdl.ui.Dialogs;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,9 +36,6 @@ public class HistoryComponentController extends VBox implements ComponentControl
 
     private static final Logger LOGGER = LogManager.getLogger(HistoryComponentController.class);
 
-    // Observable to correctly change combobox value when new language is chosen
-    private final StringProperty disableHistoryStringProperty = new SimpleStringProperty(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.combobox.disablehistory"));
-
     @FXML private TableView<HistoryItem> historyTableView;
     @FXML private TableColumn<HistoryItem, String> titleTableColumn;
     @FXML private TableColumn<HistoryItem, String> urlTableColumn;
@@ -58,27 +52,11 @@ public class HistoryComponentController extends VBox implements ComponentControl
         initHistoryTableView();
 
         clearHistoryBtn.setOnAction(this::handleClearHistoryBtnClick);
-
-        bindLocale();
-    }
-
-    private void bindLocale() {
-        I18n.bindLocaleProperty(entriesNumberLabel.textProperty(), "stage.history.entries.number.label");
-        I18n.bindLocaleProperty(clearHistoryBtn.textProperty(), "stage.history.btn.clear");
-        I18n.bindLocaleProperty(titleTableColumn.textProperty(), "stage.history.table.header.title");
-        I18n.bindLocaleProperty(urlTableColumn.textProperty(), "stage.history.table.header.url");
-        I18n.bindLocaleProperty(locationTableColumn.textProperty(), "stage.history.table.header.location");
-        I18n.bindLocaleProperty(dtmTableColumn.textProperty(), "stage.history.table.header.dtm");
-        I18n.bindLocaleProperty(disableHistoryStringProperty, "stage.history.combobox.disablehistory");
     }
 
     private void initEntriesNumberComboBox() {
-        updateEntriesNumberComboBox();
-        disableHistoryStringProperty.addListener((observable, oldValue, newValue) -> updateEntriesNumberComboBox());
-        entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty());
-    }
+        final String DISABLE_HISTORY = ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.combobox.disablehistory");
 
-    private void updateEntriesNumberComboBox() {
         entriesNumberComboBox.setItems(FXCollections.observableArrayList(0, 10, 30, 50, 100, 1000));
         entriesNumberComboBox.setConverter(new StringConverter<>() {
             @Override
@@ -87,14 +65,16 @@ public class HistoryComponentController extends VBox implements ComponentControl
                     return null;
                 }
 
-                return object.intValue() == 0 ? disableHistoryStringProperty.getValue() : String.valueOf(object);
+                return object.intValue() == 0 ? DISABLE_HISTORY : String.valueOf(object);
             }
 
             @Override
             public Number fromString(String string) {
-                return disableHistoryStringProperty.getValue().equals(string) ? 0 : Integer.parseInt(string);
+                return DISABLE_HISTORY.equals(string) ? 0 : Integer.parseInt(string);
             }
         });
+
+        entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty());
     }
 
     private void initHistoryTableView() {

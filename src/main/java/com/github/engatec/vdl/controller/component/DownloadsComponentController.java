@@ -1,8 +1,9 @@
 package com.github.engatec.vdl.controller.component;
 
 import java.nio.file.Path;
+import java.util.ResourceBundle;
 
-import com.github.engatec.vdl.core.I18n;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
@@ -70,42 +71,26 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             );
             return row;
         });
-
-        bindLocale();
-    }
-
-    private void bindLocale() {
-        I18n.bindLocaleProperty(startAllBtn.textProperty(), "stage.queue.btn.startall");
-        I18n.bindLocaleProperty(stopAllBtn.textProperty(), "stage.queue.btn.stopall");
-        I18n.bindLocaleProperty(removeAllBtn.textProperty(), "stage.queue.btn.removeall");
-        I18n.bindLocaleProperty(statusTableColumn.textProperty(), "stage.queue.table.column.status");
-        I18n.bindLocaleProperty(progressTableColumn.textProperty(), "stage.queue.table.column.progress");
-        I18n.bindLocaleProperty(titleTableColumn.textProperty(), "stage.queue.table.column.title");
-        I18n.bindLocaleProperty(urlTableColumn.textProperty(), "stage.queue.table.column.url");
-        I18n.bindLocaleProperty(sizeTableColumn.textProperty(), "stage.queue.table.column.size");
-        I18n.bindLocaleProperty(throughputTableColumn.textProperty(), "stage.queue.table.column.throughput");
-        I18n.bindLocaleProperty(downloadPathTableColumn.textProperty(), "stage.queue.table.column.downloadpath");
     }
 
     private ContextMenu createContextMenu(TableRow<QueueItem> row) {
+        ResourceBundle rb = ApplicationContext.INSTANCE.getResourceBundle();
+
         ContextMenu ctxMenu = new ContextMenu();
 
-        MenuItem cancelMenuItem = new MenuItem();
-        I18n.bindLocaleProperty(cancelMenuItem.textProperty(), "stage.queue.table.contextmenu.cancel");
+        MenuItem cancelMenuItem = new MenuItem(rb.getString("stage.queue.table.contextmenu.cancel"));
         cancelMenuItem.setOnAction(e -> {
             queueManager.cancelDownload(row.getItem());
             e.consume();
         });
 
-        MenuItem resumeMenuItem = new MenuItem();
-        I18n.bindLocaleProperty(resumeMenuItem.textProperty(), "stage.queue.table.contextmenu.resume");
+        MenuItem resumeMenuItem = new MenuItem(rb.getString("stage.queue.table.contextmenu.resume"));
         resumeMenuItem.setOnAction(e -> {
             queueManager.resumeDownload(row.getItem());
             e.consume();
         });
 
-        MenuItem deleteMenuItem = new MenuItem();
-        I18n.bindLocaleProperty(deleteMenuItem.textProperty(), "stage.queue.table.contextmenu.delete");
+        MenuItem deleteMenuItem = new MenuItem(rb.getString("stage.queue.table.contextmenu.delete"));
         deleteMenuItem.setOnAction(e -> {
             queueManager.removeItem(row.getItem());
             e.consume();

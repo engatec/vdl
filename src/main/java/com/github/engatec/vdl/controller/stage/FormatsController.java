@@ -12,7 +12,6 @@ import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Audio;
 import com.github.engatec.vdl.model.downloadable.Video;
 import com.github.engatec.vdl.util.LabelUtils;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -183,7 +182,7 @@ public class FormatsController {
         ComboBox<String> comboBox = new ComboBox<>();
         ApplicationContext ctx = ApplicationContext.INSTANCE;
         comboBox.setMaxWidth(Double.MAX_VALUE);
-        comboBox.valueProperty().bind(Bindings.createObjectBinding(() -> ctx.getResourceBundle().getString("audio.track.unmodifiable"), ctx.getResourceBundleProperty()));
+        comboBox.setValue(ctx.getResourceBundle().getString("audio.track.unmodifiable"));
         comboBox.setDisable(true);
         return comboBox;
     }

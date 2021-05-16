@@ -73,19 +73,3 @@
     -fx-opacity: 0.9;
     -fx-cursor: hand;
 }
-
-.language-dropdown {
-    -fx-opacity: 0.7;
-    -fx-font-size: 12;
-    -fx-prompt-text-fill: black;
-    -fx-text-fill: black;
-    -fx-background-color: transparent;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: #bdbdbd;
-    -fx-padding: 0 -5 0 0;
-}
-
-.language-dropdown:hover {
-    -fx-opacity: 1;
-    -fx-cursor: hand;
-}
