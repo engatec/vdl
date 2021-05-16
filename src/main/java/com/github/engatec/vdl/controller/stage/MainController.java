@@ -26,13 +26,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class MainController extends StageAwareController {
-
-    private static final Logger LOGGER = LogManager.getLogger(MainController.class);
 
     private final ApplicationContext appCtx = ApplicationContext.INSTANCE;
 
@@ -45,36 +40,15 @@ public class MainController extends StageAwareController {
     private DownloadsComponentController downloads;
     private HistoryComponentController history;
 
-    /*@FXML private HBox mainHbox;
-
-    @FXML private VBox rootControlVBox;
-
-    @FXML private ScrollPane contentScrollPane;
-    @FXML private VBox contentVBox;
+    /*
 
     @FXML private Menu fileMenu;
-    @FXML private MenuItem queueMenuItem;
-    @FXML private MenuItem historyMenuItem;
-    @FXML private MenuItem preferencesMenuItem;
     @FXML private MenuItem exitMenuItem;
 
-    @FXML private Menu languageMenu;
-    @FXML private MenuItem langEnMenuItem;
-    @FXML private MenuItem langRuMenuItem;
-    @FXML private MenuItem langUkMenuItem;
-
-    @FXML private Menu helpMenu;
     @FXML private MenuItem checkYoutubeDlUpdatesMenuItem;
     @FXML private MenuItem aboutMenuItem;
 
-    @FXML private TextField videoUrlTextField;
-    @FXML private Button searchBtn;
-    @FXML private ProgressIndicator searchProgressIndicator;
-
-    @FXML private HBox playlistSearchProgressWrapperHBox;
-    @FXML private ProgressBar playlistSearchProgressBar;
-    @FXML private Label playlistSearchLabel;
-    @FXML private Button playlistSearchCancelBtn;*/
+    */
 
     private MainController() {
     }
@@ -93,13 +67,10 @@ public class MainController extends StageAwareController {
         contentPane.getChildren().add(search);
 
 
-        /*initLocaleBindings();
-        initSearchBindings();
-        initMenuItems();
-        initDragAndDrop();
-        initScrollPaneUpdate();*/
-
-        // stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(videoUrlTextField, searchBtn));
+        /*
+            initDragAndDrop();
+            stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(videoUrlTextField, searchBtn));
+        */
     }
 
     private void initSideBar() {
@@ -133,11 +104,6 @@ public class MainController extends StageAwareController {
         servicebarPane.getChildren().add(servicebar);
     }
 
-    private void handleExitMenuItemClick(ActionEvent event) {
-        event.consume();
-        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-    }
-
     private void handleYoutubeDlUpdatesMenuItemClick(ActionEvent event) {
         if (Files.isWritable(appCtx.getYoutubeDlPath())) {
             UpdateManager.updateYoutubeDl(stage);
@@ -146,13 +112,6 @@ public class MainController extends StageAwareController {
         }
         event.consume();
     }
-
-    private void performAutoDownload() {
-        /*final String format = ConfigRegistry.get(AutoDownloadFormatPref.class).getValue();
-        Downloadable downloadable = new BaseDownloadable(videoUrlTextField.getText(), format);
-        AppUtils.executeCommandResolvingPath(stage, new DownloadCommand(stage, downloadable), downloadable::setDownloadPath);*/
-    }
-
 
     private void initDragAndDrop() {
         /*rootControlVBox.setOnDragOver(e -> {
@@ -170,23 +129,6 @@ public class MainController extends StageAwareController {
                 e.setDropCompleted(true);
             }
             e.consume();
-        });*/
-    }
-
-    /**
-     * A hack!
-     * This is to forcibly redraw scrollpane if no scrollbar is visible,
-     * otherwise dynamically added playlist items not visible until the search is over or srollbar appears (whichever happens first).
-     */
-    private void initScrollPaneUpdate() {
-        /*var snapshotParams = new SnapshotParameters();
-        var writableImage = new WritableImage(1, 1);
-        contentVBox.getChildren().addListener((ListChangeListener<Node>) c -> {
-            double scrollPaneHeight = contentScrollPane.getHeight();
-            double contentVBoxHeight = contentVBox.getHeight();
-            if (Double.compare(contentVBoxHeight, scrollPaneHeight) < 0) {
-                contentScrollPane.snapshot(snapshotParams, writableImage);
-            }
         });*/
     }
 }
