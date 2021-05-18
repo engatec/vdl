@@ -185,18 +185,20 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
 
             private void checkErrors(InputStream errorStream) throws IOException {
                 List<String> errLines = IOUtils.readLines(errorStream, ApplicationContext.INSTANCE.getSystemCharset());
-                if (CollectionUtils.isNotEmpty(errLines)) {
-                    String msg = String.join(System.lineSeparator(), errLines);
-                    // ErrorStream aggregates not only errors, but warnings as well. Don't care much about warnings so they will be just logged and ignored, but errors are showstoppers
-                    boolean hasErrors = errLines.stream()
-                            .filter(StringUtils::isNotBlank)
-                            .map(StringUtils::strip)
-                            .anyMatch(it -> it.startsWith(ERROR_PREFIX));
-                    if (hasErrors) {
-                        throw new YoutubeDlProcessException(msg);
-                    } else {
-                        LOGGER.warn(msg);
-                    }
+                if (CollectionUtils.isEmpty(errLines)) {
+                    return;
+                }
+
+                String msg = String.join(System.lineSeparator(), errLines);
+                // ErrorStream aggregates not only errors, but warnings as well. Don't care much about warnings so they will be just logged and ignored, but errors are showstoppers
+                boolean hasErrors = errLines.stream()
+                        .filter(StringUtils::isNotBlank)
+                        .map(StringUtils::strip)
+                        .anyMatch(it -> it.startsWith(ERROR_PREFIX));
+                if (hasErrors) {
+                    throw new YoutubeDlProcessException(msg);
+                } else {
+                    LOGGER.warn(msg);
                 }
             }
         };
