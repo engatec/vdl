@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +30,6 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     private static final Logger LOGGER = LogManager.getLogger(QueueItemDownloadService.class);
 
     private static final String SIZE_SEPARATOR = " / ";
-    private static final String FORMAT_SEPARATOR = "/";
 
     private static final String ERROR_PREFIX = "ERROR:";
 
@@ -50,13 +48,11 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     private static final Pattern DOWNLOAD_NEW_DESTINATION_PATTERN = Pattern.compile("\\s*\\[download] Destination:.*");
 
     private final QueueItem queueItem;
-    private static final int MAX_PROGRESS_PER_ITEM = 100;
-    private final int maxOverallProgress;
+    private static final int MAX_PROGRESS = 100;
 
     public QueueItemDownloadService(QueueItem queueItem) {
         super();
         this.queueItem = queueItem;
-        maxOverallProgress = MAX_PROGRESS_PER_ITEM * (StringUtils.countMatches(StringUtils.substringBefore(queueItem.getFormatId(), FORMAT_SEPARATOR), '+') + 1);
         setExecutor(AppExecutors.QUEUE_EXECUTOR);
 
         queueItem.progressProperty().bind(progressProperty());
@@ -141,7 +137,6 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
             @Override
             protected QueueItemDownloadProgressData call() throws Exception {
                 var progressData = new QueueItemDownloadProgressData();
-                AtomicInteger progressModificator = new AtomicInteger(0);
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
                 try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
@@ -162,10 +157,9 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                             progressData.setThroughput(matcher.group(GROUP_THROUGHPUT));
                             progressData.setSize(calculateSizeString(progressData.getSize(), matcher.group(GROUP_SIZE)));
 
-                            updateProgress(currentProgress + progressModificator.get(), maxOverallProgress);
+                            updateProgress(currentProgress, MAX_PROGRESS);
                             updateValue(new QueueItemDownloadProgressData(progressData.getProgress(), progressData.getSize(), progressData.getThroughput()));
                         } else if (DOWNLOAD_NEW_DESTINATION_PATTERN.matcher(it).matches() && StringUtils.isNotBlank(progressData.getSize())) {
-                            progressModificator.addAndGet(MAX_PROGRESS_PER_ITEM);
                             progressData.setProgress(0);
                             progressData.setSize(progressData.getSize() + SIZE_SEPARATOR);
                         }
