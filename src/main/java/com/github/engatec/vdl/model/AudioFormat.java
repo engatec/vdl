@@ -8,6 +8,8 @@ public enum AudioFormat {
 
     MP3, AAC, M4A, FLAC, OPUS, VORBIS, WAV;
 
+    public static final int BEST_QUALITY = 9;
+
     public static AudioFormat getByString(String value) {
         if (StringUtils.isBlank(value)) {
             return MP3;

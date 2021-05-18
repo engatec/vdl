@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <fx:root stylesheets="@../../styles.css" type="javafx.scene.control.ScrollPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
@@ -46,9 +47,32 @@
                         <ComboBox fx:id="autoSelectFormatComboBox" />
                     </children>
             <VBox.margin>
-               <Insets top="8.0" />
+               <Insets bottom="8.0" top="8.0" />
             </VBox.margin>
                 </HBox>
+         <VBox spacing="8.0">
+            <VBox.margin>
+               <Insets top="8.0" />
+            </VBox.margin>
+            <children>
+               <Label text="%preferences.general.audioextraction" />
+               <HBox alignment="CENTER_LEFT" spacing="8.0">
+                  <children>
+                     <Label text="%preferences.general.audioextraction.format" />
+                     <ComboBox fx:id="audioExtractionFormatComboBox" />
+                     <Label text="%preferences.general.audioextraction.quality">
+                        <HBox.margin>
+                           <Insets left="16.0" />
+                        </HBox.margin>
+                     </Label>
+                     <Slider fx:id="audioExtractionQualitySlider" blockIncrement="1.0" majorTickUnit="9.0" max="9.0" minorTickCount="8" snapToTicks="true" value="5.0" />
+                  </children>
+                  <VBox.margin>
+                     <Insets left="8.0" />
+                  </VBox.margin>
+               </HBox>
+            </children>
+         </VBox>
         </children>
     </VBox>
    <padding>

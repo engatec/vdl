@@ -16,6 +16,8 @@ import com.github.engatec.vdl.model.YoutubedlFormat;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionFormatPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionQualityPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.Tooltips;
@@ -68,10 +70,13 @@ public class DownloadableItemComponentController extends HBox {
         audioButton.setTooltip(Tooltips.createNew("download.audio"));
         audioButton.setOnAction(e -> {
             AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
+                String format = ConfigRegistry.get(AudioExtractionFormatPref.class).getValue();
+                // Youtube-dl quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
+                int quality = Math.abs(ConfigRegistry.get(AudioExtractionQualityPref.class).getValue() - AudioFormat.BEST_QUALITY);
                 Downloadable audioDownloadable = getDownloadable();
                 audioDownloadable.setDownloadPath(path);
                 audioDownloadable.setFormatId(YoutubedlFormat.BEST_AUDIO.getCmdValue()); // No need to download video if user only wants to extract audio
-                audioDownloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(AudioFormat.MP3.toString(), 0)));
+                audioDownloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(format, quality)));
                 QueueManager.INSTANCE.addItem(new QueueItem(audioDownloadable));
             });
             e.consume();
