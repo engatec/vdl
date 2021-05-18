@@ -3,19 +3,11 @@ package com.github.engatec.vdl.ui.stage.postprocessing;
 import java.util.function.Consumer;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
 import com.github.engatec.vdl.model.postprocessing.FragmentCutPostprocessing;
 import com.github.engatec.vdl.model.postprocessing.Postprocessing;
 import com.github.engatec.vdl.ui.stage.AppStage;
 
 public enum PostprocessingStageFactory {
-
-    EXTRACT_AUDIO("stage.postprocessing.extractaudio", ExtractAudioPostprocessing.class) {
-        @Override
-        public AppStage create(Postprocessing model, Consumer<? super Postprocessing> okClickCallback) {
-            return new ExtractAudioStage((ExtractAudioPostprocessing) model, okClickCallback);
-        }
-    },
 
     FRAGMENT("stage.postprocessing.fragment", FragmentCutPostprocessing.class) {
         @Override
