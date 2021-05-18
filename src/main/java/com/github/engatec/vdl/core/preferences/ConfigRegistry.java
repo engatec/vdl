@@ -11,6 +11,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromCl
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
@@ -44,6 +45,7 @@ public class ConfigRegistry {
         REGISTRY.put(AutoSearchFromClipboardPref.class, new AutoSearchFromClipboardPref());
         REGISTRY.put(DownloadPathPref.class, new DownloadPathPref());
         REGISTRY.put(LanguagePref.class, new LanguagePref());
+        REGISTRY.put(YoutubeDlStartupUpdatesCheckPref.class, new YoutubeDlStartupUpdatesCheckPref());
 
         /* YoutubeDl */
         REGISTRY.put(ConfigFilePathPref.class, new ConfigFilePathPref());

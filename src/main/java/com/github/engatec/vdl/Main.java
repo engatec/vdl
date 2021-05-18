@@ -5,9 +5,11 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.ui.stage.MainStage;
 import javafx.application.Application;
 import javafx.scene.text.Font;
@@ -21,6 +23,11 @@ public class Main extends Application {
         setLanguage();
         QueueManager.INSTANCE.restoreQueue();
         new MainStage(stage).show();
+
+        Boolean needCheckYoutubeDlUpdate = ConfigRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getValue();
+        if (needCheckYoutubeDlUpdate) {
+            YoutubeDlManager.INSTANCE.checkLatestYoutubeDlVersion(stage);
+        }
     }
 
     @Override

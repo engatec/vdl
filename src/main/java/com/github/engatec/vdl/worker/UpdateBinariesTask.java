@@ -9,7 +9,7 @@ public class UpdateBinariesTask extends Task<Void> {
 
     @Override
     protected Void call() throws IOException, InterruptedException {
-        YoutubeDlManager.INSTANCE.checkYoutubeDlUpdates();
+        YoutubeDlManager.INSTANCE.updateYoutubeDl();
         return null;
     }
 }

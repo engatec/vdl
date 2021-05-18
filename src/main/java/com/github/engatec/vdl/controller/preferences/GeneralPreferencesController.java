@@ -18,6 +18,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromCl
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
 import com.github.engatec.vdl.validation.InputForm;
@@ -36,6 +37,8 @@ import org.apache.commons.lang3.StringUtils;
 public class GeneralPreferencesController extends ScrollPane implements InputForm {
 
     @FXML private ComboBox<ComboBoxValueHolder<Language>> languageComboBox;
+
+    @FXML private CheckBox youtubeDlStartupUpdatesCheckBox;
 
     private final ToggleGroup downloadPathRadioGroup = new ToggleGroup();
     @FXML private RadioButton downloadPathRadioBtn;
@@ -90,6 +93,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         autoSelectFormatComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(AutoSelectFormatPref.class).getProperty().asObject());
         audioExtractionFormatComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(AudioExtractionFormatPref.class).getProperty());
         audioExtractionQualitySlider.valueProperty().bindBidirectional(ConfigRegistry.get(AudioExtractionQualityPref.class).getProperty());
+        youtubeDlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getProperty());
     }
 
     private void initDownloadPathSettings() {

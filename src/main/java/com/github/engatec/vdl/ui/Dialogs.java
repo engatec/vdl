@@ -31,12 +31,20 @@ public class Dialogs {
         alert.showAndWait();
     }
 
+    public static Optional<ButtonType> infoWithYesNoButtons(String key) {
+        return showDialogWithYesNoButtons(key, Alert.AlertType.INFORMATION, "info");
+    }
+
     public static Optional<ButtonType> warningWithYesNoButtons(String key) {
+        return showDialogWithYesNoButtons(key, Alert.AlertType.WARNING, "warning");
+    }
+
+    private static Optional<ButtonType> showDialogWithYesNoButtons(String messageKey, Alert.AlertType alertType, String titleKey) {
         ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
         ButtonType yes = new ButtonType(resourceBundle.getString("button.yes"), ButtonBar.ButtonData.YES);
         ButtonType no = new ButtonType(resourceBundle.getString("button.no"), ButtonBar.ButtonData.NO);
-        var alert = new Alert(Alert.AlertType.WARNING, resourceBundle.getString(key), yes, no);
-        alert.setTitle(resourceBundle.getString("warning"));
+        var alert = new Alert(alertType, resourceBundle.getString(messageKey), yes, no);
+        alert.setTitle(resourceBundle.getString(titleKey));
         alert.setHeaderText(null);
         return alert.showAndWait();
     }

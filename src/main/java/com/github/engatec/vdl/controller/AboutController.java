@@ -40,7 +40,7 @@ public class AboutController extends StageAwareController {
     }
 
     private String getYoutubeDlVersion() {
-        return StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getYoutubeDlVersion(), UNKNOWN_VERSION);
+        return StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getCurrentYoutubeDlVersion(), UNKNOWN_VERSION);
     }
 
     private void handleCloseButton(ActionEvent event) {
