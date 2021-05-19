@@ -6,7 +6,6 @@ import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,38 +14,46 @@ public class ProgressDialogController extends StageAwareController {
 
     private static final Logger LOGGER = LogManager.getLogger(ProgressDialogController.class);
 
-    private String title;
     private Task<?> task;
+    private Runnable onSuccessListener;
 
-    @FXML private Label progressDialogTitleLabel;
     @FXML private Button dialogProgressCancelButton;
 
     private ProgressDialogController() {
     }
 
-    public ProgressDialogController(Stage stage, String title, Task<?> task) {
+    public ProgressDialogController(Stage stage, Task<?> task, Runnable onSuccessListener) {
         super(stage);
-        this.title = title;
         this.task = task;
+        this.onSuccessListener = onSuccessListener;
     }
 
     @FXML
     public void initialize() {
-        progressDialogTitleLabel.setText(title);
         runTask();
     }
 
     private void runTask() {
-        task.setOnSucceeded(this::close);
-        task.setOnFailed(it -> {
-            Throwable ex = it.getSource().getException();
-            LOGGER.error(ex.getMessage(), ex);
+        task.setOnSucceeded(event -> {
+            if (onSuccessListener != null) {
+                onSuccessListener.run();
+            }
+            close(event);
         });
+
+        task.setOnFailed(event -> {
+            Throwable ex = event.getSource().getException();
+            LOGGER.error(ex.getMessage(), ex);
+            close(event);
+        });
+
         task.setOnCancelled(this::close);
+
         dialogProgressCancelButton.setOnAction(e -> {
             task.cancel();
             e.consume();
         });
+
         AppExecutors.runTaskAsync(task);
     }
 

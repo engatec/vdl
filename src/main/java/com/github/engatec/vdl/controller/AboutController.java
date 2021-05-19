@@ -4,6 +4,7 @@ import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.YoutubeDlManager;
+import com.github.engatec.vdl.util.AppUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,6 +18,7 @@ public class AboutController extends StageAwareController {
 
     @FXML private Label vdlVersionLabel;
     @FXML private Label youtubeDlVersionLabel;
+    @FXML private Button youtubeDlUpdateBtn;
     @FXML private Button closeBtn;
 
     private AboutController() {
@@ -32,7 +34,8 @@ public class AboutController extends StageAwareController {
         stage.setTitle(resBundle.getString("stage.about.title"));
         vdlVersionLabel.setText(String.format(resBundle.getString("stage.about.label.version.vdl"), getVdlVersion()));
         youtubeDlVersionLabel.setText(String.format(resBundle.getString("stage.about.label.version.youtubedl"), getYoutubeDlVersion()));
-        closeBtn.setOnAction(this::handleCloseButton);
+        youtubeDlUpdateBtn.setOnAction(this::handleYoutubeDlUpdateButtonClick);
+        closeBtn.setOnAction(this::handleCloseButtonClick);
     }
 
     private String getVdlVersion() {
@@ -43,7 +46,15 @@ public class AboutController extends StageAwareController {
         return StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getCurrentYoutubeDlVersion(), UNKNOWN_VERSION);
     }
 
-    private void handleCloseButton(ActionEvent event) {
+    private void handleYoutubeDlUpdateButtonClick(ActionEvent event) {
+        AppUtils.updateYoutubeDl(stage, () -> youtubeDlVersionLabel.setText(String.format(
+                ApplicationContext.INSTANCE.getResourceBundle().getString("stage.about.label.version.youtubedl"),
+                getYoutubeDlVersion()
+        )));
+        event.consume();
+    }
+
+    private void handleCloseButtonClick(ActionEvent event) {
         stage.close();
         event.consume();
     }

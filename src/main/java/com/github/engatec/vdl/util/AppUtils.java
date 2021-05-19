@@ -5,24 +5,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.function.Consumer;
 
-import com.github.engatec.vdl.core.command.Command;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.worker.UpdateBinariesTask;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 public class AppUtils {
-
-    public static void executeCommandResolvingPath(Stage stage, Command command, Consumer<Path> onPathResolved) {
-        resolveDownloadPath(stage).ifPresent(path -> {
-            onPathResolved.accept(path);
-            command.execute();
-        });
-    }
 
     public static Optional<Path> resolveDownloadPath(Stage stage) {
         Path path = doResolveDownloadPath(stage);
@@ -49,5 +42,16 @@ public class AppUtils {
         }
 
         return downloadPath;
+    }
+
+    public static void updateYoutubeDl(Stage stage, Runnable onSuccessListener) {
+        ApplicationContext ctx = ApplicationContext.INSTANCE;
+        if (!Files.isWritable(ctx.getYoutubeDlPath())) {
+            Dialogs.error("update.youtubedl.nopermissions");
+            return;
+        }
+
+        String title = ctx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress");
+        Dialogs.progress(title, stage, new UpdateBinariesTask(), onSuccessListener);
     }
 }

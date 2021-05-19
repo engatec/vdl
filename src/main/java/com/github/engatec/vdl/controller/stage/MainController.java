@@ -1,6 +1,5 @@
 package com.github.engatec.vdl.controller.stage;
 
-import java.nio.file.Files;
 import java.util.Iterator;
 
 import com.github.engatec.vdl.controller.StageAwareController;
@@ -12,15 +11,12 @@ import com.github.engatec.vdl.controller.component.history.HistoryComponentContr
 import com.github.engatec.vdl.controller.component.search.SearchComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
-import com.github.engatec.vdl.core.UpdateManager;
-import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.DownloadsComponent;
 import com.github.engatec.vdl.ui.component.HistoryComponent;
 import com.github.engatec.vdl.ui.component.ServicebarComponent;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.component.search.SearchComponent;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
@@ -102,15 +98,6 @@ public class MainController extends StageAwareController {
     private void initServiceBar() {
         ServicebarComponentController servicebar = new ServicebarComponent(stage).load();
         servicebarPane.getChildren().add(servicebar);
-    }
-
-    private void handleYoutubeDlUpdatesMenuItemClick(ActionEvent event) {
-        if (Files.isWritable(appCtx.getYoutubeDlPath())) {
-            UpdateManager.updateYoutubeDl(stage);
-        } else {
-            Dialogs.error("update.youtubedl.nopermissions");
-        }
-        event.consume();
     }
 
     private void initDragAndDrop() {

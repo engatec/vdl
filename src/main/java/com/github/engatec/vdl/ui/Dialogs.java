@@ -2,6 +2,7 @@ package com.github.engatec.vdl.ui;
 
 import java.util.Optional;
 import java.util.ResourceBundle;
+import javax.annotation.Nullable;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.ui.stage.ProgressDialogStage;
@@ -49,7 +50,7 @@ public class Dialogs {
         return alert.showAndWait();
     }
 
-    public static void progress(String title, Stage parent, Task<?> task) {
-        new ProgressDialogStage(title, task).modal(parent).showAndWait();
+    public static void progress(String title, Stage parent, Task<?> task, @Nullable Runnable onSuccessListener) {
+        new ProgressDialogStage(title, task, onSuccessListener).modal(parent).showAndWait();
     }
 }

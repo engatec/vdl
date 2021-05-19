@@ -37,6 +37,7 @@ import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.util.AppUtils;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -192,7 +193,7 @@ public class YoutubeDlManager {
                                         .map(ButtonType::getButtonData)
                                         .orElse(ButtonBar.ButtonData.NO);
                                 if (result == ButtonBar.ButtonData.YES) {
-                                    UpdateManager.updateYoutubeDl(stage);
+                                    AppUtils.updateYoutubeDl(stage, null);
                                 }
                             });
                         }
