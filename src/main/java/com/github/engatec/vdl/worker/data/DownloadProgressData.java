@@ -1,15 +1,15 @@
 package com.github.engatec.vdl.worker.data;
 
-public class QueueItemDownloadProgressData {
+public class DownloadProgressData {
 
     private double progress;
     private String size;
     private String throughput;
 
-    public QueueItemDownloadProgressData() {
+    public DownloadProgressData() {
     }
 
-    public QueueItemDownloadProgressData(double progress, String size, String throughput) {
+    public DownloadProgressData(double progress, String size, String throughput) {
         this.progress = progress;
         this.size = size;
         this.throughput = throughput;

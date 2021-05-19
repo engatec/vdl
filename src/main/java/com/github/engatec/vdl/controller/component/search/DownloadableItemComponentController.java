@@ -3,6 +3,7 @@ package com.github.engatec.vdl.controller.component.search;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.QueueManager;
@@ -12,7 +13,6 @@ import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.Resolution;
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.model.YoutubedlFormat;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
@@ -24,7 +24,6 @@ import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
 import com.github.engatec.vdl.ui.stage.FormatsStage;
 import com.github.engatec.vdl.util.AppUtils;
-import com.github.engatec.vdl.util.YoutubeDlUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -75,7 +74,7 @@ public class DownloadableItemComponentController extends HBox {
                 int quality = Math.abs(ConfigRegistry.get(AudioExtractionQualityPref.class).getValue() - AudioFormat.BEST_QUALITY);
                 Downloadable audioDownloadable = getDownloadable();
                 audioDownloadable.setDownloadPath(path);
-                audioDownloadable.setFormatId(YoutubedlFormat.BEST_AUDIO.getCmdValue()); // No need to download video if user only wants to extract audio
+                audioDownloadable.setFormatId("bestaudio"); // No need to download video if user only wants to extract audio
                 audioDownloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(format, quality)));
                 QueueManager.INSTANCE.addItem(new QueueItem(audioDownloadable));
             });
@@ -120,7 +119,7 @@ public class DownloadableItemComponentController extends HBox {
         Integer autoSelectFormat = ConfigRegistry.get(AutoSelectFormatPref.class).getValue();
         ComboBoxValueHolder<String> selectedItem = null;
         for (Integer height : commonAvailableFormats) {
-            ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), YoutubeDlUtils.createFormat(height));
+            ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), createFormat(height));
             comboBoxItems.add(item);
 
             if (selectedItem == null && height <= autoSelectFormat) {
@@ -135,6 +134,20 @@ public class DownloadableItemComponentController extends HBox {
         }
 
         adjustWidth();
+    }
+
+    private String createFormat(Integer height) {
+        String h = StringUtils.EMPTY;
+        if (height != null) {
+            h = "[height<=" + height + "]";
+        }
+
+        return new StringJoiner("/")
+                .add("bestvideo" + h + "[ext=mp4]+bestaudio[ext=m4a]")
+                .add("bestvideo" + h + "[ext=webm]+bestaudio[ext=webm]")
+                .add("bestvideo" + h + "+bestaudio")
+                .add("best" + h)
+                .toString();
     }
 
     /**

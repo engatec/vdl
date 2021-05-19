@@ -17,14 +17,6 @@ public class ExtractAudioPostprocessing implements Postprocessing {
         return instance;
     }
 
-    public String getFormat() {
-        return format;
-    }
-
-    public int getQuality() {
-        return quality;
-    }
-
     @Override
     public List<String> getCommandList() {
         return List.of(

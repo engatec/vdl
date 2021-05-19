@@ -16,7 +16,7 @@ import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
-import com.github.engatec.vdl.worker.data.QueueItemDownloadProgressData;
+import com.github.engatec.vdl.worker.data.DownloadProgressData;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class QueueItemDownloadService extends Service<QueueItemDownloadProgressData> {
+public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
     private static final Logger LOGGER = LogManager.getLogger(QueueItemDownloadService.class);
 
@@ -132,11 +132,11 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
     }
 
     @Override
-    protected Task<QueueItemDownloadProgressData> createTask() {
+    protected Task<DownloadProgressData> createTask() {
         return new Task<>() {
             @Override
-            protected QueueItemDownloadProgressData call() throws Exception {
-                var progressData = new QueueItemDownloadProgressData();
+            protected DownloadProgressData call() throws Exception {
+                var progressData = new DownloadProgressData();
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
                 try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
@@ -158,7 +158,7 @@ public class QueueItemDownloadService extends Service<QueueItemDownloadProgressD
                             progressData.setSize(calculateSizeString(progressData.getSize(), matcher.group(GROUP_SIZE)));
 
                             updateProgress(currentProgress, MAX_PROGRESS);
-                            updateValue(new QueueItemDownloadProgressData(progressData.getProgress(), progressData.getSize(), progressData.getThroughput()));
+                            updateValue(new DownloadProgressData(progressData.getProgress(), progressData.getSize(), progressData.getThroughput()));
                         } else if (DOWNLOAD_NEW_DESTINATION_PATTERN.matcher(it).matches() && StringUtils.isNotBlank(progressData.getSize())) {
                             progressData.setProgress(0);
                             progressData.setSize(progressData.getSize() + SIZE_SEPARATOR);
