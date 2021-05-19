@@ -73,7 +73,7 @@ public class YoutubeDlCommandHelper {
                 int timeout = Integer.parseInt(socketTimeout);
                 commandBuilder.socketTimeout(timeout);
             } catch (NumberFormatException e) {
-                LOGGER.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage());
             }
         }
 

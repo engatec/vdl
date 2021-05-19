@@ -57,7 +57,7 @@ public class HistoryManager {
                     .skip(Math.max(0, historyItems.size() - historyEntriesMaxNumber))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            LOGGER.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage());
             throw new UncheckedIOException(e);
         }
     }
@@ -77,7 +77,7 @@ public class HistoryManager {
         try {
             mapper.writeValue(ApplicationContext.CONFIG_PATH.resolve(FILENAME).toFile(), historyItems);
         } catch (IOException e) {
-            LOGGER.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage());
         }
     }
 }

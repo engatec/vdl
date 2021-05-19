@@ -109,7 +109,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
                         (SystemUtils.IS_OS_LINUX ? "xdg-open" : "open");
                 Runtime.getRuntime().exec(new String[] {command, path.toString()});
             } catch (Exception e) {
-                LOGGER.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage());
                 Dialogs.error("stage.history.ctxmenu.openfolder.error");
             }
             event.consume();

@@ -113,12 +113,11 @@ public class SearchComponentController extends VBox implements ComponentControll
         downloadableSearchService.setOnInfoFetchedCallback(this::updateContentPane);
 
         downloadableSearchService.setOnSucceeded(it -> {
-            // List<VideoInfo> downloadables = (List<VideoInfo>) it.getSource().getValue();
         });
 
         downloadableSearchService.setOnFailed(it -> {
             Throwable ex = it.getSource().getException();
-            LOGGER.error(ex.getMessage(), ex);
+            LOGGER.error(ex.getMessage());
             Dialogs.info("video.search.error");
         });
     }
