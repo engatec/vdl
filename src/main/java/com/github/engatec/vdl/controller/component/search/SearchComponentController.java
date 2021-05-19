@@ -154,7 +154,7 @@ public class SearchComponentController extends VBox implements ComponentControll
             if (CollectionUtils.isNotEmpty(contentItems)) {
                 contentItems.add(new Separator());
             }
-            DownloadableItemComponentController controller = new DownloadableItemComponent((Stage) urlTextField.getScene().getWindow(), downloadable).load();
+            DownloadableItemComponentController controller = new DownloadableItemComponent(stage, downloadable).load();
             controller.setSelectable(totalItems > 1);
             controller.setSelected(true);
             checkBoxGroup.add(controller.getItemSelectedCheckBox());
