@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -153,7 +154,7 @@ public class YoutubeDlManager {
         while (currentLastModifiedTime.compareTo(initialLastModifiedTime) == 0) {
             try {
                 currentLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getYoutubeDlPath());
-                Thread.sleep(1000);
+                TimeUnit.SECONDS.sleep(1);
             } catch (IOException ignored) { // For extremely rare cases when getLastModifiedTime() is called when the old file already removed, but the new one hasn't been renamed yet
                 // ignore
             } catch (InterruptedException e) {
