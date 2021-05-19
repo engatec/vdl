@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -132,10 +133,20 @@ public class YoutubeDlManager {
         FileTime initialLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getYoutubeDlPath());
 
         List<YoutubeDlProcessBuilder> processBuilders = List.of(new CacheRemoveProcessBuilder(), new YoutubeDlUpdateProcessBuilder());
+        String currentYdlVersion = getCurrentYoutubeDlVersion();
+        boolean ydlUpToDate = false;
         for (YoutubeDlProcessBuilder pb : processBuilders) {
             List<String> command = pb.buildCommand();
             Process process = pb.buildProcess(command);
+            ydlUpToDate |= IOUtils.readLines(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset())
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .anyMatch(it -> it.contains(currentYdlVersion));
             process.waitFor();
+        }
+
+        if (ydlUpToDate) {
+            return;
         }
 
         FileTime currentLastModifiedTime = initialLastModifiedTime;
