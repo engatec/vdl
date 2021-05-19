@@ -1,7 +1,5 @@
 package com.github.engatec.vdl.model;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Format {
@@ -20,9 +18,6 @@ public class Format {
 
     @JsonProperty("abr")
     private Double audioBitrate;
-
-    @JsonProperty("http_headers")
-    private Map<String, String> httpHeaders;
 
     private Integer width;
     private Integer height;
@@ -117,13 +112,5 @@ public class Format {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public Map<String, String> getHttpHeaders() {
-        return httpHeaders;
-    }
-
-    public void setHttpHeaders(Map<String, String> httpHeaders) {
-        this.httpHeaders = httpHeaders;
     }
 }
