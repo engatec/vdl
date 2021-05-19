@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
@@ -24,7 +25,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,6 +41,8 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private final Stage stage;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
+
+    @FXML private Node rootNode;
 
     @FXML private TextField urlTextField;
     @FXML private Button searchButton;
@@ -79,6 +84,9 @@ public class SearchComponentController extends VBox implements ComponentControll
         searchButton.setOnAction(this::handleSearchButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
         downloadButton.setOnAction(this::handleDownloadButtonClick);
+
+        initDragAndDrop();
+        stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(urlTextField, searchButton));
     }
 
     private void initSearchControl() {
@@ -172,5 +180,24 @@ public class SearchComponentController extends VBox implements ComponentControll
                     QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
                 })
         );
+    }
+
+    private void initDragAndDrop() {
+        rootNode.setOnDragOver(e -> {
+            if (searchButton.isVisible() && e.getDragboard().hasString()) {
+                e.acceptTransferModes(TransferMode.COPY);
+            }
+            e.consume();
+        });
+
+        rootNode.setOnDragDropped(e -> {
+            Dragboard dragboard = e.getDragboard();
+            if (searchButton.isVisible() && e.getTransferMode() == TransferMode.COPY && dragboard.hasString()) {
+                urlTextField.setText(dragboard.getString());
+                searchButton.fire();
+                e.setDropCompleted(true);
+            }
+            e.consume();
+        });
     }
 }

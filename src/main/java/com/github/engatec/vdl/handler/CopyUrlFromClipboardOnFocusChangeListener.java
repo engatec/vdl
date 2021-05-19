@@ -34,6 +34,10 @@ public class CopyUrlFromClipboardOnFocusChangeListener implements ChangeListener
             return;
         }
 
+        if (!button.isVisible()) { // Search is already in progress
+            return;
+        }
+
         try {
             String clipboardText = systemClipboard.getString();
             String currentUrlText = textField.getText();

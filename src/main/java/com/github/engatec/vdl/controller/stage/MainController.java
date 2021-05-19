@@ -9,7 +9,6 @@ import com.github.engatec.vdl.controller.component.ServicebarComponentController
 import com.github.engatec.vdl.controller.component.SidebarComponentController;
 import com.github.engatec.vdl.controller.component.history.HistoryComponentController;
 import com.github.engatec.vdl.controller.component.search.SearchComponentController;
-import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.ui.component.DownloadsComponent;
 import com.github.engatec.vdl.ui.component.HistoryComponent;
@@ -24,8 +23,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainController extends StageAwareController {
-
-    private final ApplicationContext appCtx = ApplicationContext.INSTANCE;
 
     @FXML private HBox rootNode;
     @FXML private StackPane navigationPane;
@@ -61,12 +58,6 @@ public class MainController extends StageAwareController {
         search = new SearchComponent(stage).load();
         downloads = new DownloadsComponent(stage).load();
         contentPane.getChildren().add(search);
-
-
-        /*
-            initDragAndDrop();
-            stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(videoUrlTextField, searchBtn));
-        */
     }
 
     private void initSideBar() {
@@ -98,24 +89,5 @@ public class MainController extends StageAwareController {
     private void initServiceBar() {
         ServicebarComponentController servicebar = new ServicebarComponent(stage).load();
         servicebarPane.getChildren().add(servicebar);
-    }
-
-    private void initDragAndDrop() {
-        /*rootControlVBox.setOnDragOver(e -> {
-            if (e.getDragboard().hasString()) {
-                e.acceptTransferModes(TransferMode.COPY);
-            }
-            e.consume();
-        });
-
-        rootControlVBox.setOnDragDropped(e -> {
-            Dragboard dragboard = e.getDragboard();
-            if (e.getTransferMode() == TransferMode.COPY && dragboard.hasString()) {
-                videoUrlTextField.setText(dragboard.getString());
-                searchBtn.fire();
-                e.setDropCompleted(true);
-            }
-            e.consume();
-        });*/
     }
 }
