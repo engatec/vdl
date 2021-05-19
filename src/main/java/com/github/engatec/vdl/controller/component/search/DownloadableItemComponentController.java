@@ -29,6 +29,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -186,5 +187,21 @@ public class DownloadableItemComponentController extends HBox {
         downloadable.setTitle(titleLabel.getText());
         downloadable.setBaseUrl(videoInfo.getBaseUrl());
         return downloadable;
+    }
+
+    private ContextMenu createContextMenu() {
+        /*ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
+        ContextMenu ctxMenu = new ContextMenu();
+
+        MenuItem postprocessingMenuItem = new MenuItem(resourceBundle.getString("component.downloadgrid.contextmenu.postprocessing"));
+        postprocessingMenuItem.setOnAction(e -> {
+            new PostprocessingStage(downloadable).modal(stage).showAndWait();
+            e.consume();
+        });
+        ctxMenu.getItems().add(postprocessingMenuItem);
+
+        return ctxMenu;*/
+        return null;
     }
 }
