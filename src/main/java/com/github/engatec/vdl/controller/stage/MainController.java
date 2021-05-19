@@ -33,16 +33,6 @@ public class MainController extends StageAwareController {
     private DownloadsComponentController downloads;
     private HistoryComponentController history;
 
-    /*
-
-    @FXML private Menu fileMenu;
-    @FXML private MenuItem exitMenuItem;
-
-    @FXML private MenuItem checkYoutubeDlUpdatesMenuItem;
-    @FXML private MenuItem aboutMenuItem;
-
-    */
-
     private MainController() {
     }
 
