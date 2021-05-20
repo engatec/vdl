@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.worker.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -19,6 +20,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class DownloadableSearchService extends Service<List<VideoInfo>> {
 
@@ -53,25 +55,25 @@ public class DownloadableSearchService extends Service<List<VideoInfo>> {
         return new Task<>() {
             @Override
             protected List<VideoInfo> call() throws Exception {
-                List<VideoInfo> allItems = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(List.of(getUrl()));
-                if (CollectionUtils.isEmpty(allItems)) {
+                List<VideoInfo> allFoundItems = extractVideoInfo(List.of(getUrl()));
+                if (CollectionUtils.isEmpty(allFoundItems)) {
                     throw new NoDownloadableFoundException();
                 }
 
-                int totalCount = allItems.size();
-                List<VideoInfo> readyItems = new ArrayList<>();
-                List<VideoInfo> playlistItems = new ArrayList<>();
-                for (VideoInfo item : allItems) {
-                    if (CollectionUtils.isNotEmpty(item.getFormats())) {
-                        readyItems.add(item);
+                int totalCount = allFoundItems.size();
+                List<VideoInfo> basicItemsInfoList = new ArrayList<>();
+                List<VideoInfo> completeItemsInfoList = new ArrayList<>();
+                for (VideoInfo item : allFoundItems) {
+                    if (isCompleteVideoInfo(item)) {
+                        completeItemsInfoList.add(item);
                     } else {
-                        playlistItems.add(item);
+                        basicItemsInfoList.add(item);
                     }
                 }
 
-                perfomProgressUpdate(new ArrayList<>(readyItems), readyItems.size(), totalCount);
+                perfomProgressUpdate(new ArrayList<>(completeItemsInfoList), completeItemsInfoList.size(), totalCount);
 
-                List<String> playlistVideoUrls = playlistItems.stream().map(VideoInfo::getBaseUrl).collect(Collectors.toList());
+                List<String> playlistVideoUrls = basicItemsInfoList.stream().map(VideoInfo::getBaseUrl).collect(Collectors.toList());
                 for (List<String> urls : ListUtils.partition(playlistVideoUrls, CONCURRENT_PLAYLIST_ITEMS_FETCH_COUNT)) {
                     if (Thread.interrupted()) {
                         cancel();
@@ -82,11 +84,46 @@ public class DownloadableSearchService extends Service<List<VideoInfo>> {
                     }
 
                     List<VideoInfo> chunk = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(urls);
-                    readyItems.addAll(chunk);
-                    perfomProgressUpdate(chunk, readyItems.size(), totalCount);
+                    completeItemsInfoList.addAll(chunk);
+                    perfomProgressUpdate(chunk, completeItemsInfoList.size(), totalCount);
                 }
 
-                return readyItems;
+                return completeItemsInfoList;
+            }
+
+            /**
+             * Method to handle "inner" playlists. For example a link to a channel has been provided an the channel contains multiple playlists. Info from them must be properly extracted.
+             */
+            private List<VideoInfo> extractVideoInfo(List<String> urls) throws IOException {
+                List<VideoInfo> items = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(urls);
+
+                List<VideoInfo> playlists = new ArrayList<>();
+                List<VideoInfo> videos = new ArrayList<>();
+
+                for (VideoInfo item : items) {
+                    if (isCompleteVideoInfo(item)) {
+                        videos.add(item);
+                    } else if (StringUtils.isNotBlank(item.getId()) || StringUtils.isNotBlank(item.getExtractor())) { // Highly likely a link to a complete video info
+                        videos.add(item);
+                    } else {
+                        playlists.add(item);
+                    }
+                }
+
+                if (CollectionUtils.isNotEmpty(playlists)) {
+                    List<String> newUrls = playlists.stream()
+                            .map(VideoInfo::getBaseUrl)
+                            .collect(Collectors.toList());
+
+                    videos.addAll(extractVideoInfo(newUrls));
+                }
+
+                return videos;
+            }
+
+            private boolean isCompleteVideoInfo(VideoInfo item) {
+                String type = item.getType();
+                return StringUtils.isBlank(type) || type.equals("video");
             }
 
             private void perfomProgressUpdate(List<VideoInfo> chunk, int readyCount, int totalCount) {

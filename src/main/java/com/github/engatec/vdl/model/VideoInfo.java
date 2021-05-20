@@ -4,7 +4,18 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Parameters explanation can be found here: https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/common.py
+ */
 public class VideoInfo {
+
+    private String id;
+
+    @JsonProperty("ie_key")
+    private String extractor;
+
+    @JsonProperty("_type")
+    private String type;
 
     @JsonProperty("webpage_url")
     private String baseUrl;
@@ -15,6 +26,30 @@ public class VideoInfo {
     private String title;
     private Integer duration;
     private List<Format> formats;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getExtractor() {
+        return extractor;
+    }
+
+    public void setExtractor(String extractor) {
+        this.extractor = extractor;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getBaseUrl() {
         return baseUrl;

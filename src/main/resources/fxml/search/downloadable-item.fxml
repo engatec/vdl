@@ -14,7 +14,7 @@
             <HBox spacing="4.0">
                <children>
                   <Label fx:id="titleLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="search-component-label" text="Title" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="durationLabel" styleClass="search-component-label" text="Duration" />
+                  <Label fx:id="durationLabel" minHeight="-Infinity" minWidth="-Infinity" styleClass="search-component-label" text="00:00:00" />
                </children>
             </HBox>
             <HBox spacing="4.0">
