@@ -14,6 +14,7 @@
          </children>
       </HBox>
       <Label fx:id="historyLabel" styleClass="sidebar-label" text="%sidebar.history" />
+      <Label fx:id="subscriptionsLabel" styleClass="sidebar-label" text="%sidebar.subscriptions" />
       <HBox fx:id="sidebarWidthCorrectionNode" alignment="CENTER_LEFT" spacing="4.0" styleClass="sidebar-label" visible="false">
          <children>
             <Label fx:id="dummyWidthLabel" text="%sidebar.downloads" />

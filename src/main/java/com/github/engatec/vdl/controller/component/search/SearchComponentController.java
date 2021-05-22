@@ -121,6 +121,10 @@ public class SearchComponentController extends VBox implements ComponentControll
         downloadableSearchService.setOnInfoFetchedCallback(this::updateContentPane);
 
         downloadableSearchService.setOnSucceeded(it -> {
+            var items = (List<VideoInfo>) it.getSource().getValue();
+            if (CollectionUtils.isEmpty(items)) {
+                Dialogs.info("video.search.notfound");
+            }
         });
 
         downloadableSearchService.setOnFailed(it -> {

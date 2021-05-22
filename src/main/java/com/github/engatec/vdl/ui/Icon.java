@@ -12,7 +12,8 @@ public enum Icon {
     HELP_MEDIUM("/assets/icons/help_24dp.png"),
     HISTORY_SMALL("/assets/icons/history_icon_18dp.png"),
     SEARCH_SMALL("/assets/icons/search_icon_18dp.png"),
-    SETTINGS_MEDIUM("/assets/icons/settings_24dp.png");
+    SETTINGS_MEDIUM("/assets/icons/settings_24dp.png"),
+    SUBSCRIPTIONS_SMALL("/assets/icons/subscriptions_18dp.png");
 
     private final Image image;
 

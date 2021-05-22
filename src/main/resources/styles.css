@@ -59,6 +59,12 @@
     -fx-cursor: hand;
 }
 
+.sidebar-label-current {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-opacity: 0.9;
+}
+
 .search-component-label {
     -fx-font-family: "Roboto";
     -fx-font-size: 12;

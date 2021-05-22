@@ -44,6 +44,7 @@ public class Main extends Application {
 
     private void loadFonts() {
         Font.loadFont(getClass().getResourceAsStream("/assets/fonts/Roboto-Regular.ttf"), 0);
+        Font.loadFont(getClass().getResourceAsStream("/assets/fonts/Roboto-Bold.ttf"), 0);
     }
 
     private void setLanguage() {

@@ -9,12 +9,14 @@ import com.github.engatec.vdl.controller.component.ServicebarComponentController
 import com.github.engatec.vdl.controller.component.SidebarComponentController;
 import com.github.engatec.vdl.controller.component.history.HistoryComponentController;
 import com.github.engatec.vdl.controller.component.search.SearchComponentController;
+import com.github.engatec.vdl.controller.component.subscriptions.SubscriptionsComponentController;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.ui.component.DownloadsComponent;
 import com.github.engatec.vdl.ui.component.HistoryComponent;
 import com.github.engatec.vdl.ui.component.ServicebarComponent;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.component.search.SearchComponent;
+import com.github.engatec.vdl.ui.component.subscriptions.SubscriptionsComponent;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -32,6 +34,7 @@ public class MainController extends StageAwareController {
     private SearchComponentController search;
     private DownloadsComponentController downloads;
     private HistoryComponentController history;
+    private SubscriptionsComponentController subscriptions;
 
     private MainController() {
     }
@@ -47,7 +50,7 @@ public class MainController extends StageAwareController {
 
         search = new SearchComponent(stage).load();
         downloads = new DownloadsComponent(stage).load();
-        contentPane.getChildren().add(search);
+        loadComponent(search);
     }
 
     private void initSideBar() {
@@ -59,6 +62,12 @@ public class MainController extends StageAwareController {
                 history = new HistoryComponent(stage).load();
             }
             loadComponent(history);
+        });
+        sidebar.setOnSubscruptionsClickListener(() -> {
+            if (subscriptions == null) {
+                subscriptions = new SubscriptionsComponent(stage).load();
+            }
+            loadComponent(subscriptions);
         });
 
         navigationPane.getChildren().add(sidebar);
