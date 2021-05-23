@@ -5,6 +5,7 @@ import java.util.List;
 import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.stage.subscriptions.PlaylistContentsStage;
 import com.github.engatec.vdl.worker.service.PlaylistDetailsSearchService;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.event.ActionEvent;
@@ -78,7 +79,10 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
             var items = (List<VideoInfo>) it.getSource().getValue();
             if (CollectionUtils.isEmpty(items)) {
                 Dialogs.info("subscriptions.playlist.notfound");
+                return;
             }
+
+            new PlaylistContentsStage(items).modal(stage).showAndWait();
         });
 
         playlistDetailsSearchService.setOnFailed(it -> {

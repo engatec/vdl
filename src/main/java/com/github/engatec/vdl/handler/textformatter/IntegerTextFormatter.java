@@ -20,7 +20,7 @@ public class IntegerTextFormatter extends TextFormatter<Integer> {
                 defaultValue,
                 change -> {
                     String newText = change.getControlNewText();
-                    return StringUtils.isBlank(newText) || NUMERIC_PATTERN.matcher(newText).matches() ? change : null;
+                    return StringUtils.isEmpty(newText) || NUMERIC_PATTERN.matcher(newText).matches() ? change : null;
                 }
         );
     }
