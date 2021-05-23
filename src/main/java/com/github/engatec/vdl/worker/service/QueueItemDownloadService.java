@@ -134,9 +134,31 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     @Override
     protected Task<DownloadProgressData> createTask() {
         return new Task<>() {
+            /* Small performance tweak. JavaFX's updateValue() will actually perform update only if the new value and the old one aren't referencing the same object.
+               Instead of creating a new object each time making a swarm of them per download I will just rollover two objects. */
+            private DownloadProgressData progressDataCurrent = new DownloadProgressData();
+            private DownloadProgressData progressDataPending = new DownloadProgressData();
+
+            private void updateProgressData(double progress, String throughput, String size) {
+                progressDataCurrent.setProgress(progress);
+                progressDataCurrent.setThroughput(throughput);
+                progressDataCurrent.setSize(size);
+            }
+
+            private DownloadProgressData getProgressData() {
+                progressDataPending.setProgress(progressDataCurrent.getProgress());
+                progressDataPending.setThroughput(progressDataCurrent.getThroughput());
+                progressDataPending.setSize(progressDataCurrent.getSize());
+
+                DownloadProgressData temp = progressDataCurrent;
+                progressDataCurrent = progressDataPending;
+                progressDataPending = temp;
+
+                return progressDataCurrent;
+            }
+
             @Override
             protected DownloadProgressData call() throws Exception {
-                var progressData = new DownloadProgressData();
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
                 try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
@@ -152,16 +174,11 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                         Matcher matcher = DOWNLOAD_PROGRESS_PATTERN.matcher(it);
                         if (matcher.matches()) {
                             double currentProgress = Double.parseDouble(matcher.group(GROUP_PROGRESS));
-
-                            progressData.setProgress(currentProgress);
-                            progressData.setThroughput(matcher.group(GROUP_THROUGHPUT));
-                            progressData.setSize(calculateSizeString(progressData.getSize(), matcher.group(GROUP_SIZE)));
-
+                            updateProgressData(currentProgress, matcher.group(GROUP_THROUGHPUT), calculateSizeString(progressDataCurrent.getSize(), matcher.group(GROUP_SIZE)));
                             updateProgress(currentProgress, MAX_PROGRESS);
-                            updateValue(new DownloadProgressData(progressData.getProgress(), progressData.getSize(), progressData.getThroughput()));
-                        } else if (DOWNLOAD_NEW_DESTINATION_PATTERN.matcher(it).matches() && StringUtils.isNotBlank(progressData.getSize())) {
-                            progressData.setProgress(0);
-                            progressData.setSize(progressData.getSize() + SIZE_SEPARATOR);
+                            updateValue(getProgressData());
+                        } else if (DOWNLOAD_NEW_DESTINATION_PATTERN.matcher(it).matches() && StringUtils.isNotBlank(progressDataCurrent.getSize())) {
+                            updateProgressData(0, progressDataCurrent.getThroughput(), progressDataCurrent.getSize() + SIZE_SEPARATOR);
                         }
                     });
                 }
