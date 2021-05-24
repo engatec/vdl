@@ -22,6 +22,10 @@ public class PlaylistItemComponentController extends HBox {
     public void initialize() {
         String text = StringUtils.firstNonBlank(videoInfo.getTitle(), videoInfo.getId(), videoInfo.getBaseUrl());
         label.setText(text);
+        label.setOnMouseClicked(e -> {
+            checkbox.setSelected(!checkbox.isSelected());
+            e.consume();
+        });
     }
 
     public boolean isSelected() {
@@ -34,5 +38,9 @@ public class PlaylistItemComponentController extends HBox {
 
     public CheckBox getCheckbox() {
         return checkbox;
+    }
+
+    public VideoInfo getItem() {
+        return videoInfo;
     }
 }

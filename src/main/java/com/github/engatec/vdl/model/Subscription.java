@@ -1,22 +1,24 @@
 package com.github.engatec.vdl.model;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
-import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 
 public class Subscription {
 
-    private String title;
+    private String name;
     private String playlistUrl;
-    private List<String> processedItems;
+    private Set<String> processedItems;
+    private LocalDateTime createdAt;
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPlaylistUrl() {
@@ -27,11 +29,19 @@ public class Subscription {
         this.playlistUrl = playlistUrl;
     }
 
-    public List<String> getProcessedItems() {
-        return Collections.unmodifiableList(ListUtils.emptyIfNull(processedItems));
+    public Set<String> getProcessedItems() {
+        return Collections.unmodifiableSet(SetUtils.emptyIfNull(processedItems));
     }
 
-    public void setProcessedItems(List<String> processedItems) {
+    public void setProcessedItems(Set<String> processedItems) {
         this.processedItems = processedItems;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

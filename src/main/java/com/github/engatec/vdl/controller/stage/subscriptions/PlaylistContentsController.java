@@ -1,12 +1,17 @@
 package com.github.engatec.vdl.controller.stage.subscriptions;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.github.engatec.fxcontrols.FxTextField;
 import com.github.engatec.vdl.controller.component.subscriptions.PlaylistItemComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.handler.textformatter.NotBlankTextFormatter;
+import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.component.subscriptions.PlaylistItemComponent;
 import com.github.engatec.vdl.validation.InputForm;
@@ -17,12 +22,12 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 
 public class PlaylistContentsController implements InputForm {
 
     private Stage stage;
+    private String playlistUrl;
     private List<VideoInfo> videoInfoList;
 
     @FXML private VBox contentVBox;
@@ -34,8 +39,9 @@ public class PlaylistContentsController implements InputForm {
     public PlaylistContentsController() {
     }
 
-    public PlaylistContentsController(Stage stage, List<VideoInfo> videoInfoList) {
+    public PlaylistContentsController(Stage stage, String playlistUrl, List<VideoInfo> videoInfoList) {
         this.stage = stage;
+        this.playlistUrl = playlistUrl;
         this.videoInfoList = videoInfoList;
     }
 
@@ -82,7 +88,19 @@ public class PlaylistContentsController implements InputForm {
     }
 
     private void subscribe() {
-        throw new NotImplementedException();
+        Set<String> processedItems = contentVBox.getChildren().stream()
+                .map(it -> (PlaylistItemComponentController) it)
+                .filter(PlaylistItemComponentController::isSelected)
+                .map(PlaylistItemComponentController::getItem)
+                .map(it -> StringUtils.firstNonBlank(it.getId(), it.getUrl(), it.getTitle()))
+                .collect(Collectors.toSet());
+
+        var subscription = new Subscription();
+        subscription.setName(subscriptionNameTextField.getText());
+        subscription.setPlaylistUrl(playlistUrl);
+        subscription.setProcessedItems(processedItems);
+        subscription.setCreatedAt(LocalDateTime.now());
+        SubscriptionsManager.INSTANCE.subscribe(subscription);
     }
 
     private void handleCloseButtonClick(ActionEvent event) {

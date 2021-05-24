@@ -13,6 +13,7 @@ import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.search.DownloadableItemComponent;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -123,7 +124,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         downloadableSearchService.setOnSucceeded(it -> {
             var items = (List<VideoInfo>) it.getSource().getValue();
             if (CollectionUtils.isEmpty(items)) {
-                Dialogs.info("video.search.notfound");
+                Platform.runLater(() -> Dialogs.info("video.search.notfound"));
             }
         });
 

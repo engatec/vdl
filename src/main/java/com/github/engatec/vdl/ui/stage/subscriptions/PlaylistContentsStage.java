@@ -11,9 +11,11 @@ import javafx.util.Callback;
 
 public class PlaylistContentsStage extends AppStage {
 
+    private final String playlistUrl;
     private final List<VideoInfo> videoInfoList;
 
-    public PlaylistContentsStage(List<VideoInfo> videoInfoList) {
+    public PlaylistContentsStage(String playlistUrl, List<VideoInfo> videoInfoList) {
+        this.playlistUrl = playlistUrl;
         this.videoInfoList = videoInfoList;
         init();
     }
@@ -31,6 +33,6 @@ public class PlaylistContentsStage extends AppStage {
 
     @Override
     protected Callback<Class<?>, Object> getControllerFactory(Stage stage) {
-        return param -> new PlaylistContentsController(stage, videoInfoList);
+        return param -> new PlaylistContentsController(stage, playlistUrl, videoInfoList);
     }
 }
