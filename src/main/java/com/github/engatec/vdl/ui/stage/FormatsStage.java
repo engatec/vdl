@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import com.github.engatec.vdl.controller.stage.FormatsController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.VideoInfo;
+import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -28,11 +29,23 @@ public class FormatsStage extends AppStage {
         stage.setResizable(false);
         stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("format.select"));
         stage.setOnShown(event -> {
-            double stageHeight = stage.getHeight();
-            double screenHeight = Screen.getPrimary().getBounds().getHeight();
-            if (stageHeight > screenHeight) {
-                stage.setHeight(screenHeight / 1.5);
+            Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+            boolean stageResized = false;
+
+            double maxScreenWidth = screenBounds.getWidth() / 1.5;
+            if (stage.getWidth() > maxScreenWidth) {
+                stage.setWidth(maxScreenWidth);
+                stageResized = true;
+            }
+
+            double maxScreenHeight = screenBounds.getHeight() / 1.5;
+            if (stage.getHeight() > maxScreenHeight) {
+                stage.setHeight(maxScreenHeight);
                 stage.setWidth(stage.getWidth() + 30);
+                stageResized = true;
+            }
+
+            if (stageResized) {
                 stage.centerOnScreen();
             }
         });
