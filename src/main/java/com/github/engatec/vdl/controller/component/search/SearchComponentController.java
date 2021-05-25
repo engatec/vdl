@@ -185,6 +185,10 @@ public class SearchComponentController extends VBox implements ComponentControll
                     QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
                 })
         );
+
+        urlTextField.clear();
+        contentNode.getChildren().clear();
+        e.consume();
     }
 
     private void initDragAndDrop() {
