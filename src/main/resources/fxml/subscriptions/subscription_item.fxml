@@ -8,8 +8,8 @@
    <children>
       <VBox maxWidth="1.7976931348623157E308" spacing="8.0" HBox.hgrow="ALWAYS">
          <children>
-            <Label fx:id="titleLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="search-component-label" text="Title" />
-            <Label fx:id="urlLabel" minHeight="-Infinity" minWidth="-Infinity" styleClass="search-component-label" text="http://" />
+            <Label fx:id="titleLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="common-label" text="Title" />
+            <Label fx:id="urlLabel" minHeight="-Infinity" minWidth="-Infinity" styleClass="common-label" text="http://" />
          </children>
       </VBox>
       <ImageView pickOnBounds="true" preserveRatio="true" />

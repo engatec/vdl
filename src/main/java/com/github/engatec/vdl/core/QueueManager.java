@@ -22,6 +22,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.github.engatec.vdl.model.DownloadStatus.FINISHED;
 import static com.github.engatec.vdl.model.DownloadStatus.IN_PROGRESS;
 import static com.github.engatec.vdl.model.DownloadStatus.READY;
 import static com.github.engatec.vdl.model.DownloadStatus.SCHEDULED;
@@ -71,6 +72,11 @@ public class QueueManager {
         queueItems.remove(item);
     }
 
+    @Deprecated(forRemoval = true)
+    private void removeFinished() {
+        queueItems.removeIf(it -> it.getStatus() == FINISHED);
+    }
+
     public void removeAll() {
         queueItems.clear();
     }
@@ -115,6 +121,7 @@ public class QueueManager {
             List<QueueItem> items = mapper.readValue(queueFilePath.toFile(), new TypeReference<>(){});
             fixState(items);
             queueItems.addAll(items);
+            removeFinished(); // FIXME: this is just to clean up after previous app version which didn't remove finished items from the queue automatically
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e);
         }

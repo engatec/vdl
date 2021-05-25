@@ -25,9 +25,9 @@
           <RowConstraints minHeight="-Infinity" valignment="CENTER" vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="%subscriptions.name" />
+            <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="common-label" text="%subscriptions.name" />
             <FxTextField fx:id="subscriptionNameTextField" minWidth="-Infinity" prefWidth="200.0" GridPane.columnIndex="1" />
-            <Label text="%subscriptions.downloadpath" GridPane.rowIndex="1" />
+            <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="common-label" text="%subscriptions.downloadpath" GridPane.rowIndex="1" />
             <FxDirectoryChooser fx:id="subscriptionDownloadPathTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
@@ -36,7 +36,7 @@
             <Insets top="8.0" />
          </VBox.margin>
       </Separator>
-      <Label minHeight="-Infinity" text="%subscriptions.playlist.skipmsg" wrapText="true">
+      <Label minHeight="-Infinity" styleClass="caption" text="%subscriptions.playlist.skipmsg" wrapText="true">
          <VBox.margin>
             <Insets top="8.0" />
          </VBox.margin>
@@ -48,7 +48,7 @@
       </CheckBox>
       <ScrollPane fitToHeight="true" fitToWidth="true" styleClass="no-border" VBox.vgrow="ALWAYS">
          <VBox.margin>
-            <Insets bottom="16.0" top="8.0" />
+            <Insets bottom="16.0" top="4.0" />
          </VBox.margin>
          <content>
             <VBox fx:id="contentVBox" spacing="8.0" />

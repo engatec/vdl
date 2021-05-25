@@ -188,6 +188,7 @@ public class SearchComponentController extends VBox implements ComponentControll
 
         urlTextField.clear();
         contentNode.getChildren().clear();
+        downloadButton.setVisible(false);
         e.consume();
     }
 
