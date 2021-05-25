@@ -6,13 +6,17 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.github.engatec.fxcontrols.FxDirectoryChooser;
 import com.github.engatec.fxcontrols.FxTextField;
 import com.github.engatec.vdl.controller.component.subscriptions.PlaylistItemComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.SubscriptionsManager;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.handler.textformatter.NotBlankTextFormatter;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
+import com.github.engatec.vdl.ui.CheckBoxGroup;
 import com.github.engatec.vdl.ui.component.subscriptions.PlaylistItemComponent;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.collections.ObservableList;
@@ -20,6 +24,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +38,11 @@ public class PlaylistContentsController implements InputForm {
     @FXML private VBox contentVBox;
 
     @FXML private FxTextField subscriptionNameTextField;
+    @FXML private FxDirectoryChooser subscriptionDownloadPathTextField;
+
+    private CheckBoxGroup checkBoxGroup;
+    @FXML private CheckBox selectAllCheckBox;
+
     @FXML private Button subscribeBtn;
     @FXML private Button closeBtn;
 
@@ -49,8 +59,12 @@ public class PlaylistContentsController implements InputForm {
     public void initialize() {
         subscriptionNameTextField.setTextFormatter(new NotBlankTextFormatter());
         subscriptionNameTextField.textProperty().addListener((observable, oldValue, newValue) -> subscriptionNameTextField.clearError());
+        subscriptionDownloadPathTextField.setButtonText(ApplicationContext.INSTANCE.getResourceBundle().getString("button.directorychoose"));
+        subscriptionDownloadPathTextField.setPath(ConfigRegistry.get(DownloadPathPref.class).getValue());
         subscribeBtn.setOnAction(this::handleSubscribeButtonClick);
         closeBtn.setOnAction(this::handleCloseButtonClick);
+
+        checkBoxGroup = new CheckBoxGroup(selectAllCheckBox);
 
         initContent();
     }
@@ -59,6 +73,7 @@ public class PlaylistContentsController implements InputForm {
         ObservableList<Node> contentList = contentVBox.getChildren();
         for (VideoInfo vi : videoInfoList) {
             PlaylistItemComponentController node = new PlaylistItemComponent(stage, vi).load();
+            checkBoxGroup.add(node.getCheckbox());
             contentList.add(node);
         }
     }

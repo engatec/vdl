@@ -29,7 +29,7 @@
             </Label>
          </children>
       </VBox>
-      <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%search.selectall">
+      <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%checkbox.selectall">
          <VBox.margin>
             <Insets bottom="8.0" top="16.0" />
          </VBox.margin>

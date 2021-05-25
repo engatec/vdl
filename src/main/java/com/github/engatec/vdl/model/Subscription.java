@@ -11,6 +11,7 @@ public class Subscription {
     private String name;
     private String playlistUrl;
     private Set<String> processedItems;
+    private String path;
     private LocalDateTime createdAt;
 
     public String getName() {
@@ -35,6 +36,14 @@ public class Subscription {
 
     public void setProcessedItems(Set<String> processedItems) {
         this.processedItems = processedItems;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public LocalDateTime getCreatedAt() {
