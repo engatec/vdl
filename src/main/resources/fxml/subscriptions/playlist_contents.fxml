@@ -28,7 +28,7 @@
             <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="common-label" text="%subscriptions.name" />
             <FxTextField fx:id="subscriptionNameTextField" minWidth="-Infinity" prefWidth="200.0" GridPane.columnIndex="1" />
             <Label maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="common-label" text="%subscriptions.downloadpath" GridPane.rowIndex="1" />
-            <FxDirectoryChooser fx:id="subscriptionDownloadPathTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <FxDirectoryChooser fx:id="subscriptionDownloadPathDirectoryChooser" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <Separator prefWidth="200.0">

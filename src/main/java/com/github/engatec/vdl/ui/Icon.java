@@ -7,6 +7,7 @@ import javafx.scene.image.Image;
 public enum Icon {
 
     AUDIOTRACK_SMALL("/assets/icons/audiotrack_18dp.png"),
+    DELETE_SMALL("/assets/icons/delete_18dp.png"),
     DOWNLOAD_SMALL("/assets/icons/download_icon_18dp.png"),
     FILTER_LIST_SMALL("/assets/icons/filter_list_18dp.png"),
     HELP_MEDIUM("/assets/icons/help_24dp.png"),

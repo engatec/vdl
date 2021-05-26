@@ -1,14 +1,19 @@
 package com.github.engatec.vdl.controller.component.subscriptions;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
+import com.github.engatec.vdl.core.SubscriptionsManager;
+import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.component.subscriptions.SubscriptionItemComponent;
 import com.github.engatec.vdl.ui.stage.subscriptions.PlaylistContentsStage;
 import com.github.engatec.vdl.worker.service.PlaylistDetailsSearchService;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -51,6 +56,8 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
 
         searchButton.setOnAction(this::handleSearchButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
+
+        displaySubscriptions(SubscriptionsManager.INSTANCE.getSubscriptions());
     }
 
     private void initSearchControl() {
@@ -83,7 +90,7 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
                 return;
             }
 
-            Platform.runLater(() -> new PlaylistContentsStage(urlTextField.getText(), items).modal(stage).showAndWait());
+            Platform.runLater(() -> new PlaylistContentsStage(urlTextField.getText(), items, subscription -> displaySubscriptions(List.of(subscription))).modal(stage).showAndWait());
         });
 
         playlistDetailsSearchService.setOnFailed(it -> {
@@ -99,9 +106,28 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
     }
 
     private void handleSearchButtonClick(Event event) {
-        contentNode.getChildren().clear();
         playlistDetailsSearchService.setUrl(urlTextField.getText());
         playlistDetailsSearchService.restart();
         event.consume();
+    }
+
+    private void displaySubscriptions(List<Subscription> subscriptions) {
+        ObservableList<Node> contentList = contentNode.getChildren();
+        for (Subscription item : subscriptions) {
+            SubscriptionItemComponentController node = new SubscriptionItemComponent(stage, item, getOnSubscriptionDeleteButtonClickListener()).load();
+            contentList.add(node);
+        }
+    }
+
+    private Consumer<Subscription> getOnSubscriptionDeleteButtonClickListener() {
+        return subscription -> {
+            SubscriptionsManager.INSTANCE.unsubscribe(subscription);
+            contentNode.getChildren().removeIf(it -> subscription.equals(((SubscriptionItemComponentController) it).getItem()));
+        };
+    }
+
+    @Override
+    public void onVisibilityLost() {
+        SubscriptionsManager.INSTANCE.persist();
     }
 }

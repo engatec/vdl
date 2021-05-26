@@ -89,7 +89,7 @@ public class QueueManager {
         return queueItems.stream().anyMatch(it -> it.getStatus() == IN_PROGRESS);
     }
 
-    public void persistQueue() {
+    public void persist() {
         ObjectMapper mapper = new ObjectMapper();
         try {
             mapper.writeValue(ApplicationContext.CONFIG_PATH.resolve(FILENAME).toFile(), queueItems);
@@ -110,7 +110,7 @@ public class QueueManager {
         }
     }
 
-    public void restoreQueue() {
+    public void restore() {
         Path queueFilePath = ApplicationContext.CONFIG_PATH.resolve(FILENAME);
         if (!Files.exists(queueFilePath)) {
             return;

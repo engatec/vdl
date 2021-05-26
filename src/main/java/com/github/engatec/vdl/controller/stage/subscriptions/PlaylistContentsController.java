@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.github.engatec.fxcontrols.FxDirectoryChooser;
@@ -16,6 +17,7 @@ import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.ui.CheckBoxGroup;
+import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -32,11 +34,12 @@ public class PlaylistContentsController implements InputForm {
     private Stage stage;
     private String playlistUrl;
     private List<VideoInfo> videoInfoList;
+    private Consumer<Subscription> onSubscribeListener;
 
     @FXML private VBox contentVBox;
 
     @FXML private FxTextField subscriptionNameTextField;
-    @FXML private FxDirectoryChooser subscriptionDownloadPathTextField;
+    @FXML private FxDirectoryChooser subscriptionDownloadPathDirectoryChooser;
 
     private CheckBoxGroup checkBoxGroup;
     @FXML private CheckBox selectAllCheckBox;
@@ -47,18 +50,19 @@ public class PlaylistContentsController implements InputForm {
     public PlaylistContentsController() {
     }
 
-    public PlaylistContentsController(Stage stage, String playlistUrl, List<VideoInfo> videoInfoList) {
+    public PlaylistContentsController(Stage stage, String playlistUrl, List<VideoInfo> videoInfoList, Consumer<Subscription> onSubscribeListener) {
         this.stage = stage;
         this.playlistUrl = playlistUrl;
         this.videoInfoList = videoInfoList;
+        this.onSubscribeListener = onSubscribeListener;
     }
 
     @FXML
     public void initialize() {
         subscriptionNameTextField.setTextFormatter(new NotBlankTextFormatter());
         subscriptionNameTextField.textProperty().addListener((observable, oldValue, newValue) -> subscriptionNameTextField.clearError());
-        subscriptionDownloadPathTextField.setButtonText(ApplicationContext.INSTANCE.getResourceBundle().getString("button.directorychoose"));
-        subscriptionDownloadPathTextField.setPath(ConfigRegistry.get(DownloadPathPref.class).getValue());
+        subscriptionDownloadPathDirectoryChooser.setButtonText(ApplicationContext.INSTANCE.getResourceBundle().getString("button.directorychoose"));
+        subscriptionDownloadPathDirectoryChooser.setPath(ConfigRegistry.get(DownloadPathPref.class).getValue());
         subscribeBtn.setOnAction(this::handleSubscribeButtonClick);
         closeBtn.setOnAction(this::handleCloseButtonClick);
 
@@ -112,10 +116,12 @@ public class PlaylistContentsController implements InputForm {
 
         var subscription = new Subscription();
         subscription.setName(subscriptionNameTextField.getText());
-        subscription.setPlaylistUrl(playlistUrl);
+        subscription.setUrl(playlistUrl);
         subscription.setProcessedItems(processedItems);
-        subscription.setCreatedAt(LocalDateTime.now());
+        subscription.setPath(subscriptionDownloadPathDirectoryChooser.getPath());
+        subscription.setCreatedAt(AppUtils.convertDtmToString(LocalDateTime.now()));
         SubscriptionsManager.INSTANCE.subscribe(subscription);
+        onSubscribeListener.accept(subscription);
     }
 
     private void handleCloseButtonClick(ActionEvent event) {

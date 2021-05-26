@@ -62,7 +62,7 @@ public class HistoryManager {
         }
     }
 
-    public synchronized void persistHistory() {
+    public synchronized void persist() {
         flushToDisk(getHistoryItems());
         newItems.clear();
     }

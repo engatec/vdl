@@ -1,6 +1,5 @@
 package com.github.engatec.vdl.model;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 
@@ -9,10 +8,10 @@ import org.apache.commons.collections4.SetUtils;
 public class Subscription {
 
     private String name;
-    private String playlistUrl;
+    private String url;
     private Set<String> processedItems;
     private String path;
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     public String getName() {
         return name;
@@ -22,12 +21,12 @@ public class Subscription {
         this.name = name;
     }
 
-    public String getPlaylistUrl() {
-        return playlistUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public void setPlaylistUrl(String playlistUrl) {
-        this.playlistUrl = playlistUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Set<String> getProcessedItems() {
@@ -46,11 +45,11 @@ public class Subscription {
         this.path = path;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 }

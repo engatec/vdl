@@ -1,9 +1,11 @@
 package com.github.engatec.vdl.ui.stage.subscriptions;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.github.engatec.vdl.controller.stage.subscriptions.PlaylistContentsController;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.stage.AppStage;
 import javafx.geometry.Rectangle2D;
@@ -15,10 +17,12 @@ public class PlaylistContentsStage extends AppStage {
 
     private final String playlistUrl;
     private final List<VideoInfo> videoInfoList;
+    private final Consumer<Subscription> onSubscribeListener;
 
-    public PlaylistContentsStage(String playlistUrl, List<VideoInfo> videoInfoList) {
+    public PlaylistContentsStage(String playlistUrl, List<VideoInfo> videoInfoList, Consumer<Subscription> onSubscribeListener) {
         this.playlistUrl = playlistUrl;
         this.videoInfoList = videoInfoList;
+        this.onSubscribeListener = onSubscribeListener;
         init();
     }
 
@@ -56,6 +60,6 @@ public class PlaylistContentsStage extends AppStage {
 
     @Override
     protected Callback<Class<?>, Object> getControllerFactory(Stage stage) {
-        return param -> new PlaylistContentsController(stage, playlistUrl, videoInfoList);
+        return param -> new PlaylistContentsController(stage, playlistUrl, videoInfoList, onSubscribeListener);
     }
 }

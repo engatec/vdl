@@ -5,6 +5,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
@@ -21,7 +22,8 @@ public class Main extends Application {
     public void start(Stage stage) {
         loadFonts();
         setLanguage();
-        QueueManager.INSTANCE.restoreQueue();
+        QueueManager.INSTANCE.restore();
+        SubscriptionsManager.INSTANCE.restore();
         new MainStage(stage).show();
 
         Boolean needCheckYoutubeDlUpdate = ConfigRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getValue();
@@ -33,8 +35,9 @@ public class Main extends Application {
     @Override
     public void stop() {
         AppExecutors.shutdownExecutors();
-        QueueManager.INSTANCE.persistQueue();
-        HistoryManager.INSTANCE.persistHistory();
+        QueueManager.INSTANCE.persist();
+        HistoryManager.INSTANCE.persist();
+        SubscriptionsManager.INSTANCE.persist();
     }
 
     public static void main(String[] args) {

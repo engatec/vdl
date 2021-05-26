@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +54,6 @@ public class YoutubeDlManager {
     public static final YoutubeDlManager INSTANCE = new YoutubeDlManager();
 
     private final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 
     public List<VideoInfo> fetchDownloadableInfo(List<String> urls) throws IOException {
         var pb = new DownloadableInfoFetchProcessBuilder(urls);
@@ -99,7 +97,7 @@ public class YoutubeDlManager {
     public Process download(Downloadable downloadable) throws IOException {
         if (ConfigRegistry.get(HistoryEntriesNumberPref.class).getValue() > 0) { // TODO: Think about eventbus instead
             HistoryManager.INSTANCE.addHistoryItem(
-                    new HistoryItem(downloadable.getTitle(), downloadable.getBaseUrl(), downloadable.getDownloadPath(), LocalDateTime.now().format(dateTimeFormatter))
+                    new HistoryItem(downloadable.getTitle(), downloadable.getBaseUrl(), downloadable.getDownloadPath(), AppUtils.convertDtmToString(LocalDateTime.now()))
             );
         }
 
