@@ -132,6 +132,6 @@ public class HistoryComponentController extends VBox implements ComponentControl
 
     @Override
     public void onVisibilityLost() {
-        AppExecutors.BACKGROUND_EXECUTOR.submit(HistoryManager.INSTANCE::persist); // To eliminate possible phantom entries from the hard drive if the user starts playing with max entries number
+        AppExecutors.SYSTEM_EXECUTOR.submit(HistoryManager.INSTANCE::persist); // To eliminate possible phantom entries from the hard drive if the user starts playing with max entries number
     }
 }

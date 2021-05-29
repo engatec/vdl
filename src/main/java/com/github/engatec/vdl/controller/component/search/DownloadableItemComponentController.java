@@ -3,7 +3,6 @@ package com.github.engatec.vdl.controller.component.search;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.QueueManager;
@@ -24,6 +23,7 @@ import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
 import com.github.engatec.vdl.ui.stage.FormatsStage;
 import com.github.engatec.vdl.util.AppUtils;
+import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -108,7 +108,7 @@ public class DownloadableItemComponentController extends HBox {
     }
 
     private void initFormats() {
-        List<Integer> commonAvailableFormats = ListUtils.emptyIfNull(videoInfo.getFormats()).stream()
+        List<Integer> commonAvailableHeights = ListUtils.emptyIfNull(videoInfo.getFormats()).stream()
                 .map(Format::getHeight)
                 .filter(Objects::nonNull)
                 .filter(it -> it > 0) // Should never happen, just a sanity check in case there's a bug in youtube-dl
@@ -119,8 +119,8 @@ public class DownloadableItemComponentController extends HBox {
         ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
         Integer autoSelectFormat = ConfigRegistry.get(AutoSelectFormatPref.class).getValue();
         ComboBoxValueHolder<String> selectedItem = null;
-        for (Integer height : commonAvailableFormats) {
-            ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), createFormat(height));
+        for (Integer height : commonAvailableHeights) {
+            ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), YouDlUtils.createFormatByHeight(height));
             comboBoxItems.add(item);
 
             if (selectedItem == null && height <= autoSelectFormat) {
@@ -129,26 +129,12 @@ public class DownloadableItemComponentController extends HBox {
         }
 
         if (selectedItem == null) {
-            formatsComboBox.getSelectionModel().selectFirst();
+            formatsComboBox.getSelectionModel().selectLast();
         } else {
             formatsComboBox.getSelectionModel().select(selectedItem);
         }
 
         adjustWidth();
-    }
-
-    private String createFormat(Integer height) {
-        String h = StringUtils.EMPTY;
-        if (height != null) {
-            h = "[height<=" + height + "]";
-        }
-
-        return new StringJoiner("/")
-                .add("bestvideo" + h + "[ext=mp4]+bestaudio[ext=m4a]")
-                .add("bestvideo" + h + "[ext=webm]+bestaudio[ext=webm]")
-                .add("bestvideo" + h + "+bestaudio")
-                .add("best" + h)
-                .toString();
     }
 
     /**

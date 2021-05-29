@@ -1,9 +1,7 @@
 package com.github.engatec.vdl.model;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.collections4.SetUtils;
 
 public class Subscription {
 
@@ -30,7 +28,10 @@ public class Subscription {
     }
 
     public Set<String> getProcessedItems() {
-        return Collections.unmodifiableSet(SetUtils.emptyIfNull(processedItems));
+        if (processedItems == null) {
+            processedItems = new HashSet<>();
+        }
+        return processedItems;
     }
 
     public void setProcessedItems(Set<String> processedItems) {

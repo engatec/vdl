@@ -28,6 +28,14 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
      * Method to handle "inner" playlists. For example a link to a channel has been provided an the channel contains multiple playlists. Info from them must be properly extracted.
      */
     private List<VideoInfo> extractVideoInfo(List<String> urls) throws IOException {
+        if (Thread.interrupted()) {
+            cancel();
+        }
+
+        if (isCancelled()) {
+            return List.of();
+        }
+
         List<VideoInfo> items = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(urls);
 
         List<VideoInfo> playlists = new ArrayList<>();

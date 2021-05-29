@@ -1,6 +1,7 @@
 package com.github.engatec.vdl.worker.service;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.model.VideoInfo;
@@ -15,8 +16,12 @@ public class PlaylistDetailsSearchService extends Service<List<VideoInfo>> {
     private final StringProperty url = new SimpleStringProperty();
 
     public PlaylistDetailsSearchService() {
+        this(AppExecutors.COMMON_EXECUTOR);
+    }
+
+    public PlaylistDetailsSearchService(ExecutorService executor) {
         super();
-        setExecutor(AppExecutors.COMMON_EXECUTOR);
+        setExecutor(executor);
     }
 
     public String getUrl() {

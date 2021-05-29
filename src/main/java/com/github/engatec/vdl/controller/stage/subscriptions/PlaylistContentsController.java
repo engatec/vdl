@@ -111,7 +111,7 @@ public class PlaylistContentsController implements InputForm {
                 .filter(CheckBox::isSelected)
                 .map(CheckBox::getUserData)
                 .map(it -> (VideoInfo) it)
-                .map(it -> StringUtils.firstNonBlank(it.getId(), it.getUrl(), it.getTitle()))
+                .map(SubscriptionsManager.INSTANCE::getPlaylistItemId)
                 .collect(Collectors.toSet());
 
         var subscription = new Subscription();
