@@ -129,7 +129,7 @@ public class DownloadableItemComponentController extends HBox {
         }
 
         if (selectedItem == null) {
-            formatsComboBox.getSelectionModel().selectLast();
+            formatsComboBox.getSelectionModel().selectFirst();
         } else {
             formatsComboBox.getSelectionModel().select(selectedItem);
         }
