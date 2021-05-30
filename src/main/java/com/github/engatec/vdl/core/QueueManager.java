@@ -65,16 +65,19 @@ public class QueueManager {
         queueItems.remove(item);
         queueItems.add(item);
 
-        startDownload(item);
+        if (item.getStatus() == READY) {
+            startDownload(item);
+        }
+    }
+
+    public void addAll(List<QueueItem> items) {
+        for (QueueItem item : items) {
+            addItem(item);
+        }
     }
 
     public void removeItem(QueueItem item) {
         queueItems.remove(item);
-    }
-
-    @Deprecated(forRemoval = true)
-    private void removeFinished() {
-        queueItems.removeIf(it -> it.getStatus() == FINISHED);
     }
 
     public void removeAll() {
@@ -101,8 +104,8 @@ public class QueueManager {
     private void fixState(List<QueueItem> items) {
         for (QueueItem item : ListUtils.emptyIfNull(items)) {
             DownloadStatus status = item.getStatus();
-            if (status == SCHEDULED) {
-                item.setStatus(READY); // Should be safe to turn SCHEDULED into READY as it hadn't started when the app shut down
+            if (status == SCHEDULED || status == IN_PROGRESS) {
+                item.setStatus(READY);
             }
             if (item.getProgress() < 0) {
                 item.setProgress(0);
@@ -119,9 +122,9 @@ public class QueueManager {
         ObjectMapper mapper = new ObjectMapper();
         try {
             List<QueueItem> items = mapper.readValue(queueFilePath.toFile(), new TypeReference<>(){});
+            items.removeIf(it -> it.getStatus() == FINISHED); // FIXME: this is just to clean up after previous app version which didn't remove finished items from the queue automatically
             fixState(items);
-            queueItems.addAll(items);
-            removeFinished(); // FIXME: this is just to clean up after previous app version which didn't remove finished items from the queue automatically
+            addAll(items);
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e);
         }

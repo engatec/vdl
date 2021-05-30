@@ -30,7 +30,7 @@ public class Main extends Application {
         if (needCheckYoutubeDlUpdate) {
             YoutubeDlManager.INSTANCE.checkLatestYoutubeDlVersion(stage);
         }
-        SubscriptionsManager.INSTANCE.massCheckForUpdates();
+        SubscriptionsManager.INSTANCE.updateAllSubscriptions();
     }
 
     @Override

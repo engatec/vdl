@@ -92,7 +92,7 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
 
             Platform.runLater(() -> new PlaylistContentsStage(urlTextField.getText(), items, subscription -> {
                 displaySubscriptions(List.of(subscription));
-                SubscriptionsManager.INSTANCE.checkForUpdates(subscription);
+                SubscriptionsManager.INSTANCE.updateSubscription(subscription);
             }).modal(stage).showAndWait());
         });
 
