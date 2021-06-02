@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,8 @@ public class SubscriptionsManager {
     private static final String FILENAME = "subscriptions.vdl";
 
     private final List<Subscription> subscriptions = new CopyOnWriteArrayList<>();
+
+    private Consumer<Boolean> subscriptionsUpdateProgressListener;
 
     private SubscriptionsManager() {
     }
@@ -77,10 +80,21 @@ public class SubscriptionsManager {
         if (CollectionUtils.isEmpty(subscriptions)) {
             return;
         }
-        new SubscriptionsUpdateService(subscriptions).start();
+
+        var subscriptionsUpdateService = new SubscriptionsUpdateService(subscriptions);
+        subscriptionsUpdateService.runningProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && subscriptionsUpdateProgressListener != null) {
+                subscriptionsUpdateProgressListener.accept(newValue);
+            }
+        });
+        subscriptionsUpdateService.start();
     }
 
     public String buildPlaylistItemId(VideoInfo item) {
         return StringUtils.firstNonBlank(item.getId(), item.getUrl(), item.getTitle());
+    }
+
+    public void setSubscriptionsUpdateProgressListener(Consumer<Boolean> subscriptionsUpdateProgressListener) {
+        this.subscriptionsUpdateProgressListener = subscriptionsUpdateProgressListener;
     }
 }

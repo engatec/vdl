@@ -7,6 +7,7 @@ import com.github.engatec.vdl.ui.Icon;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -20,6 +21,7 @@ public class SidebarComponentController extends VBox {
     @FXML private Label queueItemsCountLabel;
     @FXML private Label historyLabel;
     @FXML private Label subscriptionsLabel;
+    @FXML private ProgressIndicator subscriptionsUpdateProgressIndicator;
     @FXML private HBox sidebarWidthCorrectionNode; // Dummy node to prevent the sidebar from changing width on queueItemsCountLabel text change
     @FXML private Label dummyWidthLabel;
 
@@ -29,9 +31,16 @@ public class SidebarComponentController extends VBox {
     public void initialize() {
         sidebarWidthCorrectionNode.setVisible(false);
         initGraphic();
+        initSubscriptionsUpdateProgressIndicator();
 
         clickableLabels = Set.of(searchLabel, downloadsLabelWrapperNode, historyLabel, subscriptionsLabel);
         setLabelCurrent(searchLabel);
+    }
+
+    private void initSubscriptionsUpdateProgressIndicator() {
+        subscriptionsUpdateProgressIndicator.setVisible(false);
+        subscriptionsUpdateProgressIndicator.prefWidthProperty().bind(subscriptionsLabel.heightProperty());
+        subscriptionsUpdateProgressIndicator.prefHeightProperty().bind(subscriptionsLabel.heightProperty());
     }
 
     private void initGraphic() {
@@ -74,15 +83,19 @@ public class SidebarComponentController extends VBox {
         });
     }
 
-    public Consumer<Integer> getOnQueueItemsChangeListener() {
-        return count -> queueItemsCountLabel.setText(count == 0 ? StringUtils.EMPTY : "(" + count + ")");
-    }
-
     private void setLabelCurrent(Node label) {
         String styleClass = "sidebar-label-current";
         for (Node node : clickableLabels) {
             node.getStyleClass().remove(styleClass);
         }
         label.getStyleClass().add(styleClass);
+    }
+
+    public Consumer<Integer> getOnQueueItemsChangeListener() {
+        return count -> queueItemsCountLabel.setText(count == 0 ? StringUtils.EMPTY : "(" + count + ")");
+    }
+
+    public Consumer<Boolean> getSubscriptionsUpdateProgressListener() {
+        return inProgress -> subscriptionsUpdateProgressIndicator.setVisible(inProgress);
     }
 }

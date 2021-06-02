@@ -94,3 +94,8 @@
     -fx-font-size: 10;
     -fx-opacity: 0.9;
 }
+
+.subscriptions-pi {
+    -fx-progress-color: black;
+    -fx-opacity: 0.6;
+}

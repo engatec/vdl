@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <fx:root maxHeight="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="32.0" styleClass="sidebar" stylesheets="@../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
@@ -14,7 +15,12 @@
          </children>
       </HBox>
       <Label fx:id="historyLabel" styleClass="sidebar-label" text="%sidebar.history" />
-      <Label fx:id="subscriptionsLabel" styleClass="sidebar-label" text="%sidebar.subscriptions" />
+      <HBox alignment="CENTER_LEFT" spacing="4.0">
+         <children>
+            <Label fx:id="subscriptionsLabel" styleClass="sidebar-label" text="%sidebar.subscriptions" />
+            <ProgressIndicator fx:id="subscriptionsUpdateProgressIndicator" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="15.0" styleClass="subscriptions-pi" />
+         </children>
+      </HBox>
       <HBox fx:id="sidebarWidthCorrectionNode" alignment="CENTER_LEFT" spacing="4.0" styleClass="sidebar-label" visible="false">
          <children>
             <Label fx:id="dummyWidthLabel" text="%sidebar.downloads" />

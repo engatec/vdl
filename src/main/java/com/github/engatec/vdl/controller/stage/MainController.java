@@ -11,6 +11,7 @@ import com.github.engatec.vdl.controller.component.history.HistoryComponentContr
 import com.github.engatec.vdl.controller.component.search.SearchComponentController;
 import com.github.engatec.vdl.controller.component.subscriptions.SubscriptionsComponentController;
 import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.ui.component.DownloadsComponent;
 import com.github.engatec.vdl.ui.component.HistoryComponent;
 import com.github.engatec.vdl.ui.component.ServicebarComponent;
@@ -72,6 +73,7 @@ public class MainController extends StageAwareController {
 
         navigationPane.getChildren().add(sidebar);
         QueueManager.INSTANCE.setOnQueueItemsChangeListener(sidebar.getOnQueueItemsChangeListener());
+        SubscriptionsManager.INSTANCE.setSubscriptionsUpdateProgressListener(sidebar.getSubscriptionsUpdateProgressListener());
     }
 
     private <T extends Node & ComponentController> void loadComponent(T component) {
