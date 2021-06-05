@@ -41,7 +41,7 @@
       </ScrollPane>
       <AnchorPane>
          <children>
-            <Button fx:id="downloadButton" contentDisplay="RIGHT" graphicTextGap="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn-big" text="%download" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <Button fx:id="downloadButton" contentDisplay="RIGHT" graphicTextGap="2.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn-big" text="%download" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <graphic>
                   <Label fx:id="downloadsCountLabel" minHeight="-Infinity" minWidth="-Infinity" />
                </graphic></Button>

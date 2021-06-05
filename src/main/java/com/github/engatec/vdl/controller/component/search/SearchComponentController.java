@@ -187,8 +187,11 @@ public class SearchComponentController extends VBox implements ComponentControll
         );
 
         urlTextField.clear();
-        contentNode.getChildren().clear();
         downloadButton.setVisible(false);
+        selectAllCheckBox.setManaged(false);
+        selectAllCheckBox.setVisible(false);
+        contentNode.getChildren().clear();
+        checkBoxGroup.clear();
         e.consume();
     }
 
