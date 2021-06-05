@@ -38,6 +38,9 @@
          <content>
             <VBox fx:id="contentNode" spacing="16.0" />
          </content>
+         <padding>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </padding>
       </ScrollPane>
       <AnchorPane>
          <children>
