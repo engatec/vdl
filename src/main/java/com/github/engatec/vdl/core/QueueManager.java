@@ -115,7 +115,7 @@ public class QueueManager {
 
     public void restore() {
         Path queueFilePath = ApplicationContext.CONFIG_PATH.resolve(FILENAME);
-        if (!Files.exists(queueFilePath)) {
+        if (Files.notExists(queueFilePath)) {
             return;
         }
 

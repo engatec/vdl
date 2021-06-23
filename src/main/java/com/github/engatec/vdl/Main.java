@@ -22,8 +22,11 @@ public class Main extends Application {
     public void start(Stage stage) {
         loadFonts();
         setLanguage();
+
         QueueManager.INSTANCE.restore();
+        HistoryManager.INSTANCE.restore();
         SubscriptionsManager.INSTANCE.restore();
+
         new MainStage(stage).show();
 
         Boolean needCheckYoutubeDlUpdate = ConfigRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getValue();

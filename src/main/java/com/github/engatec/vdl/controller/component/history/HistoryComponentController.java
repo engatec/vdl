@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
-import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -132,6 +131,6 @@ public class HistoryComponentController extends VBox implements ComponentControl
 
     @Override
     public void onVisibilityLost() {
-        AppExecutors.SYSTEM_EXECUTOR.submit(HistoryManager.INSTANCE::persist); // To eliminate possible phantom entries from the hard drive if the user starts playing with max entries number
+        HistoryManager.INSTANCE.reviseHistorySize();
     }
 }
