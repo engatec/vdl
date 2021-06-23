@@ -3,14 +3,14 @@ package com.github.engatec.vdl.model.preferences.wrapper.misc;
 import com.github.engatec.vdl.model.preferences.ConfigItem;
 import com.github.engatec.vdl.model.preferences.misc.HistoryEntriesNumberConfigItem;
 import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
 
-public class HistoryEntriesNumberPref extends ConfigItemWrapper<IntegerProperty, Integer> {
+public class HistoryEntriesNumberPref extends ConfigItemWrapper<Property<Integer>, Integer> {
 
     private static final ConfigItem<Integer> CONFIG_ITEM = new HistoryEntriesNumberConfigItem();
 
-    private final IntegerProperty property = new SimpleIntegerProperty();
+    private final Property<Integer> property = new SimpleObjectProperty<>();
 
     public HistoryEntriesNumberPref() {
         restore();
@@ -23,17 +23,17 @@ public class HistoryEntriesNumberPref extends ConfigItemWrapper<IntegerProperty,
     }
 
     @Override
-    public IntegerProperty getProperty() {
+    public Property<Integer> getProperty() {
         return property;
     }
 
     @Override
     public Integer getValue() {
-        return property.get();
+        return property.getValue();
     }
 
     @Override
     public void setValue(Integer value) {
-        property.set(value);
+        property.setValue(value);
     }
 }

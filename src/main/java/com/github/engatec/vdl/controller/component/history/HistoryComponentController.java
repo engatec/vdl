@@ -72,7 +72,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
             }
         });
 
-        entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty().asObject());
+        entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty());
     }
 
     private void initHistoryTableView() {

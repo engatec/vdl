@@ -90,7 +90,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         askPathRadioBtn.selectedProperty().bindBidirectional(ConfigRegistry.get(AlwaysAskDownloadPathPref.class).getProperty());
         downloadPathDirectoryChooser.pathProperty().bindBidirectional(ConfigRegistry.get(DownloadPathPref.class).getProperty());
         autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(AutoSearchFromClipboardPref.class).getProperty());
-        autoSelectFormatComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(AutoSelectFormatPref.class).getProperty().asObject());
+        autoSelectFormatComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(AutoSelectFormatPref.class).getProperty());
         audioExtractionFormatComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(AudioExtractionFormatPref.class).getProperty());
         audioExtractionQualitySlider.valueProperty().bindBidirectional(ConfigRegistry.get(AudioExtractionQualityPref.class).getProperty());
         youtubeDlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getProperty());
