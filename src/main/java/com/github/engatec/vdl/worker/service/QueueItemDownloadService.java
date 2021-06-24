@@ -17,6 +17,7 @@ import com.github.engatec.vdl.exception.YoutubeDlProcessException;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.worker.data.DownloadProgressData;
+import javafx.beans.property.DoubleProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
@@ -85,6 +86,11 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
             throw new IllegalStateException(msg);
         }
         queueItem.setStatus(DownloadStatus.READY);
+
+        DoubleProperty progressProperty = queueItem.progressProperty();
+        if (!progressProperty.isBound()) {
+            progressProperty.bind(progressProperty());
+        }
 
         super.restart();
     }
