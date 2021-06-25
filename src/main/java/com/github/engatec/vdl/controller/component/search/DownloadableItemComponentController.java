@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.AudioFormat;
@@ -77,6 +78,7 @@ public class DownloadableItemComponentController extends HBox {
                 audioDownloadable.setDownloadPath(path);
                 audioDownloadable.setFormatId("bestaudio"); // No need to download video if user only wants to extract audio
                 audioDownloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(format, quality)));
+                HistoryManager.INSTANCE.addToHistory(audioDownloadable);
                 QueueManager.INSTANCE.addItem(new QueueItem(audioDownloadable));
             });
             e.consume();

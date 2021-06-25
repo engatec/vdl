@@ -3,6 +3,7 @@ package com.github.engatec.vdl.controller.component.search;
 import java.util.List;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
+import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.QueueItem;
@@ -182,6 +183,7 @@ public class SearchComponentController extends VBox implements ComponentControll
                 .forEach(it -> {
                     Downloadable downloadable = it.getDownloadable();
                     downloadable.setDownloadPath(path);
+                    HistoryManager.INSTANCE.addToHistory(downloadable);
                     QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
                 })
         );

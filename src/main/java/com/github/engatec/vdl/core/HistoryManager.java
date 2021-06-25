@@ -3,6 +3,7 @@ package com.github.engatec.vdl.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.HistoryItem;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
+import com.github.engatec.vdl.util.AppUtils;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,9 +33,12 @@ public class HistoryManager {
     private HistoryManager() {
     }
 
-    public synchronized void addHistoryItem(HistoryItem item) {
-        synchronized (lock) {
-            historyQueue.offer(item);
+    public synchronized void addToHistory(Downloadable downloadable) {
+        if (ConfigRegistry.get(HistoryEntriesNumberPref.class).getValue() > 0) {
+            HistoryItem historyItem = new HistoryItem(downloadable.getTitle(), downloadable.getBaseUrl(), downloadable.getDownloadPath(), AppUtils.convertDtmToString(LocalDateTime.now()));
+            synchronized (lock) {
+                historyQueue.offer(historyItem);
+            }
         }
     }
 

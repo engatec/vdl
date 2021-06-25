@@ -11,7 +11,6 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,10 +29,8 @@ import com.github.engatec.vdl.core.youtubedl.processbuilder.VersionFetchProcessB
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlUpdateProcessBuilder;
 import com.github.engatec.vdl.exception.YoutubeDlProcessException;
-import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.util.AppUtils;
@@ -95,12 +92,6 @@ public class YoutubeDlManager {
     }
 
     public Process download(Downloadable downloadable) throws IOException {
-        if (ConfigRegistry.get(HistoryEntriesNumberPref.class).getValue() > 0) { // TODO: Think about eventbus instead
-            HistoryManager.INSTANCE.addHistoryItem(
-                    new HistoryItem(downloadable.getTitle(), downloadable.getBaseUrl(), downloadable.getDownloadPath(), AppUtils.convertDtmToString(LocalDateTime.now()))
-            );
-        }
-
         Boolean useConfigFile = ConfigRegistry.get(UseConfigFilePref.class).getValue();
         YoutubeDlProcessBuilder pb = useConfigFile ? new DownloadWithConfigFileProcessBuilder(downloadable) : new DownloadProcessBuilder(downloadable);
         List<String> command = pb.buildCommand();

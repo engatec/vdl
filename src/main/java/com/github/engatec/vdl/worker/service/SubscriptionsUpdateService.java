@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.AppExecutors;
+import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -92,7 +93,10 @@ public class SubscriptionsUpdateService extends Service<Void> {
                     downloadable.setFormatId(formatId);
                     downloadable.setDownloadPath(Path.of(subscription.getPath()));
 
-                    Platform.runLater(() -> QueueManager.INSTANCE.addItem(new QueueItem(downloadable)));
+                    Platform.runLater(() -> {
+                        HistoryManager.INSTANCE.addToHistory(downloadable);
+                        QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
+                    });
 
                     processedItems.add(SubscriptionsManager.INSTANCE.buildPlaylistItemId(vi));
                 }
