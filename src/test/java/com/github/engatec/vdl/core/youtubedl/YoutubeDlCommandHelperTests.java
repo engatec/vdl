@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
@@ -32,6 +33,8 @@ import static org.assertj.core.api.Assertions.atIndex;
 
 public class YoutubeDlCommandHelperTests {
 
+    private final ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+
     private void doAssertions(List<String> command, String key) {
         assertThat(command).hasSize(2);
         assertThat(command).contains(key, atIndex(1));
@@ -49,12 +52,12 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            ConfigRegistry.get(MarkWatchedPref.class).setValue(false);
-            ConfigRegistry.get(NoContinuePref.class).setValue(false);
-            ConfigRegistry.get(NoPartPref.class).setValue(false);
-            ConfigRegistry.get(NoMTimePref.class).setValue(false);
-            ConfigRegistry.get(ReadCookiesPref.class).setValue(false);
-            ConfigRegistry.get(CookiesFileLocationPref.class).setValue(StringUtils.EMPTY);
+            configRegistry.get(MarkWatchedPref.class).setValue(false);
+            configRegistry.get(NoContinuePref.class).setValue(false);
+            configRegistry.get(NoPartPref.class).setValue(false);
+            configRegistry.get(NoMTimePref.class).setValue(false);
+            configRegistry.get(ReadCookiesPref.class).setValue(false);
+            configRegistry.get(CookiesFileLocationPref.class).setValue(StringUtils.EMPTY);
         }
 
         private List<String> buildCommand() {
@@ -71,33 +74,33 @@ public class YoutubeDlCommandHelperTests {
 
         @Test
         void shouldSetMarkWatched() {
-            ConfigRegistry.get(MarkWatchedPref.class).getProperty().setValue(true);
+            configRegistry.get(MarkWatchedPref.class).getProperty().setValue(true);
             doAssertions(buildCommand(), "--mark-watched");
         }
 
         @Test
         void shouldSetNoContinue() {
-            ConfigRegistry.get(NoContinuePref.class).getProperty().setValue(true);
+            configRegistry.get(NoContinuePref.class).getProperty().setValue(true);
             doAssertions(buildCommand(), "--no-continue");
         }
 
         @Test
         void shouldSetNoPart() {
-            ConfigRegistry.get(NoPartPref.class).getProperty().setValue(true);
+            configRegistry.get(NoPartPref.class).getProperty().setValue(true);
             doAssertions(buildCommand(), "--no-part");
         }
 
         @Test
         void shouldSetNoMTime() {
-            ConfigRegistry.get(NoMTimePref.class).getProperty().setValue(true);
+            configRegistry.get(NoMTimePref.class).getProperty().setValue(true);
             doAssertions(buildCommand(), "--no-mtime");
         }
 
         @Test
         void shouldSetCookies() throws Exception {
             Path tempFile = Files.createTempFile(null, null);
-            ConfigRegistry.get(ReadCookiesPref.class).getProperty().setValue(true);
-            ConfigRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(tempFile.toString());
+            configRegistry.get(ReadCookiesPref.class).getProperty().setValue(true);
+            configRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(tempFile.toString());
             doAssertions(buildCommand(), "--cookies", tempFile.toString());
             Files.deleteIfExists(tempFile);
         }
@@ -105,8 +108,8 @@ public class YoutubeDlCommandHelperTests {
         @Test
         void shouldNotSetCookies_fileNotExists() {
             String path = "path";
-            ConfigRegistry.get(ReadCookiesPref.class).getProperty().setValue(true);
-            ConfigRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(path);
+            configRegistry.get(ReadCookiesPref.class).getProperty().setValue(true);
+            configRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(path);
             assertThat(buildCommand())
                     .hasSize(1)
                     .doesNotContain("--cookies");
@@ -115,7 +118,7 @@ public class YoutubeDlCommandHelperTests {
         @Test
         void shouldNoSetCookies_readCookiesPropertyIsFalse() {
             String path = "path";
-            ConfigRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(path);
+            configRegistry.get(CookiesFileLocationPref.class).getProperty().setValue(path);
             assertThat(buildCommand())
                     .hasSize(1)
                     .doesNotContain("--cookies");
@@ -128,11 +131,11 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            ConfigRegistry.get(ProxyUrlPref.class).setValue(StringUtils.EMPTY);
-            ConfigRegistry.get(SocketTimeoutPref.class).setValue(StringUtils.EMPTY);
-            ConfigRegistry.get(SourceAddressPref.class).setValue(StringUtils.EMPTY);
-            ConfigRegistry.get(ForceIpV4Pref.class).setValue(false);
-            ConfigRegistry.get(ForceIpV6Pref.class).setValue(false);
+            configRegistry.get(ProxyUrlPref.class).setValue(StringUtils.EMPTY);
+            configRegistry.get(SocketTimeoutPref.class).setValue(StringUtils.EMPTY);
+            configRegistry.get(SourceAddressPref.class).setValue(StringUtils.EMPTY);
+            configRegistry.get(ForceIpV4Pref.class).setValue(false);
+            configRegistry.get(ForceIpV6Pref.class).setValue(false);
         }
 
         private List<String> buildCommand() {
@@ -150,42 +153,42 @@ public class YoutubeDlCommandHelperTests {
         @Test
         void shouldSetProxyUrl() {
             String proxyUrl = "http://proxy";
-            ConfigRegistry.get(ProxyUrlPref.class).getProperty().setValue(proxyUrl);
+            configRegistry.get(ProxyUrlPref.class).getProperty().setValue(proxyUrl);
             doAssertions(buildCommand(), "--proxy", proxyUrl);
         }
 
         @Test
         void shouldSetSocketTimeout() {
             String timeout = "10";
-            ConfigRegistry.get(SocketTimeoutPref.class).getProperty().setValue(timeout);
+            configRegistry.get(SocketTimeoutPref.class).getProperty().setValue(timeout);
             doAssertions(buildCommand(), "--socket-timeout", timeout);
         }
 
         @Test
         void shouldSetSourceAddress() {
             String ip = "127.0.0.1";
-            ConfigRegistry.get(SourceAddressPref.class).getProperty().setValue(ip);
+            configRegistry.get(SourceAddressPref.class).getProperty().setValue(ip);
             doAssertions(buildCommand(), "--source-address", ip);
         }
 
         @Test
         void shouldSetForceIpV4() {
-            ConfigRegistry.get(ForceIpV4Pref.class).getProperty().setValue(true);
+            configRegistry.get(ForceIpV4Pref.class).getProperty().setValue(true);
             doAssertions(buildCommand(), "--force-ipv4");
         }
 
         @Test
         void shouldSetForceIpV6() {
-            ConfigRegistry.get(ForceIpV6Pref.class).getProperty().setValue(true);
+            configRegistry.get(ForceIpV6Pref.class).getProperty().setValue(true);
             doAssertions(buildCommand(), "--force-ipv6");
         }
 
         @Test
         void shouldSetMultiple() {
-            ConfigRegistry.get(ProxyUrlPref.class).getProperty().setValue("http://proxy");
-            ConfigRegistry.get(SocketTimeoutPref.class).getProperty().setValue("10");
-            ConfigRegistry.get(SourceAddressPref.class).getProperty().setValue("127.0.0.1");
-            ConfigRegistry.get(ForceIpV4Pref.class).getProperty().setValue(true);
+            configRegistry.get(ProxyUrlPref.class).getProperty().setValue("http://proxy");
+            configRegistry.get(SocketTimeoutPref.class).getProperty().setValue("10");
+            configRegistry.get(SourceAddressPref.class).getProperty().setValue("127.0.0.1");
+            configRegistry.get(ForceIpV4Pref.class).getProperty().setValue(true);
             List<String> command = buildCommand();
             assertThat(command)
                     .hasSize(8)
@@ -200,11 +203,11 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            ConfigRegistry.get(AuthUsernamePref.class).setValue(StringUtils.EMPTY);
-            ConfigRegistry.get(AuthPasswordPref.class).setValue(StringUtils.EMPTY);
-            ConfigRegistry.get(TwoFactorCodePref.class).setValue(StringUtils.EMPTY);
-            ConfigRegistry.get(NetrcPref.class).setValue(false);
-            ConfigRegistry.get(VideoPasswordPref.class).setValue(StringUtils.EMPTY);
+            configRegistry.get(AuthUsernamePref.class).setValue(StringUtils.EMPTY);
+            configRegistry.get(AuthPasswordPref.class).setValue(StringUtils.EMPTY);
+            configRegistry.get(TwoFactorCodePref.class).setValue(StringUtils.EMPTY);
+            configRegistry.get(NetrcPref.class).setValue(false);
+            configRegistry.get(VideoPasswordPref.class).setValue(StringUtils.EMPTY);
         }
 
         private List<String> buildCommand() {
@@ -222,53 +225,53 @@ public class YoutubeDlCommandHelperTests {
         @Test
         void shouldSetUsername() {
             String username = "usr";
-            ConfigRegistry.get(AuthUsernamePref.class).getProperty().setValue(username);
+            configRegistry.get(AuthUsernamePref.class).getProperty().setValue(username);
             doAssertions(buildCommand(), "-u", username);
         }
 
         @Test
         void shouldSetPassword() {
             String password = "pass";
-            ConfigRegistry.get(AuthPasswordPref.class).getProperty().setValue(password);
+            configRegistry.get(AuthPasswordPref.class).getProperty().setValue(password);
             doAssertions(buildCommand(), "-p", password);
         }
 
         @Test
         void shouldNotSetTwoFactorCode_noUsernameOrPassword() {
             String code = "pass";
-            ConfigRegistry.get(TwoFactorCodePref.class).getProperty().setValue(code);
+            configRegistry.get(TwoFactorCodePref.class).getProperty().setValue(code);
             assertThat(buildCommand()).hasSize(1).doesNotContain("-2");
         }
 
         @Test
         void shouldSetTwoFactorCode() {
             String code = "pass";
-            ConfigRegistry.get(AuthUsernamePref.class).getProperty().setValue("usr");
-            ConfigRegistry.get(AuthPasswordPref.class).getProperty().setValue("pass");
-            ConfigRegistry.get(TwoFactorCodePref.class).getProperty().setValue(code);
+            configRegistry.get(AuthUsernamePref.class).getProperty().setValue("usr");
+            configRegistry.get(AuthPasswordPref.class).getProperty().setValue("pass");
+            configRegistry.get(TwoFactorCodePref.class).getProperty().setValue(code);
             assertThat(buildCommand()).hasSize(7)
                     .contains("-2", "-u", "-p");
         }
 
         @Test
         void shouldSetNetrc() {
-            ConfigRegistry.get(NetrcPref.class).getProperty().setValue(true);
+            configRegistry.get(NetrcPref.class).getProperty().setValue(true);
             doAssertions(buildCommand(), "--netrc");
         }
 
         @Test
         void shouldSetVideoPassword() {
             String code = "pass";
-            ConfigRegistry.get(VideoPasswordPref.class).getProperty().setValue(code);
+            configRegistry.get(VideoPasswordPref.class).getProperty().setValue(code);
             doAssertions(buildCommand(), "--video-password", code);
         }
 
         @Test
         void shouldSetMultiple() {
-            ConfigRegistry.get(AuthUsernamePref.class).getProperty().setValue("usr");
-            ConfigRegistry.get(AuthPasswordPref.class).getProperty().setValue("pass");
-            ConfigRegistry.get(TwoFactorCodePref.class).getProperty().setValue("pass");
-            ConfigRegistry.get(VideoPasswordPref.class).getProperty().setValue("pass");
+            configRegistry.get(AuthUsernamePref.class).getProperty().setValue("usr");
+            configRegistry.get(AuthPasswordPref.class).getProperty().setValue("pass");
+            configRegistry.get(TwoFactorCodePref.class).getProperty().setValue("pass");
+            configRegistry.get(VideoPasswordPref.class).getProperty().setValue("pass");
             List<String> command = buildCommand();
             assertThat(command)
                     .hasSize(9)

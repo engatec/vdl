@@ -25,6 +25,7 @@ public class HistoryManager {
     private final Object lock = new Object();
 
     public static final HistoryManager INSTANCE = new HistoryManager();
+    private final ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
 
     private static final String FILENAME = "history.vdl";
 
@@ -34,7 +35,7 @@ public class HistoryManager {
     }
 
     public synchronized void addToHistory(Downloadable downloadable) {
-        if (ConfigRegistry.get(HistoryEntriesNumberPref.class).getValue() > 0) {
+        if (configRegistry.get(HistoryEntriesNumberPref.class).getValue() > 0) {
             HistoryItem historyItem = new HistoryItem(downloadable.getTitle(), downloadable.getBaseUrl(), downloadable.getDownloadPath(), AppUtils.convertDtmToString(LocalDateTime.now()));
             synchronized (lock) {
                 historyQueue.offer(historyItem);
@@ -49,7 +50,7 @@ public class HistoryManager {
     }
 
     public void reviseHistorySize() {
-        Integer historyEntriesMaxNumber = ConfigRegistry.get(HistoryEntriesNumberPref.class).getValue();
+        Integer historyEntriesMaxNumber = configRegistry.get(HistoryEntriesNumberPref.class).getValue();
         if (historyQueue.maxSize() != historyEntriesMaxNumber) {
             synchronized (lock) {
                 CircularFifoQueue<HistoryItem> newQueue = new CircularFifoQueue<>(historyEntriesMaxNumber);
@@ -64,7 +65,7 @@ public class HistoryManager {
     }
 
     public void restore() {
-        Integer historyEntriesMaxNumber = ConfigRegistry.get(HistoryEntriesNumberPref.class).getValue();
+        Integer historyEntriesMaxNumber = configRegistry.get(HistoryEntriesNumberPref.class).getValue();
         List<HistoryItem> loadedItems = new ArrayList<>(historyEntriesMaxNumber);
 
         Path historyPath = ApplicationContext.CONFIG_PATH.resolve(FILENAME);

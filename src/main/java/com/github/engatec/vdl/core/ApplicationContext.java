@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -16,6 +17,7 @@ public class ApplicationContext {
 
     public static final Path CONFIG_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
 
+    private ConfigRegistry configRegistry;
     private ResourceBundle resourceBundle;
 
     public void setLanguage(Language language) {
@@ -24,6 +26,14 @@ public class ApplicationContext {
 
     public ResourceBundle getResourceBundle() {
         return resourceBundle;
+    }
+
+    public void setConfigRegistry(ConfigRegistry configRegistry) {
+        this.configRegistry = configRegistry;
+    }
+
+    public ConfigRegistry getConfigRegistry() {
+        return configRegistry;
     }
 
     public Charset getSystemCharset() {

@@ -7,7 +7,7 @@ import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.core.YoutubeDlManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.core.preferences.ConfigRegistryImpl;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
@@ -20,6 +20,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        initConfig();
         loadFonts();
         setLanguage();
 
@@ -29,7 +30,7 @@ public class Main extends Application {
 
         new MainStage(stage).show();
 
-        Boolean needCheckYoutubeDlUpdate = ConfigRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getValue();
+        Boolean needCheckYoutubeDlUpdate = ApplicationContext.INSTANCE.getConfigRegistry().get(YoutubeDlStartupUpdatesCheckPref.class).getValue();
         if (needCheckYoutubeDlUpdate) {
             YoutubeDlManager.INSTANCE.checkLatestYoutubeDlVersion(stage);
         }
@@ -49,13 +50,18 @@ public class Main extends Application {
         launch(args);
     }
 
+    private void initConfig() {
+        ApplicationContext.INSTANCE.setConfigRegistry(new ConfigRegistryImpl());
+    }
+
     private void loadFonts() {
         Font.loadFont(getClass().getResourceAsStream("/assets/fonts/Roboto-Regular.ttf"), 0);
         Font.loadFont(getClass().getResourceAsStream("/assets/fonts/Roboto-Bold.ttf"), 0);
     }
 
     private void setLanguage() {
-        Language language = Language.getByLocaleCode(ConfigRegistry.get(LanguagePref.class).getValue());
-        ApplicationContext.INSTANCE.setLanguage(language);
+        ApplicationContext ctx = ApplicationContext.INSTANCE;
+        Language language = Language.getByLocaleCode(ctx.getConfigRegistry().get(LanguagePref.class).getValue());
+        ctx.setLanguage(language);
     }
 }

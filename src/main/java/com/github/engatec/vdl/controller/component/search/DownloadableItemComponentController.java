@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -71,9 +72,10 @@ public class DownloadableItemComponentController extends HBox {
         audioButton.setTooltip(Tooltips.createNew("download.audio"));
         audioButton.setOnAction(e -> {
             AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
-                String format = ConfigRegistry.get(AudioExtractionFormatPref.class).getValue();
+                ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+                String format = configRegistry.get(AudioExtractionFormatPref.class).getValue();
                 // Youtube-dl quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
-                int quality = Math.abs(ConfigRegistry.get(AudioExtractionQualityPref.class).getValue() - AudioFormat.BEST_QUALITY);
+                int quality = Math.abs(configRegistry.get(AudioExtractionQualityPref.class).getValue() - AudioFormat.BEST_QUALITY);
                 Downloadable audioDownloadable = getDownloadable();
                 audioDownloadable.setDownloadPath(path);
                 audioDownloadable.setFormatId("bestaudio"); // No need to download video if user only wants to extract audio
@@ -119,7 +121,7 @@ public class DownloadableItemComponentController extends HBox {
                 .collect(Collectors.toList());
 
         ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
-        Integer autoSelectFormat = ConfigRegistry.get(AutoSelectFormatPref.class).getValue();
+        Integer autoSelectFormat = ApplicationContext.INSTANCE.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
         ComboBoxValueHolder<String> selectedItem = null;
         for (Integer height : commonAvailableHeights) {
             ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), YouDlUtils.createFormatByHeight(height));

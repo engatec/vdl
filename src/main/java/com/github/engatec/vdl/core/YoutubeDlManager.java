@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.CacheRemoveProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadWithConfigFileProcessBuilder;
@@ -92,7 +91,7 @@ public class YoutubeDlManager {
     }
 
     public Process download(Downloadable downloadable) throws IOException {
-        Boolean useConfigFile = ConfigRegistry.get(UseConfigFilePref.class).getValue();
+        Boolean useConfigFile = ApplicationContext.INSTANCE.getConfigRegistry().get(UseConfigFilePref.class).getValue();
         YoutubeDlProcessBuilder pb = useConfigFile ? new DownloadWithConfigFileProcessBuilder(downloadable) : new DownloadProcessBuilder(downloadable);
         List<String> command = pb.buildCommand();
         return pb.buildProcess(command);

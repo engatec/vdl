@@ -3,7 +3,7 @@ package com.github.engatec.vdl.handler;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -30,7 +30,7 @@ public class CopyUrlFromClipboardOnFocusChangeListener implements ChangeListener
             return;
         }
 
-        if (!ConfigRegistry.get(AutoSearchFromClipboardPref.class).getValue()) {
+        if (!ApplicationContext.INSTANCE.getConfigRegistry().get(AutoSearchFromClipboardPref.class).getValue()) {
             return;
         }
 

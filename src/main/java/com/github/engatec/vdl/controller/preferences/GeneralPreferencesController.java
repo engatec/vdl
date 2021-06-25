@@ -36,6 +36,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class GeneralPreferencesController extends ScrollPane implements InputForm {
 
+    private final ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+
     @FXML private ComboBox<ComboBoxValueHolder<Language>> languageComboBox;
 
     @FXML private CheckBox youtubeDlStartupUpdatesCheckBox;
@@ -68,7 +70,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 .collect(Collectors.toList());
         languageComboBox.getItems().addAll(languages);
 
-        Language currentLanguage = Language.getByLocaleCode(ConfigRegistry.get(LanguagePref.class).getValue());
+        Language currentLanguage = Language.getByLocaleCode(configRegistry.get(LanguagePref.class).getValue());
         languages.stream()
                 .filter(it -> it.getValue() == currentLanguage)
                 .findFirst()
@@ -78,7 +80,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
             if (newValue != null) {
                 Language newLanguage = newValue.getValue();
                 ApplicationContext.INSTANCE.setLanguage(newLanguage);
-                LanguagePref languagePref = ConfigRegistry.get(LanguagePref.class);
+                LanguagePref languagePref = configRegistry.get(LanguagePref.class);
                 languagePref.setValue(newLanguage.getLocaleCode());
                 languagePref.save();
                 Dialogs.info("preferences.general.language.dialog.info");
@@ -87,13 +89,13 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     }
 
     private void bindPropertyHolder() {
-        askPathRadioBtn.selectedProperty().bindBidirectional(ConfigRegistry.get(AlwaysAskDownloadPathPref.class).getProperty());
-        downloadPathDirectoryChooser.pathProperty().bindBidirectional(ConfigRegistry.get(DownloadPathPref.class).getProperty());
-        autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(AutoSearchFromClipboardPref.class).getProperty());
-        autoSelectFormatComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(AutoSelectFormatPref.class).getProperty());
-        audioExtractionFormatComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(AudioExtractionFormatPref.class).getProperty());
-        audioExtractionQualitySlider.valueProperty().bindBidirectional(ConfigRegistry.get(AudioExtractionQualityPref.class).getProperty());
-        youtubeDlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(ConfigRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getProperty());
+        askPathRadioBtn.selectedProperty().bindBidirectional(configRegistry.get(AlwaysAskDownloadPathPref.class).getProperty());
+        downloadPathDirectoryChooser.pathProperty().bindBidirectional(configRegistry.get(DownloadPathPref.class).getProperty());
+        autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(configRegistry.get(AutoSearchFromClipboardPref.class).getProperty());
+        autoSelectFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AutoSelectFormatPref.class).getProperty());
+        audioExtractionFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionFormatPref.class).getProperty());
+        audioExtractionQualitySlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionQualityPref.class).getProperty());
+        youtubeDlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getProperty());
     }
 
     private void initDownloadPathSettings() {

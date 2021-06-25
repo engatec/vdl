@@ -11,7 +11,6 @@ import com.github.engatec.fxcontrols.FxDirectoryChooser;
 import com.github.engatec.fxcontrols.FxTextField;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.SubscriptionsManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.handler.textformatter.NotBlankTextFormatter;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
@@ -59,10 +58,11 @@ public class PlaylistContentsController implements InputForm {
 
     @FXML
     public void initialize() {
+        ApplicationContext ctx = ApplicationContext.INSTANCE;
         subscriptionNameTextField.setTextFormatter(new NotBlankTextFormatter());
         subscriptionNameTextField.textProperty().addListener((observable, oldValue, newValue) -> subscriptionNameTextField.clearError());
-        subscriptionDownloadPathDirectoryChooser.setButtonText(ApplicationContext.INSTANCE.getResourceBundle().getString("button.directorychoose"));
-        subscriptionDownloadPathDirectoryChooser.setPath(ConfigRegistry.get(DownloadPathPref.class).getValue());
+        subscriptionDownloadPathDirectoryChooser.setButtonText(ctx.getResourceBundle().getString("button.directorychoose"));
+        subscriptionDownloadPathDirectoryChooser.setPath(ctx.getConfigRegistry().get(DownloadPathPref.class).getValue());
         subscribeBtn.setOnAction(this::handleSubscribeButtonClick);
         closeBtn.setOnAction(this::handleCloseButtonClick);
 

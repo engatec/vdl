@@ -37,8 +37,9 @@ public class AppUtils {
     }
 
     private static Path doResolveDownloadPath(Stage stage) {
-        Path downloadPath = Paths.get(ConfigRegistry.get(DownloadPathPref.class).getValue());
-        boolean askPath = ConfigRegistry.get(AlwaysAskDownloadPathPref.class).getValue();
+        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        Path downloadPath = Paths.get(configRegistry.get(DownloadPathPref.class).getValue());
+        boolean askPath = configRegistry.get(AlwaysAskDownloadPathPref.class).getValue();
         if (askPath) {
             var directoryChooser = new DirectoryChooser();
             File selectedDirectory = directoryChooser.showDialog(stage);

@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.ui.Dialogs;
@@ -72,7 +71,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
             }
         });
 
-        entriesNumberComboBox.valueProperty().bindBidirectional(ConfigRegistry.get(HistoryEntriesNumberPref.class).getProperty());
+        entriesNumberComboBox.valueProperty().bindBidirectional(ApplicationContext.INSTANCE.getConfigRegistry().get(HistoryEntriesNumberPref.class).getProperty());
     }
 
     private void initHistoryTableView() {

@@ -8,10 +8,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.AppExecutors;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
@@ -81,7 +81,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
                         .filter(Predicate.not(it -> processedItems.contains(SubscriptionsManager.INSTANCE.buildPlaylistItemId(it))))
                         .collect(Collectors.toList());
 
-                Integer selectedVideoHeight = ConfigRegistry.get(AutoSelectFormatPref.class).getValue();
+                Integer selectedVideoHeight = ApplicationContext.INSTANCE.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
                 selectedVideoHeight = AutoSelectFormatConfigItem.DEFAULT.equals(selectedVideoHeight) ? null : selectedVideoHeight;
 
                 for (VideoInfo vi : newItems) {

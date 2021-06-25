@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 public class PreferencesController extends StageAwareController {
 
     private final ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+    private final ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
 
     @FXML private ScrollPane preferencesScrollPane;
     @FXML private TreeView<Category> preferencesCategoryTreeView;
@@ -81,7 +82,7 @@ public class PreferencesController extends StageAwareController {
     }
 
     private void discardChanges() {
-        ConfigRegistry.restorePreviousValues();
+        configRegistry.restorePreviousValues();
     }
 
     private void handleOkBtnClick(ActionEvent event) {
@@ -99,6 +100,6 @@ public class PreferencesController extends StageAwareController {
     }
 
     private void saveSettings() {
-        ConfigRegistry.saveAll();
+        configRegistry.saveAll();
     }
 }

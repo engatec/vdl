@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
@@ -26,7 +25,7 @@ public class DownloadWithConfigFileProcessBuilder implements YoutubeDlProcessBui
 
     @Override
     public List<String> buildCommand() {
-        String configLocation = ConfigRegistry.get(ConfigFilePathPref.class).getValue();
+        String configLocation = ApplicationContext.INSTANCE.getConfigRegistry().get(ConfigFilePathPref.class).getValue();
 
         YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance().configLocation(configLocation);
 
