@@ -13,6 +13,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
@@ -68,6 +69,7 @@ public class ConfigRegistryImpl implements ConfigRegistry {
 
         /* Misc */
         addToRegistry(new HistoryEntriesNumberPref());
+        addToRegistry(new RecentDownloadPathPref());
     }
 
     private static <T extends ConfigItemWrapper<?, ?>> void addToRegistry(T pref) {

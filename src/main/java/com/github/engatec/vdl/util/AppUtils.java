@@ -12,6 +12,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.worker.UpdateBinariesTask;
 import javafx.stage.DirectoryChooser;
@@ -33,6 +34,8 @@ public class AppUtils {
             return Optional.empty();
         }
 
+        ApplicationContext.INSTANCE.getConfigRegistry().get(RecentDownloadPathPref.class).setValue(path.toString());
+
         return Optional.of(path);
     }
 
@@ -42,6 +45,10 @@ public class AppUtils {
         boolean askPath = configRegistry.get(AlwaysAskDownloadPathPref.class).getValue();
         if (askPath) {
             var directoryChooser = new DirectoryChooser();
+            File recentDownloadPath = Path.of(ApplicationContext.INSTANCE.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
+            if (recentDownloadPath.isDirectory()) {
+                directoryChooser.setInitialDirectory(recentDownloadPath);
+            }
             File selectedDirectory = directoryChooser.showDialog(stage);
             downloadPath = selectedDirectory != null ? selectedDirectory.toPath() : null;
         }
