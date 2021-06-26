@@ -38,4 +38,23 @@ public class HistoryManagerTest {
 
         assertThat(HistoryManager.INSTANCE.getHistoryItems()).hasSize(1);
     }
+
+    @Test
+    void shouldNotAddToHistory() {
+        HistoryEntriesNumberPref historyEntriesNumberPrefMock = Mockito.mock(HistoryEntriesNumberPref.class);
+
+        ConfigRegistry configRegistryMock = ApplicationContext.INSTANCE.getConfigRegistry();
+        Mockito.when(configRegistryMock.get(HistoryEntriesNumberPref.class)).thenReturn(historyEntriesNumberPrefMock);
+        Mockito.when(historyEntriesNumberPrefMock.getValue()).thenReturn(0);
+
+        assertThat(HistoryManager.INSTANCE.getHistoryItems()).isEmpty();
+
+        Downloadable downloadable = new BaseDownloadable();
+        downloadable.setTitle("Title");
+        downloadable.setBaseUrl("http://localhost");
+        downloadable.setDownloadPath(Path.of("/"));
+        HistoryManager.INSTANCE.addToHistory(downloadable);
+
+        assertThat(HistoryManager.INSTANCE.getHistoryItems()).isEmpty();
+    }
 }

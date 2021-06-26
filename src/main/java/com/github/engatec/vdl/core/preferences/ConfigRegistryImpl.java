@@ -34,47 +34,51 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordP
 
 public class ConfigRegistryImpl implements ConfigRegistry {
 
-    private final Map<Class<? extends ConfigItemWrapper<?, ?>>, ConfigItemWrapper<?, ?>> REGISTRY = new HashMap<>();
+    private static final Map<Class<? extends ConfigItemWrapper<?, ?>>, ConfigItemWrapper<?, ?>> REGISTRY = new HashMap<>();
 
-    public ConfigRegistryImpl() {
-        REGISTRY.put(AlwaysAskDownloadPathPref.class, new AlwaysAskDownloadPathPref());
-        REGISTRY.put(AudioExtractionFormatPref.class, new AudioExtractionFormatPref());
-        REGISTRY.put(AudioExtractionQualityPref.class, new AudioExtractionQualityPref());
-        REGISTRY.put(AutoSelectFormatPref.class, new AutoSelectFormatPref());
-        REGISTRY.put(AutoSearchFromClipboardPref.class, new AutoSearchFromClipboardPref());
-        REGISTRY.put(DownloadPathPref.class, new DownloadPathPref());
-        REGISTRY.put(LanguagePref.class, new LanguagePref());
-        REGISTRY.put(YoutubeDlStartupUpdatesCheckPref.class, new YoutubeDlStartupUpdatesCheckPref());
+    static {
+        addToRegistry(new AlwaysAskDownloadPathPref());
+        addToRegistry(new AudioExtractionFormatPref());
+        addToRegistry(new AudioExtractionQualityPref());
+        addToRegistry(new AutoSelectFormatPref());
+        addToRegistry(new AutoSearchFromClipboardPref());
+        addToRegistry(new DownloadPathPref());
+        addToRegistry(new LanguagePref());
+        addToRegistry(new YoutubeDlStartupUpdatesCheckPref());
 
         /* YoutubeDl */
-        REGISTRY.put(ConfigFilePathPref.class, new ConfigFilePathPref());
-        REGISTRY.put(MarkWatchedPref.class, new MarkWatchedPref());
-        REGISTRY.put(NoContinuePref.class, new NoContinuePref());
-        REGISTRY.put(NoPartPref.class, new NoPartPref());
-        REGISTRY.put(NoMTimePref.class, new NoMTimePref());
-        REGISTRY.put(ReadCookiesPref.class, new ReadCookiesPref());
-        REGISTRY.put(CookiesFileLocationPref.class, new CookiesFileLocationPref());
-        REGISTRY.put(ProxyUrlPref.class, new ProxyUrlPref());
-        REGISTRY.put(SocketTimeoutPref.class, new SocketTimeoutPref());
-        REGISTRY.put(UseConfigFilePref.class, new UseConfigFilePref());
-        REGISTRY.put(SourceAddressPref.class, new SourceAddressPref());
-        REGISTRY.put(ForceIpV4Pref.class, new ForceIpV4Pref());
-        REGISTRY.put(ForceIpV6Pref.class, new ForceIpV6Pref());
-        REGISTRY.put(AuthUsernamePref.class, new AuthUsernamePref());
-        REGISTRY.put(AuthPasswordPref.class, new AuthPasswordPref());
-        REGISTRY.put(TwoFactorCodePref.class, new TwoFactorCodePref());
-        REGISTRY.put(NetrcPref.class, new NetrcPref());
-        REGISTRY.put(VideoPasswordPref.class, new VideoPasswordPref());
+        addToRegistry(new ConfigFilePathPref());
+        addToRegistry(new MarkWatchedPref());
+        addToRegistry(new NoContinuePref());
+        addToRegistry(new NoPartPref());
+        addToRegistry(new NoMTimePref());
+        addToRegistry(new ReadCookiesPref());
+        addToRegistry(new CookiesFileLocationPref());
+        addToRegistry(new ProxyUrlPref());
+        addToRegistry(new SocketTimeoutPref());
+        addToRegistry(new UseConfigFilePref());
+        addToRegistry(new SourceAddressPref());
+        addToRegistry(new ForceIpV4Pref());
+        addToRegistry(new ForceIpV6Pref());
+        addToRegistry(new AuthUsernamePref());
+        addToRegistry(new AuthPasswordPref());
+        addToRegistry(new TwoFactorCodePref());
+        addToRegistry(new NetrcPref());
+        addToRegistry(new VideoPasswordPref());
 
         /* Misc */
-        REGISTRY.put(HistoryEntriesNumberPref.class, new HistoryEntriesNumberPref());
+        addToRegistry(new HistoryEntriesNumberPref());
+    }
+
+    private static <T extends ConfigItemWrapper<?, ?>> void addToRegistry(T pref) {
+        REGISTRY.put((Class<? extends ConfigItemWrapper<?, ?>>) pref.getClass(), pref);
     }
 
     public <T extends ConfigItemWrapper<?, ?>> T get(Class<T> clazz) {
         return (T) REGISTRY.get(clazz);
     }
 
-    public void restorePreviousValues() {
+    public void dropUnsavedChanges() {
         for (ConfigItemWrapper<?, ?> value : REGISTRY.values()) {
             value.restore();
         }

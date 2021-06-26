@@ -6,7 +6,7 @@ public interface ConfigRegistry {
 
     <T extends ConfigItemWrapper<?, ?>> T get(Class<T> clazz);
 
-    void restorePreviousValues();
+    void dropUnsavedChanges();
 
     void saveAll();
 }

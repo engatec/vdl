@@ -82,7 +82,7 @@ public class PreferencesController extends StageAwareController {
     }
 
     private void discardChanges() {
-        configRegistry.restorePreviousValues();
+        configRegistry.dropUnsavedChanges();
     }
 
     private void handleOkBtnClick(ActionEvent event) {
