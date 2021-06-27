@@ -25,12 +25,12 @@ public class DownloadProcessBuilder implements YoutubeDlProcessBuilder {
 
         commandBuilder
                 .formatId(downloadable.getFormatId())
-                .outputPath(downloadable.getDownloadPath(), downloadable.getTitle())
                 .ignoreConfig()
                 .ignoreErrors()
                 .noCheckCertificate()
                 .ffmpegLocation(ApplicationContext.APP_DIR);
 
+        YoutubeDlCommandHelper.setOutputPath(commandBuilder, downloadable);
         YoutubeDlCommandHelper.setGeneralOptions(commandBuilder);
         YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
         YoutubeDlCommandHelper.setAuthenticationOptions(commandBuilder);

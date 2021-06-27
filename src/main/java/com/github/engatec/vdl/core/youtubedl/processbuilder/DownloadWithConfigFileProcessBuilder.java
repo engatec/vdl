@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
+import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +42,7 @@ public class DownloadWithConfigFileProcessBuilder implements YoutubeDlProcessBui
         }
 
         if (!configFile.contains("-o ") && !configFile.contains("--output ")) {
-            commandBuilder.outputPath(downloadable.getDownloadPath(), downloadable.getTitle());
+            YoutubeDlCommandHelper.setOutputPath(commandBuilder, downloadable);
         }
 
         return commandBuilder

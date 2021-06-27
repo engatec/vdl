@@ -13,143 +13,138 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<fx:root stylesheets="@../../styles.css" type="javafx.scene.control.ScrollPane" fitToWidth="true" xmlns="http://javafx.com/javafx/11.0.1"
-         xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fitToWidth="true" stylesheets="@../../styles.css" type="javafx.scene.control.ScrollPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <VBox spacing="8.0">
         <children>
             <HBox alignment="BASELINE_LEFT" spacing="8.0">
                 <children>
-                    <Label styleClass="preferences-category-title" text="%preferences.youtubedl.general.title"/>
-                    <Separator HBox.hgrow="ALWAYS"/>
+                    <Label styleClass="preferences-category-title" text="%preferences.youtubedl.general.title" />
+                    <Separator HBox.hgrow="ALWAYS" />
                 </children>
             </HBox>
             <VBox spacing="12.0">
                 <padding>
-                    <Insets bottom="8.0" left="12.0" right="4.0" top="4.0"/>
+                    <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />
                 </padding>
                 <children>
-                    <CheckBox fx:id="markWatchedCheckbox" mnemonicParsing="false"
-                              text="%preferences.youtubedl.general.markwatched.label" wrapText="true"/>
-                    <CheckBox fx:id="noMTimeCheckBox" mnemonicParsing="false"
-                              text="%preferences.youtubedl.nomtime.label" wrapText="true">
+               <HBox alignment="CENTER_LEFT" spacing="4.0">
+                  <children>
+                     <Label fx:id="outputTemplateLabel" text="%preferences.youtubedl.general.outputtemplate" />
+                     <FxTextField fx:id="outputTemplateTextField" HBox.hgrow="ALWAYS" />
+                  </children>
+               </HBox>
+                    <CheckBox fx:id="markWatchedCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.general.markwatched.label" wrapText="true" />
+                    <CheckBox fx:id="noMTimeCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nomtime.label" wrapText="true">
                         <VBox.margin>
-                            <Insets/>
+                            <Insets />
                         </VBox.margin>
                     </CheckBox>
-                    <CheckBox fx:id="noContinueCheckbox" mnemonicParsing="false"
-                              text="%preferences.youtubedl.nocontinue.checkbox" wrapText="true"/>
-                    <CheckBox fx:id="noPartCheckBox" mnemonicParsing="false"
-                              text="%preferences.youtubedl.nopart.checkbox" wrapText="true"/>
-                    <CheckBox fx:id="readCookiesCheckbox" mnemonicParsing="false"
-                              text="%preferences.youtubedl.readcookies.checkbox"/>
+                    <CheckBox fx:id="noContinueCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.nocontinue.checkbox" wrapText="true" />
+                    <CheckBox fx:id="noPartCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nopart.checkbox" wrapText="true" />
+                    <CheckBox fx:id="readCookiesCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.readcookies.checkbox" />
                     <FxFileChooser fx:id="cookiesFileChooser">
                         <VBox.margin>
-                            <Insets left="8.0"/>
+                            <Insets left="8.0" />
                         </VBox.margin>
                     </FxFileChooser>
-                    <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false"
-                              text="%preferences.youtubedl.configfile.checkbox" wrapText="true"/>
+                    <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.configfile.checkbox" wrapText="true" />
                     <FxFileChooser fx:id="configFileChooser">
                         <VBox.margin>
-                            <Insets left="8.0"/>
+                            <Insets left="8.0" />
                         </VBox.margin>
                     </FxFileChooser>
                 </children>
             </VBox>
             <HBox alignment="BASELINE_LEFT" spacing="8.0">
                 <children>
-                    <Label styleClass="preferences-category-title" text="%preferences.youtubedl.network.title"/>
-                    <Separator HBox.hgrow="ALWAYS"/>
+                    <Label styleClass="preferences-category-title" text="%preferences.youtubedl.network.title" />
+                    <Separator HBox.hgrow="ALWAYS" />
                 </children>
                 <VBox.margin>
-                    <Insets top="8.0"/>
+                    <Insets top="8.0" />
                 </VBox.margin>
             </HBox>
             <VBox spacing="12.0">
                 <children>
                     <GridPane alignment="CENTER_LEFT" hgap="8.0" vgap="8.0" VBox.vgrow="NEVER">
                         <columnConstraints>
-                            <ColumnConstraints minWidth="10.0"/>
-                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints minWidth="10.0" />
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                         </columnConstraints>
                         <rowConstraints>
-                            <RowConstraints valignment="BASELINE" vgrow="NEVER"/>
-                            <RowConstraints valignment="BASELINE" vgrow="NEVER"/>
-                            <RowConstraints valignment="BASELINE" vgrow="NEVER"/>
+                            <RowConstraints valignment="BASELINE" vgrow="NEVER" />
+                            <RowConstraints valignment="BASELINE" vgrow="NEVER" />
+                            <RowConstraints valignment="BASELINE" vgrow="NEVER" />
                         </rowConstraints>
                         <children>
-                            <Label text="%preferences.youtubedl.network.proxy.label"/>
-                            <FxTextField fx:id="proxyUrlTextField" GridPane.columnIndex="1"/>
-                            <Label text="%preferences.youtubedl.network.socket.timeout.label" GridPane.rowIndex="1"/>
-                            <FxTextField fx:id="socketTimoutTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                            <Label text="%preferences.youtubedl.network.sourceaddress.label" GridPane.rowIndex="2"/>
-                            <FxTextField fx:id="sourceAddressTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <Label text="%preferences.youtubedl.network.proxy.label" />
+                            <FxTextField fx:id="proxyUrlTextField" GridPane.columnIndex="1" />
+                            <Label text="%preferences.youtubedl.network.socket.timeout.label" GridPane.rowIndex="1" />
+                            <FxTextField fx:id="socketTimoutTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                            <Label text="%preferences.youtubedl.network.sourceaddress.label" GridPane.rowIndex="2" />
+                            <FxTextField fx:id="sourceAddressTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         </children>
                     </GridPane>
                     <HBox spacing="12.0">
                         <children>
-                            <CheckBox fx:id="forceIpV4CheckBox" mnemonicParsing="false"
-                                      text="%preferences.youtubedl.network.forceipv4.label"/>
-                            <CheckBox fx:id="forceIpV6CheckBox" mnemonicParsing="false"
-                                      text="%preferences.youtubedl.network.forceipv6.label"/>
+                            <CheckBox fx:id="forceIpV4CheckBox" mnemonicParsing="false" text="%preferences.youtubedl.network.forceipv4.label" />
+                            <CheckBox fx:id="forceIpV6CheckBox" mnemonicParsing="false" text="%preferences.youtubedl.network.forceipv6.label" />
                         </children>
                         <VBox.margin>
-                            <Insets/>
+                            <Insets />
                         </VBox.margin>
                     </HBox>
                 </children>
                 <padding>
-                    <Insets bottom="8.0" left="12.0" right="4.0" top="4.0"/>
+                    <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />
                 </padding>
             </VBox>
             <HBox alignment="BASELINE_LEFT" spacing="8.0">
                 <children>
-                    <Label styleClass="preferences-category-title" text="%preferences.youtubedl.authentication.title"/>
-                    <Separator HBox.hgrow="ALWAYS"/>
+                    <Label styleClass="preferences-category-title" text="%preferences.youtubedl.authentication.title" />
+                    <Separator HBox.hgrow="ALWAYS" />
                 </children>
                 <VBox.margin>
-                    <Insets top="8.0"/>
+                    <Insets top="8.0" />
                 </VBox.margin>
             </HBox>
             <VBox spacing="12.0">
                 <children>
                     <GridPane hgap="8.0" vgap="8.0" VBox.vgrow="NEVER">
                         <columnConstraints>
-                            <ColumnConstraints minWidth="10.0"/>
-                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+                            <ColumnConstraints minWidth="10.0" />
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                         </columnConstraints>
                         <rowConstraints>
-                            <RowConstraints valignment="BASELINE" vgrow="NEVER"/>
-                            <RowConstraints valignment="BASELINE" vgrow="NEVER"/>
-                            <RowConstraints valignment="BASELINE" vgrow="NEVER"/>
-                            <RowConstraints valignment="BASELINE" vgrow="NEVER"/>
+                            <RowConstraints valignment="BASELINE" vgrow="NEVER" />
+                            <RowConstraints valignment="BASELINE" vgrow="NEVER" />
+                            <RowConstraints valignment="BASELINE" vgrow="NEVER" />
+                            <RowConstraints valignment="BASELINE" vgrow="NEVER" />
                         </rowConstraints>
                         <children>
-                            <Label text="%preferences.youtubedl.authentication.username.label"/>
-                            <FxTextField fx:id="usernameTextField" GridPane.columnIndex="1"/>
-                            <Label text="%preferences.youtubedl.authentication.password.label" GridPane.rowIndex="1"/>
-                            <FxTextField fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                            <Label text="%preferences.youtubedl.authentication.twofactor.label" GridPane.rowIndex="2"/>
-                            <TextField fx:id="twoFactorTextField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                            <Label text="%preferences.youtubedl.authentication.videopassword.label"
-                                   GridPane.rowIndex="3"/>
-                            <FxTextField fx:id="videoPasswordTextField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            <Label text="%preferences.youtubedl.authentication.username.label" />
+                            <FxTextField fx:id="usernameTextField" GridPane.columnIndex="1" />
+                            <Label text="%preferences.youtubedl.authentication.password.label" GridPane.rowIndex="1" />
+                            <FxTextField fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                            <Label text="%preferences.youtubedl.authentication.twofactor.label" GridPane.rowIndex="2" />
+                            <TextField fx:id="twoFactorTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                            <Label text="%preferences.youtubedl.authentication.videopassword.label" GridPane.rowIndex="3" />
+                            <FxTextField fx:id="videoPasswordTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         </children>
                     </GridPane>
-                    <CheckBox fx:id="netrcCheckbox" mnemonicParsing="false"
-                              text="%preferences.youtubedl.authentication.netrc.label">
+                    <CheckBox fx:id="netrcCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.authentication.netrc.label">
                         <VBox.margin>
-                            <Insets/>
+                            <Insets />
                         </VBox.margin>
                     </CheckBox>
                 </children>
                 <padding>
-                    <Insets bottom="8.0" left="12.0" right="4.0" top="4.0"/>
+                    <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />
                 </padding>
             </VBox>
         </children>
     </VBox>
     <padding>
-        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+        <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
     </padding>
 </fx:root>

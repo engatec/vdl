@@ -1,0 +1,194 @@
+package com.github.engatec.vdl.controller.preferences;
+
+import java.util.ResourceBundle;
+
+import com.github.engatec.fxcontrols.FxFileChooser;
+import com.github.engatec.fxcontrols.FxTextField;
+import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.handler.textformatter.IntegerTextFormatter;
+import com.github.engatec.vdl.handler.textformatter.NotBlankTextFormatter;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
+import com.github.engatec.vdl.ui.SvgIcons;
+import com.github.engatec.vdl.validation.InputForm;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.InetAddressValidator;
+import org.apache.commons.validator.routines.UrlValidator;
+
+public class YoutubedlPreferencesController extends ScrollPane implements InputForm {
+
+    @FXML private FxTextField outputTemplateTextField;
+
+    @FXML private FxTextField proxyUrlTextField;
+    @FXML private FxTextField socketTimoutTextField;
+    @FXML private FxTextField sourceAddressTextField;
+
+    @FXML private CheckBox forceIpV4CheckBox;
+    @FXML private CheckBox forceIpV6CheckBox;
+
+    @FXML private FxTextField usernameTextField;
+    @FXML private FxTextField passwordTextField;
+    @FXML private TextField twoFactorTextField;
+    @FXML private FxTextField videoPasswordTextField;
+    @FXML private CheckBox netrcCheckbox;
+
+    @FXML private CheckBox markWatchedCheckbox;
+    @FXML private CheckBox noContinueCheckbox;
+    @FXML private CheckBox noPartCheckBox;
+    @FXML private CheckBox noMTimeCheckBox;
+
+    @FXML private CheckBox readCookiesCheckbox;
+    @FXML private FxFileChooser cookiesFileChooser;
+
+    @FXML private CheckBox useConfigFileCheckBox;
+    @FXML private FxFileChooser configFileChooser;
+
+    public YoutubedlPreferencesController() {
+    }
+
+    @FXML
+    public void initialize() {
+        initGeneralSettings();
+        initNetworkSettings();
+        initAuthenticationSettings();
+        initConfigFileSettings();
+
+        bindProperties();
+    }
+
+    private void initGeneralSettings() {
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
+        outputTemplateTextField.setTextFormatter(new NotBlankTextFormatter());
+
+        markWatchedCheckbox.setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.general.markwatched.tooltip"));
+        markWatchedCheckbox.setContentDisplay(ContentDisplay.RIGHT);
+
+        cookiesFileChooser.setButtonText(resourceBundle.getString("button.filechoose"));
+        cookiesFileChooser.disableProperty().bind(readCookiesCheckbox.selectedProperty().not());
+    }
+
+    private void initNetworkSettings() {
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
+        proxyUrlTextField.textProperty().addListener((observable, oldValue, newValue) -> proxyUrlTextField.clearError());
+        proxyUrlTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.proxy.hint"));
+
+        socketTimoutTextField.setTextFormatter(new IntegerTextFormatter());
+        socketTimoutTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.socket.timeout.hint"));
+
+        sourceAddressTextField.textProperty().addListener((observable, oldValue, newValue) -> sourceAddressTextField.clearError());
+        sourceAddressTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.sourceaddress.hint"));
+
+        forceIpV4CheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (BooleanUtils.isTrue(newValue)) {
+                forceIpV6CheckBox.setSelected(false);
+            }
+        });
+        forceIpV6CheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (BooleanUtils.isTrue(newValue)) {
+                forceIpV4CheckBox.setSelected(false);
+            }
+        });
+    }
+
+    private void initAuthenticationSettings() {
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
+        usernameTextField.textProperty().addListener((observable, oldValue, newValue) -> usernameTextField.clearError());
+        passwordTextField.textProperty().addListener((observable, oldValue, newValue) -> passwordTextField.clearError());
+        videoPasswordTextField.setHint(resourceBundle.getString("preferences.youtubedl.authentication.videopassword.hint"));
+    }
+
+    private void initConfigFileSettings() {
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
+        useConfigFileCheckBox.setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.configfile.tooltip"));
+        useConfigFileCheckBox.setContentDisplay(ContentDisplay.RIGHT);
+
+        configFileChooser.setButtonText(resourceBundle.getString("button.filechoose"));
+        configFileChooser.disableProperty().bind(useConfigFileCheckBox.selectedProperty().not());
+    }
+
+    private void bindProperties() {
+        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        proxyUrlTextField.textProperty().bindBidirectional(configRegistry.get(ProxyUrlPref.class).getProperty());
+        socketTimoutTextField.textProperty().bindBidirectional(configRegistry.get(SocketTimeoutPref.class).getProperty());
+        sourceAddressTextField.textProperty().bindBidirectional(configRegistry.get(SourceAddressPref.class).getProperty());
+        forceIpV4CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV4Pref.class).getProperty());
+        forceIpV6CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV6Pref.class).getProperty());
+
+        usernameTextField.textProperty().bindBidirectional(configRegistry.get(AuthUsernamePref.class).getProperty());
+        passwordTextField.textProperty().bindBidirectional(configRegistry.get(AuthPasswordPref.class).getProperty());
+        twoFactorTextField.textProperty().bindBidirectional(configRegistry.get(TwoFactorCodePref.class).getProperty());
+        videoPasswordTextField.textProperty().bindBidirectional(configRegistry.get(VideoPasswordPref.class).getProperty());
+        netrcCheckbox.selectedProperty().bindBidirectional(configRegistry.get(NetrcPref.class).getProperty());
+
+        outputTemplateTextField.textProperty().bindBidirectional(configRegistry.get(OutputTemplatePref.class).getProperty());
+        markWatchedCheckbox.selectedProperty().bindBidirectional(configRegistry.get(MarkWatchedPref.class).getProperty());
+        noContinueCheckbox.selectedProperty().bindBidirectional(configRegistry.get(NoContinuePref.class).getProperty());
+        noPartCheckBox.selectedProperty().bindBidirectional(configRegistry.get(NoPartPref.class).getProperty());
+        noMTimeCheckBox.selectedProperty().bindBidirectional(configRegistry.get(NoMTimePref.class).getProperty());
+
+        readCookiesCheckbox.selectedProperty().bindBidirectional(configRegistry.get(ReadCookiesPref.class).getProperty());
+        cookiesFileChooser.pathProperty().bindBidirectional(configRegistry.get(CookiesFileLocationPref.class).getProperty());
+
+        useConfigFileCheckBox.selectedProperty().bindBidirectional(configRegistry.get(UseConfigFilePref.class).getProperty());
+        configFileChooser.pathProperty().bindBidirectional(configRegistry.get(ConfigFilePathPref.class).getProperty());
+    }
+
+    @Override
+    public boolean hasErrors() {
+        boolean hasErrors = false;
+        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+
+        String proxyUrl = proxyUrlTextField.getText();
+        if (StringUtils.isNotBlank(proxyUrl) && !new UrlValidator(new String[] {"http", "https", "socks4", "socks5"}).isValid(proxyUrl)) {
+            proxyUrlTextField.setError(resourceBundle.getString("preferences.youtubedl.network.proxy.error"));
+            hasErrors = true;
+        }
+
+        String sourceAddressText = sourceAddressTextField.getText();
+        InetAddressValidator ipValidator = InetAddressValidator.getInstance();
+        if (StringUtils.isNotBlank(sourceAddressText) && !(ipValidator.isValidInet4Address(sourceAddressText) || ipValidator.isValidInet6Address(sourceAddressText))) {
+            sourceAddressTextField.setError(resourceBundle.getString("preferences.youtubedl.network.sourceaddress.error"));
+            hasErrors = true;
+        }
+
+        if (StringUtils.isBlank(usernameTextField.getText()) && StringUtils.isNotBlank(passwordTextField.getText())) {
+            usernameTextField.setError(resourceBundle.getString("preferences.youtubedl.authentication.username.error"));
+            hasErrors = true;
+        }
+
+        if (StringUtils.isBlank(passwordTextField.getText()) && StringUtils.isNotBlank(usernameTextField.getText())) {
+            passwordTextField.setError(resourceBundle.getString("preferences.youtubedl.authentication.password.error"));
+            hasErrors = true;
+        }
+
+        return hasErrors;
+    }
+}

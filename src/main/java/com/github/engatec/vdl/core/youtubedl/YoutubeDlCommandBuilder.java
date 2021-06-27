@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public class YoutubeDlCommandBuilder {
 
-    private final int MAX_TITLE_LENGTH = 200;
-
     private List<String> commandList;
 
     private YoutubeDlCommandBuilder() {
@@ -166,13 +164,12 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
-    public YoutubeDlCommandBuilder outputPath(Path path, String title) {
-        Objects.requireNonNull(path, "path must not be null");
-
-        title = StringUtils.length(title) > MAX_TITLE_LENGTH ? "%(id)s" : "%(title)s";
-
+    public YoutubeDlCommandBuilder outputPath(String path) {
+        if (StringUtils.isBlank(path)) {
+            throw new IllegalArgumentException("path must not be blank");
+        }
         commandList.add("-o");
-        commandList.add(path.resolve(title + ".%(ext)s").toString());
+        commandList.add(path);
         return this;
     }
 

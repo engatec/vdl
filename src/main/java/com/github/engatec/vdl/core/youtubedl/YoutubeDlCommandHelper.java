@@ -5,6 +5,7 @@ import java.nio.file.Path;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
@@ -15,6 +16,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
@@ -30,6 +32,11 @@ import static org.apache.commons.lang3.StringUtils.strip;
 public class YoutubeDlCommandHelper {
 
     private static final Logger LOGGER = LogManager.getLogger(YoutubeDlCommandHelper.class);
+
+    public static void setOutputPath(YoutubeDlCommandBuilder commandBuilder, Downloadable downloadable) {
+        String outputTemplate = ApplicationContext.INSTANCE.getConfigRegistry().get(OutputTemplatePref.class).getValue();
+        commandBuilder.outputPath(downloadable.getDownloadPath().resolve(outputTemplate).toString());
+    }
 
     public static void setGeneralOptions(YoutubeDlCommandBuilder commandBuilder) {
         ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();

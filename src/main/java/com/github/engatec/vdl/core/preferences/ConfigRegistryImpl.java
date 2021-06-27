@@ -25,6 +25,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
@@ -49,6 +50,7 @@ public class ConfigRegistryImpl implements ConfigRegistry {
 
         /* YoutubeDl */
         addToRegistry(new ConfigFilePathPref());
+        addToRegistry(new OutputTemplatePref());
         addToRegistry(new MarkWatchedPref());
         addToRegistry(new NoContinuePref());
         addToRegistry(new NoPartPref());
