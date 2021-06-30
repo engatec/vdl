@@ -57,12 +57,11 @@ public class QueueManager {
 
     public void addItem(QueueItem item) {
         Service<?> service = itemServiceMap.get(item);
-        if (service != null && service.isRunning()) { // Ooops, item's being downloaded already
+        if (service != null && service.isRunning()) { // Sanity check. Should never happen.
+            LOGGER.warn("Ooops! Service exists and running!");
             return;
         }
 
-        // Add most recent item rather than allow to have multiple same items in the queue
-        queueItems.remove(item);
         queueItems.add(item);
 
         if (item.getStatus() == READY) {

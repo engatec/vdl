@@ -2,7 +2,6 @@ package com.github.engatec.vdl.model;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
@@ -26,6 +25,7 @@ public class QueueItem implements Downloadable {
     @JsonIgnore
     private final Downloadable downloadable;
 
+    @SuppressWarnings("unused")
     public QueueItem() {
         this(new BaseDownloadable());
     }
@@ -130,22 +130,5 @@ public class QueueItem implements Downloadable {
     @Override
     public void setPostprocessingSteps(List<Postprocessing> items) {
         downloadable.setPostprocessingSteps(List.copyOf(ListUtils.emptyIfNull(items)));
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        QueueItem queueItem = (QueueItem) o;
-        return getBaseUrl().equals(queueItem.getBaseUrl());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getBaseUrl());
     }
 }
