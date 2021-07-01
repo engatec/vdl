@@ -23,6 +23,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.SystemUtils;
@@ -112,7 +114,16 @@ public class HistoryComponentController extends VBox implements ComponentControl
             }
             event.consume();
         });
-        ctxMenu.getItems().add(openFolder);
+
+        MenuItem copyUrl = new MenuItem(resourceBundle.getString("stage.history.ctxmenu.copyurl"));
+        copyUrl.setOnAction(event -> {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(row.getItem().getUrl());
+            Clipboard.getSystemClipboard().setContent(content);
+            event.consume();
+        });
+
+        ctxMenu.getItems().addAll(openFolder, copyUrl);
 
         return ctxMenu;
     }
