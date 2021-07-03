@@ -7,6 +7,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
+import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -92,7 +93,9 @@ public class DownloadsComponentController extends VBox implements ComponentContr
 
         MenuItem deleteMenuItem = new MenuItem(rb.getString("stage.queue.table.contextmenu.delete"));
         deleteMenuItem.setOnAction(e -> {
-            queueManager.removeItem(row.getItem());
+            QueueItem item = row.getItem();
+            YouDlUtils.deleteTempFiles(item.getDestinations());
+            queueManager.removeItem(item);
             e.consume();
         });
 

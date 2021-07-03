@@ -37,6 +37,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     private static final String GROUP_PROGRESS = "progress";
     private static final String GROUP_SIZE = "size";
     private static final String GROUP_THROUGHPUT = "throughput";
+    private static final String GROUP_DESTINATION = "destination";
 
     private static final Pattern DOWNLOAD_PROGRESS_PATTERN = Pattern.compile(
             "\\s*\\[download]\\s+" +
@@ -46,7 +47,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                     ".*"
     );
 
-    private static final Pattern DOWNLOAD_NEW_DESTINATION_PATTERN = Pattern.compile("\\s*\\[download] Destination:.*");
+    private static final Pattern DOWNLOAD_DESTINATION_PATTERN = Pattern.compile("\\s*\\[download] Destination:(?<destination>.*)");
 
     private final QueueItem queueItem;
     private static final int MAX_PROGRESS = 100;
@@ -177,14 +178,20 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                             return;
                         }
 
-                        Matcher matcher = DOWNLOAD_PROGRESS_PATTERN.matcher(it);
-                        if (matcher.matches()) {
-                            double currentProgress = Double.parseDouble(matcher.group(GROUP_PROGRESS));
-                            updateProgressData(currentProgress, matcher.group(GROUP_THROUGHPUT), calculateSizeString(progressDataCurrent.getSize(), matcher.group(GROUP_SIZE)));
+                        Matcher progressMatcher = DOWNLOAD_PROGRESS_PATTERN.matcher(it);
+                        if (progressMatcher.matches()) {
+                            double currentProgress = Double.parseDouble(progressMatcher.group(GROUP_PROGRESS));
+                            updateProgressData(currentProgress, progressMatcher.group(GROUP_THROUGHPUT), calculateSizeString(progressDataCurrent.getSize(), progressMatcher.group(GROUP_SIZE)));
                             updateProgress(currentProgress, MAX_PROGRESS);
                             updateValue(getProgressData());
-                        } else if (DOWNLOAD_NEW_DESTINATION_PATTERN.matcher(it).matches() && StringUtils.isNotBlank(progressDataCurrent.getSize())) {
-                            updateProgressData(0, progressDataCurrent.getThroughput(), progressDataCurrent.getSize() + SIZE_SEPARATOR);
+                        } else {
+                            Matcher destinationMatcher = DOWNLOAD_DESTINATION_PATTERN.matcher(it);
+                            if (destinationMatcher.matches()) {
+                                queueItem.getDestinations().add(destinationMatcher.group(GROUP_DESTINATION));
+                                if (StringUtils.isNotBlank(progressDataCurrent.getSize())) {
+                                    updateProgressData(0, progressDataCurrent.getThroughput(), progressDataCurrent.getSize() + SIZE_SEPARATOR);
+                                }
+                            }
                         }
                     });
                 }

@@ -1,7 +1,9 @@
 package com.github.engatec.vdl.model;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
@@ -21,6 +23,7 @@ public class QueueItem implements Downloadable {
     private final DoubleProperty progress = new SimpleDoubleProperty();
     private final StringProperty size = new SimpleStringProperty();
     private final StringProperty throughput = new SimpleStringProperty();
+    private final Set<String> destinations = new HashSet<>(2); // Normally there's 1 or 2 items downloaded: video / video+audio
 
     @JsonIgnore
     private final Downloadable downloadable;
@@ -80,6 +83,10 @@ public class QueueItem implements Downloadable {
 
     public void setThroughput(String throughput) {
         this.throughput.set(throughput);
+    }
+
+    public Set<String> getDestinations() {
+        return destinations;
     }
 
     @Override
