@@ -24,6 +24,7 @@ public class Format {
     private Long filesize;
     private String vcodec;
     private String acodec;
+    private Double fps;
     private String url;
 
     public String getId() {
@@ -104,6 +105,14 @@ public class Format {
 
     public void setAcodec(String acodec) {
         this.acodec = acodec;
+    }
+
+    public Double getFps() {
+        return fps;
+    }
+
+    public void setFps(Double fps) {
+        this.fps = fps;
     }
 
     public String getUrl() {

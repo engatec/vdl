@@ -32,6 +32,14 @@ public class LabelUtils {
         return StringUtils.substringBefore(codec, ".");
     }
 
+    public static String formatFps(Double fps) {
+        if (fps == null) {
+            return N_A;
+        }
+
+        return fps % 1 == 0 ? String.valueOf(fps.intValue()) : fps.toString();
+    }
+
     public static String formatAudio(Audio item) {
         return List.of(
                 item.getExtension(),

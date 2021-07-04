@@ -41,6 +41,10 @@ public class Video {
         return ObjectUtils.defaultIfNull(format.getVideoBitrate(), format.getTotalBitrate());
     }
 
+    public Double getFps() {
+        return format.getFps();
+    }
+
     public Integer getWidth() {
         return format.getWidth();
     }

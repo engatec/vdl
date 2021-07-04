@@ -22,6 +22,7 @@
                   <ColumnConstraints minWidth="-Infinity" />
                   <ColumnConstraints minWidth="-Infinity" />
                   <ColumnConstraints minWidth="-Infinity" />
+                  <ColumnConstraints />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints valignment="CENTER" />
@@ -32,7 +33,8 @@
                   <Label styleClass="grid-header-label" text="%size" GridPane.columnIndex="2" />
                   <Label styleClass="grid-header-label" text="%codec" GridPane.columnIndex="3" />
                   <Label styleClass="grid-header-label" text="%format" GridPane.columnIndex="4" />
-                  <Label styleClass="grid-header-label" text="%audio.track" GridPane.columnIndex="5" />
+                  <Label styleClass="grid-header-label" text="%fps" GridPane.columnIndex="5" />
+                  <Label styleClass="grid-header-label" text="%audio.track" GridPane.columnIndex="6" />
                   <Separator GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
                </children>
                <opaqueInsets>

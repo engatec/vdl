@@ -136,6 +136,7 @@ public class FormatsController {
                 createSizeLabel(video),
                 createCodecLabel(video),
                 createExtensionLabel(video),
+                createFpsLabel(video),
                 video.getAudio() != null || audioObservableList.isEmpty() ? createAudioUnmodifiableComboBox() : createAudioComboBox(video, audioObservableList),
         };
         formatsGridPane.addRow(formatsGridPane.getRowCount(), nodes);
@@ -175,6 +176,12 @@ public class FormatsController {
     private Label createExtensionLabel(Video video) {
         Label label = new Label();
         label.setText(video.getExtension());
+        return label;
+    }
+
+    private Node createFpsLabel(Video video) {
+        Label label = new Label();
+        label.setText(LabelUtils.formatFps(video.getFps()));
         return label;
     }
 
