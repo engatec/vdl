@@ -62,6 +62,14 @@ public class CompleteVideoInfoSearchTask extends VideoInfoSearchTask {
     }
 
     private void perfomProgressUpdate(List<VideoInfo> chunk, int readyCount, int totalCount) {
+        if (Thread.interrupted()) {
+            cancel();
+        }
+
+        if (isCancelled()) {
+            return;
+        }
+
         updateMessage(String.format(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.main.search.playlist.progress"), readyCount, totalCount));
         updateProgress(readyCount, totalCount);
         Platform.runLater(() -> onInfoFetchedCallback.accept(chunk, totalCount));
