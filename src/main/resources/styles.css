@@ -7,7 +7,7 @@
 }
 
 .control-btn-big {
-    -fx-min-width: 100;
+    -fx-min-width: 120;
     -fx-min-height: 30;
     -fx-pref-height: 30;
     -fx-font-family: "Roboto";

@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.controller.component.search;
 
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -71,18 +72,7 @@ public class DownloadableItemComponentController extends HBox {
         audioButton.setGraphic(new ImageView(Icon.AUDIOTRACK_SMALL.getImage()));
         audioButton.setTooltip(Tooltips.createNew("download.audio"));
         audioButton.setOnAction(e -> {
-            AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
-                ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
-                String format = configRegistry.get(AudioExtractionFormatPref.class).getValue();
-                // Youtube-dl quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
-                int quality = Math.abs(configRegistry.get(AudioExtractionQualityPref.class).getValue() - AudioFormat.BEST_QUALITY);
-                Downloadable audioDownloadable = getDownloadable();
-                audioDownloadable.setDownloadPath(path);
-                audioDownloadable.setFormatId("bestaudio"); // No need to download video if user only wants to extract audio
-                audioDownloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(format, quality)));
-                HistoryManager.INSTANCE.addToHistory(audioDownloadable);
-                QueueManager.INSTANCE.addItem(new QueueItem(audioDownloadable));
-            });
+            AppUtils.resolveDownloadPath(stage).ifPresent(this::downloadAudio);
             e.consume();
         });
 
@@ -177,6 +167,26 @@ public class DownloadableItemComponentController extends HBox {
         downloadable.setTitle(titleLabel.getText());
         downloadable.setBaseUrl(videoInfo.getBaseUrl());
         return downloadable;
+    }
+
+    public void download(Path path) {
+        Downloadable downloadable = getDownloadable();
+        downloadable.setDownloadPath(path);
+        HistoryManager.INSTANCE.addToHistory(downloadable);
+        QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
+    }
+
+    public void downloadAudio(Path path) {
+        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        String format = configRegistry.get(AudioExtractionFormatPref.class).getValue();
+        // Youtube-dl quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
+        int quality = Math.abs(configRegistry.get(AudioExtractionQualityPref.class).getValue() - AudioFormat.BEST_QUALITY);
+        Downloadable downloadable = getDownloadable();
+        downloadable.setDownloadPath(path);
+        downloadable.setFormatId("bestaudio"); // No need to download video if user only wants to extract audio
+        downloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(format, quality)));
+        HistoryManager.INSTANCE.addToHistory(downloadable);
+        QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
     }
 
     private ContextMenu createContextMenu() {

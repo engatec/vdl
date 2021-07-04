@@ -1,14 +1,12 @@
 package com.github.engatec.vdl.controller.component.search;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
-import com.github.engatec.vdl.core.HistoryManager;
-import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
-import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.ui.CheckBoxGroup;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.search.DownloadableItemComponent;
@@ -24,8 +22,10 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
@@ -58,7 +58,7 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     @FXML private VBox contentNode;
 
-    @FXML private Button downloadButton;
+    @FXML private SplitMenuButton downloadButton;
     @FXML private Label downloadsCountLabel;
 
     public SearchComponentController(Stage stage) {
@@ -114,9 +114,13 @@ public class SearchComponentController extends VBox implements ComponentControll
             }
         });
 
-        downloadButton.setVisible(false);
         selectAllCheckBox.setManaged(false);
         selectAllCheckBox.setVisible(false);
+
+        downloadButton.setVisible(false);
+        MenuItem downloadAudioMenuItem = new MenuItem(ApplicationContext.INSTANCE.getResourceBundle().getString("download.audio"));
+        downloadAudioMenuItem.setOnAction(this::handleDownloadAudioButtonClick);
+        downloadButton.getItems().add(downloadAudioMenuItem);
     }
 
     private void initSearchService() {
@@ -142,11 +146,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void handleSearchButtonClick(Event event) {
-        downloadButton.setVisible(false);
-        selectAllCheckBox.setManaged(false);
-        selectAllCheckBox.setVisible(false);
-        contentNode.getChildren().clear();
-        checkBoxGroup.clear();
+        clearSearchPane(false);
         downloadableSearchService.setUrl(urlTextField.getText());
         downloadableSearchService.restart();
         event.consume();
@@ -175,26 +175,35 @@ public class SearchComponentController extends VBox implements ComponentControll
         }
     }
 
-    private void handleDownloadButtonClick(ActionEvent e) {
-        AppUtils.resolveDownloadPath(stage).ifPresent(path -> contentNode.getChildren().stream()
+    private List<DownloadableItemComponentController> getSelectedItems() {
+        return contentNode.getChildren().stream()
                 .filter(it -> it instanceof DownloadableItemComponentController)
                 .map(it -> (DownloadableItemComponentController) it)
                 .filter(DownloadableItemComponentController::isSelected)
-                .forEach(it -> {
-                    Downloadable downloadable = it.getDownloadable();
-                    downloadable.setDownloadPath(path);
-                    HistoryManager.INSTANCE.addToHistory(downloadable);
-                    QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
-                })
-        );
+                .collect(Collectors.toList());
+    }
 
-        urlTextField.clear();
+    private void handleDownloadButtonClick(ActionEvent e) {
+        AppUtils.resolveDownloadPath(stage).ifPresent(path -> getSelectedItems().forEach(it -> it.download(path)));
+        clearSearchPane(true);
+        e.consume();
+    }
+
+    private void handleDownloadAudioButtonClick(ActionEvent e) {
+        AppUtils.resolveDownloadPath(stage).ifPresent(path -> getSelectedItems().forEach(it -> it.downloadAudio(path)));
+        clearSearchPane(true);
+        e.consume();
+    }
+
+    private void clearSearchPane(boolean clearUrlTextField) {
+        if (clearUrlTextField) {
+            urlTextField.clear();
+        }
         downloadButton.setVisible(false);
         selectAllCheckBox.setManaged(false);
         selectAllCheckBox.setVisible(false);
         contentNode.getChildren().clear();
         checkBoxGroup.clear();
-        e.consume();
     }
 
     private void initDragAndDrop() {
