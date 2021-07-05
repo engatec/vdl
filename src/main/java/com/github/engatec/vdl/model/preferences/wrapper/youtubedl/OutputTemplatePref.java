@@ -15,6 +15,11 @@ public class OutputTemplatePref extends ConfigItemWrapper<StringProperty, String
 
     public OutputTemplatePref() {
         restore();
+        property.addListener((observable, oldValue, newValue) -> {
+            if (StringUtils.isBlank(newValue)) {
+                setValue(OutputTemplateConfigItem.DEFAULT);
+            }
+        });
     }
 
     @Override
@@ -35,13 +40,5 @@ public class OutputTemplatePref extends ConfigItemWrapper<StringProperty, String
     @Override
     public void setValue(String value) {
         property.set(value);
-    }
-
-    @Override
-    public void save() {
-        super.save();
-        if (StringUtils.isBlank(getValue())) {
-            super.restore();
-        }
     }
 }
