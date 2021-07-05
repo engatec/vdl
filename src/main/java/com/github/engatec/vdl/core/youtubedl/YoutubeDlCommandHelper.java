@@ -18,11 +18,14 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
+import com.github.engatec.vdl.model.preferences.youtubedl.RateLimitConfigItem;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,6 +71,15 @@ public class YoutubeDlCommandHelper {
             if (Files.exists(cookiesPath) && Files.isReadable(cookiesPath)) {
                 commandBuilder.cookiesFile(Path.of(cookiesFileLocation));
             }
+        }
+    }
+
+    public static void setDownloadOptions(YoutubeDlCommandBuilder commandBuilder) {
+        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+
+        String limit = StringUtils.defaultIfBlank(configRegistry.get(RateLimitPref.class).getValue(), RateLimitConfigItem.DEFAULT);
+        if (!limit.equals(RateLimitConfigItem.DEFAULT)) {
+            commandBuilder.rateLimit(limit);
         }
     }
 

@@ -105,6 +105,13 @@ public class YoutubeDlCommandBuilder {
         return this;
     }
 
+    /* Download Options */
+    public YoutubeDlCommandBuilder rateLimit(String limit) {
+        commandList.add("-r");
+        commandList.add(limit);
+        return this;
+    }
+
     /* Authentication Options */
     public YoutubeDlCommandBuilder username(String username) {
         commandList.add("-u");

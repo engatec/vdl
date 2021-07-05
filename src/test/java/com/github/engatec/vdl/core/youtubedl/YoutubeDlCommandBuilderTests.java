@@ -98,6 +98,17 @@ public class YoutubeDlCommandBuilderTests {
     }
 
     @Nested
+    @DisplayName("Download options")
+    class DownloadOptions {
+        @Test
+        void shouldCreateRateLimit() {
+            String limit = "4.2M";
+            List<String> command = YoutubeDlCommandBuilder.newInstance().rateLimit(limit).buildAsList();
+            doAssertions(command, "-r", limit);
+        }
+    }
+
+    @Nested
     @DisplayName("Authentication options")
     class AuthenticationOptions {
 

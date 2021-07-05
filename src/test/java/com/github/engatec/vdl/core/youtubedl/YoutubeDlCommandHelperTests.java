@@ -18,17 +18,21 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
+import com.github.engatec.vdl.model.preferences.youtubedl.RateLimitConfigItem;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -136,6 +140,38 @@ public class YoutubeDlCommandHelperTests {
             assertThat(buildCommand())
                     .hasSize(1)
                     .doesNotContain("--cookies");
+        }
+    }
+
+    @Nested
+    @DisplayName("Download options")
+    class DownloadOptions {
+
+        @BeforeEach
+        void setUp() {
+            mockPreference(RateLimitPref.class, RateLimitConfigItem.DEFAULT);
+        }
+
+        private List<String> buildCommand() {
+            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
+            YoutubeDlCommandHelper.setDownloadOptions(commandBuilder);
+            return commandBuilder.buildAsList();
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"50", "4.2M"})
+        void shouldSetRateLimit(String limit) {
+            mockPreference(RateLimitPref.class, limit);
+            List<String> command = buildCommand();
+            assertThat(command).hasSize(3).contains("-r", limit);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {StringUtils.EMPTY, RateLimitConfigItem.DEFAULT})
+        void shouldNotSetRateLimit(String limit) {
+            mockPreference(RateLimitPref.class, limit);
+            List<String> command = buildCommand();
+            assertThat(command).hasSize(1).doesNotContain("-r");
         }
     }
 

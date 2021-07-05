@@ -8,6 +8,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.handler.textformatter.IntegerTextFormatter;
 import com.github.engatec.vdl.handler.textformatter.NotBlankTextFormatter;
+import com.github.engatec.vdl.handler.textformatter.RegexTextFormatter;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
@@ -21,6 +22,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
@@ -40,6 +42,8 @@ import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
 public class YoutubedlPreferencesController extends ScrollPane implements InputForm {
+
+    private final ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
 
     @FXML private FxTextField outputTemplateTextField;
 
@@ -67,12 +71,15 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     @FXML private CheckBox useConfigFileCheckBox;
     @FXML private FxFileChooser configFileChooser;
 
+    @FXML private FxTextField rateLimitTextField;
+
     public YoutubedlPreferencesController() {
     }
 
     @FXML
     public void initialize() {
         initGeneralSettings();
+        initDownloadSettings();
         initNetworkSettings();
         initAuthenticationSettings();
         initConfigFileSettings();
@@ -81,8 +88,6 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     }
 
     private void initGeneralSettings() {
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
-
         outputTemplateTextField.setTextFormatter(new NotBlankTextFormatter());
 
         markWatchedCheckbox.setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.general.markwatched.tooltip"));
@@ -92,9 +97,12 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
         cookiesFileChooser.disableProperty().bind(readCookiesCheckbox.selectedProperty().not());
     }
 
-    private void initNetworkSettings() {
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+    private void initDownloadSettings() {
+        rateLimitTextField.setTextFormatter(RegexTextFormatter.of("^(0|[1-9][0-9]{0,9}[KkMmGg]?)$"));
+        rateLimitTextField.setHint(resourceBundle.getString("preferences.youtubedl.download.ratelimit.hint"));
+    }
 
+    private void initNetworkSettings() {
         proxyUrlTextField.textProperty().addListener((observable, oldValue, newValue) -> proxyUrlTextField.clearError());
         proxyUrlTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.proxy.hint"));
 
@@ -117,16 +125,12 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     }
 
     private void initAuthenticationSettings() {
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
-
         usernameTextField.textProperty().addListener((observable, oldValue, newValue) -> usernameTextField.clearError());
         passwordTextField.textProperty().addListener((observable, oldValue, newValue) -> passwordTextField.clearError());
         videoPasswordTextField.setHint(resourceBundle.getString("preferences.youtubedl.authentication.videopassword.hint"));
     }
 
     private void initConfigFileSettings() {
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
-
         useConfigFileCheckBox.setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.configfile.tooltip"));
         useConfigFileCheckBox.setContentDisplay(ContentDisplay.RIGHT);
 
@@ -141,6 +145,8 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
         sourceAddressTextField.textProperty().bindBidirectional(configRegistry.get(SourceAddressPref.class).getProperty());
         forceIpV4CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV4Pref.class).getProperty());
         forceIpV6CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV6Pref.class).getProperty());
+
+        rateLimitTextField.textProperty().bindBidirectional(configRegistry.get(RateLimitPref.class).getProperty());
 
         usernameTextField.textProperty().bindBidirectional(configRegistry.get(AuthUsernamePref.class).getProperty());
         passwordTextField.textProperty().bindBidirectional(configRegistry.get(AuthPasswordPref.class).getProperty());
@@ -164,7 +170,6 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     @Override
     public boolean hasErrors() {
         boolean hasErrors = false;
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
 
         String proxyUrl = proxyUrlTextField.getText();
         if (StringUtils.isNotBlank(proxyUrl) && !new UrlValidator(new String[] {"http", "https", "socks4", "socks5"}).isValid(proxyUrl)) {

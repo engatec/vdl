@@ -27,6 +27,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
@@ -55,6 +56,7 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new NoContinuePref());
         addToRegistry(new NoPartPref());
         addToRegistry(new NoMTimePref());
+        addToRegistry(new RateLimitPref());
         addToRegistry(new ReadCookiesPref());
         addToRegistry(new CookiesFileLocationPref());
         addToRegistry(new ProxyUrlPref());
@@ -74,10 +76,12 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new RecentDownloadPathPref());
     }
 
+    @SuppressWarnings("unchecked")
     private static <T extends ConfigItemWrapper<?, ?>> void addToRegistry(T pref) {
         REGISTRY.put((Class<? extends ConfigItemWrapper<?, ?>>) pref.getClass(), pref);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends ConfigItemWrapper<?, ?>> T get(Class<T> clazz) {
         return (T) REGISTRY.get(clazz);
     }
