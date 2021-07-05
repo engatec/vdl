@@ -34,8 +34,6 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFileP
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.util.AppUtils;
 import javafx.application.Platform;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RegExUtils;
@@ -176,14 +174,11 @@ public class YoutubeDlManager {
                         latestVersion = RegExUtils.replaceAll(latestVersion, "\\.", "");
                         currentVersion = RegExUtils.replaceAll(currentVersion, "\\.", "");
                         if (Integer.parseInt(latestVersion) > Integer.parseInt(currentVersion)) {
-                            Platform.runLater(() -> {
-                                ButtonBar.ButtonData result = Dialogs.infoWithYesNoButtons("youtubedl.update.available")
-                                        .map(ButtonType::getButtonData)
-                                        .orElse(ButtonBar.ButtonData.NO);
-                                if (result == ButtonBar.ButtonData.YES) {
-                                    AppUtils.updateYoutubeDl(stage, null);
-                                }
-                            });
+                            Platform.runLater(() -> Dialogs.infoWithYesNoButtons(
+                                    "youtubedl.update.available",
+                                    () -> AppUtils.updateYoutubeDl(stage, null),
+                                    null
+                            ));
                         }
                     } catch (Exception e) { // No need to fail if version check went wrong
                         LOGGER.warn(e.getMessage());

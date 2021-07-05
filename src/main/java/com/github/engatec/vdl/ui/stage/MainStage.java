@@ -3,8 +3,6 @@ package com.github.engatec.vdl.ui.stage;
 import com.github.engatec.vdl.controller.stage.MainController;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.ui.Dialogs;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
@@ -47,12 +45,7 @@ public class MainStage extends AppStage {
      */
     private void handleCloseRequest(WindowEvent e) {
         if (QueueManager.INSTANCE.hasItemsInProgress()) {
-            ButtonBar.ButtonData result = Dialogs.warningWithYesNoButtons("stage.main.dialog.close.queuehasitemsinprogress")
-                    .map(ButtonType::getButtonData)
-                    .orElse(ButtonBar.ButtonData.YES);
-            if (result == ButtonBar.ButtonData.NO) {
-                e.consume();
-            }
+            Dialogs.warningWithYesNoButtons("stage.main.dialog.close.queuehasitemsinprogress", null, e::consume);
         }
     }
 }
