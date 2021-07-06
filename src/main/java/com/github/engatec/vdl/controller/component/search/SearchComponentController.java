@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.CheckBoxGroup;
@@ -146,10 +147,23 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void handleSearchButtonClick(Event event) {
+        String url = urlTextField.getText();
         clearSearchPane(false);
-        downloadableSearchService.setUrl(urlTextField.getText());
-        downloadableSearchService.restart();
+        if (isUrlBeingDownloaded(url)) {
+            Dialogs.infoWithYesNoButtons("stage.main.search.dialog.suchitemisbeingdownloaded", () -> startSearch(url), null);
+        } else {
+            startSearch(url);
+        }
         event.consume();
+    }
+
+    private void startSearch(String url) {
+        downloadableSearchService.setUrl(url);
+        downloadableSearchService.restart();
+    }
+
+    private boolean isUrlBeingDownloaded(String url) {
+        return QueueManager.INSTANCE.hasItem(it -> StringUtils.equals(it.getBaseUrl(), url));
     }
 
     private void updateContentPane(List<VideoInfo> downloadables, Integer totalItems) {

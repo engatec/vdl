@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
+import static com.github.engatec.vdl.model.DownloadStatus.IN_PROGRESS;
+
 public class MainStage extends AppStage {
 
     private static final int STAGE_MIN_WIDTH = 500;
@@ -44,7 +46,7 @@ public class MainStage extends AppStage {
      * Confirmation on app close if queue items being downloaded
      */
     private void handleCloseRequest(WindowEvent e) {
-        if (QueueManager.INSTANCE.hasItemsInProgress()) {
+        if (QueueManager.INSTANCE.hasItem(it -> it.getStatus() == IN_PROGRESS)) {
             Dialogs.warningWithYesNoButtons("stage.main.dialog.close.queuehasitemsinprogress", null, e::consume);
         }
     }

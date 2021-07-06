@@ -8,12 +8,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.worker.service.QueueItemDownloadService;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -87,8 +89,11 @@ public class QueueManager {
         return queueItems;
     }
 
-    public boolean hasItemsInProgress() {
-        return queueItems.stream().anyMatch(it -> it.getStatus() == IN_PROGRESS);
+    public boolean hasItem(Predicate<QueueItem> predicate) {
+        if (!Platform.isFxApplicationThread()) {
+            throw new IllegalStateException("Method must only be used from the FX Application Thread");
+        }
+        return queueItems.stream().anyMatch(predicate);
     }
 
     public void persist() {
