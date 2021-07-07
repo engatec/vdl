@@ -25,6 +25,7 @@ public class VideoInfo {
     private String url;
     private String title;
     private Integer duration;
+    private String thumbnail;
     private List<Format> formats;
 
     public String getId() {
@@ -81,6 +82,14 @@ public class VideoInfo {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     public List<Format> getFormats() {

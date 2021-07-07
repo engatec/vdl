@@ -21,6 +21,7 @@ import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionQualityPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
@@ -33,8 +34,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,6 +58,9 @@ public class DownloadableItemComponentController extends HBox {
     @FXML private Button audioButton;
     @FXML private CheckBox itemSelectedCheckBox;
 
+    @FXML private ImageView thumbnailImageView;
+    @FXML private StackPane thumbnailWrapperPane;
+
     public DownloadableItemComponentController(Stage stage, VideoInfo videoInfo) {
         this.stage = stage;
         this.videoInfo = videoInfo;
@@ -65,6 +71,7 @@ public class DownloadableItemComponentController extends HBox {
         initControlButtons();
         initLabels();
         initFormats();
+        initThumbnail();
     }
 
     private void initControlButtons() {
@@ -141,6 +148,19 @@ public class DownloadableItemComponentController extends HBox {
             items.remove(dummyItem);
             formatsComboBox.setOnShowing(null);
         });
+    }
+
+    private void initThumbnail() {
+        if (!ApplicationContext.INSTANCE.getConfigRegistry().get(LoadThumbnailsPref.class).getValue()) {
+            thumbnailWrapperPane.setVisible(false);
+            thumbnailWrapperPane.setManaged(false);
+            return;
+        }
+
+        Image image = new Image(AppUtils.normalizeThumbnailUrl(videoInfo));
+        if (image.getException() == null) {
+            thumbnailImageView.setImage(image);
+        }
     }
 
     public void setSelectable(boolean selectable) {

@@ -18,6 +18,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromCl
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
@@ -40,15 +41,14 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
 
     @FXML private ComboBox<ComboBoxValueHolder<Language>> languageComboBox;
 
-    @FXML private CheckBox youtubeDlStartupUpdatesCheckBox;
-
     private final ToggleGroup downloadPathRadioGroup = new ToggleGroup();
     @FXML private RadioButton downloadPathRadioBtn;
     @FXML private RadioButton askPathRadioBtn;
     @FXML private FxDirectoryChooser downloadPathDirectoryChooser;
 
+    @FXML private CheckBox youtubeDlStartupUpdatesCheckBox;
     @FXML private CheckBox autoSearchFromClipboardCheckBox;
-
+    @FXML private CheckBox loadThumbnailsCheckbox;
     @FXML private ComboBox<Integer> autoSelectFormatComboBox;
 
     @FXML private ComboBox<String> audioExtractionFormatComboBox;
@@ -96,6 +96,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         audioExtractionFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionFormatPref.class).getProperty());
         audioExtractionQualitySlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionQualityPref.class).getProperty());
         youtubeDlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getProperty());
+        loadThumbnailsCheckbox.selectedProperty().bindBidirectional(configRegistry.get(LoadThumbnailsPref.class).getProperty());
     }
 
     private void initDownloadPathSettings() {

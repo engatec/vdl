@@ -4,12 +4,23 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <fx:root alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="16.0" stylesheets="@../../styles.css" type="HBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <CheckBox fx:id="itemSelectedCheckBox" mnemonicParsing="false" />
-      <VBox maxWidth="1.7976931348623157E308" spacing="8.0" HBox.hgrow="ALWAYS">
+      <StackPane fx:id="thumbnailWrapperPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="100.0">
+         <children>
+            <ImageView fx:id="thumbnailImageView" fitHeight="56.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../assets/images/no_image_available.png" />
+               </image></ImageView>
+         </children>
+      </StackPane>
+      <VBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0" HBox.hgrow="ALWAYS">
          <children>
             <HBox spacing="4.0">
                <children>

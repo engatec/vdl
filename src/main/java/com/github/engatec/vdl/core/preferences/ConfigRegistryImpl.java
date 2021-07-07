@@ -11,6 +11,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromCl
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
@@ -48,6 +49,7 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new DownloadPathPref());
         addToRegistry(new LanguagePref());
         addToRegistry(new YoutubeDlStartupUpdatesCheckPref());
+        addToRegistry(new LoadThumbnailsPref());
 
         /* YoutubeDl */
         addToRegistry(new ConfigFilePathPref());
