@@ -1,6 +1,8 @@
 package com.github.engatec.vdl.util;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -19,6 +22,7 @@ import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.worker.UpdateBinariesTask;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 
 public class AppUtils {
 
@@ -68,6 +72,39 @@ public class AppUtils {
 
         String title = ctx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress");
         Dialogs.progress(title, stage, new UpdateBinariesTask(), onSuccessListener);
+    }
+
+    /**
+     * Naive parsing youtube url to remove list if single video is expected. Should be sufficient for now.
+     */
+    public static String normalizeBaseUrl(String baseUrl) {
+        URL url;
+        try {
+            url = new URL(baseUrl);
+        } catch (MalformedURLException e) {
+            return baseUrl;
+        }
+
+        if (!StringUtils.contains(url.getHost(), "youtube.com")) {
+            return baseUrl;
+        }
+
+        if (!StringUtils.contains(url.getPath(), "/watch")) {
+            return baseUrl;
+        }
+
+        String[] queryParams = StringUtils.split(url.getQuery(), '&');
+        String videoIdQueryParam = Stream.of(queryParams)
+                .map(StringUtils::strip)
+                .filter(it -> it.startsWith("v="))
+                .findFirst()
+                .orElse(null);
+
+        if (videoIdQueryParam == null) {
+            return baseUrl;
+        }
+
+        return url.getProtocol() + "://" + url.getAuthority() + url.getPath() + '?' + videoIdQueryParam;
     }
 
     public static String normalizeThumbnailUrl(VideoInfo vi) {

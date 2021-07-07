@@ -158,7 +158,8 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void startSearch(String url) {
-        downloadableSearchService.setUrl(url);
+        String normUrl = AppUtils.normalizeBaseUrl(url);
+        downloadableSearchService.setUrl(normUrl);
         downloadableSearchService.restart();
     }
 
