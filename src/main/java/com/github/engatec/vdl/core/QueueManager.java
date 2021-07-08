@@ -3,10 +3,12 @@ package com.github.engatec.vdl.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
+import com.github.engatec.vdl.util.YouDlUtils;
 import com.github.engatec.vdl.worker.service.QueueItemDownloadService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -45,12 +48,28 @@ public class QueueManager {
     private QueueManager() {
         queueItems.addListener((ListChangeListener<QueueItem>) change -> {
             while (change.next()) {
-                for (QueueItem removedItem : change.getRemoved()) {
-                    Service<?> service = itemServiceMap.remove(removedItem);
+                List<? extends QueueItem> removedItems = change.getRemoved();
+
+                List<Process> processes = new ArrayList<>();
+                for (QueueItem ri : removedItems) {
+                    Service<?> service = itemServiceMap.remove(ri);
                     if (service != null) {
+                        processes.addAll(((QueueItemDownloadService) service).getProcesses());
                         service.cancel();
                     }
                 }
+
+                CompletableFuture<?>[] onExitCompletableFutures = processes.stream()
+                        .map(Process::onExit)
+                        .toArray(CompletableFuture[]::new);
+
+                CompletableFuture.allOf(onExitCompletableFutures).thenRun(() -> {
+                    for (QueueItem ri : removedItems) {
+                        if (ri.getStatus() != FINISHED) {
+                            YouDlUtils.deleteTempFiles(ri.getDestinations());
+                        }
+                    }
+                });
             }
 
             notifyItemsChanged(change.getList());

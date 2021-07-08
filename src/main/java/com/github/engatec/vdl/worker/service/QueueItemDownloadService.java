@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -49,6 +51,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
     private static final Pattern DOWNLOAD_DESTINATION_PATTERN = Pattern.compile("\\s*\\[download] Destination:(?<destination>.*)");
 
+    private final List<Process> processes = Collections.synchronizedList(new ArrayList<>());
     private final QueueItem queueItem;
     private static final int MAX_PROGRESS = 100;
 
@@ -121,6 +124,19 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
         LOGGER.error(getException().getMessage());
     }
 
+    private void addProcess(Process process) {
+        processes.add(process);
+    }
+
+    /**
+     * @return all processes created by this service
+     */
+    public List<Process> getProcesses() {
+        synchronized (processes) {
+            return List.copyOf(processes);
+        }
+    }
+
     private void updateQueueItem(DownloadStatus status, String size, String throughput) {
         if (status != null) {
             queueItem.setStatus(status);
@@ -167,6 +183,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
             @Override
             protected DownloadProgressData call() throws Exception {
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
+                addProcess(process);
                 try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
                         if (Thread.interrupted()) {
@@ -175,7 +192,6 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
                         if (isCancelled()) {
                             process.destroy();
-                            return;
                         }
 
                         Matcher progressMatcher = DOWNLOAD_PROGRESS_PATTERN.matcher(it);
@@ -187,7 +203,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                         } else {
                             Matcher destinationMatcher = DOWNLOAD_DESTINATION_PATTERN.matcher(it);
                             if (destinationMatcher.matches()) {
-                                queueItem.getDestinations().add(destinationMatcher.group(GROUP_DESTINATION));
+                                queueItem.addDestination(destinationMatcher.group(GROUP_DESTINATION));
                                 if (StringUtils.isNotBlank(progressDataCurrent.getSize())) {
                                     updateProgressData(0, progressDataCurrent.getThroughput(), progressDataCurrent.getSize() + SIZE_SEPARATOR);
                                 }
