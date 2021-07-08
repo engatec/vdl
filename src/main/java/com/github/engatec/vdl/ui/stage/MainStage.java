@@ -1,8 +1,15 @@
 package com.github.engatec.vdl.ui.stage;
 
 import com.github.engatec.vdl.controller.stage.MainController;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowHeightPref;
+import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowPosXPref;
+import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowPosYPref;
+import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowWidthPref;
 import com.github.engatec.vdl.ui.Dialogs;
+import javafx.beans.property.DoubleProperty;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
@@ -13,8 +20,6 @@ public class MainStage extends AppStage {
 
     private static final int STAGE_MIN_WIDTH = 500;
     private static final int STAGE_MIN_HEIGHT = 300;
-    private static final int STAGE_PREF_WIDTH = 800;
-    private static final int STAGE_PREF_HEIGHT = 600;
 
     public MainStage(Stage stage) {
         super(stage);
@@ -25,10 +30,31 @@ public class MainStage extends AppStage {
     protected void init() {
         super.init();
         stage.setTitle("VDL - Video downloader");
-        stage.setWidth(STAGE_PREF_WIDTH);
-        stage.setHeight(STAGE_PREF_HEIGHT);
+
+        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+
         stage.setMinWidth(STAGE_MIN_WIDTH);
+        DoubleProperty widthProperty = configRegistry.get(MainWindowWidthPref.class).getProperty();
+        stage.setWidth(widthProperty.getValue());
+        widthProperty.bind(stage.widthProperty());
+
         stage.setMinHeight(STAGE_MIN_HEIGHT);
+        DoubleProperty heightProperty = configRegistry.get(MainWindowHeightPref.class).getProperty();
+        stage.setHeight(heightProperty.getValue());
+        heightProperty.bind(stage.heightProperty());
+
+        DoubleProperty xProperty = configRegistry.get(MainWindowPosXPref.class).getProperty();
+        if (xProperty.getValue() >= 0) {
+            stage.setX(xProperty.getValue());
+        }
+        xProperty.bind(stage.xProperty());
+
+        DoubleProperty yProperty = configRegistry.get(MainWindowPosYPref.class).getProperty();
+        if (yProperty.getValue() >= 0) {
+            stage.setY(yProperty.getValue());
+        }
+        yProperty.bind(stage.yProperty());
+
         stage.setOnCloseRequest(this::handleCloseRequest);
     }
 

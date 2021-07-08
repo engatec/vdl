@@ -15,6 +15,10 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPr
 import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowHeightPref;
+import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowPosXPref;
+import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowPosYPref;
+import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowWidthPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
@@ -76,6 +80,12 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         /* Misc */
         addToRegistry(new HistoryEntriesNumberPref());
         addToRegistry(new RecentDownloadPathPref());
+
+        /* UI */
+        addToRegistry(new MainWindowPosXPref());
+        addToRegistry(new MainWindowPosYPref());
+        addToRegistry(new MainWindowWidthPref());
+        addToRegistry(new MainWindowHeightPref());
     }
 
     @SuppressWarnings("unchecked")
