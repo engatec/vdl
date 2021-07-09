@@ -63,13 +63,13 @@ public class QueueManager {
                         .map(Process::onExit)
                         .toArray(CompletableFuture[]::new);
 
-                CompletableFuture.allOf(onExitCompletableFutures).thenRun(() -> {
+                CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> {
                     for (QueueItem ri : removedItems) {
                         if (ri.getStatus() != FINISHED) {
                             YouDlUtils.deleteTempFiles(ri.getDestinations());
                         }
                     }
-                });
+                }, AppExecutors.SYSTEM_EXECUTOR);
             }
 
             notifyItemsChanged(change.getList());
