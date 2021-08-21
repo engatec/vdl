@@ -51,6 +51,13 @@ public class HistoryManager {
 
     public void reviseHistorySize() {
         Integer historyEntriesMaxNumber = configRegistry.get(HistoryEntriesNumberPref.class).getValue();
+        if (historyEntriesMaxNumber <= 0) {
+            synchronized (lock) {
+                historyQueue.clear();
+            }
+            return;
+        }
+
         if (historyQueue.maxSize() != historyEntriesMaxNumber) {
             synchronized (lock) {
                 CircularFifoQueue<HistoryItem> newQueue = new CircularFifoQueue<>(historyEntriesMaxNumber);
@@ -66,8 +73,14 @@ public class HistoryManager {
 
     public void restore() {
         Integer historyEntriesMaxNumber = configRegistry.get(HistoryEntriesNumberPref.class).getValue();
-        List<HistoryItem> loadedItems = new ArrayList<>(historyEntriesMaxNumber);
+        if (historyEntriesMaxNumber <= 0) {
+            synchronized (lock) {
+                historyQueue.clear();
+            }
+            return;
+        }
 
+        List<HistoryItem> loadedItems = new ArrayList<>(historyEntriesMaxNumber);
         Path historyPath = ApplicationContext.CONFIG_PATH.resolve(FILENAME);
         if (Files.exists(historyPath)) {
             ObjectMapper mapper = new ObjectMapper();
