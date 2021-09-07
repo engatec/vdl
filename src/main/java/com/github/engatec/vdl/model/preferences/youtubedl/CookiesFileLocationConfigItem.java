@@ -18,6 +18,6 @@ public class CookiesFileLocationConfigItem extends YoutubeDlConfigItem<String> {
 
     @Override
     public void setValue(Preferences prefs, String value) {
-        prefs.get(getKey(), value);
+        prefs.put(getKey(), value);
     }
 }

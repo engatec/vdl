@@ -1,10 +1,16 @@
 package com.github.engatec.vdl.core.youtubedl.processbuilder;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
+import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
 import org.apache.commons.collections4.CollectionUtils;
 
 public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuilder {
@@ -28,6 +34,15 @@ public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuil
 
         YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
         YoutubeDlCommandHelper.setAuthenticationOptions(commandBuilder);
+
+        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        if (configRegistry.get(ReadCookiesPref.class).getValue()) {
+            String cookiesFileLocation = configRegistry.get(CookiesFileLocationPref.class).getValue();
+            Path cookiesPath = Path.of(cookiesFileLocation);
+            if (Files.exists(cookiesPath) && Files.isReadable(cookiesPath)) {
+                commandBuilder.cookiesFile(Path.of(cookiesFileLocation));
+            }
+        }
 
         return commandBuilder
                 .urls(urls)
