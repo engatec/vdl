@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.Downloader;
+import com.github.engatec.vdl.core.Engine;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.DownloaderPref;
 import com.github.engatec.vdl.ui.stage.AboutStage;
 import com.github.engatec.vdl.ui.stage.PreferencesStage;
@@ -31,8 +31,8 @@ public class ServicebarComponentController extends HBox {
 
     @FXML
     public void initialize() {
-        List<Integer> configValues = Stream.of(Downloader.values())
-                .map(Downloader::getConfigValue)
+        List<Integer> configValues = Stream.of(Engine.values())
+                .map(Engine::getConfigValue)
                 .collect(Collectors.toList());
         downloaderComboBox.setItems(FXCollections.observableArrayList(configValues));
         downloaderComboBox.setConverter(new StringConverter<>() {
@@ -41,12 +41,12 @@ public class ServicebarComponentController extends HBox {
                 if (value == null) {
                     return null;
                 }
-                return Downloader.getByConfigValue(value).getDisplayValue();
+                return Engine.getByConfigValue(value).getDisplayValue();
             }
 
             @Override
             public Integer fromString(String value) {
-                return Downloader.getByDisplaValue(value).getConfigValue();
+                return Engine.getByDisplaValue(value).getConfigValue();
             }
         });
         downloaderComboBox.valueProperty().bindBidirectional(ApplicationContext.INSTANCE.getConfigRegistry().get(DownloaderPref.class).getProperty());

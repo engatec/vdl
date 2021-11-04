@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.Engine;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
@@ -65,7 +66,7 @@ public class AppUtils {
 
     public static void updateYoutubeDl(Stage stage, Runnable onSuccessListener) {
         ApplicationContext ctx = ApplicationContext.INSTANCE;
-        if (!Files.isWritable(ctx.getYoutubeDlPath())) {
+        if (!Files.isWritable(ctx.getDownloaderPath(Engine.YOUTUBE_DL))) {
             Dialogs.error("update.youtubedl.nopermissions");
             return;
         }

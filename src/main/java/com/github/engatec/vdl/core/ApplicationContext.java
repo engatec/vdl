@@ -41,11 +41,7 @@ public class ApplicationContext {
         return Charset.isSupported(encoding) ? Charset.forName(encoding) : Charset.defaultCharset();
     }
 
-    public Path getYoutubeDlPath() {
-        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), Downloader.YOUTUBE_DL.resolveFileName());
-    }
-
-    public Path getYtDlpPath() {
-        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), Downloader.YT_DLP.resolveFileName());
+    public Path getDownloaderPath(Engine engine) {
+        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), engine.resolveFileName());
     }
 }

@@ -118,7 +118,7 @@ public class YoutubeDlManager {
 
     public void updateYoutubeDl() throws IOException, InterruptedException {
         // LastModifiedTime is a bit "hacky" solution, but I need to be sure that the file will have actually updated
-        FileTime initialLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getYoutubeDlPath());
+        FileTime initialLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getDownloaderPath(Engine.YOUTUBE_DL));
 
         List<YoutubeDlProcessBuilder> processBuilders = List.of(new CacheRemoveProcessBuilder(), new YoutubeDlUpdateProcessBuilder());
         String currentYdlVersion = getCurrentYoutubeDlVersion();
@@ -140,7 +140,7 @@ public class YoutubeDlManager {
         FileTime currentLastModifiedTime = initialLastModifiedTime;
         while (currentLastModifiedTime.compareTo(initialLastModifiedTime) == 0) {
             try {
-                currentLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getYoutubeDlPath());
+                currentLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getDownloaderPath(Engine.YOUTUBE_DL));
                 TimeUnit.SECONDS.sleep(1);
             } catch (IOException ignored) { // For extremely rare cases when getLastModifiedTime() is called when the old file already removed, but the new one hasn't been renamed yet
                 // ignore

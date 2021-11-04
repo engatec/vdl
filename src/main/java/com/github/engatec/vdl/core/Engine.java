@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
-public enum Downloader {
+public enum Engine {
 
     YOUTUBE_DL(1, "youtube-dl") {
         @Override
@@ -30,7 +30,7 @@ public enum Downloader {
     private final int configValue;
     private final String displayValue;
 
-    Downloader(int configValue, String displayValue) {
+    Engine(int configValue, String displayValue) {
         this.configValue = configValue;
         this.displayValue = displayValue;
     }
@@ -45,8 +45,8 @@ public enum Downloader {
         return displayValue;
     }
 
-    public static Downloader getByConfigValue(int value) {
-        for (Downloader item : values()) {
+    public static Engine getByConfigValue(int value) {
+        for (Engine item : values()) {
             if (item.configValue == value) {
                 return item;
             }
@@ -55,8 +55,8 @@ public enum Downloader {
         throw new NoSuchElementException("No config value '" + value + "' exists");
     }
 
-    public static Downloader getByDisplaValue(String value) {
-        for (Downloader item : values()) {
+    public static Engine getByDisplaValue(String value) {
+        for (Engine item : values()) {
             if (item.displayValue.equals(value)) {
                 return item;
             }
