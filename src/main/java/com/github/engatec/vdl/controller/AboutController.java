@@ -1,14 +1,18 @@
 package com.github.engatec.vdl.controller;
 
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.Engine;
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.util.AppUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,7 +22,11 @@ public class AboutController extends StageAwareController {
 
     @FXML private Label vdlVersionLabel;
     @FXML private Label youtubeDlVersionLabel;
+    @FXML private ProgressIndicator youtubeDlVersionProgress;
     @FXML private Button youtubeDlUpdateBtn;
+    @FXML private Label ytdlpVersionLabel;
+    @FXML private ProgressIndicator ytdlpVersionProgress;
+    @FXML private Button ytdlpUpdateBtn;
     @FXML private Button closeBtn;
 
     private AboutController() {
@@ -33,8 +41,10 @@ public class AboutController extends StageAwareController {
         ResourceBundle resBundle = ApplicationContext.INSTANCE.getResourceBundle();
         stage.setTitle(resBundle.getString("stage.about.title"));
         vdlVersionLabel.setText(String.format(resBundle.getString("stage.about.label.version.vdl"), getVdlVersion()));
-        youtubeDlVersionLabel.setText(String.format(resBundle.getString("stage.about.label.version.youtubedl"), getYoutubeDlVersion()));
+        setYoutubeDlVersionLabel();
         youtubeDlUpdateBtn.setOnAction(this::handleYoutubeDlUpdateButtonClick);
+        setYtdlpVersionLabel();
+        ytdlpUpdateBtn.setOnAction(this::handleYtdlpUpdateButtonClick);
         closeBtn.setOnAction(this::handleCloseButtonClick);
     }
 
@@ -42,15 +52,43 @@ public class AboutController extends StageAwareController {
         return StringUtils.defaultIfBlank(getClass().getPackage().getImplementationVersion(), UNKNOWN_VERSION);
     }
 
-    private String getYoutubeDlVersion() {
-        return StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getCurrentYoutubeDlVersion(), UNKNOWN_VERSION);
+    private void setYoutubeDlVersionLabel() {
+        CompletableFuture.runAsync(() -> {
+            String v = StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getCurrentVersion(Engine.YOUTUBE_DL), UNKNOWN_VERSION);
+            String label = ApplicationContext.INSTANCE.getResourceBundle().getString("stage.about.label.version.youtubedl") + " " + v;
+            Platform.runLater(() -> {
+                youtubeDlVersionProgress.setVisible(false);
+                youtubeDlVersionLabel.setText(label);
+            });
+        });
+    }
+
+    private void setYtdlpVersionLabel() {
+        CompletableFuture.runAsync(() -> {
+            String v = StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getCurrentVersion(Engine.YT_DLP), UNKNOWN_VERSION);
+            String label = ApplicationContext.INSTANCE.getResourceBundle().getString("stage.about.label.version.ytdlp") + " " + v;
+            Platform.runLater(() -> {
+                ytdlpVersionProgress.setVisible(false);
+                ytdlpVersionLabel.setText(label);
+            });
+        });
     }
 
     private void handleYoutubeDlUpdateButtonClick(ActionEvent event) {
-        AppUtils.updateYoutubeDl(stage, () -> youtubeDlVersionLabel.setText(String.format(
-                ApplicationContext.INSTANCE.getResourceBundle().getString("stage.about.label.version.youtubedl"),
-                getYoutubeDlVersion()
-        )));
+        AppUtils.updateYoutubeDl(stage, () -> {
+            String v = StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getCurrentVersion(Engine.YOUTUBE_DL), UNKNOWN_VERSION);
+            String label = ApplicationContext.INSTANCE.getResourceBundle().getString("stage.about.label.version.youtubedl") + " " + v;
+            youtubeDlVersionLabel.setText(label);
+        });
+        event.consume();
+    }
+
+    private void handleYtdlpUpdateButtonClick(ActionEvent event) {
+        AppUtils.updateYtdlp(stage, () -> {
+            String v = StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getCurrentVersion(Engine.YT_DLP), UNKNOWN_VERSION);
+            String label = ApplicationContext.INSTANCE.getResourceBundle().getString("stage.about.label.version.ytdlp") + " " + v;
+            ytdlpVersionLabel.setText(label);
+        });
         event.consume();
     }
 

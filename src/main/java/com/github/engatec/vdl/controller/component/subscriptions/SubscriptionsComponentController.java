@@ -128,4 +128,9 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
             contentNode.getChildren().removeIf(it -> subscription.equals(((SubscriptionItemComponentController) it).getItem()));
         };
     }
+
+    @Override
+    public void onBeforeVisible() {
+        Platform.runLater(() -> urlTextField.requestFocus());
+    }
 }

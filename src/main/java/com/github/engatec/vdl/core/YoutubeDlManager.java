@@ -95,11 +95,11 @@ public class YoutubeDlManager {
         return pb.buildProcess(command);
     }
 
-    public String getCurrentYoutubeDlVersion() {
+    public String getCurrentVersion(Engine engine) {
         String version = null;
 
         try {
-            var pb = new VersionFetchProcessBuilder();
+            var pb = new VersionFetchProcessBuilder(engine);
             List<String> command = pb.buildCommand();
             Process process = pb.buildProcess(command);
             try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -120,20 +120,20 @@ public class YoutubeDlManager {
         // LastModifiedTime is a bit "hacky" solution, but I need to be sure that the file will have actually updated
         FileTime initialLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getDownloaderPath(Engine.YOUTUBE_DL));
 
-        List<YoutubeDlProcessBuilder> processBuilders = List.of(new CacheRemoveProcessBuilder(), new YoutubeDlUpdateProcessBuilder());
-        String currentYdlVersion = getCurrentYoutubeDlVersion();
-        boolean ydlUpToDate = false;
+        List<YoutubeDlProcessBuilder> processBuilders = List.of(new CacheRemoveProcessBuilder(), new YoutubeDlUpdateProcessBuilder(Engine.YOUTUBE_DL));
+        String currentVersion = getCurrentVersion(Engine.YOUTUBE_DL);
+        boolean versionIsUpToDate = false;
         for (YoutubeDlProcessBuilder pb : processBuilders) {
             List<String> command = pb.buildCommand();
             Process process = pb.buildProcess(command);
-            ydlUpToDate |= IOUtils.readLines(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset())
+            versionIsUpToDate |= IOUtils.readLines(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset())
                     .stream()
                     .filter(Objects::nonNull)
-                    .anyMatch(it -> it.contains(currentYdlVersion));
+                    .anyMatch(it -> it.contains(currentVersion));
             process.waitFor();
         }
 
-        if (ydlUpToDate) {
+        if (versionIsUpToDate) {
             return;
         }
 
@@ -141,6 +141,41 @@ public class YoutubeDlManager {
         while (currentLastModifiedTime.compareTo(initialLastModifiedTime) == 0) {
             try {
                 currentLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getDownloaderPath(Engine.YOUTUBE_DL));
+                TimeUnit.SECONDS.sleep(1);
+            } catch (IOException ignored) { // For extremely rare cases when getLastModifiedTime() is called when the old file already removed, but the new one hasn't been renamed yet
+                // ignore
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
+
+    public void updateYtdlp() throws IOException, InterruptedException {
+        // LastModifiedTime is a bit "hacky" solution, but I need to be sure that the file will have actually updated
+        FileTime initialLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getDownloaderPath(Engine.YT_DLP));
+
+        List<YoutubeDlProcessBuilder> processBuilders = List.of(new CacheRemoveProcessBuilder(), new YoutubeDlUpdateProcessBuilder(Engine.YT_DLP));
+        String currentVersion = getCurrentVersion(Engine.YT_DLP);
+        boolean versionIsUpToDate = false;
+        for (YoutubeDlProcessBuilder pb : processBuilders) {
+            List<String> command = pb.buildCommand();
+            Process process = pb.buildProcess(command);
+            versionIsUpToDate |= IOUtils.readLines(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset())
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .anyMatch(it -> it.contains(currentVersion));
+            process.waitFor();
+        }
+
+        if (versionIsUpToDate) {
+            return;
+        }
+
+        FileTime currentLastModifiedTime = initialLastModifiedTime;
+        while (currentLastModifiedTime.compareTo(initialLastModifiedTime) == 0) {
+            try {
+                currentLastModifiedTime = Files.getLastModifiedTime(ApplicationContext.INSTANCE.getDownloaderPath(Engine.YT_DLP));
                 TimeUnit.SECONDS.sleep(1);
             } catch (IOException ignored) { // For extremely rare cases when getLastModifiedTime() is called when the old file already removed, but the new one hasn't been renamed yet
                 // ignore
@@ -170,7 +205,7 @@ public class YoutubeDlManager {
                 .thenAccept(json -> {
                     try {
                         String latestVersion = String.valueOf(objectMapper.readValue(json, HashMap.class).get("tag_name"));
-                        String currentVersion = getCurrentYoutubeDlVersion();
+                        String currentVersion = getCurrentVersion(Engine.YOUTUBE_DL);
                         latestVersion = RegExUtils.replaceAll(latestVersion, "\\.", "");
                         currentVersion = RegExUtils.replaceAll(currentVersion, "\\.", "");
                         if (Integer.parseInt(latestVersion) > Integer.parseInt(currentVersion)) {

@@ -19,9 +19,13 @@ public class YoutubeDlCommandBuilder {
     }
 
     public static YoutubeDlCommandBuilder newInstance() {
+        Engine engine = Engine.getByConfigValue(ApplicationContext.INSTANCE.getConfigRegistry().get(DownloaderPref.class).getValue());
+        return newInstance(engine);
+    }
+
+    public static YoutubeDlCommandBuilder newInstance(Engine engine) {
         var o = new YoutubeDlCommandBuilder();
         o.commandList = new ArrayList<>();
-        Engine engine = Engine.getByConfigValue(ApplicationContext.INSTANCE.getConfigRegistry().get(DownloaderPref.class).getValue());
         o.commandList.add(ApplicationContext.INSTANCE.getDownloaderPath(engine).toString());
         return o;
     }
