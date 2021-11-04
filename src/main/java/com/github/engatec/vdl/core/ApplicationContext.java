@@ -42,13 +42,10 @@ public class ApplicationContext {
     }
 
     public Path getYoutubeDlPath() {
-        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), resolveYoutubeDlFileName());
+        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), Downloader.YOUTUBE_DL.resolveFileName());
     }
 
-    private String resolveYoutubeDlFileName() {
-        return StringUtils.defaultIfBlank(
-                System.getProperty("app.youtubedl"),
-                SystemUtils.IS_OS_WINDOWS ? "youtube-dl.exe" : "youtube-dl" // If app.youtubedl is not set, assume default name
-        );
+    public Path getYtDlpPath() {
+        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), Downloader.YT_DLP.resolveFileName());
     }
 }

@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -63,13 +64,14 @@ public class QueueManager {
                         .map(Process::onExit)
                         .toArray(CompletableFuture[]::new);
 
+                // It might take a while until file is accessible even after the process is destroyed, therefore run it with delayedExecutor
                 CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> {
                     for (QueueItem ri : removedItems) {
                         if (ri.getStatus() != FINISHED) {
                             YouDlUtils.deleteTempFiles(ri.getDestinations());
                         }
                     }
-                }, AppExecutors.SYSTEM_EXECUTOR);
+                }, CompletableFuture.delayedExecutor(5, TimeUnit.SECONDS, AppExecutors.SYSTEM_EXECUTOR));
             }
 
             notifyItemsChanged(change.getList());
