@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.Engine;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.DownloaderPref;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,9 +19,14 @@ public class YoutubeDlCommandBuilder {
     }
 
     public static YoutubeDlCommandBuilder newInstance() {
+        Engine engine = Engine.getByConfigValue(ApplicationContext.INSTANCE.getConfigRegistry().get(DownloaderPref.class).getValue());
+        return newInstance(engine);
+    }
+
+    public static YoutubeDlCommandBuilder newInstance(Engine engine) {
         var o = new YoutubeDlCommandBuilder();
         o.commandList = new ArrayList<>();
-        o.commandList.add(ApplicationContext.INSTANCE.getYoutubeDlPath().toString());
+        o.commandList.add(ApplicationContext.INSTANCE.getDownloaderPath(engine).toString());
         return o;
     }
 

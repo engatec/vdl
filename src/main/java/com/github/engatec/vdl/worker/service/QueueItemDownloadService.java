@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -191,7 +192,14 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                         }
 
                         if (isCancelled()) {
-                            process.destroy();
+                            try {
+                                reader.close();
+                            } catch (IOException e) {
+                                LOGGER.warn("Couldn't close input stream", e);
+                                throw new UncheckedIOException(e);
+                            } finally {
+                                process.destroy();
+                            }
                         }
 
                         Matcher progressMatcher = DOWNLOAD_PROGRESS_PATTERN.matcher(it);

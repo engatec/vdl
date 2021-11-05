@@ -13,6 +13,8 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.YtdlpStartupUpdatesCheckPref;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.DownloaderPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowHeightPref;
@@ -45,6 +47,7 @@ public class ConfigRegistryImpl implements ConfigRegistry {
     private static final Map<Class<? extends ConfigItemWrapper<?, ?>>, ConfigItemWrapper<?, ?>> REGISTRY = new HashMap<>();
 
     static {
+        /* General */
         addToRegistry(new AlwaysAskDownloadPathPref());
         addToRegistry(new AudioExtractionFormatPref());
         addToRegistry(new AudioExtractionQualityPref());
@@ -53,9 +56,10 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new DownloadPathPref());
         addToRegistry(new LanguagePref());
         addToRegistry(new YoutubeDlStartupUpdatesCheckPref());
+        addToRegistry(new YtdlpStartupUpdatesCheckPref());
         addToRegistry(new LoadThumbnailsPref());
 
-        /* YoutubeDl */
+        /* YoutubeDl / YtDlp */
         addToRegistry(new ConfigFilePathPref());
         addToRegistry(new OutputTemplatePref());
         addToRegistry(new MarkWatchedPref());
@@ -78,6 +82,7 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new VideoPasswordPref());
 
         /* Misc */
+        addToRegistry(new DownloaderPref());
         addToRegistry(new HistoryEntriesNumberPref());
         addToRegistry(new RecentDownloadPathPref());
 

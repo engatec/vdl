@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <fx:root alignment="CENTER_RIGHT" spacing="12.0" stylesheets="@../styles.css" type="HBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
+      <ComboBox fx:id="downloaderComboBox">
+         <HBox.margin>
+            <Insets right="16.0" />
+         </HBox.margin>
+      </ComboBox>
       <ImageView fx:id="preferencesButton" pickOnBounds="true" preserveRatio="true" styleClass="service-btn">
          <image>
             <Image url="@../assets/icons/settings_24dp.png" />

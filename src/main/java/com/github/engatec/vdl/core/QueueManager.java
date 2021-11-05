@@ -63,6 +63,7 @@ public class QueueManager {
                         .map(Process::onExit)
                         .toArray(CompletableFuture[]::new);
 
+                // It might take a while until file is accessible even after the process is destroyed, therefore run it with delayedExecutor
                 CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> {
                     for (QueueItem ri : removedItems) {
                         if (ri.getStatus() != FINISHED) {

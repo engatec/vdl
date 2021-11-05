@@ -239,4 +239,9 @@ public class SearchComponentController extends VBox implements ComponentControll
             e.consume();
         });
     }
+
+    @Override
+    public void onBeforeVisible() {
+        Platform.runLater(() -> urlTextField.requestFocus());
+    }
 }

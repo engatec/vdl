@@ -41,14 +41,7 @@ public class ApplicationContext {
         return Charset.isSupported(encoding) ? Charset.forName(encoding) : Charset.defaultCharset();
     }
 
-    public Path getYoutubeDlPath() {
-        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), resolveYoutubeDlFileName());
-    }
-
-    private String resolveYoutubeDlFileName() {
-        return StringUtils.defaultIfBlank(
-                System.getProperty("app.youtubedl"),
-                SystemUtils.IS_OS_WINDOWS ? "youtube-dl.exe" : "youtube-dl" // If app.youtubedl is not set, assume default name
-        );
+    public Path getDownloaderPath(Engine engine) {
+        return Path.of(StringUtils.defaultString(APP_DIR, StringUtils.EMPTY), engine.resolveFileName());
     }
 }
