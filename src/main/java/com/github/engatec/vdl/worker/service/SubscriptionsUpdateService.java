@@ -54,7 +54,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
                         return null;
                     }
 
-                    var playlistSearchService = new PlaylistDetailsSearchService(AppExecutors.SYSTEM_EXECUTOR);
+                    var playlistSearchService = new PlaylistDetailsSearchService(AppExecutors.COMMON_EXECUTOR);
                     playlistSearchService.setUrl(subscription.getUrl());
                     playlistSearchService.setOnSucceeded(e -> updateSubscription(subscription, (List<VideoInfo>) e.getSource().getValue()));
                     playlistSearchService.setOnFailed(e -> LOGGER.error(e.getSource().getException().getMessage()));

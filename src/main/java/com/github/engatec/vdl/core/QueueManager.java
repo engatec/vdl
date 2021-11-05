@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -71,7 +70,7 @@ public class QueueManager {
                             YouDlUtils.deleteTempFiles(ri.getDestinations());
                         }
                     }
-                }, CompletableFuture.delayedExecutor(5, TimeUnit.SECONDS, AppExecutors.SYSTEM_EXECUTOR));
+                }, AppExecutors.SYSTEM_EXECUTOR);
             }
 
             notifyItemsChanged(change.getList());

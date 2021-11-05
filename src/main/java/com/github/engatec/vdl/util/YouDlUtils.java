@@ -7,6 +7,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,12 +34,12 @@ public class YouDlUtils {
 
     public static void deleteTempFiles(Collection<? extends String> paths) {
         for (String path : CollectionUtils.emptyIfNull(paths)) {
-            deleteTempFiles(path);
+            deleteTempFiles(path, 0);
         }
     }
 
-    public static void deleteTempFiles(String path) {
-        if (StringUtils.isBlank(path)) {
+    public static void deleteTempFiles(String path, int attempt) {
+        if (StringUtils.isBlank(path) || attempt > 5) {
             return;
         }
 
@@ -54,7 +55,13 @@ public class YouDlUtils {
         } catch (DirectoryNotEmptyException e) {
             LOGGER.warn("File expected, got directory instead. '{}'", normalizedPath);
         } catch (IOException e) {
-            LOGGER.warn("Couldn't delete file", e);
+            LOGGER.warn("Couldn't delete file '{}', retrying in 1 second", path);
+            try { // In some cases file is not released by the system even if the process using it is terminated. Do a few attempts to wait and delete again
+                TimeUnit.SECONDS.sleep(1);
+                deleteTempFiles(path, attempt + 1);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 }

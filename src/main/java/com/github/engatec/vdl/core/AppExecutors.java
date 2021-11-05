@@ -13,8 +13,8 @@ public class AppExecutors {
 
     private static final Logger LOGGER = LogManager.getLogger(AppExecutors.class);
 
-    public static final ExecutorService COMMON_EXECUTOR = Executors.newFixedThreadPool(2);
-    public static final ExecutorService SYSTEM_EXECUTOR = Executors.newFixedThreadPool(3);
+    public static final ExecutorService COMMON_EXECUTOR = Executors.newFixedThreadPool(5);
+    public static final ExecutorService SYSTEM_EXECUTOR = Executors.newFixedThreadPool(1);
     public static final ExecutorService QUEUE_EXECUTOR = Executors.newFixedThreadPool(3);
 
     public static <T> void runTaskAsync(Task<T> task) {
@@ -22,17 +22,17 @@ public class AppExecutors {
     }
 
     public static void shutdownExecutors() {
-        for (ExecutorService executor : List.of(COMMON_EXECUTOR, SYSTEM_EXECUTOR, QUEUE_EXECUTOR)) {
-            shutdownExecutor(executor);
-        }
-    }
-
-    private static void shutdownExecutor(ExecutorService executor) {
-        try {
+        for (ExecutorService executor : List.of(COMMON_EXECUTOR, QUEUE_EXECUTOR)) {
             executor.shutdownNow();
-            boolean successfulTermination = executor.awaitTermination(10, TimeUnit.SECONDS);
+        }
+
+        // Lets shutdown SYSTEM_EXECUTOR gracefully as it intended for an important work
+        try {
+            SYSTEM_EXECUTOR.shutdown();
+            int awaitTimeout = 10;
+            boolean successfulTermination = SYSTEM_EXECUTOR.awaitTermination(awaitTimeout, TimeUnit.SECONDS);
             if (!successfulTermination) {
-                LOGGER.warn("Executor shutdown abruptly after 10 seconds");
+                LOGGER.warn("SYSTEM_EXECUTOR wasn't able to finish its job in {} seconds", awaitTimeout);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
