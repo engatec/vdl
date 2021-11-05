@@ -220,4 +220,39 @@ public class YoutubeDlManager {
                     }
                 });
     }
+
+    public void checkLatestYtdlpVersion(Stage stage) {
+        HttpClient client = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .connectTimeout(Duration.ofSeconds(30))
+                .build();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest"))
+                .timeout(Duration.ofSeconds(30))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+
+        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body)
+                .thenAccept(json -> {
+                    try {
+                        String latestVersion = String.valueOf(objectMapper.readValue(json, HashMap.class).get("tag_name"));
+                        String currentVersion = getCurrentVersion(Engine.YT_DLP);
+                        latestVersion = RegExUtils.replaceAll(latestVersion, "\\.", "");
+                        currentVersion = RegExUtils.replaceAll(currentVersion, "\\.", "");
+                        if (Integer.parseInt(latestVersion) > Integer.parseInt(currentVersion)) {
+                            Platform.runLater(() -> Dialogs.infoWithYesNoButtons(
+                                    "ytdlp.update.available",
+                                    () -> AppUtils.updateYoutubeDl(stage, null),
+                                    null
+                            ));
+                        }
+                    } catch (Exception e) { // No need to fail if version check went wrong
+                        LOGGER.warn(e.getMessage());
+                    }
+                });
+    }
 }

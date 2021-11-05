@@ -11,6 +11,7 @@ import com.github.engatec.vdl.core.preferences.ConfigRegistryImpl;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.YtdlpStartupUpdatesCheckPref;
 import com.github.engatec.vdl.ui.stage.MainStage;
 import javafx.application.Application;
 import javafx.scene.text.Font;
@@ -34,6 +35,12 @@ public class Main extends Application {
         if (needCheckYoutubeDlUpdate) {
             YoutubeDlManager.INSTANCE.checkLatestYoutubeDlVersion(stage);
         }
+
+        Boolean needCheckYtdlpUpdate = ApplicationContext.INSTANCE.getConfigRegistry().get(YtdlpStartupUpdatesCheckPref.class).getValue();
+        if (needCheckYtdlpUpdate) {
+            YoutubeDlManager.INSTANCE.checkLatestYtdlpVersion(stage);
+        }
+
         SubscriptionsManager.INSTANCE.updateAllSubscriptions();
     }
 
