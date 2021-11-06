@@ -3,14 +3,34 @@ package com.github.engatec.vdl.core.youtubedl;
 import java.nio.file.Path;
 import java.util.List;
 
+import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.DownloaderPref;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
 
 public class YoutubeDlCommandBuilderTests {
+
+    @BeforeAll
+    static void setUp() {
+        ConfigRegistry configRegistryMock = Mockito.mock(ConfigRegistry.class);
+        ApplicationContext.INSTANCE.setConfigRegistry(configRegistryMock);
+
+        mockPreference(DownloaderPref.class, 1);
+    }
+
+    private static <V, T extends ConfigItemWrapper<?, V>> void mockPreference(Class<T> configItemClass, V value) {
+        T prefMock = Mockito.mock(configItemClass);
+        Mockito.when(ApplicationContext.INSTANCE.getConfigRegistry().get(configItemClass)).thenReturn(prefMock);
+        Mockito.when(prefMock.getValue()).thenReturn(value);
+    }
 
     private void doAssertions(List<String> command, String key) {
         assertThat(command).hasSize(2);
