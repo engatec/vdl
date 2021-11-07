@@ -9,12 +9,12 @@ public class ProgressDialogStage extends AppStage {
 
     private final String title;
     private final Task<?> task;
-    private final Runnable onSuccessListener;
+    private final Runnable onSuccessCallback;
 
-    public ProgressDialogStage(String title, Task<?> task, Runnable onSuccessListener) {
+    public ProgressDialogStage(String title, Task<?> task, Runnable onSuccessCallback) {
         this.title = title;
         this.task = task;
-        this.onSuccessListener = onSuccessListener;
+        this.onSuccessCallback = onSuccessCallback;
         init();
     }
 
@@ -32,6 +32,6 @@ public class ProgressDialogStage extends AppStage {
 
     @Override
     protected Callback<Class<?>, Object> getControllerFactory(Stage stage) {
-        return param -> new ProgressDialogController(stage, task, onSuccessListener);
+        return param -> new ProgressDialogController(stage, task, onSuccessCallback);
     }
 }

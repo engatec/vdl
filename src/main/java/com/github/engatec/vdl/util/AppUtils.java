@@ -65,7 +65,7 @@ public class AppUtils {
         return downloadPath;
     }
 
-    public static void updateYoutubeDl(Stage stage, Runnable onSuccessListener) {
+    public static void updateYoutubeDl(Stage stage, Runnable onSuccessCallback) {
         ApplicationContext ctx = ApplicationContext.INSTANCE;
         if (!Files.isWritable(ctx.getDownloaderPath(Engine.YOUTUBE_DL))) {
             Dialogs.error("update.youtubedl.nopermissions");
@@ -73,10 +73,10 @@ public class AppUtils {
         }
 
         String title = ctx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress");
-        Dialogs.progress(title, stage, new UpdateYoutubeDlBinaryTask(), onSuccessListener);
+        Dialogs.progress(title, stage, new UpdateYoutubeDlBinaryTask(), onSuccessCallback);
     }
 
-    public static void updateYtdlp(Stage stage, Runnable onSuccessListener) {
+    public static void updateYtdlp(Stage stage, Runnable onSuccessCallback) {
         ApplicationContext ctx = ApplicationContext.INSTANCE;
         if (!Files.isWritable(ctx.getDownloaderPath(Engine.YT_DLP))) {
             Dialogs.error("update.ytdlp.nopermissions");
@@ -84,7 +84,7 @@ public class AppUtils {
         }
 
         String title = ctx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress");
-        Dialogs.progress(title, stage, new UpdateYtdlpBinaryTask(), onSuccessListener);
+        Dialogs.progress(title, stage, new UpdateYtdlpBinaryTask(), onSuccessCallback);
     }
 
     /**

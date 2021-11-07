@@ -15,17 +15,17 @@ public class ProgressDialogController extends StageAwareController {
     private static final Logger LOGGER = LogManager.getLogger(ProgressDialogController.class);
 
     private Task<?> task;
-    private Runnable onSuccessListener;
+    private Runnable onSuccessCallback;
 
     @FXML private Button dialogProgressCancelButton;
 
     private ProgressDialogController() {
     }
 
-    public ProgressDialogController(Stage stage, Task<?> task, Runnable onSuccessListener) {
+    public ProgressDialogController(Stage stage, Task<?> task, Runnable onSuccessCallback) {
         super(stage);
         this.task = task;
-        this.onSuccessListener = onSuccessListener;
+        this.onSuccessCallback = onSuccessCallback;
     }
 
     @FXML
@@ -35,8 +35,8 @@ public class ProgressDialogController extends StageAwareController {
 
     private void runTask() {
         task.setOnSucceeded(event -> {
-            if (onSuccessListener != null) {
-                onSuccessListener.run();
+            if (onSuccessCallback != null) {
+                onSuccessCallback.run();
             }
             close(event);
         });
