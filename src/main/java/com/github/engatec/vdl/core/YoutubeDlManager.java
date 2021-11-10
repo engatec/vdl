@@ -246,7 +246,7 @@ public class YoutubeDlManager {
                         if (Integer.parseInt(latestVersion) > Integer.parseInt(currentVersion)) {
                             Platform.runLater(() -> Dialogs.infoWithYesNoButtons(
                                     "ytdlp.update.available",
-                                    () -> AppUtils.updateYoutubeDl(stage, null),
+                                    () -> AppUtils.updateYtdlp(stage, null),
                                     null
                             ));
                         }
