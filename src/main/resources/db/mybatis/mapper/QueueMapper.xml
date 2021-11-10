@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.engatec.vdl.db.mapper.QueueMapper">
+
+    <insert id="insertQueueItem" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO queue (title, format_id, url, file_path, size, progress, status) VALUES
+        <foreach item="it" collection="list" separator=",">
+            (#{it.title}, #{it.formatId}, #{it.url}, #{it.filePath}, #{it.size}, #{it.progress}, #{it.status})
+        </foreach>
+    </insert>
+
+</mapper>

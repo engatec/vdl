@@ -15,5 +15,10 @@ open module engatec.vdl {
 
     requires engatec.fxcontrol;
 
+    requires java.sql;
+    requires org.xerial.sqlitejdbc;
+    requires org.flywaydb.core;
+    requires org.mybatis;
+
     exports com.github.engatec.vdl;
 }
