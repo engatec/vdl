@@ -60,17 +60,24 @@ public class QueueManager extends VdlManager {
                         .map(Process::onExit)
                         .toArray(CompletableFuture[]::new);
 
-                CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> {
-                    for (QueueItem ri : removedItems) {
-                        if (ri.getStatus() != FINISHED) {
-                            YouDlUtils.deleteTempFiles(ri.getDestinationsForTraversal());
-                        }
-                    }
-                }, AppExecutors.SYSTEM_EXECUTOR);
+                CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> deleteTempData(removedItems), AppExecutors.SYSTEM_EXECUTOR);
             }
 
             notifyItemsChanged(change.getList());
         });
+    }
+
+    private void deleteTempData(List<? extends QueueItem> removedItems) {
+        List<Long> ids = removedItems.stream()
+                .map(QueueItem::getId)
+                .toList();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.deleteQueueItems(ids));
+
+        for (QueueItem ri : removedItems) {
+            if (ri.getStatus() != FINISHED) {
+                YouDlUtils.deleteTempFiles(ri.getDestinationsForTraversal());
+            }
+        }
     }
 
     @Override
@@ -95,7 +102,7 @@ public class QueueManager extends VdlManager {
         }
 
         if (dbEntryRequired) {
-            dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(item)));
+            dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItems(List.of(item)));
         }
 
         queueItems.add(item);

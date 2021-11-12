@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import com.github.engatec.vdl.db.DbManager;
+import com.github.engatec.vdl.db.entity.FindQueueTempFilesResult;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import org.apache.ibatis.exceptions.PersistenceException;
@@ -43,20 +44,20 @@ public class QueueMapperTest {
     void insertQueueItem_shouldInsert() {
         QueueItem item = createQueueItem();
         assertThat(item.getId()).isNull();
-        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(item))).join();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItems(List.of(item))).join();
         assertThat(item.getId()).isNotNull();
     }
 
     @Test
     void fetchQueueItems_shouldFindMoreThanOne() {
         QueueItem it1 = createQueueItem();
-        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(it1)))
-                .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(it1.getId(), "~/Downloads/abc.mp4"))
-                                .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(it1.getId(), "~/Downloads/cde.m4a"))).join()
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItems(List.of(it1)))
+                .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(it1.getId(), "~/Downloads/it1.mp4"))
+                                .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(it1.getId(), "~/Downloads/it1.m4a"))).join()
                 ).join();
 
         QueueItem it2 = createQueueItem();
-        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(it2))).join();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItems(List.of(it2))).join();
 
         List<QueueItem> dbItems = dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems).join();
         assertThat(dbItems)
@@ -84,6 +85,46 @@ public class QueueMapperTest {
     }
 
     @Test
+    void deleteQueueItems_shouldDeleteQueueItemAndTempFilesInfo() {
+        QueueItem it1 = createQueueItem();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItems(List.of(it1)))
+                .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(it1.getId(), "~/Downloads/it1.mp4"))
+                        .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(it1.getId(), "~/Downloads/it1.m4a"))).join()
+                ).join();
+
+        QueueItem it2 = createQueueItem();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItems(List.of(it2)))
+                .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(it2.getId(), "~/Downloads/it2.webm")))
+                .join();
+
+        List<QueueItem> dbItems = dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems).join();
+        assertThat(dbItems)
+                .extracting(QueueItem::getId)
+                .contains(it1.getId(), it2.getId());
+
+        List<FindQueueTempFilesResult> tempFilesResultBeforeDelete = dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.findQueueTempFiles(List.of(it1.getId(), it2.getId()))).join();
+        assertThat(tempFilesResultBeforeDelete)
+                .hasSize(3)
+                .extracting(FindQueueTempFilesResult::getQueueId)
+                .contains(it1.getId(), it2.getId());
+
+        Integer deletedQueueItemEntries = dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.deleteQueueItems(List.of(it1.getId()))).join();
+        assertThat(deletedQueueItemEntries).isEqualTo(1);
+
+        List<QueueItem> dbItemsAfterDelete = dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems).join();
+        assertThat(dbItemsAfterDelete)
+                .extracting(QueueItem::getId)
+                .doesNotContain(it1.getId());
+
+        List<FindQueueTempFilesResult> tempFilesResultAfterDelete = dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.findQueueTempFiles(List.of(it1.getId(), it2.getId()))).join();
+        assertThat(tempFilesResultAfterDelete)
+                .hasSize(1)
+                .extracting(FindQueueTempFilesResult::getQueueId)
+                .contains(it2.getId())
+                .doesNotContain(it1.getId());
+    }
+
+    @Test
     void insertQueueTempFile_insertionShouldFail_foreignKeyNull() {
         assertThatThrownBy(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(null, "~/Downloads/abc.mp4")).join())
                 .hasCauseInstanceOf(PersistenceException.class)
@@ -102,7 +143,7 @@ public class QueueMapperTest {
     @Test
     void insertQueueTempFile_shouldInsert() {
         QueueItem item = createQueueItem();
-        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(item)))
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItems(List.of(item)))
                 .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(item.getId(), "~/Downloads/abc.mp4")))
                 .join();
     }
