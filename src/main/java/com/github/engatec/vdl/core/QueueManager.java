@@ -1,5 +1,8 @@
 package com.github.engatec.vdl.core;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,6 +12,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.db.mapper.QueueMapper;
 import com.github.engatec.vdl.model.QueueItem;
@@ -19,6 +24,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,19 +70,6 @@ public class QueueManager extends VdlManager {
         });
     }
 
-    private void deleteTempData(List<? extends QueueItem> removedItems) {
-        List<Long> ids = removedItems.stream()
-                .map(QueueItem::getId)
-                .toList();
-        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.deleteQueueItems(ids));
-
-        for (QueueItem ri : removedItems) {
-            if (ri.getStatus() != FINISHED) {
-                YouDlUtils.deleteTempFiles(ri.getDestinationsForTraversal());
-            }
-        }
-    }
-
     @Override
     public void init() {
         dbManager = ApplicationContext.getManager(DbManager.class);
@@ -84,7 +77,39 @@ public class QueueManager extends VdlManager {
                 .thenAccept(dbItems -> {
                     fixState(dbItems);
                     Platform.runLater(() -> addAll(dbItems));
+                })
+                .thenRun(() -> { // FIXME: deprecated in 1.7 For removal in 1.9
+                    List<QueueItem> queueItems = restoreFromJson();
+                    if (CollectionUtils.isEmpty(queueItems)) {
+                        return;
+                    }
+                    fixState(queueItems);
+                    Platform.runLater(() -> {
+                        for (QueueItem it : queueItems) {
+                            addItem(it);
+                        }
+                    });
                 });
+    }
+
+    // FIXME: transition from JSON files to sqlite.
+    @Deprecated(since = "1.7", forRemoval = true)
+    private List<QueueItem> restoreFromJson() {
+        Path queueFilePath = ApplicationContext.DATA_PATH.resolve("queue.vdl");
+        if (Files.notExists(queueFilePath)) {
+            return List.of();
+        }
+
+        List<QueueItem> result = List.of();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            result = mapper.readValue(queueFilePath.toFile(), new TypeReference<>(){});
+            result.removeIf(it -> it.getStatus() == FINISHED);
+            Files.delete(queueFilePath);
+        } catch (IOException e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+        return result;
     }
 
     public void addItem(QueueItem item) {
@@ -121,6 +146,19 @@ public class QueueManager extends VdlManager {
 
     public void removeAll() {
         queueItems.clear();
+    }
+
+    private void deleteTempData(List<? extends QueueItem> removedItems) {
+        List<Long> ids = removedItems.stream()
+                .map(QueueItem::getId)
+                .toList();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.deleteQueueItems(ids));
+
+        for (QueueItem ri : removedItems) {
+            if (ri.getStatus() != FINISHED) {
+                YouDlUtils.deleteTempFiles(ri.getDestinationsForTraversal());
+            }
+        }
     }
 
     public void addDestination(QueueItem item, String destination) {
