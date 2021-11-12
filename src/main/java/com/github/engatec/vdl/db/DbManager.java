@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.AppExecutors;
+import com.github.engatec.vdl.core.VdlManager;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -16,19 +18,18 @@ import org.apache.logging.log4j.Logger;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
-public class Db {
+public class DbManager extends VdlManager {
 
-    private static final Logger LOGGER = LogManager.getLogger(Db.class);
-    private static final Path DB_PATH =  ApplicationContext.CONFIG_PATH.resolve("data.db");
-
-    public static final Db INSTANCE = new Db();
+    private static final Logger LOGGER = LogManager.getLogger(DbManager.class);
+    private final String url;
 
     private final SqlSessionFactory sessionFactory;
 
-    private Db() {
+    public DbManager(Path dbPath) {
+        url = "jdbc:sqlite:" + dbPath;
         try {
             updateSchema();
-            this.sessionFactory = buildSqlSessionFactory();
+            sessionFactory = buildSqlSessionFactory();
         } catch (IOException | FlywayException e) {
             LOGGER.error("Error during DB initialization", e);
             throw new RuntimeException(e);
@@ -37,7 +38,7 @@ public class Db {
 
     private void updateSchema() {
         Flyway.configure()
-                .dataSource("jdbc:sqlite:" + DB_PATH, null, null)
+                .dataSource(url, null, null)
                 .locations("db/migrations")
                 .load()
                 .migrate();
@@ -47,17 +48,19 @@ public class Db {
         InputStream is = Resources.getResourceAsStream("db/mybatis/mybatis-config.xml");
         Properties props = new Properties();
         props.setProperty("driver", "org.sqlite.JDBC");
-        props.setProperty("url", "jdbc:sqlite:" + DB_PATH.toString());
+        props.setProperty("url", url);
         return new SqlSessionFactoryBuilder().build(is, props);
     }
 
-    public <R, M> R doQuery(Class<M> mapperClass, Function<M, R> func) {
-        R result;
-        try (SqlSession session = sessionFactory.openSession()) {
-            M mapper = session.getMapper(mapperClass);
-            result = func.apply(mapper);
-            session.commit();
-        }
-        return result;
+    public <R, M> CompletableFuture<R> doQueryAsync(Class<M> mapperClass, Function<M, R> func) {
+        return CompletableFuture.supplyAsync(() -> {
+            R result;
+            try (SqlSession session = sessionFactory.openSession()) {
+                M mapper = session.getMapper(mapperClass);
+                result = func.apply(mapper);
+                session.commit();
+            }
+            return result;
+        }, AppExecutors.COMMON_EXECUTOR);
     }
 }

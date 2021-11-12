@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS queue(
     title TEXT,
     format_id TEXT NOT NULL,
     url TEXT NOT NULL,
-    file_path TEXT NOT NULL,
+    download_path TEXT NOT NULL,
     size TEXT,
     progress NUMERIC,
     status TEXT NOT NULL,
@@ -19,8 +19,9 @@ CREATE TABLE IF NOT EXISTS queue(
 );
 
 CREATE TABLE IF NOT EXISTS queue_temp_file(
-    queue_id INTEGER,
-    download_path TEXT
+    queue_id INTEGER NOT NULL,
+    file_path TEXT,
+    FOREIGN KEY (queue_id) REFERENCES queue(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS subscription(

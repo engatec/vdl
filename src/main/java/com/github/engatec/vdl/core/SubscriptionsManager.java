@@ -47,14 +47,14 @@ public class SubscriptionsManager {
     public void persist() {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            mapper.writeValue(ApplicationContext.CONFIG_PATH.resolve(FILENAME).toFile(), subscriptions);
+            mapper.writeValue(ApplicationContext.DATA_PATH.resolve(FILENAME).toFile(), subscriptions);
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e);
         }
     }
 
     public void restore() {
-        Path path = ApplicationContext.CONFIG_PATH.resolve(FILENAME);
+        Path path = ApplicationContext.DATA_PATH.resolve(FILENAME);
         if (!Files.exists(path)) {
             return;
         }

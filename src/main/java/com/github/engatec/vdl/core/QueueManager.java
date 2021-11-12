@@ -1,8 +1,5 @@
 package com.github.engatec.vdl.core;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,8 +9,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.engatec.vdl.db.DbManager;
+import com.github.engatec.vdl.db.mapper.QueueMapper;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.util.YouDlUtils;
@@ -32,18 +29,18 @@ import static com.github.engatec.vdl.model.DownloadStatus.IN_PROGRESS;
 import static com.github.engatec.vdl.model.DownloadStatus.READY;
 import static com.github.engatec.vdl.model.DownloadStatus.SCHEDULED;
 
-public class QueueManager {
+public class QueueManager extends VdlManager {
 
     private static final Logger LOGGER = LogManager.getLogger(QueueManager.class);
 
     public static final QueueManager INSTANCE = new QueueManager();
 
-    private static final String FILENAME = "queue.vdl";
-
     private final ObservableList<QueueItem> queueItems = FXCollections.observableList(new LinkedList<>());
     private final Map<QueueItem, Service<?>> itemServiceMap = new HashMap<>();
 
     private Consumer<Integer> onQueueItemsChangeListener;
+
+    private DbManager dbManager;
 
     private QueueManager() {
         queueItems.addListener((ListChangeListener<QueueItem>) change -> {
@@ -63,11 +60,10 @@ public class QueueManager {
                         .map(Process::onExit)
                         .toArray(CompletableFuture[]::new);
 
-                // It might take a while until file is accessible even after the process is destroyed, therefore run it with delayedExecutor
                 CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> {
                     for (QueueItem ri : removedItems) {
                         if (ri.getStatus() != FINISHED) {
-                            YouDlUtils.deleteTempFiles(ri.getDestinations());
+                            YouDlUtils.deleteTempFiles(ri.getDestinationsForTraversal());
                         }
                     }
                 }, AppExecutors.SYSTEM_EXECUTOR);
@@ -77,11 +73,29 @@ public class QueueManager {
         });
     }
 
+    @Override
+    public void init() {
+        dbManager = ApplicationContext.getManager(DbManager.class);
+        dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems)
+                .thenAccept(dbItems -> {
+                    fixState(dbItems);
+                    Platform.runLater(() -> addAll(dbItems));
+                });
+    }
+
     public void addItem(QueueItem item) {
+        addItem(item, true);
+    }
+
+    private void addItem(QueueItem item, boolean dbEntryRequired) {
         Service<?> service = itemServiceMap.get(item);
         if (service != null && service.isRunning()) { // Sanity check. Should never happen.
             LOGGER.warn("Ooops! Service exists and running!");
             return;
+        }
+
+        if (dbEntryRequired) {
+            dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(item)));
         }
 
         queueItems.add(item);
@@ -93,7 +107,7 @@ public class QueueManager {
 
     public void addAll(List<QueueItem> items) {
         for (QueueItem item : items) {
-            addItem(item);
+            addItem(item, false);
         }
     }
 
@@ -103,6 +117,11 @@ public class QueueManager {
 
     public void removeAll() {
         queueItems.clear();
+    }
+
+    public void addDestination(QueueItem item, String destination) {
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(item.getId(), destination));
+        item.getDestinations().add(destination);
     }
 
     public ObservableList<QueueItem> getQueueItems() {
@@ -116,15 +135,6 @@ public class QueueManager {
         return queueItems.stream().anyMatch(predicate);
     }
 
-    public void persist() {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            mapper.writeValue(ApplicationContext.CONFIG_PATH.resolve(FILENAME).toFile(), queueItems);
-        } catch (IOException e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-    }
-
     private void fixState(List<QueueItem> items) {
         for (QueueItem item : ListUtils.emptyIfNull(items)) {
             DownloadStatus status = item.getStatus();
@@ -134,23 +144,6 @@ public class QueueManager {
             if (item.getProgress() < 0) {
                 item.setProgress(0);
             }
-        }
-    }
-
-    public void restore() {
-        Path queueFilePath = ApplicationContext.CONFIG_PATH.resolve(FILENAME);
-        if (Files.notExists(queueFilePath)) {
-            return;
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            List<QueueItem> items = mapper.readValue(queueFilePath.toFile(), new TypeReference<>(){});
-            items.removeIf(it -> it.getStatus() == FINISHED); // FIXME: this is just to clean up after previous app version which didn't remove finished items from the queue automatically
-            fixState(items);
-            addAll(items);
-        } catch (IOException e) {
-            LOGGER.warn(e.getMessage(), e);
         }
     }
 

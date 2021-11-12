@@ -2,6 +2,10 @@ package com.github.engatec.vdl.core;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -14,11 +18,23 @@ public class ApplicationContext {
     public static final ApplicationContext INSTANCE = new ApplicationContext();
 
     public static final String APP_DIR = System.getProperty("app.dir");
+    public static final Path DATA_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
+    public static final Path DB_PATH = DATA_PATH.resolve("data.db");
 
-    public static final Path CONFIG_PATH = SystemUtils.getUserHome().toPath().resolve(".vdl");
+    public static final Map<Class<? extends VdlManager>, VdlManager> MANAGERS_MAP = new HashMap<>();
 
     private ConfigRegistry configRegistry;
     private ResourceBundle resourceBundle;
+
+    public static void init(Collection<? extends VdlManager> mgrs) {
+        mgrs.forEach(it -> MANAGERS_MAP.put(it.getClass(), it));
+        mgrs.forEach(VdlManager::init);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends VdlManager> T getManager(Class<T> managerClass) {
+        return (T) MANAGERS_MAP.computeIfAbsent(managerClass, key -> {throw new NoSuchElementException("Manager '" + managerClass.getSimpleName() + "' hasn't been initialized");});
+    }
 
     public void setLanguage(Language language) {
         resourceBundle = ResourceBundle.getBundle("lang", language.getLocale());

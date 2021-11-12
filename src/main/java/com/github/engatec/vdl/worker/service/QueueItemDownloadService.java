@@ -211,7 +211,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                         } else {
                             Matcher destinationMatcher = DOWNLOAD_DESTINATION_PATTERN.matcher(it);
                             if (destinationMatcher.matches()) {
-                                queueItem.addDestination(destinationMatcher.group(GROUP_DESTINATION));
+                                QueueManager.INSTANCE.addDestination(queueItem, destinationMatcher.group(GROUP_DESTINATION));
                                 if (StringUtils.isNotBlank(progressDataCurrent.getSize())) {
                                     updateProgressData(0, progressDataCurrent.getThroughput(), progressDataCurrent.getSize() + SIZE_SEPARATOR);
                                 }

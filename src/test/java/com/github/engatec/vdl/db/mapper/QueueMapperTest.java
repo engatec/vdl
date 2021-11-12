@@ -1,0 +1,109 @@
+package com.github.engatec.vdl.db.mapper;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+import com.github.engatec.vdl.db.DbManager;
+import com.github.engatec.vdl.model.DownloadStatus;
+import com.github.engatec.vdl.model.QueueItem;
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.sqlite.SQLiteException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+public class QueueMapperTest {
+
+    private static final Path DB_PATH = Path.of("test.db");
+    private static DbManager dbManager;
+
+    @BeforeAll
+    static void setUp() throws IOException {
+        Files.deleteIfExists(DB_PATH);
+        dbManager = new DbManager(DB_PATH);
+    }
+
+    private QueueItem createQueueItem() {
+        var item = new QueueItem();
+        item.setTitle("Title");
+        item.setFormatId("FormatId");
+        item.setBaseUrl("https://url");
+        item.setDownloadPath(Path.of("~/Downloads/"));
+        item.setSize("30Mb");
+        item.setProgress(0.8);
+        item.setStatus(DownloadStatus.IN_PROGRESS);
+        return item;
+    }
+
+    @Test
+    void insertQueueItem_shouldInsert() {
+        QueueItem item = createQueueItem();
+        assertThat(item.getId()).isNull();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(item))).join();
+        assertThat(item.getId()).isNotNull();
+    }
+
+    @Test
+    void fetchQueueItems_shouldFindMoreThanOne() {
+        QueueItem it1 = createQueueItem();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(it1)))
+                .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(it1.getId(), "~/Downloads/abc.mp4"))
+                                .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(it1.getId(), "~/Downloads/cde.m4a"))).join()
+                ).join();
+
+        QueueItem it2 = createQueueItem();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(it2))).join();
+
+        List<QueueItem> dbItems = dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems).join();
+        assertThat(dbItems)
+                .hasSizeGreaterThan(1)
+                .extracting(QueueItem::getId)
+                .contains(it1.getId(), it2.getId());
+
+        for (QueueItem dbItem : dbItems) {
+            if (dbItem.getId().equals(it2.getId())) {
+                assertThat(dbItem.getDestinationsForTraversal()).isEmpty();
+            }
+
+            if (dbItem.getId().equals(it1.getId())) {
+                assertThat(dbItem.getTitle()).isEqualTo(it1.getTitle());
+                assertThat(dbItem.getFormatId()).isEqualTo(it1.getFormatId());
+                assertThat(dbItem.getBaseUrl()).isEqualTo(it1.getBaseUrl());
+                assertThat(dbItem.getDownloadPath()).isEqualTo(it1.getDownloadPath());
+                assertThat(dbItem.getSize()).isEqualTo(it1.getSize());
+                assertThat(dbItem.getProgress()).isEqualTo(it1.getProgress());
+                assertThat(dbItem.getStatus()).isEqualTo(it1.getStatus());
+                assertThat(dbItem.getDownloadPath()).isEqualTo(it1.getDownloadPath());
+                assertThat(dbItem.getDestinationsForTraversal()).hasSize(2);
+            }
+        }
+    }
+
+    @Test
+    void insertQueueTempFile_insertionShouldFail_foreignKeyNull() {
+        assertThatThrownBy(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(null, "~/Downloads/abc.mp4")).join())
+                .hasCauseInstanceOf(PersistenceException.class)
+                .hasRootCauseInstanceOf(SQLiteException.class)
+                .hasMessageContaining("SQLITE_CONSTRAINT_NOTNULL");
+    }
+
+    @Test
+    void insertQueueTempFile_insertionShouldFail_foreignKeyError() {
+        assertThatThrownBy(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(10000L, "~/Downloads/abc.mp4")).join())
+                .hasCauseInstanceOf(PersistenceException.class)
+                .hasRootCauseInstanceOf(SQLiteException.class)
+                .hasMessageContaining("SQLITE_CONSTRAINT_FOREIGNKEY");
+    }
+
+    @Test
+    void insertQueueTempFile_shouldInsert() {
+        QueueItem item = createQueueItem();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItem(List.of(item)))
+                .thenRun(() -> dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(item.getId(), "~/Downloads/abc.mp4")))
+                .join();
+    }
+}

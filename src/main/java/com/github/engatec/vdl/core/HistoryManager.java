@@ -81,7 +81,7 @@ public class HistoryManager {
         }
 
         List<HistoryItem> loadedItems = new ArrayList<>(historyEntriesMaxNumber);
-        Path historyPath = ApplicationContext.CONFIG_PATH.resolve(FILENAME);
+        Path historyPath = ApplicationContext.DATA_PATH.resolve(FILENAME);
         if (Files.exists(historyPath)) {
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -109,7 +109,7 @@ public class HistoryManager {
     private void flushToDisk(List<HistoryItem> historyItems) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            mapper.writeValue(ApplicationContext.CONFIG_PATH.resolve(FILENAME).toFile(), historyItems);
+            mapper.writeValue(ApplicationContext.DATA_PATH.resolve(FILENAME).toFile(), historyItems);
         } catch (IOException e) {
             LOGGER.warn(e.getMessage());
         }
