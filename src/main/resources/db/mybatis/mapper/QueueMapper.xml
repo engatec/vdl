@@ -3,9 +3,9 @@
 <mapper namespace="com.github.engatec.vdl.db.mapper.QueueMapper">
 
     <insert id="insertQueueItems" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO queue (title, format_id, url, download_path, size, progress, status) VALUES
+        INSERT INTO queue (title, format_id, url, download_path) VALUES
         <foreach item="it" collection="list" separator=",">
-            (#{it.title}, #{it.formatId}, #{it.baseUrl}, #{it.downloadPath}, #{it.size}, #{it.progress}, #{it.status})
+            (#{it.title}, #{it.formatId}, #{it.baseUrl}, #{it.downloadPath})
         </foreach>
     </insert>
 
@@ -15,16 +15,13 @@
         <result column="format_id" property="formatId"/>
         <result column="url" property="baseUrl"/>
         <result column="download_path" property="downloadPath"/>
-        <result column="size" property="size"/>
-        <result column="progress" property="progress"/>
-        <result column="status" property="status"/>
         <collection property="destinations" javaType="list" ofType="string">
             <result column="file_path"/>
         </collection>
     </resultMap>
 
     <select id="fetchQueueItems" resultMap="fetchQueueItemsResultMap">
-        SELECT id, title, format_id, url, download_path, size, progress, status, file_path
+        SELECT id, title, format_id, url, download_path, file_path
         FROM queue
         LEFT JOIN queue_temp_file ON queue_temp_file.queue_id = queue.id
     </select>

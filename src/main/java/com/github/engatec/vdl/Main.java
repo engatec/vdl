@@ -6,6 +6,7 @@ import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.Janitor;
+import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistryImpl;
@@ -31,7 +32,7 @@ public class Main extends Application {
         loadFonts();
         setLanguage();
 
-        // QueueManager.INSTANCE.restore();
+        QueueManager.INSTANCE.init();
         HistoryManager.INSTANCE.restore();
         SubscriptionsManager.INSTANCE.restore();
 

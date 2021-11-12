@@ -12,9 +12,6 @@ CREATE TABLE IF NOT EXISTS queue(
     format_id TEXT NOT NULL,
     url TEXT NOT NULL,
     download_path TEXT NOT NULL,
-    size TEXT,
-    progress NUMERIC,
-    status TEXT NOT NULL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 

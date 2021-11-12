@@ -11,7 +11,6 @@ import java.util.function.Predicate;
 
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.db.mapper.QueueMapper;
-import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.util.YouDlUtils;
 import com.github.engatec.vdl.worker.service.QueueItemDownloadService;
@@ -25,9 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static com.github.engatec.vdl.model.DownloadStatus.FINISHED;
-import static com.github.engatec.vdl.model.DownloadStatus.IN_PROGRESS;
 import static com.github.engatec.vdl.model.DownloadStatus.READY;
-import static com.github.engatec.vdl.model.DownloadStatus.SCHEDULED;
 
 public class QueueManager extends VdlManager {
 
@@ -144,13 +141,8 @@ public class QueueManager extends VdlManager {
 
     private void fixState(List<QueueItem> items) {
         for (QueueItem item : ListUtils.emptyIfNull(items)) {
-            DownloadStatus status = item.getStatus();
-            if (status == SCHEDULED || status == IN_PROGRESS) {
-                item.setStatus(READY);
-            }
-            if (item.getProgress() < 0) {
-                item.setProgress(0);
-            }
+            item.setStatus(READY);
+            item.setProgress(0);
         }
     }
 

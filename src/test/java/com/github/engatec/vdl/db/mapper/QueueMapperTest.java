@@ -75,10 +75,6 @@ public class QueueMapperTest {
                 assertThat(dbItem.getFormatId()).isEqualTo(it1.getFormatId());
                 assertThat(dbItem.getBaseUrl()).isEqualTo(it1.getBaseUrl());
                 assertThat(dbItem.getDownloadPath()).isEqualTo(it1.getDownloadPath());
-                assertThat(dbItem.getSize()).isEqualTo(it1.getSize());
-                assertThat(dbItem.getProgress()).isEqualTo(it1.getProgress());
-                assertThat(dbItem.getStatus()).isEqualTo(it1.getStatus());
-                assertThat(dbItem.getDownloadPath()).isEqualTo(it1.getDownloadPath());
                 assertThat(dbItem.getDestinationsForTraversal()).hasSize(2);
             }
         }
