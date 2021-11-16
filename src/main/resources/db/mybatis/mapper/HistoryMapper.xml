@@ -30,8 +30,8 @@
     </delete>
 
     <delete id="stripHistory">
-        DELETE FROM history WHERE ROWID NOT IN (
-            SELECT ROWID FROM history ORDER BY created_at DESC LIMIT #{maxEntries}
+        DELETE FROM history WHERE id NOT IN (
+            SELECT id FROM history ORDER BY created_at DESC LIMIT #{maxEntries}
         )
     </delete>
 

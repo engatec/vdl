@@ -1,4 +1,5 @@
 CREATE TABLE IF NOT EXISTS history(
+    id INTEGER PRIMARY KEY,
     title TEXT,
     url TEXT NOT NULL,
     download_path TEXT NOT NULL,
@@ -16,7 +17,7 @@ CREATE TABLE IF NOT EXISTS queue(
 
 CREATE TABLE IF NOT EXISTS queue_temp_file(
     queue_id INTEGER NOT NULL,
-    file_path TEXT,
+    file_path TEXT NOT NULL,
     FOREIGN KEY (queue_id) REFERENCES queue(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
