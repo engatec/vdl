@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.engatec.vdl.db.mapper.HistoryMapper">
+
+    <insert id="insertHistoryItems">
+        INSERT INTO history (title, url, download_path, created_at) VALUES
+        <foreach item="it" collection="list" separator=",">
+            (#{it.title}, #{it.url}, #{it.downloadPath}, #{it.createdAt})
+        </foreach>
+    </insert>
+
+    <resultMap id="fetchHistoryResultMap" type="com.github.engatec.vdl.model.HistoryItem">
+        <result column="title" property="title"/>
+        <result column="url" property="url"/>
+        <result column="download_path" property="downloadPath"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <select id="fetchHistory" resultMap="fetchHistoryResultMap">
+        SELECT title, url, download_path, created_at
+        FROM history
+        ORDER BY created_at DESC
+        <if test="limit != null">
+            LIMIT #{limit}
+        </if>
+    </select>
+
+    <delete id="clearHistory">
+        DELETE FROM history
+    </delete>
+
+    <delete id="stripHistory">
+        DELETE FROM history WHERE ROWID NOT IN (
+            SELECT ROWID FROM history ORDER BY created_at DESC LIMIT #{maxEntries}
+        )
+    </delete>
+
+</mapper>

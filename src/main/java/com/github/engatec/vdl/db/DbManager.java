@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import com.github.engatec.vdl.core.AppExecutors;
@@ -53,6 +54,10 @@ public class DbManager extends VdlManager {
     }
 
     public <R, M> CompletableFuture<R> doQueryAsync(Class<M> mapperClass, Function<M, R> func) {
+        return doQueryAsync(mapperClass, func, AppExecutors.COMMON_EXECUTOR);
+    }
+
+    public <R, M> CompletableFuture<R> doQueryAsync(Class<M> mapperClass, Function<M, R> func, Executor executor) {
         return CompletableFuture.supplyAsync(() -> {
             R result;
             try (SqlSession session = sessionFactory.openSession()) {
@@ -61,6 +66,6 @@ public class DbManager extends VdlManager {
                 session.commit();
             }
             return result;
-        }, AppExecutors.COMMON_EXECUTOR);
+        }, executor);
     }
 }

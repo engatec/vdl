@@ -41,7 +41,7 @@ public class QueueMapperTest {
     }
 
     @Test
-    void insertQueueItem_shouldInsert() {
+    void insertQueueItems_shouldInsert() {
         QueueItem item = createQueueItem();
         assertThat(item.getId()).isNull();
         dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItems(List.of(item))).join();

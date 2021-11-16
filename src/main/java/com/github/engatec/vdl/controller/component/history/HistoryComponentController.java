@@ -9,6 +9,7 @@ import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.ui.Dialogs;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -81,8 +82,8 @@ public class HistoryComponentController extends VBox implements ComponentControl
 
         titleTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getTitle()));
         urlTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getUrl()));
-        locationTableColumn.setCellValueFactory(it -> new ReadOnlyObjectWrapper<>(it.getValue().getPath()));
-        dtmTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getDtm()));
+        locationTableColumn.setCellValueFactory(it -> new ReadOnlyObjectWrapper<>(it.getValue().getDownloadPath()));
+        dtmTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getCreatedAt()));
 
         historyTableView.setRowFactory(tableView -> {
             TableRow<HistoryItem> row = new TableRow<>();
@@ -102,7 +103,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
 
         MenuItem openFolder = new MenuItem(resourceBundle.getString("stage.history.ctxmenu.openfolder"));
         openFolder.setOnAction(event -> {
-            Path path = row.getItem().getPath();
+            Path path = row.getItem().getDownloadPath();
             try {
                 // Avoid using Desktop from awt package to open folders as it's crap! It hangs or doesn't work on Linux and Mac
                 String command = SystemUtils.IS_OS_WINDOWS ? "explorer" :
@@ -136,11 +137,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
 
     @Override
     public void onBeforeVisible() {
-        historyTableView.setItems(FXCollections.observableList(HistoryManager.INSTANCE.getHistoryItems()));
-    }
-
-    @Override
-    public void onVisibilityLost() {
-        HistoryManager.INSTANCE.reviseHistorySize();
+        HistoryManager.INSTANCE.getHistoryItemsAsync()
+                .thenAccept(items -> Platform.runLater(() -> historyTableView.setItems(FXCollections.observableList(items))));
     }
 }

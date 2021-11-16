@@ -33,7 +33,7 @@ public class Main extends Application {
         setLanguage();
 
         QueueManager.INSTANCE.init();
-        HistoryManager.INSTANCE.restore();
+        HistoryManager.INSTANCE.init();
         SubscriptionsManager.INSTANCE.restore();
 
         new MainStage(stage).show();
@@ -53,9 +53,10 @@ public class Main extends Application {
 
     @Override
     public void stop() {
+        HistoryManager.INSTANCE.stripHistory();
         AppExecutors.shutdownExecutors();
         // QueueManager.INSTANCE.persist();
-        HistoryManager.INSTANCE.persist();
+        // HistoryManager.INSTANCE.persist();
         SubscriptionsManager.INSTANCE.persist();
     }
 

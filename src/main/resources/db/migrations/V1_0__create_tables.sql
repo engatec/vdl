@@ -1,5 +1,4 @@
 CREATE TABLE IF NOT EXISTS history(
-    id INTEGER PRIMARY KEY,
     title TEXT,
     url TEXT NOT NULL,
     download_path TEXT NOT NULL,
