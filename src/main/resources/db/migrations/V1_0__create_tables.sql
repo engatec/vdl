@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS subscription(
 );
 
 CREATE TABLE IF NOT EXISTS subscription_processed_items(
-    subscription_id INTEGER,
-    item_id TEXT NOT NULL
+    subscription_id INTEGER NOT NULL,
+    item_id TEXT NOT NULL,
+    FOREIGN KEY (subscription_id) REFERENCES subscription(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
