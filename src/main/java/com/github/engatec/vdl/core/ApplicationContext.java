@@ -3,11 +3,13 @@ package com.github.engatec.vdl.core;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
+import com.github.engatec.vdl.core.annotation.Order;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
 import org.apache.commons.lang3.StringUtils;
@@ -27,8 +29,15 @@ public class ApplicationContext {
     private ResourceBundle resourceBundle;
 
     public static void init(Collection<? extends VdlManager> mgrs) {
-        mgrs.forEach(it -> MANAGERS_MAP.put(it.getClass(), it));
-        mgrs.forEach(VdlManager::init);
+        mgrs.stream()
+                .sorted(Comparator.comparingInt(it -> {
+                    var order = it.getClass().getAnnotation(Order.class);
+                    return order == null ? Integer.MAX_VALUE : order.value();
+                }))
+                .forEach(it -> {
+                    MANAGERS_MAP.put(it.getClass(), it);
+                    it.init();
+                });
     }
 
     @SuppressWarnings("unchecked")

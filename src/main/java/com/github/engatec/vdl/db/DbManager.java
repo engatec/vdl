@@ -2,7 +2,6 @@ package com.github.engatec.vdl.db;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -10,6 +9,7 @@ import java.util.function.Function;
 
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.VdlManager;
+import com.github.engatec.vdl.core.annotation.Order;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -19,15 +19,20 @@ import org.apache.logging.log4j.Logger;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
+@Order(1)
 public class DbManager extends VdlManager {
 
     private static final Logger LOGGER = LogManager.getLogger(DbManager.class);
     private final String url;
 
-    private final SqlSessionFactory sessionFactory;
+    private SqlSessionFactory sessionFactory;
 
-    public DbManager(Path dbPath) {
-        url = "jdbc:sqlite:" + dbPath;
+    public DbManager(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public void init() {
         try {
             updateSchema();
             sessionFactory = buildSqlSessionFactory();

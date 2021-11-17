@@ -1,13 +1,12 @@
 package com.github.engatec.vdl.db.mapper;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.github.engatec.vdl.DbManagerTestHelper;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.model.HistoryItem;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,13 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class HistoryMapperTest {
 
-    private static final Path DB_PATH = Path.of("test.db");
     private static DbManager dbManager;
 
     @BeforeAll
-    static void setUp() throws IOException {
-        Files.deleteIfExists(DB_PATH);
-        dbManager = new DbManager(DB_PATH);
+    static void setUp() {
+        dbManager = DbManagerTestHelper.DB_MANAGER;
     }
 
     @Test

@@ -25,7 +25,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         ApplicationContext.init(List.of(
-                new DbManager(ApplicationContext.DB_PATH)
+                new DbManager("jdbc:sqlite:" + ApplicationContext.DB_PATH)
         ));
 
         initConfig();
