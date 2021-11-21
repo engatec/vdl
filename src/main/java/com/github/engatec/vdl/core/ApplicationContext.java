@@ -28,7 +28,7 @@ public class ApplicationContext {
     private ConfigRegistry configRegistry;
     private ResourceBundle resourceBundle;
 
-    public static void init(Collection<? extends VdlManager> mgrs) {
+    public static void setManagers(Collection<? extends VdlManager> mgrs) {
         mgrs.stream()
                 .sorted(Comparator.comparingInt(it -> {
                     var order = it.getClass().getAnnotation(Order.class);

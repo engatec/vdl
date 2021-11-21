@@ -24,30 +24,19 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        ApplicationContext.init(List.of(
-                new DbManager("jdbc:sqlite:" + ApplicationContext.DB_PATH)
-        ));
-
-        initConfig();
         loadFonts();
         setLanguage();
-
-        QueueManager.INSTANCE.init();
-        HistoryManager.INSTANCE.init();
-        SubscriptionsManager.INSTANCE.restore();
+        ApplicationContext.INSTANCE.setConfigRegistry(new ConfigRegistryImpl());
+        ApplicationContext.setManagers(List.of(
+                new DbManager("jdbc:sqlite:" + ApplicationContext.DB_PATH),
+                QueueManager.INSTANCE,
+                HistoryManager.INSTANCE,
+                SubscriptionsManager.INSTANCE
+        ));
 
         new MainStage(stage).show();
 
-        Boolean needCheckYoutubeDlUpdate = ApplicationContext.INSTANCE.getConfigRegistry().get(YoutubeDlStartupUpdatesCheckPref.class).getValue();
-        if (needCheckYoutubeDlUpdate) {
-            YoutubeDlManager.INSTANCE.checkLatestYoutubeDlVersion(stage);
-        }
-
-        Boolean needCheckYtdlpUpdate = ApplicationContext.INSTANCE.getConfigRegistry().get(YtdlpStartupUpdatesCheckPref.class).getValue();
-        if (needCheckYtdlpUpdate) {
-            YoutubeDlManager.INSTANCE.checkLatestYtdlpVersion(stage);
-        }
-
+        checkUpdates(stage);
         SubscriptionsManager.INSTANCE.updateAllSubscriptions();
     }
 
@@ -55,18 +44,11 @@ public class Main extends Application {
     public void stop() {
         HistoryManager.INSTANCE.stripHistory();
         AppExecutors.shutdownExecutors();
-        // QueueManager.INSTANCE.persist();
-        // HistoryManager.INSTANCE.persist();
-        SubscriptionsManager.INSTANCE.persist();
     }
 
     public static void main(String[] args) {
         Janitor.cleanUp();
         launch(args);
-    }
-
-    private void initConfig() {
-        ApplicationContext.INSTANCE.setConfigRegistry(new ConfigRegistryImpl());
     }
 
     private void loadFonts() {
@@ -78,5 +60,17 @@ public class Main extends Application {
         ApplicationContext ctx = ApplicationContext.INSTANCE;
         Language language = Language.getByLocaleCode(ctx.getConfigRegistry().get(LanguagePref.class).getValue());
         ctx.setLanguage(language);
+    }
+
+    private void checkUpdates(Stage stage) {
+        Boolean needCheckYoutubeDlUpdate = ApplicationContext.INSTANCE.getConfigRegistry().get(YoutubeDlStartupUpdatesCheckPref.class).getValue();
+        if (needCheckYoutubeDlUpdate) {
+            YoutubeDlManager.INSTANCE.checkLatestYoutubeDlVersion(stage);
+        }
+
+        Boolean needCheckYtdlpUpdate = ApplicationContext.INSTANCE.getConfigRegistry().get(YtdlpStartupUpdatesCheckPref.class).getValue();
+        if (needCheckYtdlpUpdate) {
+            YoutubeDlManager.INSTANCE.checkLatestYtdlpVersion(stage);
+        }
     }
 }

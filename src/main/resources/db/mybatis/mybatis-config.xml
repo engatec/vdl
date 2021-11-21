@@ -19,5 +19,6 @@
     <mappers>
         <mapper resource="db/mybatis/mapper/QueueMapper.xml"/>
         <mapper resource="db/mybatis/mapper/HistoryMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/SubscriptionMapper.xml"/>
     </mappers>
 </configuration>

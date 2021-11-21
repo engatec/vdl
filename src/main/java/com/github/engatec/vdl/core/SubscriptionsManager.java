@@ -4,68 +4,91 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.engatec.vdl.db.DbManager;
+import com.github.engatec.vdl.db.mapper.SubscriptionMapper;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.worker.service.SubscriptionsUpdateService;
+import javafx.application.Platform;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class SubscriptionsManager {
+public class SubscriptionsManager extends VdlManager {
 
     private static final Logger LOGGER = LogManager.getLogger(SubscriptionsManager.class);
 
+    private DbManager dbManager;
+
     public static final SubscriptionsManager INSTANCE = new SubscriptionsManager();
-
-    private static final String FILENAME = "subscriptions.vdl";
-
-    private final List<Subscription> subscriptions = new CopyOnWriteArrayList<>();
 
     private Consumer<Boolean> subscriptionsUpdateProgressListener;
 
-    private SubscriptionsManager() {
+    @Override
+    public void init() {
+        dbManager = ApplicationContext.getManager(DbManager.class);
+
+        // FIXME: deprecated in 1.7 For removal in 1.9
+        CompletableFuture.supplyAsync(this::restoreFromJson, AppExecutors.COMMON_EXECUTOR)
+                .thenAccept(items -> {
+                    for (Subscription it : ListUtils.emptyIfNull(items)) {
+                        subscribe(it, it.getProcessedItemsForTraversal());
+                    }
+                }).join();
     }
 
-    public List<Subscription> getSubscriptions() {
-        return List.copyOf(subscriptions);
-    }
-
-    public void subscribe(Subscription s) {
-        subscriptions.add(s);
+    public void subscribe(Subscription s, Set<String> processedItems) {
+        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertSubscription(s))
+                .thenRun(() -> addProcessedItems(s, processedItems));
     }
 
     public void unsubscribe(Subscription s) {
-        subscriptions.remove(s);
+        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.deleteSubscription(s.getId()));
     }
 
-    public void persist() {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            mapper.writeValue(ApplicationContext.DATA_PATH.resolve(FILENAME).toFile(), subscriptions);
-        } catch (IOException e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
+    public CompletableFuture<List<Subscription>> getSubscriptionsAsync() {
+        return dbManager.doQueryAsync(SubscriptionMapper.class, SubscriptionMapper::fetchSubscriptions);
     }
 
-    public void restore() {
-        Path path = ApplicationContext.DATA_PATH.resolve(FILENAME);
-        if (!Files.exists(path)) {
+    public void addProcessedItems(Subscription s, Set<String> processedItems) {
+        if (CollectionUtils.isEmpty(processedItems)) {
             return;
         }
 
+        try {
+            dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(s.getId(), processedItems))
+                    .thenRun(() -> s.getProcessedItems().addAll(processedItems));
+        } catch (PersistenceException e) {
+            LOGGER.warn("Couldn't add processed items for subscription '{}'. Id '{}' doesn't exist.", s.getName(), s.getId());
+        }
+    }
+
+    // FIXME: transition from JSON files to sqlite.
+    @Deprecated(since = "1.7", forRemoval = true)
+    public List<Subscription> restoreFromJson() {
+        Path subscriptionFilePath = ApplicationContext.DATA_PATH.resolve("subscriptions.vdl");
+        if (Files.notExists(subscriptionFilePath)) {
+            return List.of();
+        }
+
+        List<Subscription> result = List.of();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            List<Subscription> items = mapper.readValue(path.toFile(), new TypeReference<>(){});
-            subscriptions.addAll(items);
+            result = mapper.readValue(subscriptionFilePath.toFile(), new TypeReference<>(){});
+            Files.delete(subscriptionFilePath);
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e);
         }
+        return result;
     }
 
     public void updateSubscription(Subscription subscription) {
@@ -73,7 +96,7 @@ public class SubscriptionsManager {
     }
 
     public void updateAllSubscriptions() {
-        doSubscriptionsUpdate(List.copyOf(subscriptions));
+        getSubscriptionsAsync().thenAccept(subscriptions -> Platform.runLater(() -> doSubscriptionsUpdate(subscriptions)));
     }
 
     private void doSubscriptionsUpdate(List<Subscription> subscriptions) {

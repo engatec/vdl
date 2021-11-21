@@ -57,7 +57,10 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
         searchButton.setOnAction(this::handleSearchButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
 
-        displaySubscriptions(SubscriptionsManager.INSTANCE.getSubscriptions());
+        SubscriptionsManager.INSTANCE.getSubscriptionsAsync()
+                .thenAccept(subscriptions ->
+                        Platform.runLater(() -> displaySubscriptions(subscriptions))
+                );
     }
 
     private void initSearchControl() {

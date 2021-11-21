@@ -117,10 +117,9 @@ public class PlaylistContentsController implements InputForm {
         var subscription = new Subscription();
         subscription.setName(subscriptionNameTextField.getText());
         subscription.setUrl(playlistUrl);
-        subscription.setProcessedItems(processedItems);
-        subscription.setPath(subscriptionDownloadPathDirectoryChooser.getPath());
+        subscription.setDownloadPath(subscriptionDownloadPathDirectoryChooser.getPath());
         subscription.setCreatedAt(AppUtils.convertDtmToString(LocalDateTime.now()));
-        SubscriptionsManager.INSTANCE.subscribe(subscription);
+        SubscriptionsManager.INSTANCE.subscribe(subscription, processedItems);
         onSubscribeListener.accept(subscription);
     }
 

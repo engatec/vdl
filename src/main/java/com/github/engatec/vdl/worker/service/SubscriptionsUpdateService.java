@@ -1,9 +1,11 @@
 package com.github.engatec.vdl.worker.service;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,8 @@ public class SubscriptionsUpdateService extends Service<Void> {
         return new Task<>() {
             @Override
             protected Void call() throws Exception {
+                Set<PlaylistDetailsSearchService> runningServices = new HashSet<>();
+
                 for (Subscription subscription : subscriptions) {
                     if (Thread.interrupted()) {
                         cancel();
@@ -54,19 +58,26 @@ public class SubscriptionsUpdateService extends Service<Void> {
                         return null;
                     }
 
-                    var playlistSearchService = new PlaylistDetailsSearchService(AppExecutors.COMMON_EXECUTOR);
+                    var playlistSearchService = new PlaylistDetailsSearchService();
                     playlistSearchService.setUrl(subscription.getUrl());
                     playlistSearchService.setOnSucceeded(e -> updateSubscription(subscription, (List<VideoInfo>) e.getSource().getValue()));
                     playlistSearchService.setOnFailed(e -> LOGGER.error(e.getSource().getException().getMessage()));
                     playlistSearchService.runningProperty().addListener((observable, oldValue, newValue) -> {
                         if (!newValue) {
+                            runningServices.remove(playlistSearchService);
                             updatesCountDownLatch.countDown();
                         }
                     });
+                    runningServices.add(playlistSearchService);
                     playlistSearchService.start();
                 }
 
-                updatesCountDownLatch.await(); // Subscriptions are updated in different threads, wait for all of them to finish
+                int latchWaitingTime = 3;
+                boolean countDownFinished = updatesCountDownLatch.await(latchWaitingTime, TimeUnit.MINUTES); // Subscriptions are updated in different threads, wait for all of them to finish
+                if (!countDownFinished) {
+                    LOGGER.warn("Couldn't update all subscriptions in {} minutes. {} playlists left to process.", latchWaitingTime, runningServices.size());
+                }
+
                 return null;
             }
 
@@ -76,7 +87,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
                     return;
                 }
 
-                Set<String> processedItems = subscription.getProcessedItems();
+                Set<String> processedItems = subscription.getProcessedItemsForTraversal();
                 List<VideoInfo> newItems = playlistItems.stream()
                         .filter(Predicate.not(it -> processedItems.contains(SubscriptionsManager.INSTANCE.buildPlaylistItemId(it))))
                         .collect(Collectors.toList());
@@ -91,15 +102,16 @@ public class SubscriptionsUpdateService extends Service<Void> {
                     downloadable.setBaseUrl(vi.getBaseUrl());
                     downloadable.setTitle(vi.getTitle());
                     downloadable.setFormatId(formatId);
-                    downloadable.setDownloadPath(Path.of(subscription.getPath()));
+                    downloadable.setDownloadPath(Path.of(subscription.getDownloadPath()));
 
                     Platform.runLater(() -> {
                         HistoryManager.INSTANCE.addToHistory(downloadable);
                         QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
                     });
 
-                    processedItems.add(SubscriptionsManager.INSTANCE.buildPlaylistItemId(vi));
                 }
+
+                SubscriptionsManager.INSTANCE.addProcessedItems(subscription, newItems.stream().map(SubscriptionsManager.INSTANCE::buildPlaylistItemId).collect(Collectors.toSet()));
             }
         };
     }

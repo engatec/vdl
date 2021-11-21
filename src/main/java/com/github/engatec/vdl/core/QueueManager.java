@@ -26,6 +26,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -162,8 +163,12 @@ public class QueueManager extends VdlManager {
     }
 
     public void addDestination(QueueItem item, String destination) {
-        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(item.getId(), destination));
-        item.getDestinations().add(destination);
+        try {
+            dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(item.getId(), destination));
+            item.getDestinations().add(destination);
+        } catch (PersistenceException e) {
+            LOGGER.warn("Couldn't add destination for queue item '{}'. Id '{}' doesn't exist.", item.getTitle(), item.getId());
+        }
     }
 
     public ObservableList<QueueItem> getQueueItems() {
