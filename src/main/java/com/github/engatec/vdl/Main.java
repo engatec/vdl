@@ -25,8 +25,9 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         loadFonts();
-        setLanguage();
+
         ApplicationContext.INSTANCE.setConfigRegistry(new ConfigRegistryImpl());
+        setLanguage();
         ApplicationContext.setManagers(List.of(
                 new DbManager("jdbc:sqlite:" + ApplicationContext.DB_PATH),
                 QueueManager.INSTANCE,

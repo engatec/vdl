@@ -47,8 +47,13 @@ public class SubscriptionsManager extends VdlManager {
     }
 
     public void subscribe(Subscription s, Set<String> processedItems) {
-        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertSubscription(s))
-                .thenRun(() -> addProcessedItems(s, processedItems));
+        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> {
+            mapper.insertSubscription(s);
+            if (CollectionUtils.isNotEmpty(processedItems)) {
+                mapper.insertProcessedItems(s.getId(), processedItems);
+            }
+            return 0;
+        });
     }
 
     public void unsubscribe(Subscription s) {
@@ -67,7 +72,7 @@ public class SubscriptionsManager extends VdlManager {
         try {
             dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(s.getId(), processedItems))
                     .thenRun(() -> s.getProcessedItems().addAll(processedItems));
-        } catch (PersistenceException e) {
+        } catch (PersistenceException e) { // In case subscription has been removed before processed items insertion
             LOGGER.warn("Couldn't add processed items for subscription '{}'. Id '{}' doesn't exist.", s.getName(), s.getId());
         }
     }

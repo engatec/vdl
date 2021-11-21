@@ -166,7 +166,7 @@ public class QueueManager extends VdlManager {
         try {
             dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(item.getId(), destination));
             item.getDestinations().add(destination);
-        } catch (PersistenceException e) {
+        } catch (PersistenceException e) { // Sanity check. Should never happen as the downloading service is stopped and nothing can add new destination
             LOGGER.warn("Couldn't add destination for queue item '{}'. Id '{}' doesn't exist.", item.getTitle(), item.getId());
         }
     }
