@@ -34,18 +34,4 @@
         INSERT INTO queue_temp_file (queue_id, file_path) VALUES (#{queueId}, #{filePath})
     </insert>
 
-    <resultMap id="findQueueTempFilesResultMap" type="com.github.engatec.vdl.db.entity.FindQueueTempFilesResult">
-        <result column="queue_id" property="queueId"/>
-        <result column="file_path" property="filePath"/>
-    </resultMap>
-
-    <select id="findQueueTempFiles" resultMap="findQueueTempFilesResultMap">
-        SELECT queue_id, file_path FROM queue_temp_file
-        <where>
-            <if test="list != null and !list.isEmpty">
-                queue_id IN (<foreach item="it" collection="list" separator=",">#{it}</foreach>)
-            </if>
-        </where>
-    </select>
-
 </mapper>
