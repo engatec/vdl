@@ -3,6 +3,9 @@ package com.github.engatec.vdl.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -14,6 +17,7 @@ import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.db.mapper.SubscriptionMapper;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.service.SubscriptionsUpdateService;
 import javafx.application.Platform;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,6 +45,8 @@ public class SubscriptionsManager extends VdlManager {
         CompletableFuture.supplyAsync(this::restoreFromJson, AppExecutors.COMMON_EXECUTOR)
                 .thenAccept(items -> {
                     for (Subscription it : ListUtils.emptyIfNull(items)) {
+                        ZonedDateTime dtm = LocalDateTime.parse(it.getCreatedAt(), AppUtils.DATE_TIME_FORMATTER).atZone(ZoneId.systemDefault());
+                        it.setCreatedAt(dtm.withZoneSameInstant(ZoneId.of("GMT")).format(AppUtils.DATE_TIME_FORMATTER_SQLITE));
                         subscribe(it, it.getProcessedItemsForTraversal());
                     }
                 }).join();

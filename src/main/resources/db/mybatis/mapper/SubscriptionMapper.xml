@@ -3,7 +3,8 @@
 <mapper namespace="com.github.engatec.vdl.db.mapper.SubscriptionMapper">
 
     <insert id="insertSubscription" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO subscription (name, url, download_path) VALUES (#{s.name}, #{s.url}, #{s.downloadPath})
+        INSERT INTO subscription (name, url, download_path, created_at)
+        VALUES (#{s.name}, #{s.url}, #{s.downloadPath}, <choose><when test="s.createdAt != null">#{s.createdAt}</when><otherwise>CURRENT_TIMESTAMP</otherwise></choose>)
     </insert>
 
     <insert id="insertProcessedItems">

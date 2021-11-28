@@ -1,6 +1,5 @@
 package com.github.engatec.vdl.controller.stage.subscriptions;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -15,7 +14,6 @@ import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.ui.CheckBoxGroup;
-import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -117,7 +115,6 @@ public class PlaylistContentsController implements InputForm {
         subscription.setName(subscriptionNameTextField.getText());
         subscription.setUrl(playlistUrl);
         subscription.setDownloadPath(subscriptionDownloadPathDirectoryChooser.getPath());
-        subscription.setCreatedAt(AppUtils.convertDtmToString(LocalDateTime.now()));
         SubscriptionsManager.INSTANCE.subscribe(subscription, processedItems);
         onSubscribeListener.accept(subscription);
     }

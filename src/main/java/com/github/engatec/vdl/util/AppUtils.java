@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -121,9 +120,5 @@ public class AppUtils {
 
     public static String normalizeThumbnailUrl(VideoInfo vi) {
         return YOUTUBE_PATTERN.matcher(vi.getBaseUrl()).matches() ? String.format("https://img.youtube.com/vi/%s/mqdefault.jpg", vi.getId()) : vi.getThumbnail();
-    }
-
-    public static String convertDtmToString(LocalDateTime dtm) {
-        return dtm.format(DATE_TIME_FORMATTER);
     }
 }
