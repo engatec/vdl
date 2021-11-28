@@ -9,6 +9,7 @@ import java.util.List;
 import com.github.engatec.vdl.DbManagerTestHelper;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.model.HistoryItem;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -42,8 +43,7 @@ public class HistoryMapperTest {
 
         assertThat(dbResultAfterInsert)
                 .extracting(HistoryItem::getCreatedAt)
-                .isNotNull()
-                .isNotEmpty();
+                .allMatch(StringUtils::isNotBlank);
     }
 
     @Test

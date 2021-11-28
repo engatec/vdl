@@ -69,6 +69,9 @@ public class DbManager extends VdlManager {
                 M mapper = session.getMapper(mapperClass);
                 result = func.apply(mapper);
                 session.commit();
+            } catch (Exception e) {
+                LOGGER.warn(e.getMessage());
+                throw e;
             }
             return result;
         }, executor);

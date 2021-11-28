@@ -5,7 +5,7 @@
     <insert id="insertHistoryItems">
         INSERT INTO history (title, url, download_path, created_at) VALUES
         <foreach item="it" collection="list" separator=",">
-            (#{it.title}, #{it.url}, #{it.downloadPath}, #{it.createdAt})
+            (#{it.title}, #{it.url}, #{it.downloadPath}, <choose><when test="it.createdAt != null">#{it.createdAt}</when><otherwise>CURRENT_TIMESTAMP</otherwise></choose>)
         </foreach>
     </insert>
 
