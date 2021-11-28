@@ -28,7 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class AppUtils {
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER_SQLITE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final Pattern YOUTUBE_PATTERN = Pattern.compile(".*youtube\\.com/.*");
 
     public static Optional<Path> resolveDownloadPath(Stage stage) {
