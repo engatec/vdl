@@ -37,8 +37,6 @@ public class QueueManager extends VdlManager {
 
     private static final Logger LOGGER = LogManager.getLogger(QueueManager.class);
 
-    public static final QueueManager INSTANCE = new QueueManager();
-
     private final ObservableList<QueueItem> queueItems = FXCollections.observableList(new LinkedList<>());
     private final Map<QueueItem, Service<?>> itemServiceMap = new HashMap<>();
 
@@ -46,7 +44,7 @@ public class QueueManager extends VdlManager {
 
     private DbManager dbManager;
 
-    private QueueManager() {
+    public QueueManager() {
         queueItems.addListener((ListChangeListener<QueueItem>) change -> {
             while (change.next()) {
                 List<? extends QueueItem> removedItems = change.getRemoved();

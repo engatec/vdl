@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class DownloadsComponentController extends VBox implements ComponentController {
 
-    private final QueueManager queueManager = QueueManager.INSTANCE;
+    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
     private final ObservableList<QueueItem> data = queueManager.getQueueItems();
 
     @FXML private TableView<QueueItem> downloadQueueTableView;

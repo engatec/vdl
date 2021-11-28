@@ -30,7 +30,7 @@ public class Main extends Application {
         setLanguage();
         ApplicationContext.INSTANCE.setManagers(List.of(
                 new DbManager("jdbc:sqlite:" + ApplicationContext.DB_PATH),
-                QueueManager.INSTANCE,
+                new QueueManager(),
                 HistoryManager.INSTANCE,
                 SubscriptionsManager.INSTANCE
         ));

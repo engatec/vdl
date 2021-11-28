@@ -33,6 +33,8 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
     private static final Logger LOGGER = LogManager.getLogger(QueueItemDownloadService.class);
 
+    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+
     private static final String SIZE_SEPARATOR = " / ";
 
     private static final String ERROR_PREFIX = "ERROR:";
@@ -109,7 +111,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     protected void succeeded() {
         updateQueueItem(DownloadStatus.FINISHED, null, StringUtils.EMPTY);
         updateProgress(1);
-        QueueManager.INSTANCE.removeItem(queueItem);
+        queueManager.removeItem(queueItem);
     }
 
     @Override
@@ -211,7 +213,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                         } else {
                             Matcher destinationMatcher = DOWNLOAD_DESTINATION_PATTERN.matcher(it);
                             if (destinationMatcher.matches()) {
-                                QueueManager.INSTANCE.addDestination(queueItem, destinationMatcher.group(GROUP_DESTINATION));
+                                queueManager.addDestination(queueItem, destinationMatcher.group(GROUP_DESTINATION));
                                 if (StringUtils.isNotBlank(progressDataCurrent.getSize())) {
                                     updateProgressData(0, progressDataCurrent.getThroughput(), progressDataCurrent.getSize() + SIZE_SEPARATOR);
                                 }

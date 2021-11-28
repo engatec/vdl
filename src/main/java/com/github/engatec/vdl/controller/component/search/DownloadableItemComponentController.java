@@ -47,6 +47,8 @@ public class DownloadableItemComponentController extends HBox {
 
     private static final String CUSTOM_FORMAT_LABEL = "Custom format";
 
+    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+
     private final Stage stage;
     private final VideoInfo videoInfo;
     private String customFormat;
@@ -192,7 +194,7 @@ public class DownloadableItemComponentController extends HBox {
         Downloadable downloadable = getDownloadable();
         downloadable.setDownloadPath(path);
         HistoryManager.INSTANCE.addToHistory(downloadable);
-        QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
+        queueManager.addItem(new QueueItem(downloadable));
     }
 
     public void downloadAudio(Path path) {
@@ -205,6 +207,6 @@ public class DownloadableItemComponentController extends HBox {
         downloadable.setFormatId("bestaudio"); // No need to download video if user only wants to extract audio
         downloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(format, quality)));
         HistoryManager.INSTANCE.addToHistory(downloadable);
-        QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
+        queueManager.addItem(new QueueItem(downloadable));
     }
 }

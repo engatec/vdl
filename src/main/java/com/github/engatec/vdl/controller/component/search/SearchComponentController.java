@@ -42,6 +42,8 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private static final Logger LOGGER = LogManager.getLogger(SearchComponentController.class);
 
+    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+
     private final Stage stage;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
 
@@ -164,7 +166,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private boolean isUrlBeingDownloaded(String url) {
-        return QueueManager.INSTANCE.hasItem(it -> StringUtils.equals(it.getBaseUrl(), url));
+        return queueManager.hasItem(it -> StringUtils.equals(it.getBaseUrl(), url));
     }
 
     private void updateContentPane(List<VideoInfo> downloadables, Integer totalItems) {

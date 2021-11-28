@@ -32,6 +32,8 @@ public class SubscriptionsUpdateService extends Service<Void> {
 
     private static final Logger LOGGER = LogManager.getLogger(SubscriptionsUpdateService.class);
 
+    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+
     private final CountDownLatch updatesCountDownLatch;
     private final List<Subscription> subscriptions;
 
@@ -106,7 +108,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
 
                     Platform.runLater(() -> {
                         HistoryManager.INSTANCE.addToHistory(downloadable);
-                        QueueManager.INSTANCE.addItem(new QueueItem(downloadable));
+                        queueManager.addItem(new QueueItem(downloadable));
                     });
 
                 }

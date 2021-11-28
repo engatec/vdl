@@ -10,6 +10,7 @@ import com.github.engatec.vdl.controller.component.SidebarComponentController;
 import com.github.engatec.vdl.controller.component.history.HistoryComponentController;
 import com.github.engatec.vdl.controller.component.search.SearchComponentController;
 import com.github.engatec.vdl.controller.component.subscriptions.SubscriptionsComponentController;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.ui.component.DownloadsComponent;
@@ -26,6 +27,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainController extends StageAwareController {
+
+    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
 
     @FXML private HBox rootNode;
     @FXML private StackPane navigationPane;
@@ -72,7 +75,7 @@ public class MainController extends StageAwareController {
         });
 
         navigationPane.getChildren().add(sidebar);
-        QueueManager.INSTANCE.setOnQueueItemsChangeListener(sidebar.getOnQueueItemsChangeListener());
+        queueManager.setOnQueueItemsChangeListener(sidebar.getOnQueueItemsChangeListener());
         SubscriptionsManager.INSTANCE.setSubscriptionsUpdateProgressListener(sidebar.getSubscriptionsUpdateProgressListener());
     }
 

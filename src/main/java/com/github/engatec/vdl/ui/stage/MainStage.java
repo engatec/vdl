@@ -21,6 +21,8 @@ public class MainStage extends AppStage {
     private static final int STAGE_MIN_WIDTH = 500;
     private static final int STAGE_MIN_HEIGHT = 300;
 
+    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+
     public MainStage(Stage stage) {
         super(stage);
         init();
@@ -72,7 +74,7 @@ public class MainStage extends AppStage {
      * Confirmation on app close if queue items being downloaded
      */
     private void handleCloseRequest(WindowEvent e) {
-        if (QueueManager.INSTANCE.hasItem(it -> it.getStatus() == IN_PROGRESS)) {
+        if (queueManager.hasItem(it -> it.getStatus() == IN_PROGRESS)) {
             Dialogs.warningWithYesNoButtons("stage.main.dialog.close.queuehasitemsinprogress", null, e::consume);
         }
     }
