@@ -189,7 +189,7 @@ public class FormatsController {
         ComboBox<String> comboBox = new ComboBox<>();
         ApplicationContext ctx = ApplicationContext.INSTANCE;
         comboBox.setMaxWidth(Double.MAX_VALUE);
-        comboBox.setValue(ctx.getResourceBundle().getString("audio.track.unmodifiable"));
+        comboBox.setValue(ctx.getLocalizedString("audio.track.unmodifiable"));
         comboBox.setDisable(true);
         return comboBox;
     }

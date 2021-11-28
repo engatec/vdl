@@ -81,11 +81,10 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         languageComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 Language newLanguage = newValue.getValue();
-                ApplicationContext.INSTANCE.setLanguage(newLanguage);
                 LanguagePref languagePref = configRegistry.get(LanguagePref.class);
                 languagePref.setValue(newLanguage.getLocaleCode());
                 languagePref.save();
-                Dialogs.info("preferences.general.language.dialog.info");
+                Dialogs.info("preferences.general.language.dialog.info", newLanguage);
             }
         });
     }
@@ -105,7 +104,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     private void initDownloadPathSettings() {
         downloadPathRadioBtn.setToggleGroup(downloadPathRadioGroup);
         askPathRadioBtn.setToggleGroup(downloadPathRadioGroup);
-        downloadPathDirectoryChooser.setButtonText(ApplicationContext.INSTANCE.getResourceBundle().getString("button.directorychoose"));
+        downloadPathDirectoryChooser.setButtonText(ApplicationContext.INSTANCE.getLocalizedString("button.directorychoose"));
         downloadPathDirectoryChooser.disableProperty().bind(downloadPathRadioBtn.selectedProperty().not());
         downloadPathRadioBtn.setSelected(true); // Set default value to trigger ToggleGroup. It will be overriden during PropertyHolder binding
     }
@@ -117,7 +116,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
             comboBoxItems.add(res.getHeight());
         }
 
-        final String BEST_FORMAT = ApplicationContext.INSTANCE.getResourceBundle().getString("preferences.general.autoselectformat.best");
+        final String BEST_FORMAT = ApplicationContext.INSTANCE.getLocalizedString("preferences.general.autoselectformat.best");
 
         autoSelectFormatComboBox.setConverter(new StringConverter<>() {
             @Override

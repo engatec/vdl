@@ -35,7 +35,7 @@ public class SubscriptionsManager extends VdlManager {
 
     @Override
     public void init() {
-        dbManager = ApplicationContext.getManager(DbManager.class);
+        dbManager = ApplicationContext.INSTANCE.getManager(DbManager.class);
 
         // FIXME: deprecated in 1.7 For removal in 1.9
         CompletableFuture.supplyAsync(this::restoreFromJson, AppExecutors.COMMON_EXECUTOR)

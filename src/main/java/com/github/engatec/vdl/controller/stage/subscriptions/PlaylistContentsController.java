@@ -2,7 +2,6 @@ package com.github.engatec.vdl.controller.stage.subscriptions;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -61,7 +60,7 @@ public class PlaylistContentsController implements InputForm {
         ApplicationContext ctx = ApplicationContext.INSTANCE;
         subscriptionNameTextField.setTextFormatter(new NotBlankTextFormatter());
         subscriptionNameTextField.textProperty().addListener((observable, oldValue, newValue) -> subscriptionNameTextField.clearError());
-        subscriptionDownloadPathDirectoryChooser.setButtonText(ctx.getResourceBundle().getString("button.directorychoose"));
+        subscriptionDownloadPathDirectoryChooser.setButtonText(ctx.getLocalizedString("button.directorychoose"));
         subscriptionDownloadPathDirectoryChooser.setPath(ctx.getConfigRegistry().get(DownloadPathPref.class).getValue());
         subscribeBtn.setOnAction(this::handleSubscribeButtonClick);
         closeBtn.setOnAction(this::handleCloseButtonClick);
@@ -84,10 +83,10 @@ public class PlaylistContentsController implements InputForm {
     @Override
     public boolean hasErrors() {
         boolean hasErrors = false;
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+        var ctx = ApplicationContext.INSTANCE;
 
         if (StringUtils.isBlank(subscriptionNameTextField.getText())) {
-            subscriptionNameTextField.setError(resourceBundle.getString("field.error.mandatory"));
+            subscriptionNameTextField.setError(ctx.getLocalizedString("field.error.mandatory"));
             hasErrors = true;
         }
 

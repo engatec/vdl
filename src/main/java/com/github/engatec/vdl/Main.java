@@ -28,7 +28,7 @@ public class Main extends Application {
 
         ApplicationContext.INSTANCE.setConfigRegistry(new ConfigRegistryImpl());
         setLanguage();
-        ApplicationContext.setManagers(List.of(
+        ApplicationContext.INSTANCE.setManagers(List.of(
                 new DbManager("jdbc:sqlite:" + ApplicationContext.DB_PATH),
                 QueueManager.INSTANCE,
                 HistoryManager.INSTANCE,

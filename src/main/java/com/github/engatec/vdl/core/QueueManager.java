@@ -73,7 +73,7 @@ public class QueueManager extends VdlManager {
 
     @Override
     public void init() {
-        dbManager = ApplicationContext.getManager(DbManager.class);
+        dbManager = ApplicationContext.INSTANCE.getManager(DbManager.class);
         dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems)
                 .thenAccept(dbItems -> {
                     fixState(dbItems);

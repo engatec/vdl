@@ -1,7 +1,6 @@
 package com.github.engatec.vdl.controller.component.history;
 
 import java.nio.file.Path;
-import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -55,7 +54,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
     }
 
     private void initEntriesNumberComboBox() {
-        final String DISABLE_HISTORY = ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.combobox.disablehistory");
+        final String DISABLE_HISTORY = ApplicationContext.INSTANCE.getLocalizedString("stage.history.combobox.disablehistory");
 
         entriesNumberComboBox.setItems(FXCollections.observableArrayList(0, 10, 30, 50, 100, 1000));
         entriesNumberComboBox.setConverter(new StringConverter<>() {
@@ -78,7 +77,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
     }
 
     private void initHistoryTableView() {
-        historyTableView.setPlaceholder(new Label(ApplicationContext.INSTANCE.getResourceBundle().getString("stage.history.table.placeholder")));
+        historyTableView.setPlaceholder(new Label(ApplicationContext.INSTANCE.getLocalizedString("stage.history.table.placeholder")));
 
         titleTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getTitle()));
         urlTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getUrl()));
@@ -98,10 +97,10 @@ public class HistoryComponentController extends VBox implements ComponentControl
     }
 
     private ContextMenu createContextMenu(TableRow<HistoryItem> row) {
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+        var ctx = ApplicationContext.INSTANCE;
         ContextMenu ctxMenu = new ContextMenu();
 
-        MenuItem openFolder = new MenuItem(resourceBundle.getString("stage.history.ctxmenu.openfolder"));
+        MenuItem openFolder = new MenuItem(ctx.getLocalizedString("stage.history.ctxmenu.openfolder"));
         openFolder.setOnAction(event -> {
             Path path = row.getItem().getDownloadPath();
             try {
@@ -116,7 +115,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
             event.consume();
         });
 
-        MenuItem copyUrl = new MenuItem(resourceBundle.getString("stage.history.ctxmenu.copyurl"));
+        MenuItem copyUrl = new MenuItem(ctx.getLocalizedString("stage.history.ctxmenu.copyurl"));
         copyUrl.setOnAction(event -> {
             ClipboardContent content = new ClipboardContent();
             content.putString(row.getItem().getUrl());

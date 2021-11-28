@@ -1,7 +1,5 @@
 package com.github.engatec.vdl.controller.preferences;
 
-import java.util.ResourceBundle;
-
 import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.fxcontrols.FxTextField;
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -43,7 +41,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 
 public class YoutubedlPreferencesController extends ScrollPane implements InputForm {
 
-    private final ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+    private final ApplicationContext ctx = ApplicationContext.INSTANCE;
 
     @FXML private FxTextField outputTemplateTextField;
 
@@ -93,24 +91,24 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
         markWatchedCheckbox.setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.general.markwatched.tooltip"));
         markWatchedCheckbox.setContentDisplay(ContentDisplay.RIGHT);
 
-        cookiesFileChooser.setButtonText(resourceBundle.getString("button.filechoose"));
+        cookiesFileChooser.setButtonText(ctx.getLocalizedString("button.filechoose"));
         cookiesFileChooser.disableProperty().bind(readCookiesCheckbox.selectedProperty().not());
     }
 
     private void initDownloadSettings() {
         rateLimitTextField.setTextFormatter(RegexTextFormatter.of("^(0|[1-9][0-9]{0,9}[KkMmGg]?)$"));
-        rateLimitTextField.setHint(resourceBundle.getString("preferences.youtubedl.download.ratelimit.hint"));
+        rateLimitTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.download.ratelimit.hint"));
     }
 
     private void initNetworkSettings() {
         proxyUrlTextField.textProperty().addListener((observable, oldValue, newValue) -> proxyUrlTextField.clearError());
-        proxyUrlTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.proxy.hint"));
+        proxyUrlTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.network.proxy.hint"));
 
         socketTimoutTextField.setTextFormatter(new IntegerTextFormatter());
-        socketTimoutTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.socket.timeout.hint"));
+        socketTimoutTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.network.socket.timeout.hint"));
 
         sourceAddressTextField.textProperty().addListener((observable, oldValue, newValue) -> sourceAddressTextField.clearError());
-        sourceAddressTextField.setHint(resourceBundle.getString("preferences.youtubedl.network.sourceaddress.hint"));
+        sourceAddressTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.network.sourceaddress.hint"));
 
         forceIpV4CheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (BooleanUtils.isTrue(newValue)) {
@@ -127,14 +125,14 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     private void initAuthenticationSettings() {
         usernameTextField.textProperty().addListener((observable, oldValue, newValue) -> usernameTextField.clearError());
         passwordTextField.textProperty().addListener((observable, oldValue, newValue) -> passwordTextField.clearError());
-        videoPasswordTextField.setHint(resourceBundle.getString("preferences.youtubedl.authentication.videopassword.hint"));
+        videoPasswordTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.authentication.videopassword.hint"));
     }
 
     private void initConfigFileSettings() {
         useConfigFileCheckBox.setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.configfile.tooltip"));
         useConfigFileCheckBox.setContentDisplay(ContentDisplay.RIGHT);
 
-        configFileChooser.setButtonText(resourceBundle.getString("button.filechoose"));
+        configFileChooser.setButtonText(ctx.getLocalizedString("button.filechoose"));
         configFileChooser.disableProperty().bind(useConfigFileCheckBox.selectedProperty().not());
     }
 
@@ -173,24 +171,24 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
 
         String proxyUrl = proxyUrlTextField.getText();
         if (StringUtils.isNotBlank(proxyUrl) && !new UrlValidator(new String[] {"http", "https", "socks4", "socks5"}).isValid(proxyUrl)) {
-            proxyUrlTextField.setError(resourceBundle.getString("preferences.youtubedl.network.proxy.error"));
+            proxyUrlTextField.setError(ctx.getLocalizedString("preferences.youtubedl.network.proxy.error"));
             hasErrors = true;
         }
 
         String sourceAddressText = sourceAddressTextField.getText();
         InetAddressValidator ipValidator = InetAddressValidator.getInstance();
         if (StringUtils.isNotBlank(sourceAddressText) && !(ipValidator.isValidInet4Address(sourceAddressText) || ipValidator.isValidInet6Address(sourceAddressText))) {
-            sourceAddressTextField.setError(resourceBundle.getString("preferences.youtubedl.network.sourceaddress.error"));
+            sourceAddressTextField.setError(ctx.getLocalizedString("preferences.youtubedl.network.sourceaddress.error"));
             hasErrors = true;
         }
 
         if (StringUtils.isBlank(usernameTextField.getText()) && StringUtils.isNotBlank(passwordTextField.getText())) {
-            usernameTextField.setError(resourceBundle.getString("preferences.youtubedl.authentication.username.error"));
+            usernameTextField.setError(ctx.getLocalizedString("preferences.youtubedl.authentication.username.error"));
             hasErrors = true;
         }
 
         if (StringUtils.isBlank(passwordTextField.getText()) && StringUtils.isNotBlank(usernameTextField.getText())) {
-            passwordTextField.setError(resourceBundle.getString("preferences.youtubedl.authentication.password.error"));
+            passwordTextField.setError(ctx.getLocalizedString("preferences.youtubedl.authentication.password.error"));
             hasErrors = true;
         }
 

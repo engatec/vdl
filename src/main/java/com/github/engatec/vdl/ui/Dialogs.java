@@ -1,8 +1,7 @@
 package com.github.engatec.vdl.ui;
 
-import java.util.ResourceBundle;
-
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.ui.stage.ProgressDialogStage;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
@@ -13,20 +12,29 @@ import javafx.stage.Stage;
 public class Dialogs {
 
     public static void error(String key) {
-        ResourceBundle resBundle = ApplicationContext.INSTANCE.getResourceBundle();
+        var ctx = ApplicationContext.INSTANCE;
         var alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(resBundle.getString("error"));
+        alert.setTitle(ctx.getLocalizedString("error"));
         alert.setHeaderText(null);
-        alert.setContentText(resBundle.getString(key));
+        alert.setContentText(ctx.getLocalizedString(key));
         alert.showAndWait();
     }
 
     public static void info(String key) {
-        ResourceBundle resBundle = ApplicationContext.INSTANCE.getResourceBundle();
+        var ctx = ApplicationContext.INSTANCE;
         var alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(resBundle.getString("info"));
+        alert.setTitle(ctx.getLocalizedString("info"));
         alert.setHeaderText(null);
-        alert.setContentText(resBundle.getString(key));
+        alert.setContentText(ctx.getLocalizedString(key));
+        alert.showAndWait();
+    }
+
+    public static void info(String key, Language language) {
+        var ctx = ApplicationContext.INSTANCE;
+        var alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(ctx.getLocalizedString("info", language));
+        alert.setHeaderText(null);
+        alert.setContentText(ctx.getLocalizedString(key, language));
         alert.showAndWait();
     }
 
@@ -39,13 +47,13 @@ public class Dialogs {
     }
 
     private static void showDialogWithYesNoButtons(String messageKey, Alert.AlertType alertType, String titleKey, Runnable onYesButtonClickHandler, Runnable onNoButtonClickHandler) {
-        ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
+        var ctx = ApplicationContext.INSTANCE;
 
-        ButtonType yes = new ButtonType(resourceBundle.getString("button.yes"), ButtonBar.ButtonData.YES);
-        ButtonType no = new ButtonType(resourceBundle.getString("button.no"), ButtonBar.ButtonData.NO);
+        ButtonType yes = new ButtonType(ctx.getLocalizedString("button.yes"), ButtonBar.ButtonData.YES);
+        ButtonType no = new ButtonType(ctx.getLocalizedString("button.no"), ButtonBar.ButtonData.NO);
 
-        var alert = new Alert(alertType, resourceBundle.getString(messageKey), yes, no);
-        alert.setTitle(resourceBundle.getString(titleKey));
+        var alert = new Alert(alertType, ctx.getLocalizedString(messageKey), yes, no);
+        alert.setTitle(ctx.getLocalizedString(titleKey));
         alert.setHeaderText(null);
 
         ButtonBar.ButtonData result = alert.showAndWait()
@@ -61,7 +69,8 @@ public class Dialogs {
         }
     }
 
-    public static void progress(String title, Stage parent, Task<?> task, Runnable onSuccessCallback) {
+    public static void progress(String key, Stage parent, Task<?> task, Runnable onSuccessCallback) {
+        String title = ApplicationContext.INSTANCE.getLocalizedString(key);
         new ProgressDialogStage(title, task, onSuccessCallback).modal(parent).showAndWait();
     }
 }

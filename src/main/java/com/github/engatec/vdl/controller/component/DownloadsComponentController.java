@@ -1,7 +1,6 @@
 package com.github.engatec.vdl.controller.component;
 
 import java.nio.file.Path;
-import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
@@ -74,23 +73,23 @@ public class DownloadsComponentController extends VBox implements ComponentContr
     }
 
     private ContextMenu createContextMenu(TableRow<QueueItem> row) {
-        ResourceBundle rb = ApplicationContext.INSTANCE.getResourceBundle();
+        var ctx = ApplicationContext.INSTANCE;
 
         ContextMenu ctxMenu = new ContextMenu();
 
-        MenuItem cancelMenuItem = new MenuItem(rb.getString("stage.queue.table.contextmenu.cancel"));
+        MenuItem cancelMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.cancel"));
         cancelMenuItem.setOnAction(e -> {
             queueManager.cancelDownload(row.getItem());
             e.consume();
         });
 
-        MenuItem resumeMenuItem = new MenuItem(rb.getString("stage.queue.table.contextmenu.resume"));
+        MenuItem resumeMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.resume"));
         resumeMenuItem.setOnAction(e -> {
             queueManager.resumeDownload(row.getItem());
             e.consume();
         });
 
-        MenuItem deleteMenuItem = new MenuItem(rb.getString("stage.queue.table.contextmenu.delete"));
+        MenuItem deleteMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.delete"));
         deleteMenuItem.setOnAction(e -> {
             queueManager.removeItem(row.getItem());
             e.consume();

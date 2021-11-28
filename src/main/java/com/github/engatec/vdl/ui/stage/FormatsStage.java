@@ -27,7 +27,7 @@ public class FormatsStage extends AppStage {
     protected void init() {
         super.init();
         stage.setResizable(false);
-        stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("format.select"));
+        stage.setTitle(ApplicationContext.INSTANCE.getLocalizedString("format.select"));
         stage.setOnShown(event -> {
             Rectangle2D screenBounds = Screen.getPrimary().getBounds();
             boolean stageResized = false;

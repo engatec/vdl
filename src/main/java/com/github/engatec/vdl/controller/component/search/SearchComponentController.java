@@ -119,7 +119,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         selectAllCheckBox.setVisible(false);
 
         downloadButton.setVisible(false);
-        MenuItem downloadAudioMenuItem = new MenuItem(ApplicationContext.INSTANCE.getResourceBundle().getString("download.audio"));
+        MenuItem downloadAudioMenuItem = new MenuItem(ApplicationContext.INSTANCE.getLocalizedString("download.audio"));
         downloadAudioMenuItem.setOnAction(this::handleDownloadAudioButtonClick);
         downloadButton.getItems().add(downloadAudioMenuItem);
     }

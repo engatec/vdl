@@ -72,8 +72,7 @@ public class AppUtils {
             return;
         }
 
-        String title = ctx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress");
-        Dialogs.progress(title, stage, new UpdateYoutubeDlBinaryTask(), onSuccessCallback);
+        Dialogs.progress("dialog.progress.title.label.updateinprogress", stage, new UpdateYoutubeDlBinaryTask(), onSuccessCallback);
     }
 
     public static void updateYtdlp(Stage stage, Runnable onSuccessCallback) {
@@ -83,8 +82,7 @@ public class AppUtils {
             return;
         }
 
-        String title = ctx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress");
-        Dialogs.progress(title, stage, new UpdateYtdlpBinaryTask(), onSuccessCallback);
+        Dialogs.progress("dialog.progress.title.label.updateinprogress", stage, new UpdateYtdlpBinaryTask(), onSuccessCallback);
     }
 
     /**

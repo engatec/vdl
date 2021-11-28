@@ -28,7 +28,7 @@ public class ApplicationContext {
     private ConfigRegistry configRegistry;
     private ResourceBundle resourceBundle;
 
-    public static void setManagers(Collection<? extends VdlManager> mgrs) {
+    public void setManagers(Collection<? extends VdlManager> mgrs) {
         mgrs.stream()
                 .sorted(Comparator.comparingInt(it -> {
                     var order = it.getClass().getAnnotation(Order.class);
@@ -41,7 +41,7 @@ public class ApplicationContext {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends VdlManager> T getManager(Class<T> managerClass) {
+    public <T extends VdlManager> T getManager(Class<T> managerClass) {
         return (T) MANAGERS_MAP.computeIfAbsent(managerClass, key -> {throw new NoSuchElementException("Manager '" + managerClass.getSimpleName() + "' hasn't been initialized");});
     }
 
@@ -51,6 +51,14 @@ public class ApplicationContext {
 
     public ResourceBundle getResourceBundle() {
         return resourceBundle;
+    }
+
+    public String getLocalizedString(String key) {
+        return resourceBundle.getString(key);
+    }
+
+    public String getLocalizedString(String key, Language language) {
+        return ResourceBundle.getBundle("lang", language.getLocale()).getString(key);
     }
 
     public void setConfigRegistry(ConfigRegistry configRegistry) {

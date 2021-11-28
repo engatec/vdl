@@ -1,7 +1,6 @@
 package com.github.engatec.vdl.controller.preferences;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -21,8 +20,8 @@ import javafx.stage.Stage;
 
 public class PreferencesController extends StageAwareController {
 
-    private final ResourceBundle resourceBundle = ApplicationContext.INSTANCE.getResourceBundle();
-    private final ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+    private final ApplicationContext ctx = ApplicationContext.INSTANCE;
+    private final ConfigRegistry configRegistry = ctx.getConfigRegistry();
 
     @FXML private ScrollPane preferencesScrollPane;
     @FXML private TreeView<Category> preferencesCategoryTreeView;
@@ -39,7 +38,7 @@ public class PreferencesController extends StageAwareController {
 
     @FXML
     public void initialize() {
-        stage.setTitle(resourceBundle.getString("preferences.title"));
+        stage.setTitle(ctx.getLocalizedString("preferences.title"));
         stage.setOnCloseRequest(event -> discardChanges());
 
         okBtn.setOnAction(this::handleOkBtnClick);
@@ -68,11 +67,11 @@ public class PreferencesController extends StageAwareController {
     }
 
     private TreeItem<Category> createGeneral() {
-        return new TreeItem<>(new GeneralCategory(resourceBundle.getString("preferences.category.general")));
+        return new TreeItem<>(new GeneralCategory(ctx.getLocalizedString("preferences.category.general")));
     }
 
     private TreeItem<Category> createYoutubeDl() {
-        return new TreeItem<>(new YoutubeDlCategory(resourceBundle.getString("preferences.category.youtubedl")));
+        return new TreeItem<>(new YoutubeDlCategory(ctx.getLocalizedString("preferences.category.youtubedl")));
     }
 
     private void handleCancelBtnClick(ActionEvent event) {

@@ -34,7 +34,7 @@ public class PlaylistContentsStage extends AppStage {
     @Override
     protected void init() {
         super.init();
-        stage.setTitle(ApplicationContext.INSTANCE.getResourceBundle().getString("subscriptions.stage.title"));
+        stage.setTitle(ApplicationContext.INSTANCE.getLocalizedString("subscriptions.stage.title"));
         stage.setOnShown(event -> {
             Rectangle2D screenBounds = Screen.getPrimary().getBounds();
             boolean stageResized = false;
