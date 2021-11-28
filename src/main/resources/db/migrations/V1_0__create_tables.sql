@@ -11,8 +11,7 @@ CREATE TABLE IF NOT EXISTS queue(
     title TEXT,
     format_id TEXT NOT NULL,
     url TEXT NOT NULL,
-    download_path TEXT NOT NULL,
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    download_path TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS queue_temp_file(
