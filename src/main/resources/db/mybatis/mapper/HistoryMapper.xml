@@ -17,7 +17,7 @@
     </resultMap>
 
     <select id="fetchHistory" resultMap="fetchHistoryResultMap">
-        SELECT title, url, download_path, created_at
+        SELECT title, url, download_path, datetime(created_at, 'localtime') as created_at
         FROM history
         ORDER BY created_at DESC
         <if test="limit != null">
