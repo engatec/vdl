@@ -70,7 +70,7 @@ public class DbManager extends VdlManager {
                 result = func.apply(mapper);
                 session.commit();
             } catch (Exception e) {
-                LOGGER.warn(e.getMessage());
+                LOGGER.warn(e.getMessage(), e);
                 throw e;
             }
             return result;
