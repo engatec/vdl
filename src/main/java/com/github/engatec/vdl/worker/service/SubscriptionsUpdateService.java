@@ -33,6 +33,8 @@ public class SubscriptionsUpdateService extends Service<Void> {
     private static final Logger LOGGER = LogManager.getLogger(SubscriptionsUpdateService.class);
 
     private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+    private final HistoryManager historyManager = ApplicationContext.INSTANCE.getManager(HistoryManager.class);
+    private final SubscriptionsManager subscriptionsManager = ApplicationContext.INSTANCE.getManager(SubscriptionsManager.class);
 
     private final CountDownLatch updatesCountDownLatch;
     private final List<Subscription> subscriptions;
@@ -91,7 +93,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
 
                 Set<String> processedItems = subscription.getProcessedItemsForTraversal();
                 List<VideoInfo> newItems = playlistItems.stream()
-                        .filter(Predicate.not(it -> processedItems.contains(SubscriptionsManager.INSTANCE.buildPlaylistItemId(it))))
+                        .filter(Predicate.not(it -> processedItems.contains(subscriptionsManager.buildPlaylistItemId(it))))
                         .collect(Collectors.toList());
 
                 Integer selectedVideoHeight = ApplicationContext.INSTANCE.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
@@ -107,13 +109,13 @@ public class SubscriptionsUpdateService extends Service<Void> {
                     downloadable.setDownloadPath(Path.of(subscription.getDownloadPath()));
 
                     Platform.runLater(() -> {
-                        HistoryManager.INSTANCE.addToHistory(downloadable);
+                        historyManager.addToHistory(downloadable);
                         queueManager.addItem(new QueueItem(downloadable));
                     });
 
                 }
 
-                SubscriptionsManager.INSTANCE.addProcessedItems(subscription, newItems.stream().map(SubscriptionsManager.INSTANCE::buildPlaylistItemId).collect(Collectors.toSet()));
+                subscriptionsManager.addProcessedItems(subscription, newItems.stream().map(subscriptionsManager::buildPlaylistItemId).collect(Collectors.toSet()));
             }
         };
     }

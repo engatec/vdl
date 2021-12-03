@@ -33,8 +33,6 @@ public class SubscriptionsManager extends VdlManager {
 
     private DbManager dbManager;
 
-    public static final SubscriptionsManager INSTANCE = new SubscriptionsManager();
-
     private Consumer<Boolean> subscriptionsUpdateProgressListener;
 
     @Override

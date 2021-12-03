@@ -26,7 +26,6 @@ public class HistoryManager extends VdlManager {
 
     private static final Logger LOGGER = LogManager.getLogger(HistoryManager.class);
 
-    public static final HistoryManager INSTANCE = new HistoryManager();
     private final ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
 
     private DbManager dbManager;

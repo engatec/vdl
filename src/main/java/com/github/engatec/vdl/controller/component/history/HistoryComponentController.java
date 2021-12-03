@@ -35,6 +35,8 @@ public class HistoryComponentController extends VBox implements ComponentControl
 
     private static final Logger LOGGER = LogManager.getLogger(HistoryComponentController.class);
 
+    private final HistoryManager historyManager = ApplicationContext.INSTANCE.getManager(HistoryManager.class);
+
     @FXML private TableView<HistoryItem> historyTableView;
     @FXML private TableColumn<HistoryItem, String> titleTableColumn;
     @FXML private TableColumn<HistoryItem, String> urlTableColumn;
@@ -129,14 +131,14 @@ public class HistoryComponentController extends VBox implements ComponentControl
     }
 
     private void handleClearHistoryBtnClick(ActionEvent e) {
-        HistoryManager.INSTANCE.clearHistory();
+        historyManager.clearHistory();
         historyTableView.setItems(null);
         e.consume();
     }
 
     @Override
     public void onBeforeVisible() {
-        HistoryManager.INSTANCE.getHistoryItemsAsync()
+        historyManager.getHistoryItemsAsync()
                 .thenAccept(items -> Platform.runLater(() -> historyTableView.setItems(FXCollections.observableList(items))));
     }
 }

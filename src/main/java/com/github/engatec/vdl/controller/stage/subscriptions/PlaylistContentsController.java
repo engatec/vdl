@@ -27,6 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class PlaylistContentsController implements InputForm {
 
+    private final SubscriptionsManager subscriptionsManager = ApplicationContext.INSTANCE.getManager(SubscriptionsManager.class);
+
     private Stage stage;
     private String playlistUrl;
     private List<VideoInfo> videoInfoList;
@@ -108,14 +110,14 @@ public class PlaylistContentsController implements InputForm {
                 .filter(CheckBox::isSelected)
                 .map(CheckBox::getUserData)
                 .map(it -> (VideoInfo) it)
-                .map(SubscriptionsManager.INSTANCE::buildPlaylistItemId)
+                .map(subscriptionsManager::buildPlaylistItemId)
                 .collect(Collectors.toSet());
 
         var subscription = new Subscription();
         subscription.setName(subscriptionNameTextField.getText());
         subscription.setUrl(playlistUrl);
         subscription.setDownloadPath(subscriptionDownloadPathDirectoryChooser.getPath());
-        SubscriptionsManager.INSTANCE.subscribe(subscription, processedItems);
+        subscriptionsManager.subscribe(subscription, processedItems);
         onSubscribeListener.accept(subscription);
     }
 

@@ -31,19 +31,19 @@ public class Main extends Application {
         ApplicationContext.INSTANCE.setManagers(List.of(
                 new DbManager("jdbc:sqlite:" + ApplicationContext.DB_PATH),
                 new QueueManager(),
-                HistoryManager.INSTANCE,
-                SubscriptionsManager.INSTANCE
+                new HistoryManager(),
+                new SubscriptionsManager()
         ));
 
         new MainStage(stage).show();
 
         checkUpdates(stage);
-        SubscriptionsManager.INSTANCE.updateAllSubscriptions();
+        ApplicationContext.INSTANCE.getManager(SubscriptionsManager.class).updateAllSubscriptions();
     }
 
     @Override
     public void stop() {
-        HistoryManager.INSTANCE.stripHistory();
+        ApplicationContext.INSTANCE.getManager(HistoryManager.class).stripHistory();
         AppExecutors.shutdownExecutors();
     }
 

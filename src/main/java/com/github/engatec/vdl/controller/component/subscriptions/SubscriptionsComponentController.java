@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.github.engatec.vdl.controller.component.ComponentController;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
@@ -32,6 +33,8 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
 
     private static final Logger LOGGER = LogManager.getLogger(SubscriptionsComponentController.class);
 
+    private final SubscriptionsManager subscriptionsManager = ApplicationContext.INSTANCE.getManager(SubscriptionsManager.class);
+
     private final Stage stage;
     private final PlaylistDetailsSearchService playlistDetailsSearchService = new PlaylistDetailsSearchService();
 
@@ -57,7 +60,7 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
         searchButton.setOnAction(this::handleSearchButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
 
-        SubscriptionsManager.INSTANCE.getSubscriptionsAsync()
+        subscriptionsManager.getSubscriptionsAsync()
                 .thenAccept(subscriptions ->
                         Platform.runLater(() -> displaySubscriptions(subscriptions))
                 );
@@ -95,7 +98,7 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
 
             Platform.runLater(() -> new PlaylistContentsStage(urlTextField.getText(), items, subscription -> {
                 displaySubscriptions(List.of(subscription));
-                SubscriptionsManager.INSTANCE.updateSubscription(subscription);
+                subscriptionsManager.updateSubscription(subscription);
             }).modal(stage).showAndWait());
         });
 
@@ -127,7 +130,7 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
 
     private Consumer<Subscription> getOnSubscriptionDeleteButtonClickListener() {
         return subscription -> {
-            SubscriptionsManager.INSTANCE.unsubscribe(subscription);
+            subscriptionsManager.unsubscribe(subscription);
             contentNode.getChildren().removeIf(it -> subscription.equals(((SubscriptionItemComponentController) it).getItem()));
         };
     }

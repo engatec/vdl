@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 public class MainController extends StageAwareController {
 
     private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+    private final SubscriptionsManager subscriptionsManager = ApplicationContext.INSTANCE.getManager(SubscriptionsManager.class);
 
     @FXML private HBox rootNode;
     @FXML private StackPane navigationPane;
@@ -76,7 +77,7 @@ public class MainController extends StageAwareController {
 
         navigationPane.getChildren().add(sidebar);
         queueManager.setOnQueueItemsChangeListener(sidebar.getOnQueueItemsChangeListener());
-        SubscriptionsManager.INSTANCE.setSubscriptionsUpdateProgressListener(sidebar.getSubscriptionsUpdateProgressListener());
+        subscriptionsManager.setSubscriptionsUpdateProgressListener(sidebar.getSubscriptionsUpdateProgressListener());
     }
 
     private <T extends Node & ComponentController> void loadComponent(T component) {
