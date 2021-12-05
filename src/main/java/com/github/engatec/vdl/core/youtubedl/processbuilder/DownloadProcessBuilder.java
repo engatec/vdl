@@ -28,7 +28,7 @@ public class DownloadProcessBuilder implements YoutubeDlProcessBuilder {
                 .ignoreConfig()
                 .ignoreErrors()
                 .noCheckCertificate()
-                .ffmpegLocation(ApplicationContext.APP_DIR);
+                .ffmpegLocation(ApplicationContext.getInstance().getAppBinariesDir().toString());
 
         YoutubeDlCommandHelper.setOutputPath(commandBuilder, downloadable);
         YoutubeDlCommandHelper.setGeneralOptions(commandBuilder);

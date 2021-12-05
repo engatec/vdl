@@ -32,9 +32,10 @@ public class SubscriptionsUpdateService extends Service<Void> {
 
     private static final Logger LOGGER = LogManager.getLogger(SubscriptionsUpdateService.class);
 
-    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
-    private final HistoryManager historyManager = ApplicationContext.INSTANCE.getManager(HistoryManager.class);
-    private final SubscriptionsManager subscriptionsManager = ApplicationContext.INSTANCE.getManager(SubscriptionsManager.class);
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final QueueManager queueManager = ctx.getManager(QueueManager.class);
+    private final HistoryManager historyManager = ctx.getManager(HistoryManager.class);
+    private final SubscriptionsManager subscriptionsManager = ctx.getManager(SubscriptionsManager.class);
 
     private final CountDownLatch updatesCountDownLatch;
     private final List<Subscription> subscriptions;
@@ -96,7 +97,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
                         .filter(Predicate.not(it -> processedItems.contains(subscriptionsManager.buildPlaylistItemId(it))))
                         .collect(Collectors.toList());
 
-                Integer selectedVideoHeight = ApplicationContext.INSTANCE.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
+                Integer selectedVideoHeight = ctx.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
                 selectedVideoHeight = AutoSelectFormatConfigItem.DEFAULT.equals(selectedVideoHeight) ? null : selectedVideoHeight;
 
                 for (VideoInfo vi : newItems) {

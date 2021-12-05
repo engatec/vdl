@@ -14,6 +14,8 @@ import javafx.util.Callback;
 
 public abstract class AppStage {
 
+    protected final ApplicationContext ctx = ApplicationContext.getInstance();
+
     protected Stage stage;
 
     protected abstract String getFxmlPath();
@@ -32,7 +34,7 @@ public abstract class AppStage {
     }
 
     private void loadFxml() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(getFxmlPath()), ApplicationContext.INSTANCE.getResourceBundle());
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(getFxmlPath()), ctx.getResourceBundle());
         loader.setControllerFactory(getControllerFactory(stage));
 
         Parent rootNode;

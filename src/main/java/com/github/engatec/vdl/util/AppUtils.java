@@ -43,18 +43,19 @@ public class AppUtils {
             return Optional.empty();
         }
 
-        ApplicationContext.INSTANCE.getConfigRegistry().get(RecentDownloadPathPref.class).setValue(path.toString());
+        ApplicationContext.getInstance().getConfigRegistry().get(RecentDownloadPathPref.class).setValue(path.toString());
 
         return Optional.of(path);
     }
 
     private static Path doResolveDownloadPath(Stage stage) {
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        ApplicationContext ctx = ApplicationContext.getInstance();
+        ConfigRegistry configRegistry = ctx.getConfigRegistry();
         Path downloadPath = Paths.get(configRegistry.get(DownloadPathPref.class).getValue());
         boolean askPath = configRegistry.get(AlwaysAskDownloadPathPref.class).getValue();
         if (askPath) {
             var directoryChooser = new DirectoryChooser();
-            File recentDownloadPath = Path.of(ApplicationContext.INSTANCE.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
+            File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
             if (recentDownloadPath.isDirectory()) {
                 directoryChooser.setInitialDirectory(recentDownloadPath);
             }
@@ -66,7 +67,7 @@ public class AppUtils {
     }
 
     public static void updateYoutubeDl(Stage stage, Runnable onSuccessCallback) {
-        ApplicationContext ctx = ApplicationContext.INSTANCE;
+        ApplicationContext ctx = ApplicationContext.getInstance();
         if (!Files.isWritable(ctx.getDownloaderPath(Engine.YOUTUBE_DL))) {
             Dialogs.error("update.youtubedl.nopermissions");
             return;
@@ -76,7 +77,7 @@ public class AppUtils {
     }
 
     public static void updateYtdlp(Stage stage, Runnable onSuccessCallback) {
-        ApplicationContext ctx = ApplicationContext.INSTANCE;
+        ApplicationContext ctx = ApplicationContext.getInstance();
         if (!Files.isWritable(ctx.getDownloaderPath(Engine.YT_DLP))) {
             Dialogs.error("update.ytdlp.nopermissions");
             return;

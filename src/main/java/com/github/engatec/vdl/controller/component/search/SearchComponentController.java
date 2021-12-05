@@ -42,7 +42,8 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private static final Logger LOGGER = LogManager.getLogger(SearchComponentController.class);
 
-    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final QueueManager queueManager = ctx.getManager(QueueManager.class);
 
     private final Stage stage;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
@@ -121,7 +122,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         selectAllCheckBox.setVisible(false);
 
         downloadButton.setVisible(false);
-        MenuItem downloadAudioMenuItem = new MenuItem(ApplicationContext.INSTANCE.getLocalizedString("download.audio"));
+        MenuItem downloadAudioMenuItem = new MenuItem(ctx.getLocalizedString("download.audio"));
         downloadAudioMenuItem.setOnAction(this::handleDownloadAudioButtonClick);
         downloadButton.getItems().add(downloadAudioMenuItem);
     }

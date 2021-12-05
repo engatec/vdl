@@ -33,7 +33,8 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
 
     private static final Logger LOGGER = LogManager.getLogger(SubscriptionsComponentController.class);
 
-    private final SubscriptionsManager subscriptionsManager = ApplicationContext.INSTANCE.getManager(SubscriptionsManager.class);
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final SubscriptionsManager subscriptionsManager = ctx.getManager(SubscriptionsManager.class);
 
     private final Stage stage;
     private final PlaylistDetailsSearchService playlistDetailsSearchService = new PlaylistDetailsSearchService();

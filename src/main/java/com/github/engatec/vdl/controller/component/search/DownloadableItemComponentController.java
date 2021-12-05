@@ -47,8 +47,9 @@ public class DownloadableItemComponentController extends HBox {
 
     private static final String CUSTOM_FORMAT_LABEL = "Custom format";
 
-    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
-    private final HistoryManager historyManager = ApplicationContext.INSTANCE.getManager(HistoryManager.class);
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final QueueManager queueManager = ctx.getManager(QueueManager.class);
+    private final HistoryManager historyManager = ctx.getManager(HistoryManager.class);
 
     private final Stage stage;
     private final VideoInfo videoInfo;
@@ -120,7 +121,7 @@ public class DownloadableItemComponentController extends HBox {
                 .collect(Collectors.toList());
 
         ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
-        Integer autoSelectFormat = ApplicationContext.INSTANCE.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
+        Integer autoSelectFormat = ctx.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
         ComboBoxValueHolder<String> selectedItem = null;
         for (Integer height : commonAvailableHeights) {
             ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), YouDlUtils.createFormatByHeight(height));
@@ -154,7 +155,7 @@ public class DownloadableItemComponentController extends HBox {
     }
 
     private void initThumbnail() {
-        if (!ApplicationContext.INSTANCE.getConfigRegistry().get(LoadThumbnailsPref.class).getValue()) {
+        if (!ctx.getConfigRegistry().get(LoadThumbnailsPref.class).getValue()) {
             thumbnailWrapperPane.setVisible(false);
             thumbnailWrapperPane.setManaged(false);
             return;
@@ -199,7 +200,7 @@ public class DownloadableItemComponentController extends HBox {
     }
 
     public void downloadAudio(Path path) {
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        ConfigRegistry configRegistry = ctx.getConfigRegistry();
         String format = configRegistry.get(AudioExtractionFormatPref.class).getValue();
         // Youtube-dl quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
         int quality = Math.abs(configRegistry.get(AudioExtractionQualityPref.class).getValue() - AudioFormat.BEST_QUALITY);

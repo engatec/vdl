@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.github.engatec.vdl.controller.stage.subscriptions.PlaylistContentsController;
-import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.stage.AppStage;
@@ -34,7 +33,7 @@ public class PlaylistContentsStage extends AppStage {
     @Override
     protected void init() {
         super.init();
-        stage.setTitle(ApplicationContext.INSTANCE.getLocalizedString("subscriptions.stage.title"));
+        stage.setTitle(ctx.getLocalizedString("subscriptions.stage.title"));
         stage.setOnShown(event -> {
             Rectangle2D screenBounds = Screen.getPrimary().getBounds();
             boolean stageResized = false;

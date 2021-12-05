@@ -19,6 +19,6 @@ public enum DownloadStatus {
 
     @Override
     public String toString() {
-        return ApplicationContext.INSTANCE.getLocalizedString(msgKey);
+        return ApplicationContext.getInstance().getLocalizedString(msgKey);
     }
 }

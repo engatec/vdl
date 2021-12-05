@@ -41,7 +41,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 
 public class YoutubedlPreferencesController extends ScrollPane implements InputForm {
 
-    private final ApplicationContext ctx = ApplicationContext.INSTANCE;
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
 
     @FXML private FxTextField outputTemplateTextField;
 
@@ -137,7 +137,7 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     }
 
     private void bindProperties() {
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        ConfigRegistry configRegistry = ctx.getConfigRegistry();
         proxyUrlTextField.textProperty().bindBidirectional(configRegistry.get(ProxyUrlPref.class).getProperty());
         socketTimoutTextField.textProperty().bindBidirectional(configRegistry.get(SocketTimeoutPref.class).getProperty());
         sourceAddressTextField.textProperty().bindBidirectional(configRegistry.get(SourceAddressPref.class).getProperty());

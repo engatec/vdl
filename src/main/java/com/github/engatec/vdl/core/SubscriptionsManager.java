@@ -36,11 +36,11 @@ public class SubscriptionsManager extends VdlManager {
     private Consumer<Boolean> subscriptionsUpdateProgressListener;
 
     @Override
-    public void init() {
-        dbManager = ApplicationContext.INSTANCE.getManager(DbManager.class);
+    public void init(ApplicationContext ctx) {
+        dbManager = ctx.getManager(DbManager.class);
 
         // FIXME: deprecated in 1.7 For removal in 1.9
-        CompletableFuture.supplyAsync(this::restoreFromJson, AppExecutors.COMMON_EXECUTOR)
+        CompletableFuture.supplyAsync(() -> restoreFromJson(ctx.getAppDataDir().resolve("subscriptions.vdl")), AppExecutors.COMMON_EXECUTOR)
                 .thenAccept(items -> {
                     for (Subscription it : ListUtils.emptyIfNull(items)) {
                         ZonedDateTime dtm = LocalDateTime.parse(it.getCreatedAt(), AppUtils.DATE_TIME_FORMATTER).atZone(ZoneId.systemDefault());
@@ -83,8 +83,7 @@ public class SubscriptionsManager extends VdlManager {
 
     // FIXME: transition from JSON files to sqlite.
     @Deprecated(since = "1.7", forRemoval = true)
-    public List<Subscription> restoreFromJson() {
-        Path subscriptionFilePath = ApplicationContext.DATA_PATH.resolve("subscriptions.vdl");
+    public List<Subscription> restoreFromJson(Path subscriptionFilePath) {
         if (Files.notExists(subscriptionFilePath)) {
             return List.of();
         }

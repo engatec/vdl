@@ -70,7 +70,7 @@ public class CompleteVideoInfoSearchTask extends VideoInfoSearchTask {
             return;
         }
 
-        updateMessage(String.format(ApplicationContext.INSTANCE.getLocalizedString("stage.main.search.playlist.progress"), readyCount, totalCount));
+        updateMessage(String.format(ApplicationContext.getInstance().getLocalizedString("stage.main.search.playlist.progress"), readyCount, totalCount));
         updateProgress(readyCount, totalCount);
         Platform.runLater(() -> onInfoFetchedCallback.accept(chunk, totalCount));
     }

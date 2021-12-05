@@ -70,15 +70,15 @@ public class QueueManager extends VdlManager {
     }
 
     @Override
-    public void init() {
-        dbManager = ApplicationContext.INSTANCE.getManager(DbManager.class);
+    public void init(ApplicationContext ctx) {
+        dbManager = ctx.getManager(DbManager.class);
         dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems)
                 .thenAccept(dbItems -> {
                     fixState(dbItems);
                     Platform.runLater(() -> addAll(dbItems));
                 })
                 .thenRun(() -> { // FIXME: deprecated in 1.7 For removal in 1.9
-                    List<QueueItem> queueItems = restoreFromJson();
+                    List<QueueItem> queueItems = restoreFromJson(ctx.getAppDataDir().resolve("queue.vdl"));
                     if (CollectionUtils.isEmpty(queueItems)) {
                         return;
                     }
@@ -93,8 +93,7 @@ public class QueueManager extends VdlManager {
 
     // FIXME: transition from JSON files to sqlite.
     @Deprecated(since = "1.7", forRemoval = true)
-    private List<QueueItem> restoreFromJson() {
-        Path queueFilePath = ApplicationContext.DATA_PATH.resolve("queue.vdl");
+    private List<QueueItem> restoreFromJson(Path queueFilePath) {
         if (Files.notExists(queueFilePath)) {
             return List.of();
         }

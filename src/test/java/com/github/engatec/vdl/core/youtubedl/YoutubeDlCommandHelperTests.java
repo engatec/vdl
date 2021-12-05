@@ -4,8 +4,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import com.github.engatec.vdl.TestHelper;
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.DownloaderPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
@@ -43,15 +43,13 @@ public class YoutubeDlCommandHelperTests {
 
     @BeforeAll
     static void setUp() {
-        ConfigRegistry configRegistryMock = Mockito.mock(ConfigRegistry.class);
-        ApplicationContext.INSTANCE.setConfigRegistry(configRegistryMock);
-
+        TestHelper.initTestApplicationContext();
         mockPreference(DownloaderPref.class, 1);
     }
 
     private static <V, T extends ConfigItemWrapper<?, V>> void mockPreference(Class<T> configItemClass, V value) {
         T prefMock = Mockito.mock(configItemClass);
-        Mockito.when(ApplicationContext.INSTANCE.getConfigRegistry().get(configItemClass)).thenReturn(prefMock);
+        Mockito.when(ApplicationContext.getInstance().getConfigRegistry().get(configItemClass)).thenReturn(prefMock);
         Mockito.when(prefMock.getValue()).thenReturn(value);
     }
 

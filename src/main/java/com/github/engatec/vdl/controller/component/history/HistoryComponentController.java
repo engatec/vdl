@@ -35,7 +35,8 @@ public class HistoryComponentController extends VBox implements ComponentControl
 
     private static final Logger LOGGER = LogManager.getLogger(HistoryComponentController.class);
 
-    private final HistoryManager historyManager = ApplicationContext.INSTANCE.getManager(HistoryManager.class);
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final HistoryManager historyManager = ctx.getManager(HistoryManager.class);
 
     @FXML private TableView<HistoryItem> historyTableView;
     @FXML private TableColumn<HistoryItem, String> titleTableColumn;
@@ -56,7 +57,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
     }
 
     private void initEntriesNumberComboBox() {
-        final String DISABLE_HISTORY = ApplicationContext.INSTANCE.getLocalizedString("stage.history.combobox.disablehistory");
+        final String DISABLE_HISTORY = ctx.getLocalizedString("stage.history.combobox.disablehistory");
 
         entriesNumberComboBox.setItems(FXCollections.observableArrayList(0, 10, 30, 50, 100, 1000));
         entriesNumberComboBox.setConverter(new StringConverter<>() {
@@ -75,11 +76,11 @@ public class HistoryComponentController extends VBox implements ComponentControl
             }
         });
 
-        entriesNumberComboBox.valueProperty().bindBidirectional(ApplicationContext.INSTANCE.getConfigRegistry().get(HistoryEntriesNumberPref.class).getProperty());
+        entriesNumberComboBox.valueProperty().bindBidirectional(ctx.getConfigRegistry().get(HistoryEntriesNumberPref.class).getProperty());
     }
 
     private void initHistoryTableView() {
-        historyTableView.setPlaceholder(new Label(ApplicationContext.INSTANCE.getLocalizedString("stage.history.table.placeholder")));
+        historyTableView.setPlaceholder(new Label(ctx.getLocalizedString("stage.history.table.placeholder")));
 
         titleTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getTitle()));
         urlTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getUrl()));
@@ -99,7 +100,6 @@ public class HistoryComponentController extends VBox implements ComponentControl
     }
 
     private ContextMenu createContextMenu(TableRow<HistoryItem> row) {
-        var ctx = ApplicationContext.INSTANCE;
         ContextMenu ctxMenu = new ContextMenu();
 
         MenuItem openFolder = new MenuItem(ctx.getLocalizedString("stage.history.ctxmenu.openfolder"));

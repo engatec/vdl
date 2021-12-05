@@ -6,7 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.engatec.vdl.DbManagerTestHelper;
+import com.github.engatec.vdl.TestHelper;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.model.HistoryItem;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +22,8 @@ public class HistoryMapperTest {
 
     @BeforeAll
     static void setUp() {
-        dbManager = DbManagerTestHelper.DB_MANAGER;
+        TestHelper.initTestApplicationContext();
+        dbManager = ApplicationContext.getInstance().getManager(DbManager.class);
     }
 
     @Test

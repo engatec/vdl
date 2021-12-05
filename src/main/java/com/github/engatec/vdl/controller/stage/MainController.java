@@ -28,8 +28,9 @@ import javafx.stage.Stage;
 
 public class MainController extends StageAwareController {
 
-    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
-    private final SubscriptionsManager subscriptionsManager = ApplicationContext.INSTANCE.getManager(SubscriptionsManager.class);
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final QueueManager queueManager = ctx.getManager(QueueManager.class);
+    private final SubscriptionsManager subscriptionsManager = ctx.getManager(SubscriptionsManager.class);
 
     @FXML private HBox rootNode;
     @FXML private StackPane navigationPane;

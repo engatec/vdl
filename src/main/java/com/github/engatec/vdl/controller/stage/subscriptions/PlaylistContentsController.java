@@ -27,7 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class PlaylistContentsController implements InputForm {
 
-    private final SubscriptionsManager subscriptionsManager = ApplicationContext.INSTANCE.getManager(SubscriptionsManager.class);
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final SubscriptionsManager subscriptionsManager = ctx.getManager(SubscriptionsManager.class);
 
     private Stage stage;
     private String playlistUrl;
@@ -57,7 +58,6 @@ public class PlaylistContentsController implements InputForm {
 
     @FXML
     public void initialize() {
-        ApplicationContext ctx = ApplicationContext.INSTANCE;
         subscriptionNameTextField.setTextFormatter(new NotBlankTextFormatter());
         subscriptionNameTextField.textProperty().addListener((observable, oldValue, newValue) -> subscriptionNameTextField.clearError());
         subscriptionDownloadPathDirectoryChooser.setButtonText(ctx.getLocalizedString("button.directorychoose"));
@@ -83,7 +83,6 @@ public class PlaylistContentsController implements InputForm {
     @Override
     public boolean hasErrors() {
         boolean hasErrors = false;
-        var ctx = ApplicationContext.INSTANCE;
 
         if (StringUtils.isBlank(subscriptionNameTextField.getText())) {
             subscriptionNameTextField.setError(ctx.getLocalizedString("field.error.mandatory"));

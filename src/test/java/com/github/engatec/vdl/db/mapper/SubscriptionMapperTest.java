@@ -4,7 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import com.github.engatec.vdl.DbManagerTestHelper;
+import com.github.engatec.vdl.TestHelper;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.model.Subscription;
 import org.apache.ibatis.exceptions.PersistenceException;
@@ -21,7 +22,8 @@ public class SubscriptionMapperTest {
 
     @BeforeAll
     static void setUp() {
-        dbManager = DbManagerTestHelper.DB_MANAGER;
+        TestHelper.initTestApplicationContext();
+        dbManager = ApplicationContext.getInstance().getManager(DbManager.class);
     }
 
     private Subscription createSubscriptionItem() {

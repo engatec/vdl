@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 
 public class PreferencesController extends StageAwareController {
 
-    private final ApplicationContext ctx = ApplicationContext.INSTANCE;
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final ConfigRegistry configRegistry = ctx.getConfigRegistry();
 
     @FXML private ScrollPane preferencesScrollPane;

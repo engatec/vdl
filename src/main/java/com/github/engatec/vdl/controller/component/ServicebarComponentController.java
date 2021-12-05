@@ -19,6 +19,8 @@ import javafx.util.StringConverter;
 
 public class ServicebarComponentController extends HBox {
 
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+
     private final Stage stage;
 
     @FXML private ComboBox<Integer> downloaderComboBox;
@@ -49,7 +51,7 @@ public class ServicebarComponentController extends HBox {
                 return Engine.getByDisplaValue(value).getConfigValue();
             }
         });
-        downloaderComboBox.valueProperty().bindBidirectional(ApplicationContext.INSTANCE.getConfigRegistry().get(DownloaderPref.class).getProperty());
+        downloaderComboBox.valueProperty().bindBidirectional(ctx.getConfigRegistry().get(DownloaderPref.class).getProperty());
 
         helpButton.setOnMouseClicked(e -> {
             new AboutStage().modal(stage).showAndWait();

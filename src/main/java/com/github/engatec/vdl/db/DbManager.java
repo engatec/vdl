@@ -8,6 +8,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Function;
 
 import com.github.engatec.vdl.core.AppExecutors;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.VdlManager;
 import com.github.engatec.vdl.core.annotation.Order;
 import org.apache.ibatis.io.Resources;
@@ -23,16 +24,14 @@ import org.flywaydb.core.api.FlywayException;
 public class DbManager extends VdlManager {
 
     private static final Logger LOGGER = LogManager.getLogger(DbManager.class);
-    private final String url;
+
+    private String url;
 
     private SqlSessionFactory sessionFactory;
 
-    public DbManager(String url) {
-        this.url = url;
-    }
-
     @Override
-    public void init() {
+    public void init(ApplicationContext ctx) {
+        url = "jdbc:sqlite:" + ctx.getAppDataDir().resolve(ctx.getDbName());
         try {
             updateSchema();
             sessionFactory = buildSqlSessionFactory();

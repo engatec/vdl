@@ -25,7 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class DownloadsComponentController extends VBox implements ComponentController {
 
-    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final QueueManager queueManager = ctx.getManager(QueueManager.class);
     private final ObservableList<QueueItem> data = queueManager.getQueueItems();
 
     @FXML private TableView<QueueItem> downloadQueueTableView;
@@ -73,8 +74,6 @@ public class DownloadsComponentController extends VBox implements ComponentContr
     }
 
     private ContextMenu createContextMenu(TableRow<QueueItem> row) {
-        var ctx = ApplicationContext.INSTANCE;
-
         ContextMenu ctxMenu = new ContextMenu();
 
         MenuItem cancelMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.cancel"));

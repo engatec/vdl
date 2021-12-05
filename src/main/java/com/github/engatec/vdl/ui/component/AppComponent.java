@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 public abstract class AppComponent<T> {
 
+    protected final ApplicationContext ctx = ApplicationContext.getInstance();
+
     protected Stage stage;
 
     public AppComponent(Stage stage) {
@@ -19,7 +21,7 @@ public abstract class AppComponent<T> {
     protected abstract T getController();
 
     public T load() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(getFxmlPath()), ApplicationContext.INSTANCE.getResourceBundle());
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(getFxmlPath()), ctx.getResourceBundle());
 
         T controller = getController();
         loader.setRoot(controller);

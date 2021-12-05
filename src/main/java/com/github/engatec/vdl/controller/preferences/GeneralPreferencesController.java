@@ -38,7 +38,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class GeneralPreferencesController extends ScrollPane implements InputForm {
 
-    private final ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final ConfigRegistry configRegistry = ctx.getConfigRegistry();
 
     @FXML private ComboBox<ComboBoxValueHolder<Language>> languageComboBox;
 
@@ -104,7 +105,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     private void initDownloadPathSettings() {
         downloadPathRadioBtn.setToggleGroup(downloadPathRadioGroup);
         askPathRadioBtn.setToggleGroup(downloadPathRadioGroup);
-        downloadPathDirectoryChooser.setButtonText(ApplicationContext.INSTANCE.getLocalizedString("button.directorychoose"));
+        downloadPathDirectoryChooser.setButtonText(ctx.getLocalizedString("button.directorychoose"));
         downloadPathDirectoryChooser.disableProperty().bind(downloadPathRadioBtn.selectedProperty().not());
         downloadPathRadioBtn.setSelected(true); // Set default value to trigger ToggleGroup. It will be overriden during PropertyHolder binding
     }
@@ -116,7 +117,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
             comboBoxItems.add(res.getHeight());
         }
 
-        final String BEST_FORMAT = ApplicationContext.INSTANCE.getLocalizedString("preferences.general.autoselectformat.best");
+        final String BEST_FORMAT = ctx.getLocalizedString("preferences.general.autoselectformat.best");
 
         autoSelectFormatComboBox.setConverter(new StringConverter<>() {
             @Override

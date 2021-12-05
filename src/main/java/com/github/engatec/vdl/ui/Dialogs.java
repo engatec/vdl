@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 public class Dialogs {
 
     public static void error(String key) {
-        var ctx = ApplicationContext.INSTANCE;
+        var ctx = ApplicationContext.getInstance();
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(ctx.getLocalizedString("error"));
         alert.setHeaderText(null);
@@ -21,7 +21,7 @@ public class Dialogs {
     }
 
     public static void info(String key) {
-        var ctx = ApplicationContext.INSTANCE;
+        var ctx = ApplicationContext.getInstance();
         var alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(ctx.getLocalizedString("info"));
         alert.setHeaderText(null);
@@ -30,7 +30,7 @@ public class Dialogs {
     }
 
     public static void info(String key, Language language) {
-        var ctx = ApplicationContext.INSTANCE;
+        var ctx = ApplicationContext.getInstance();
         var alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(ctx.getLocalizedString("info", language));
         alert.setHeaderText(null);
@@ -47,7 +47,7 @@ public class Dialogs {
     }
 
     private static void showDialogWithYesNoButtons(String messageKey, Alert.AlertType alertType, String titleKey, Runnable onYesButtonClickHandler, Runnable onNoButtonClickHandler) {
-        var ctx = ApplicationContext.INSTANCE;
+        var ctx = ApplicationContext.getInstance();
 
         ButtonType yes = new ButtonType(ctx.getLocalizedString("button.yes"), ButtonBar.ButtonData.YES);
         ButtonType no = new ButtonType(ctx.getLocalizedString("button.no"), ButtonBar.ButtonData.NO);
@@ -70,7 +70,7 @@ public class Dialogs {
     }
 
     public static void progress(String key, Stage parent, Task<?> task, Runnable onSuccessCallback) {
-        String title = ApplicationContext.INSTANCE.getLocalizedString(key);
+        String title = ApplicationContext.getInstance().getLocalizedString(key);
         new ProgressDialogStage(title, task, onSuccessCallback).modal(parent).showAndWait();
     }
 }

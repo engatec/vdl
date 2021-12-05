@@ -1,7 +1,6 @@
 package com.github.engatec.vdl.ui.stage;
 
 import com.github.engatec.vdl.controller.stage.MainController;
-import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowHeightPref;
@@ -21,7 +20,7 @@ public class MainStage extends AppStage {
     private static final int STAGE_MIN_WIDTH = 500;
     private static final int STAGE_MIN_HEIGHT = 300;
 
-    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+    private final QueueManager queueManager = ctx.getManager(QueueManager.class);
 
     public MainStage(Stage stage) {
         super(stage);
@@ -33,7 +32,7 @@ public class MainStage extends AppStage {
         super.init();
         stage.setTitle("VDL - Video downloader");
 
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        ConfigRegistry configRegistry = ctx.getConfigRegistry();
 
         stage.setMinWidth(STAGE_MIN_WIDTH);
         DoubleProperty widthProperty = configRegistry.get(MainWindowWidthPref.class).getProperty();

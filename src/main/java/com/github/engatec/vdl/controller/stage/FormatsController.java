@@ -40,6 +40,8 @@ import static java.util.Comparator.nullsFirst;
 
 public class FormatsController {
 
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+
     private Stage stage;
     private VideoInfo videoInfo;
     private String previouslyChosenFormat;
@@ -187,7 +189,6 @@ public class FormatsController {
 
     private ComboBox<String> createAudioUnmodifiableComboBox() {
         ComboBox<String> comboBox = new ComboBox<>();
-        ApplicationContext ctx = ApplicationContext.INSTANCE;
         comboBox.setMaxWidth(Double.MAX_VALUE);
         comboBox.setValue(ctx.getLocalizedString("audio.track.unmodifiable"));
         comboBox.setDisable(true);

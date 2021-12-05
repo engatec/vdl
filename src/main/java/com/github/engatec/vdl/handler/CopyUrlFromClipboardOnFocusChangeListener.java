@@ -30,7 +30,7 @@ public class CopyUrlFromClipboardOnFocusChangeListener implements ChangeListener
             return;
         }
 
-        if (!ApplicationContext.INSTANCE.getConfigRegistry().get(AutoSearchFromClipboardPref.class).getValue()) {
+        if (!ApplicationContext.getInstance().getConfigRegistry().get(AutoSearchFromClipboardPref.class).getValue()) {
             return;
         }
 

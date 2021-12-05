@@ -26,16 +26,16 @@ public class HistoryManager extends VdlManager {
 
     private static final Logger LOGGER = LogManager.getLogger(HistoryManager.class);
 
-    private final ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
-
+    private ConfigRegistry configRegistry;
     private DbManager dbManager;
 
     @Override
-    public void init() {
-        dbManager = ApplicationContext.INSTANCE.getManager(DbManager.class);
+    public void init(ApplicationContext ctx) {
+        configRegistry = ctx.getConfigRegistry();
+        dbManager = ctx.getManager(DbManager.class);
 
         // FIXME: deprecated in 1.7 For removal in 1.9
-        CompletableFuture.supplyAsync(this::restoreFromJson, AppExecutors.COMMON_EXECUTOR)
+        CompletableFuture.supplyAsync(() -> restoreFromJson(ctx.getAppDataDir().resolve("history.vdl")), AppExecutors.COMMON_EXECUTOR)
                 .thenAccept(items -> {
                     if (CollectionUtils.isNotEmpty(items)) {
                         dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items));
@@ -61,8 +61,7 @@ public class HistoryManager extends VdlManager {
 
     // FIXME: transition from JSON files to sqlite.
     @Deprecated(since = "1.7", forRemoval = true)
-    public List<HistoryItem> restoreFromJson() {
-        Path historyFilePath = ApplicationContext.DATA_PATH.resolve("history.vdl");
+    public List<HistoryItem> restoreFromJson(Path historyFilePath) {
         if (Files.notExists(historyFilePath)) {
             return List.of();
         }

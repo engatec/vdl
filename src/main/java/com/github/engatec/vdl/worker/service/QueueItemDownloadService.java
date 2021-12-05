@@ -33,7 +33,8 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
     private static final Logger LOGGER = LogManager.getLogger(QueueItemDownloadService.class);
 
-    private final QueueManager queueManager = ApplicationContext.INSTANCE.getManager(QueueManager.class);
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final QueueManager queueManager = ctx.getManager(QueueManager.class);
 
     private static final String SIZE_SEPARATOR = " / ";
 
@@ -187,7 +188,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
             protected DownloadProgressData call() throws Exception {
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
                 addProcess(process);
-                try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset()))) {
+                try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ctx.getSystemCharset()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
                         if (Thread.interrupted()) {
                             cancel();
@@ -240,7 +241,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
             }
 
             private void checkErrors(InputStream errorStream) throws IOException {
-                List<String> errLines = IOUtils.readLines(errorStream, ApplicationContext.INSTANCE.getSystemCharset());
+                List<String> errLines = IOUtils.readLines(errorStream, ctx.getSystemCharset());
                 if (CollectionUtils.isEmpty(errLines)) {
                     return;
                 }
