@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller;
+package com.github.engatec.vdl.ui.controller;
 
 import javafx.stage.Stage;
 

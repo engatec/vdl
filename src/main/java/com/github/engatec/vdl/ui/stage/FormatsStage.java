@@ -2,8 +2,8 @@ package com.github.engatec.vdl.ui.stage;
 
 import java.util.function.Consumer;
 
-import com.github.engatec.vdl.controller.stage.FormatsController;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.ui.controller.stage.FormatsController;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;

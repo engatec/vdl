@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.component;
+package com.github.engatec.vdl.ui.controller.component;
 
 import java.util.Set;
 import java.util.function.Consumer;

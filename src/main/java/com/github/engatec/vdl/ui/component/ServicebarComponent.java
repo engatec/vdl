@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.component;
 
-import com.github.engatec.vdl.controller.component.ServicebarComponentController;
+import com.github.engatec.vdl.ui.controller.component.ServicebarComponentController;
 import javafx.stage.Stage;
 
 public class ServicebarComponent extends AppComponent<ServicebarComponentController> {

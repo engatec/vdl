@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.component.subscriptions;
+package com.github.engatec.vdl.ui.controller.component.subscriptions;
 
 import java.util.function.Consumer;
 

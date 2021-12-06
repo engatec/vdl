@@ -1,7 +1,7 @@
-package com.github.engatec.vdl.controller.dialog;
+package com.github.engatec.vdl.ui.controller.dialog;
 
-import com.github.engatec.vdl.controller.StageAwareController;
 import com.github.engatec.vdl.core.AppExecutors;
+import com.github.engatec.vdl.ui.controller.StageAwareController;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;

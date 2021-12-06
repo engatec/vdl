@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.stage.subscriptions;
+package com.github.engatec.vdl.ui.controller.stage;
 
 import java.util.List;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.stage;
+package com.github.engatec.vdl.ui.controller.stage;
 
 import java.util.ArrayList;
 import java.util.List;

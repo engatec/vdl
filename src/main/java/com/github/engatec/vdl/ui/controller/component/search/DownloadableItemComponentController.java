@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.component.search;
+package com.github.engatec.vdl.ui.controller.component.search;
 
 import java.nio.file.Path;
 import java.util.Comparator;

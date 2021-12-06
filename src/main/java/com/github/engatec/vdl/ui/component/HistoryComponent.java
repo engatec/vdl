@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.component;
 
-import com.github.engatec.vdl.controller.component.history.HistoryComponentController;
+import com.github.engatec.vdl.ui.controller.component.history.HistoryComponentController;
 import javafx.stage.Stage;
 
 public class HistoryComponent extends AppComponent<HistoryComponentController> {

@@ -1,12 +1,11 @@
-package com.github.engatec.vdl.ui.stage.subscriptions;
+package com.github.engatec.vdl.ui.stage;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.github.engatec.vdl.controller.stage.subscriptions.PlaylistContentsController;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.ui.stage.AppStage;
+import com.github.engatec.vdl.ui.controller.stage.PlaylistContentsController;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;

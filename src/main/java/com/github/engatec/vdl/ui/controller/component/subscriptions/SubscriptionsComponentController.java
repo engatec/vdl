@@ -1,16 +1,16 @@
-package com.github.engatec.vdl.controller.component.subscriptions;
+package com.github.engatec.vdl.ui.controller.component.subscriptions;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.subscriptions.SubscriptionItemComponent;
-import com.github.engatec.vdl.ui.stage.subscriptions.PlaylistContentsStage;
+import com.github.engatec.vdl.ui.controller.component.ComponentController;
+import com.github.engatec.vdl.ui.stage.PlaylistContentsStage;
 import com.github.engatec.vdl.worker.service.PlaylistDetailsSearchService;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyBooleanProperty;

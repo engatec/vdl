@@ -1,9 +1,8 @@
-package com.github.engatec.vdl.controller.component.search;
+package com.github.engatec.vdl.ui.controller.component.search;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
@@ -11,6 +10,7 @@ import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.ui.CheckBoxGroup;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.component.search.DownloadableItemComponent;
+import com.github.engatec.vdl.ui.controller.component.ComponentController;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.worker.service.DownloadableSearchService;
 import javafx.application.Platform;

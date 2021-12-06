@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.stage;
 
-import com.github.engatec.vdl.controller.dialog.ProgressDialogController;
+import com.github.engatec.vdl.ui.controller.dialog.ProgressDialogController;
 import javafx.concurrent.Task;
 import javafx.stage.Stage;
 import javafx.util.Callback;

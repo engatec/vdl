@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.component;
 
-import com.github.engatec.vdl.controller.component.SidebarComponentController;
+import com.github.engatec.vdl.ui.controller.component.SidebarComponentController;
 import javafx.stage.Stage;
 
 public class SidebarComponent extends AppComponent<SidebarComponentController> {

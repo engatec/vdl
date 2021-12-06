@@ -1,15 +1,7 @@
-package com.github.engatec.vdl.controller.stage;
+package com.github.engatec.vdl.ui.controller.stage;
 
 import java.util.Iterator;
 
-import com.github.engatec.vdl.controller.StageAwareController;
-import com.github.engatec.vdl.controller.component.ComponentController;
-import com.github.engatec.vdl.controller.component.DownloadsComponentController;
-import com.github.engatec.vdl.controller.component.ServicebarComponentController;
-import com.github.engatec.vdl.controller.component.SidebarComponentController;
-import com.github.engatec.vdl.controller.component.history.HistoryComponentController;
-import com.github.engatec.vdl.controller.component.search.SearchComponentController;
-import com.github.engatec.vdl.controller.component.subscriptions.SubscriptionsComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
@@ -19,6 +11,14 @@ import com.github.engatec.vdl.ui.component.ServicebarComponent;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.component.search.SearchComponent;
 import com.github.engatec.vdl.ui.component.subscriptions.SubscriptionsComponent;
+import com.github.engatec.vdl.ui.controller.StageAwareController;
+import com.github.engatec.vdl.ui.controller.component.ComponentController;
+import com.github.engatec.vdl.ui.controller.component.DownloadsComponentController;
+import com.github.engatec.vdl.ui.controller.component.ServicebarComponentController;
+import com.github.engatec.vdl.ui.controller.component.SidebarComponentController;
+import com.github.engatec.vdl.ui.controller.component.history.HistoryComponentController;
+import com.github.engatec.vdl.ui.controller.component.search.SearchComponentController;
+import com.github.engatec.vdl.ui.controller.component.subscriptions.SubscriptionsComponentController;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;

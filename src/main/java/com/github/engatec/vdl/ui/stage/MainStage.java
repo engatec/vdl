@@ -1,6 +1,5 @@
 package com.github.engatec.vdl.ui.stage;
 
-import com.github.engatec.vdl.controller.stage.MainController;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowHeightPref;
@@ -8,6 +7,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowPosXPref;
 import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowPosYPref;
 import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowWidthPref;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.controller.stage.MainController;
 import javafx.beans.property.DoubleProperty;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;

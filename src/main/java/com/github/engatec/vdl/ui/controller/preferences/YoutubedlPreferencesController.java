@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.controller.preferences;
+package com.github.engatec.vdl.ui.controller.preferences;
 
 import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.fxcontrols.FxTextField;

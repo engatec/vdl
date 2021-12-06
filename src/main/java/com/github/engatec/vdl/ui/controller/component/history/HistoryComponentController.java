@@ -1,13 +1,13 @@
-package com.github.engatec.vdl.controller.component.history;
+package com.github.engatec.vdl.ui.controller.component.history;
 
 import java.nio.file.Path;
 
-import com.github.engatec.vdl.controller.component.ComponentController;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.controller.component.ComponentController;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
