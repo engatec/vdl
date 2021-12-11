@@ -3,6 +3,7 @@
 <?import com.github.engatec.fxcontrols.FxFileChooser?>
 <?import com.github.engatec.fxcontrols.FxTextField?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -41,12 +42,16 @@
                     </CheckBox>
                     <CheckBox fx:id="noContinueCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.nocontinue.checkbox" wrapText="true" />
                     <CheckBox fx:id="noPartCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nopart.checkbox" wrapText="true" />
-                    <CheckBox fx:id="readCookiesCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.readcookies.checkbox" />
-                    <FxFileChooser fx:id="cookiesFileChooser">
-                        <VBox.margin>
-                            <Insets left="8.0" />
-                        </VBox.margin>
-                    </FxFileChooser>
+                    <CheckBox fx:id="readCookiesCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.cookies.read.checkbox" />
+               <HBox spacing="8.0">
+                  <VBox.margin>
+                     <Insets left="8.0" />
+                  </VBox.margin>
+                  <children>
+                          <FxFileChooser fx:id="cookiesFileChooser" HBox.hgrow="ALWAYS" />
+                     <Button fx:id="generateCookieButton" mnemonicParsing="false" text="%preferences.youtubedl.cookies.generate.button" HBox.hgrow="NEVER" />
+                  </children>
+               </HBox>
                     <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.configfile.checkbox" wrapText="true" />
                     <FxFileChooser fx:id="configFileChooser">
                         <VBox.margin>

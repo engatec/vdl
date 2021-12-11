@@ -1,5 +1,10 @@
 package com.github.engatec.vdl.ui.controller.preferences;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.function.Consumer;
+
 import com.github.engatec.fxcontrols.FxFileChooser;
 import com.github.engatec.fxcontrols.FxTextField;
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -28,8 +33,11 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodeP
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
 import com.github.engatec.vdl.ui.SvgIcons;
+import com.github.engatec.vdl.ui.stage.YoutubeCookiesGeneratorStage;
 import com.github.engatec.vdl.validation.InputForm;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ScrollPane;
@@ -38,8 +46,12 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class YoutubedlPreferencesController extends ScrollPane implements InputForm {
+
+    private static final Logger LOGGER = LogManager.getLogger(YoutubedlPreferencesController.class);
 
     private final ApplicationContext ctx = ApplicationContext.getInstance();
 
@@ -65,6 +77,7 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
 
     @FXML private CheckBox readCookiesCheckbox;
     @FXML private FxFileChooser cookiesFileChooser;
+    @FXML private Button generateCookieButton;
 
     @FXML private CheckBox useConfigFileCheckBox;
     @FXML private FxFileChooser configFileChooser;
@@ -93,6 +106,7 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
 
         cookiesFileChooser.setButtonText(ctx.getLocalizedString("button.filechoose"));
         cookiesFileChooser.disableProperty().bind(readCookiesCheckbox.selectedProperty().not());
+        generateCookieButton.setOnAction(this::handleGenerateCookieButtonClick);
     }
 
     private void initDownloadSettings() {
@@ -163,6 +177,22 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
 
         useConfigFileCheckBox.selectedProperty().bindBidirectional(configRegistry.get(UseConfigFilePref.class).getProperty());
         configFileChooser.pathProperty().bindBidirectional(configRegistry.get(ConfigFilePathPref.class).getProperty());
+    }
+
+    private void handleGenerateCookieButtonClick(ActionEvent event) {
+        Consumer<String> onCookiesReadyCallback = cookiesContent -> {
+            Path cookiesPath = ApplicationContext.getInstance().getAppDataDir().resolve("cookies.txt");
+            try {
+                Files.deleteIfExists(cookiesPath);
+                Files.writeString(cookiesPath, cookiesContent);
+                readCookiesCheckbox.setSelected(true);
+                cookiesFileChooser.pathProperty().setValue(cookiesPath.toString());
+            } catch (IOException ex) {
+                LOGGER.warn(ex.getMessage(), ex);
+            }
+        };
+        new YoutubeCookiesGeneratorStage(onCookiesReadyCallback).modal(this.getScene().getWindow()).showAndWait();
+        event.consume();
     }
 
     @Override
