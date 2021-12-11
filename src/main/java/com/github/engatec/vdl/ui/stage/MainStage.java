@@ -1,7 +1,5 @@
 package com.github.engatec.vdl.ui.stage;
 
-import com.github.engatec.vdl.controller.stage.MainController;
-import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowHeightPref;
@@ -9,6 +7,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowPosXPref;
 import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowPosYPref;
 import com.github.engatec.vdl.model.preferences.wrapper.ui.MainWindowWidthPref;
 import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.controller.stage.MainController;
 import javafx.beans.property.DoubleProperty;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -21,6 +20,8 @@ public class MainStage extends AppStage {
     private static final int STAGE_MIN_WIDTH = 500;
     private static final int STAGE_MIN_HEIGHT = 300;
 
+    private final QueueManager queueManager = ctx.getManager(QueueManager.class);
+
     public MainStage(Stage stage) {
         super(stage);
         init();
@@ -31,7 +32,7 @@ public class MainStage extends AppStage {
         super.init();
         stage.setTitle("VDL - Video downloader");
 
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        ConfigRegistry configRegistry = ctx.getConfigRegistry();
 
         stage.setMinWidth(STAGE_MIN_WIDTH);
         DoubleProperty widthProperty = configRegistry.get(MainWindowWidthPref.class).getProperty();
@@ -72,7 +73,7 @@ public class MainStage extends AppStage {
      * Confirmation on app close if queue items being downloaded
      */
     private void handleCloseRequest(WindowEvent e) {
-        if (QueueManager.INSTANCE.hasItem(it -> it.getStatus() == IN_PROGRESS)) {
+        if (queueManager.hasItem(it -> it.getStatus() == IN_PROGRESS)) {
             Dialogs.warningWithYesNoButtons("stage.main.dialog.close.queuehasitemsinprogress", null, e::consume);
         }
     }

@@ -14,7 +14,8 @@ import java.util.function.Predicate;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.engatec.vdl.model.DownloadStatus;
+import com.github.engatec.vdl.db.DbManager;
+import com.github.engatec.vdl.db.mapper.QueueMapper;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.util.YouDlUtils;
 import com.github.engatec.vdl.worker.service.QueueItemDownloadService;
@@ -23,29 +24,27 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static com.github.engatec.vdl.model.DownloadStatus.FINISHED;
-import static com.github.engatec.vdl.model.DownloadStatus.IN_PROGRESS;
 import static com.github.engatec.vdl.model.DownloadStatus.READY;
-import static com.github.engatec.vdl.model.DownloadStatus.SCHEDULED;
 
-public class QueueManager {
+public class QueueManager extends VdlManager {
 
     private static final Logger LOGGER = LogManager.getLogger(QueueManager.class);
-
-    public static final QueueManager INSTANCE = new QueueManager();
-
-    private static final String FILENAME = "queue.vdl";
 
     private final ObservableList<QueueItem> queueItems = FXCollections.observableList(new LinkedList<>());
     private final Map<QueueItem, Service<?>> itemServiceMap = new HashMap<>();
 
     private Consumer<Integer> onQueueItemsChangeListener;
 
-    private QueueManager() {
+    private DbManager dbManager;
+
+    public QueueManager() {
         queueItems.addListener((ListChangeListener<QueueItem>) change -> {
             while (change.next()) {
                 List<? extends QueueItem> removedItems = change.getRemoved();
@@ -63,25 +62,67 @@ public class QueueManager {
                         .map(Process::onExit)
                         .toArray(CompletableFuture[]::new);
 
-                // It might take a while until file is accessible even after the process is destroyed, therefore run it with delayedExecutor
-                CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> {
-                    for (QueueItem ri : removedItems) {
-                        if (ri.getStatus() != FINISHED) {
-                            YouDlUtils.deleteTempFiles(ri.getDestinations());
-                        }
-                    }
-                }, AppExecutors.SYSTEM_EXECUTOR);
+                CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> deleteTempData(removedItems), AppExecutors.SYSTEM_EXECUTOR);
             }
 
             notifyItemsChanged(change.getList());
         });
     }
 
+    @Override
+    public void init(ApplicationContext ctx) {
+        dbManager = ctx.getManager(DbManager.class);
+        dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems)
+                .thenAccept(dbItems -> {
+                    fixState(dbItems);
+                    Platform.runLater(() -> addAll(dbItems));
+                })
+                .thenRun(() -> { // FIXME: deprecated in 1.7 For removal in 1.9
+                    List<QueueItem> queueItems = restoreFromJson(ctx.getAppDataDir().resolve("queue.vdl"));
+                    if (CollectionUtils.isEmpty(queueItems)) {
+                        return;
+                    }
+                    fixState(queueItems);
+                    Platform.runLater(() -> {
+                        for (QueueItem it : queueItems) {
+                            addItem(it);
+                        }
+                    });
+                });
+    }
+
+    // FIXME: transition from JSON files to sqlite.
+    @Deprecated(since = "1.7", forRemoval = true)
+    private List<QueueItem> restoreFromJson(Path queueFilePath) {
+        if (Files.notExists(queueFilePath)) {
+            return List.of();
+        }
+
+        List<QueueItem> result = List.of();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            result = mapper.readValue(queueFilePath.toFile(), new TypeReference<>(){});
+            result.removeIf(it -> it.getStatus() == FINISHED);
+            Files.delete(queueFilePath);
+        } catch (IOException e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+        return result;
+    }
+
     public void addItem(QueueItem item) {
+        addItem(item, true);
+    }
+
+    private void addItem(QueueItem item, boolean dbEntryRequired) {
         Service<?> service = itemServiceMap.get(item);
         if (service != null && service.isRunning()) { // Sanity check. Should never happen.
             LOGGER.warn("Ooops! Service exists and running!");
             return;
+        }
+
+        if (dbEntryRequired) {
+            dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueItems(List.of(item)));
         }
 
         queueItems.add(item);
@@ -93,7 +134,7 @@ public class QueueManager {
 
     public void addAll(List<QueueItem> items) {
         for (QueueItem item : items) {
-            addItem(item);
+            addItem(item, false);
         }
     }
 
@@ -103,6 +144,28 @@ public class QueueManager {
 
     public void removeAll() {
         queueItems.clear();
+    }
+
+    private void deleteTempData(List<? extends QueueItem> removedItems) {
+        List<Long> ids = removedItems.stream()
+                .map(QueueItem::getId)
+                .toList();
+        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.deleteQueueItems(ids));
+
+        for (QueueItem ri : removedItems) {
+            if (ri.getStatus() != FINISHED) {
+                YouDlUtils.deleteTempFiles(ri.getDestinationsForTraversal());
+            }
+        }
+    }
+
+    public void addDestination(QueueItem item, String destination) {
+        try {
+            dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.insertQueueTempFile(item.getId(), destination));
+            item.getDestinations().add(destination);
+        } catch (PersistenceException e) { // Sanity check. Should never happen as the downloading service is stopped and nothing can add new destination
+            LOGGER.warn("Couldn't add destination for queue item '{}'. Id '{}' doesn't exist.", item.getTitle(), item.getId());
+        }
     }
 
     public ObservableList<QueueItem> getQueueItems() {
@@ -116,41 +179,10 @@ public class QueueManager {
         return queueItems.stream().anyMatch(predicate);
     }
 
-    public void persist() {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            mapper.writeValue(ApplicationContext.CONFIG_PATH.resolve(FILENAME).toFile(), queueItems);
-        } catch (IOException e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-    }
-
     private void fixState(List<QueueItem> items) {
         for (QueueItem item : ListUtils.emptyIfNull(items)) {
-            DownloadStatus status = item.getStatus();
-            if (status == SCHEDULED || status == IN_PROGRESS) {
-                item.setStatus(READY);
-            }
-            if (item.getProgress() < 0) {
-                item.setProgress(0);
-            }
-        }
-    }
-
-    public void restore() {
-        Path queueFilePath = ApplicationContext.CONFIG_PATH.resolve(FILENAME);
-        if (Files.notExists(queueFilePath)) {
-            return;
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            List<QueueItem> items = mapper.readValue(queueFilePath.toFile(), new TypeReference<>(){});
-            items.removeIf(it -> it.getStatus() == FINISHED); // FIXME: this is just to clean up after previous app version which didn't remove finished items from the queue automatically
-            fixState(items);
-            addAll(items);
-        } catch (IOException e) {
-            LOGGER.warn(e.getMessage(), e);
+            item.setStatus(READY);
+            item.setProgress(0);
         }
     }
 

@@ -33,6 +33,9 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
     private static final Logger LOGGER = LogManager.getLogger(QueueItemDownloadService.class);
 
+    private final ApplicationContext ctx = ApplicationContext.getInstance();
+    private final QueueManager queueManager = ctx.getManager(QueueManager.class);
+
     private static final String SIZE_SEPARATOR = " / ";
 
     private static final String ERROR_PREFIX = "ERROR:";
@@ -109,7 +112,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     protected void succeeded() {
         updateQueueItem(DownloadStatus.FINISHED, null, StringUtils.EMPTY);
         updateProgress(1);
-        QueueManager.INSTANCE.removeItem(queueItem);
+        queueManager.removeItem(queueItem);
     }
 
     @Override
@@ -185,7 +188,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
             protected DownloadProgressData call() throws Exception {
                 Process process = YoutubeDlManager.INSTANCE.download(queueItem);
                 addProcess(process);
-                try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ApplicationContext.INSTANCE.getSystemCharset()))) {
+                try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ctx.getSystemCharset()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
                         if (Thread.interrupted()) {
                             cancel();
@@ -211,7 +214,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                         } else {
                             Matcher destinationMatcher = DOWNLOAD_DESTINATION_PATTERN.matcher(it);
                             if (destinationMatcher.matches()) {
-                                queueItem.addDestination(destinationMatcher.group(GROUP_DESTINATION));
+                                queueManager.addDestination(queueItem, destinationMatcher.group(GROUP_DESTINATION));
                                 if (StringUtils.isNotBlank(progressDataCurrent.getSize())) {
                                     updateProgressData(0, progressDataCurrent.getThroughput(), progressDataCurrent.getSize() + SIZE_SEPARATOR);
                                 }
@@ -238,7 +241,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
             }
 
             private void checkErrors(InputStream errorStream) throws IOException {
-                List<String> errLines = IOUtils.readLines(errorStream, ApplicationContext.INSTANCE.getSystemCharset());
+                List<String> errLines = IOUtils.readLines(errorStream, ctx.getSystemCharset());
                 if (CollectionUtils.isEmpty(errLines)) {
                     return;
                 }

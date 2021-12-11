@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.engatec.vdl.db.mapper.SubscriptionMapper">
+
+    <insert id="insertSubscription" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO subscription (name, url, download_path, created_at)
+        VALUES (#{s.name}, #{s.url}, #{s.downloadPath}, <choose><when test="s.createdAt != null">#{s.createdAt}</when><otherwise>CURRENT_TIMESTAMP</otherwise></choose>)
+    </insert>
+
+    <insert id="insertProcessedItems">
+        INSERT INTO subscription_processed_items (subscription_id, item_id) VALUES
+        <foreach item="it" collection="itemIds" separator=",">
+            (#{subscriptionId}, #{it})
+        </foreach>
+    </insert>
+
+    <resultMap id="fetchSubscriptionsResultMap" type="com.github.engatec.vdl.model.Subscription">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="url" property="url"/>
+        <result column="download_path" property="downloadPath"/>
+        <collection property="processedItems" javaType="list" ofType="string">
+            <result column="item_id"/>
+        </collection>
+    </resultMap>
+
+    <select id="fetchSubscriptions" resultMap="fetchSubscriptionsResultMap">
+        SELECT id, name, url, download_path, item_id
+        FROM subscription
+        LEFT JOIN subscription_processed_items ON subscription_processed_items.subscription_id = subscription.id
+        ORDER BY created_at
+    </select>
+
+    <delete id="deleteSubscription">
+        DELETE FROM subscription WHERE id = #{id}
+    </delete>
+
+</mapper>

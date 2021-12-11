@@ -36,14 +36,14 @@ public class YoutubeDlCommandHelper {
 
     private static final Logger LOGGER = LogManager.getLogger(YoutubeDlCommandHelper.class);
 
+    private static final ConfigRegistry configRegistry = ApplicationContext.getInstance().getConfigRegistry();
+
     public static void setOutputPath(YoutubeDlCommandBuilder commandBuilder, Downloadable downloadable) {
-        String outputTemplate = ApplicationContext.INSTANCE.getConfigRegistry().get(OutputTemplatePref.class).getValue();
+        String outputTemplate = configRegistry.get(OutputTemplatePref.class).getValue();
         commandBuilder.outputPath(downloadable.getDownloadPath().resolve(outputTemplate).toString());
     }
 
     public static void setGeneralOptions(YoutubeDlCommandBuilder commandBuilder) {
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
-
         Boolean markWatched = configRegistry.get(MarkWatchedPref.class).getValue();
         if (markWatched) {
             commandBuilder.markWatched();
@@ -75,8 +75,6 @@ public class YoutubeDlCommandHelper {
     }
 
     public static void setDownloadOptions(YoutubeDlCommandBuilder commandBuilder) {
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
-
         String limit = StringUtils.defaultIfBlank(configRegistry.get(RateLimitPref.class).getValue(), RateLimitConfigItem.DEFAULT);
         if (!limit.equals(RateLimitConfigItem.DEFAULT)) {
             commandBuilder.rateLimit(limit);
@@ -84,8 +82,6 @@ public class YoutubeDlCommandHelper {
     }
 
     public static void setNetworkOptions(YoutubeDlCommandBuilder commandBuilder) {
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
-
         String proxyUrl = strip(configRegistry.get(ProxyUrlPref.class).getValue());
         if (isNotBlank(proxyUrl)) {
             commandBuilder.proxy(proxyUrl);
@@ -122,8 +118,6 @@ public class YoutubeDlCommandHelper {
     }
 
     public static void setAuthenticationOptions(YoutubeDlCommandBuilder commandBuilder) {
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
-
         String username = strip(configRegistry.get(AuthUsernamePref.class).getValue());
         if (isNotBlank(username)) {
             commandBuilder.username(username);

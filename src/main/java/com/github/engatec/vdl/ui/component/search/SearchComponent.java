@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.ui.component.search;
 
-import com.github.engatec.vdl.controller.component.search.SearchComponentController;
 import com.github.engatec.vdl.ui.component.AppComponent;
+import com.github.engatec.vdl.ui.controller.component.search.SearchComponentController;
 import javafx.stage.Stage;
 
 public class SearchComponent extends AppComponent<SearchComponentController> {

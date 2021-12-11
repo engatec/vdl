@@ -26,7 +26,8 @@ public class DownloadWithConfigFileProcessBuilder implements YoutubeDlProcessBui
 
     @Override
     public List<String> buildCommand() {
-        String configLocation = ApplicationContext.INSTANCE.getConfigRegistry().get(ConfigFilePathPref.class).getValue();
+        ApplicationContext ctx = ApplicationContext.getInstance();
+        String configLocation = ctx.getConfigRegistry().get(ConfigFilePathPref.class).getValue();
 
         YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance().configLocation(configLocation);
 
@@ -46,7 +47,7 @@ public class DownloadWithConfigFileProcessBuilder implements YoutubeDlProcessBui
         }
 
         return commandBuilder
-                .ffmpegLocation(ApplicationContext.APP_DIR)
+                .ffmpegLocation(ctx.getAppBinariesDir().toString())
                 .urls(List.of(downloadable.getBaseUrl()))
                 .buildAsList();
     }

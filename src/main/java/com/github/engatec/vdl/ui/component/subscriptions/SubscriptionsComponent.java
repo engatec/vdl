@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.ui.component.subscriptions;
 
-import com.github.engatec.vdl.controller.component.subscriptions.SubscriptionsComponentController;
 import com.github.engatec.vdl.ui.component.AppComponent;
+import com.github.engatec.vdl.ui.controller.component.subscriptions.SubscriptionsComponentController;
 import javafx.stage.Stage;
 
 public class SubscriptionsComponent extends AppComponent<SubscriptionsComponentController> {

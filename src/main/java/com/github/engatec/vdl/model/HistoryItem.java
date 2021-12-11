@@ -2,21 +2,28 @@ package com.github.engatec.vdl.model;
 
 import java.nio.file.Path;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class HistoryItem {
 
     private String title;
     private String url;
-    private Path path;
-    private String dtm;
+    // FIXME: JsonProperty annotations to support transition from JSON to sqlite. For removal in 1.9
+    @JsonProperty("path") private Path downloadPath;
+    @JsonProperty("dtm") private String createdAt;
 
     public HistoryItem() {
     }
 
-    public HistoryItem(String title, String url, Path path, String dtm) {
+    public HistoryItem(String title, String url, Path downloadPath) {
+        this(title, url, downloadPath, null);
+    }
+
+    public HistoryItem(String title, String url, Path downloadPath, String createdAt) {
         this.title = title;
         this.url = url;
-        this.path = path;
-        this.dtm = dtm;
+        this.downloadPath = downloadPath;
+        this.createdAt = createdAt;
     }
 
     public String getTitle() {
@@ -35,19 +42,19 @@ public class HistoryItem {
         this.url = url;
     }
 
-    public Path getPath() {
-        return path;
+    public Path getDownloadPath() {
+        return downloadPath;
     }
 
-    public void setPath(Path path) {
-        this.path = path;
+    public void setDownloadPath(Path downloadPath) {
+        this.downloadPath = downloadPath;
     }
 
-    public String getDtm() {
-        return dtm;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public void setDtm(String dtm) {
-        this.dtm = dtm;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

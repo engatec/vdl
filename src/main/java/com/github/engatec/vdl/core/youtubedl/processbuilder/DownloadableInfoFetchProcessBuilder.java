@@ -35,7 +35,7 @@ public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuil
         YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
         YoutubeDlCommandHelper.setAuthenticationOptions(commandBuilder);
 
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        ConfigRegistry configRegistry = ApplicationContext.getInstance().getConfigRegistry();
         if (configRegistry.get(ReadCookiesPref.class).getValue()) {
             String cookiesFileLocation = configRegistry.get(CookiesFileLocationPref.class).getValue();
             Path cookiesPath = Path.of(cookiesFileLocation);

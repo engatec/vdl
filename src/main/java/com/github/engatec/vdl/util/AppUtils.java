@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -28,7 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class AppUtils {
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER_SQLITE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final Pattern YOUTUBE_PATTERN = Pattern.compile(".*youtube\\.com/.*");
 
     public static Optional<Path> resolveDownloadPath(Stage stage) {
@@ -43,18 +43,19 @@ public class AppUtils {
             return Optional.empty();
         }
 
-        ApplicationContext.INSTANCE.getConfigRegistry().get(RecentDownloadPathPref.class).setValue(path.toString());
+        ApplicationContext.getInstance().getConfigRegistry().get(RecentDownloadPathPref.class).setValue(path.toString());
 
         return Optional.of(path);
     }
 
     private static Path doResolveDownloadPath(Stage stage) {
-        ConfigRegistry configRegistry = ApplicationContext.INSTANCE.getConfigRegistry();
+        ApplicationContext ctx = ApplicationContext.getInstance();
+        ConfigRegistry configRegistry = ctx.getConfigRegistry();
         Path downloadPath = Paths.get(configRegistry.get(DownloadPathPref.class).getValue());
         boolean askPath = configRegistry.get(AlwaysAskDownloadPathPref.class).getValue();
         if (askPath) {
             var directoryChooser = new DirectoryChooser();
-            File recentDownloadPath = Path.of(ApplicationContext.INSTANCE.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
+            File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
             if (recentDownloadPath.isDirectory()) {
                 directoryChooser.setInitialDirectory(recentDownloadPath);
             }
@@ -65,26 +66,24 @@ public class AppUtils {
         return downloadPath;
     }
 
-    public static void updateYoutubeDl(Stage stage, Runnable onSuccessListener) {
-        ApplicationContext ctx = ApplicationContext.INSTANCE;
+    public static void updateYoutubeDl(Stage stage, Runnable onSuccessCallback) {
+        ApplicationContext ctx = ApplicationContext.getInstance();
         if (!Files.isWritable(ctx.getDownloaderPath(Engine.YOUTUBE_DL))) {
             Dialogs.error("update.youtubedl.nopermissions");
             return;
         }
 
-        String title = ctx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress");
-        Dialogs.progress(title, stage, new UpdateYoutubeDlBinaryTask(), onSuccessListener);
+        Dialogs.progress("dialog.progress.title.label.updateinprogress", stage, new UpdateYoutubeDlBinaryTask(), onSuccessCallback);
     }
 
-    public static void updateYtdlp(Stage stage, Runnable onSuccessListener) {
-        ApplicationContext ctx = ApplicationContext.INSTANCE;
+    public static void updateYtdlp(Stage stage, Runnable onSuccessCallback) {
+        ApplicationContext ctx = ApplicationContext.getInstance();
         if (!Files.isWritable(ctx.getDownloaderPath(Engine.YT_DLP))) {
             Dialogs.error("update.ytdlp.nopermissions");
             return;
         }
 
-        String title = ctx.getResourceBundle().getString("dialog.progress.title.label.updateinprogress");
-        Dialogs.progress(title, stage, new UpdateYtdlpBinaryTask(), onSuccessListener);
+        Dialogs.progress("dialog.progress.title.label.updateinprogress", stage, new UpdateYtdlpBinaryTask(), onSuccessCallback);
     }
 
     /**
@@ -122,9 +121,5 @@ public class AppUtils {
 
     public static String normalizeThumbnailUrl(VideoInfo vi) {
         return YOUTUBE_PATTERN.matcher(vi.getBaseUrl()).matches() ? String.format("https://img.youtube.com/vi/%s/mqdefault.jpg", vi.getId()) : vi.getThumbnail();
-    }
-
-    public static String convertDtmToString(LocalDateTime dtm) {
-        return dtm.format(DATE_TIME_FORMATTER);
     }
 }

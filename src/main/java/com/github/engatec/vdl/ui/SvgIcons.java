@@ -25,7 +25,7 @@ public class SvgIcons {
     public static Group infoWithTooltip(String key) {
         Group infoIcon = SvgIcons.info();
         Svg.scale(infoIcon, 0.8);
-        Tooltip tooltip = new Tooltip(ApplicationContext.INSTANCE.getResourceBundle().getString(key));
+        Tooltip tooltip = new Tooltip(ApplicationContext.getInstance().getLocalizedString(key));
         tooltip.setShowDelay(Duration.ZERO);
         tooltip.setShowDuration(Duration.INDEFINITE);
         Tooltip.install(infoIcon, tooltip);

@@ -2,9 +2,9 @@ package com.github.engatec.vdl.ui.component.subscriptions;
 
 import java.util.function.Consumer;
 
-import com.github.engatec.vdl.controller.component.subscriptions.SubscriptionItemComponentController;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.ui.component.AppComponent;
+import com.github.engatec.vdl.ui.controller.component.subscriptions.SubscriptionItemComponentController;
 import javafx.stage.Stage;
 
 public class SubscriptionItemComponent extends AppComponent<SubscriptionItemComponentController> {

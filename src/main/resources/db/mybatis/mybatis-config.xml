@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <typeHandlers>
+        <typeHandler handler="com.github.engatec.vdl.db.typehandler.PathTypeHandler"/>
+    </typeHandlers>
+
+    <environments default="vdl">
+        <environment id="vdl">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="driver.foreign_keys" value="ON"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="db/mybatis/mapper/QueueMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/HistoryMapper.xml"/>
+        <mapper resource="db/mybatis/mapper/SubscriptionMapper.xml"/>
+    </mappers>
+</configuration>

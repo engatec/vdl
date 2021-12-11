@@ -26,13 +26,14 @@ public class AppExecutors {
             executor.shutdownNow();
         }
 
-        // Lets shutdown SYSTEM_EXECUTOR gracefully as it intended for an important work
+        // Let's try to shutdown SYSTEM_EXECUTOR gracefully as it is intended for an important work
         try {
             SYSTEM_EXECUTOR.shutdown();
             int awaitTimeout = 10;
             boolean successfulTermination = SYSTEM_EXECUTOR.awaitTermination(awaitTimeout, TimeUnit.SECONDS);
             if (!successfulTermination) {
                 LOGGER.warn("SYSTEM_EXECUTOR wasn't able to finish its job in {} seconds", awaitTimeout);
+                SYSTEM_EXECUTOR.shutdownNow();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

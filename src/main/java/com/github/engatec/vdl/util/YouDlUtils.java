@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
@@ -44,12 +45,27 @@ public class YouDlUtils {
         }
 
         String normalizedPath = StringUtils.strip(path);
-        String tempFileLocation = StringUtils.appendIfMissing(normalizedPath, ".part");
+        String partFilePath = StringUtils.appendIfMissing(normalizedPath, ".part");
         try {
-            // Need to delete both (temp and normal) because often video and audio are downloaded separately
-            // and one of them can be finished by the time user decided to stop and delete item from downloads queue
-            Files.deleteIfExists(Path.of(tempFileLocation));
-            Files.deleteIfExists(Path.of(normalizedPath));
+            // Try to delete both (temp and normal) as the download can be finished by the time this code executes.
+            // Also need to check if deletion actually happened. If not there's a chance that the filename contains rubbish symbols and special treatment is required.
+            boolean deleted = Files.deleteIfExists(Path.of(partFilePath)) || Files.deleteIfExists(Path.of(normalizedPath));
+            if (!deleted) {
+                String regex = "[^A-Za-zА-Яа-я0-9.]";
+                Path tempFilePath = Path.of(normalizedPath);
+                String normalizedNameNoRubbishSymbols = tempFilePath.getFileName().toString().replaceAll(regex, StringUtils.EMPTY);
+                String partFileNameNoRubbishSymbols = StringUtils.appendIfMissing(normalizedNameNoRubbishSymbols, ".part");
+                Optional<Path> foundTempFileOptional = Files.list(tempFilePath.getParent())
+                        .filter(Files::isRegularFile)
+                        .filter(it -> {
+                            String s = it.getFileName().toString().replaceAll(regex, StringUtils.EMPTY);
+                            return s.equals(normalizedNameNoRubbishSymbols) || s.equals(partFileNameNoRubbishSymbols);
+                        })
+                        .findFirst();
+                if (foundTempFileOptional.isPresent()) {
+                    Files.deleteIfExists(foundTempFileOptional.get());
+                }
+            }
         } catch (InvalidPathException e) {
             LOGGER.warn("Invalid path '{}'", normalizedPath);
         } catch (DirectoryNotEmptyException e) {
