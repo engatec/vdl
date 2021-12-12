@@ -32,6 +32,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressP
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
+import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.SvgIcons;
 import com.github.engatec.vdl.ui.stage.YoutubeCookiesGeneratorStage;
 import com.github.engatec.vdl.validation.InputForm;
@@ -191,7 +192,12 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
                 LOGGER.warn(ex.getMessage(), ex);
             }
         };
-        new YoutubeCookiesGeneratorStage(onCookiesReadyCallback).modal(this.getScene().getWindow()).showAndWait();
+        Dialogs.infoWithYesNoButtons(
+                "preferences.youtubedl.cookies.generate.info",
+                () -> new YoutubeCookiesGeneratorStage(onCookiesReadyCallback).modal(this.getScene().getWindow()).showAndWait(),
+                null
+        );
+
         event.consume();
     }
 
