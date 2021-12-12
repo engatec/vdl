@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.ui.component.preferences;
 
 import com.github.engatec.vdl.ui.component.AppComponent;
-import com.github.engatec.vdl.ui.controller.preferences.GeneralPreferencesController;
+import com.github.engatec.vdl.ui.controller.stage.preferences.GeneralPreferencesController;
 import javafx.stage.Stage;
 
 public class GeneralPreferencesComponent extends AppComponent<GeneralPreferencesController> {

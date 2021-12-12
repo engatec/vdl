@@ -11,7 +11,6 @@ import com.github.engatec.vdl.ui.component.ServicebarComponent;
 import com.github.engatec.vdl.ui.component.SidebarComponent;
 import com.github.engatec.vdl.ui.component.search.SearchComponent;
 import com.github.engatec.vdl.ui.component.subscriptions.SubscriptionsComponent;
-import com.github.engatec.vdl.ui.controller.StageAwareController;
 import com.github.engatec.vdl.ui.controller.component.ComponentController;
 import com.github.engatec.vdl.ui.controller.component.DownloadsComponentController;
 import com.github.engatec.vdl.ui.controller.component.ServicebarComponentController;

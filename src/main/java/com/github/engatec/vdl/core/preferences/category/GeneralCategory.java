@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.core.preferences.category;
 
 import com.github.engatec.vdl.ui.component.preferences.GeneralPreferencesComponent;
-import com.github.engatec.vdl.ui.controller.preferences.GeneralPreferencesController;
+import com.github.engatec.vdl.ui.controller.stage.preferences.GeneralPreferencesController;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 

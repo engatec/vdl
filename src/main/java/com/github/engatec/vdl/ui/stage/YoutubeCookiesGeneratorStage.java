@@ -2,7 +2,7 @@ package com.github.engatec.vdl.ui.stage;
 
 import java.util.function.Consumer;
 
-import com.github.engatec.vdl.ui.controller.YoutubeCookiesGeneratorController;
+import com.github.engatec.vdl.ui.controller.stage.YoutubeCookiesGeneratorController;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 

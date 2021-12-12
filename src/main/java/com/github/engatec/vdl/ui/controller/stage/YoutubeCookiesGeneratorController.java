@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.ui.controller;
+package com.github.engatec.vdl.ui.controller.stage;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;

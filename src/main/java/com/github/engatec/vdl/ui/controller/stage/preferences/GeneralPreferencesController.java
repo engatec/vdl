@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.ui.controller.preferences;
+package com.github.engatec.vdl.ui.controller.stage.preferences;
 
 import java.util.List;
 import java.util.stream.Collectors;

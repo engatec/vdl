@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.stage;
 
-import com.github.engatec.vdl.ui.controller.AboutController;
+import com.github.engatec.vdl.ui.controller.stage.AboutController;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 

@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.stage;
 
-import com.github.engatec.vdl.ui.controller.preferences.PreferencesController;
+import com.github.engatec.vdl.ui.controller.stage.preferences.PreferencesController;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
