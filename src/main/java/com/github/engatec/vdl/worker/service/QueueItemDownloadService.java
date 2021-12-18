@@ -223,7 +223,12 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                     });
                 }
 
-                checkErrors(process.getErrorStream());
+                try (InputStream errorStream = process.getErrorStream()) {
+                    checkErrors(errorStream);
+                } catch (ProcessException e) {
+                    process.destroy();
+                    throw e;
+                }
 
                 return null;
             }

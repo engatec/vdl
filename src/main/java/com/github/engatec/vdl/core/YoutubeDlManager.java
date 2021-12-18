@@ -91,6 +91,7 @@ public class YoutubeDlManager {
 
         if (StringUtils.isNotBlank(errorMsg)) {
             LOGGER.warn(errorMsg);
+            process.destroy();
             throw new ProcessException(errorMsg);
         }
     }
@@ -148,6 +149,7 @@ public class YoutubeDlManager {
                         .peek(it -> {
                             LOGGER.info(it);
                             if (StringUtils.startsWith(it, "ERROR:")) {
+                                process.destroy();
                                 throw new ProcessException(it);
                             }
                         })
