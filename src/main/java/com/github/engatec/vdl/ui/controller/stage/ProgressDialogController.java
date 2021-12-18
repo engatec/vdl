@@ -44,7 +44,7 @@ public class ProgressDialogController extends StageAwareController {
         task.setOnFailed(event -> {
             Throwable ex = event.getSource().getException();
             LOGGER.error(ex.getMessage(), ex);
-            Dialogs.error("stage.about.update.error.header", ex.getMessage());
+            Dialogs.exception("stage.about.update.error.header", ex.getMessage());
             close(event);
         });
 
