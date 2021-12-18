@@ -20,6 +20,7 @@ import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.preferences.general.AutoSelectFormatConfigItem;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
+import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
@@ -66,7 +67,11 @@ public class SubscriptionsUpdateService extends Service<Void> {
                     var playlistSearchService = new PlaylistDetailsSearchService();
                     playlistSearchService.setUrl(subscription.getUrl());
                     playlistSearchService.setOnSucceeded(e -> updateSubscription(subscription, (List<VideoInfo>) e.getSource().getValue()));
-                    playlistSearchService.setOnFailed(e -> LOGGER.error(e.getSource().getException().getMessage()));
+                    playlistSearchService.setOnFailed(e -> {
+                        String msg = e.getSource().getException().getMessage();
+                        LOGGER.warn(msg);
+                        Platform.runLater(() -> Dialogs.exception("subscriptions.playlist.update.error", msg));
+                    });
                     playlistSearchService.runningProperty().addListener((observable, oldValue, newValue) -> {
                         if (!newValue) {
                             runningServices.remove(playlistSearchService);
@@ -95,7 +100,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
                 Set<String> processedItems = subscription.getProcessedItemsForTraversal();
                 List<VideoInfo> newItems = playlistItems.stream()
                         .filter(Predicate.not(it -> processedItems.contains(subscriptionsManager.buildPlaylistItemId(it))))
-                        .collect(Collectors.toList());
+                        .toList();
 
                 Integer selectedVideoHeight = ctx.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
                 selectedVideoHeight = AutoSelectFormatConfigItem.DEFAULT.equals(selectedVideoHeight) ? null : selectedVideoHeight;

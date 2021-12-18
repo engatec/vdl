@@ -104,9 +104,9 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
         });
 
         playlistDetailsSearchService.setOnFailed(it -> {
-            Throwable ex = it.getSource().getException();
-            LOGGER.error(ex.getMessage());
-            Dialogs.info("subscriptions.playlist.error");
+            String msg = it.getSource().getException().getMessage();
+            LOGGER.warn(msg);
+            Platform.runLater(() -> Dialogs.exception("subscriptions.playlist.search.error", msg));
         });
     }
 

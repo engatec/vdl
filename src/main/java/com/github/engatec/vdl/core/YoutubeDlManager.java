@@ -54,10 +54,11 @@ public class YoutubeDlManager {
     public List<VideoInfo> fetchDownloadableInfo(List<String> urls) throws IOException {
         var pb = new DownloadableInfoFetchProcessBuilder(urls);
         List<String> command = pb.buildCommand();
+        List<VideoInfo> videoInfoList;
         Process process = pb.buildProcess(command);
         try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             List<String> jsonList = reader.lines().toList();
-            List<VideoInfo> videoInfoList = new ArrayList<>(jsonList.size());
+            videoInfoList = new ArrayList<>(jsonList.size());
             for (String json : jsonList) {
                 VideoInfo videoInfo = objectMapper.readValue(json, VideoInfo.class);
                 if (StringUtils.isBlank(videoInfo.getBaseUrl())) {
@@ -65,33 +66,15 @@ public class YoutubeDlManager {
                 }
                 videoInfoList.add(videoInfo);
             }
-
-            // Log encountered errors that didn't result in exception
-            try (InputStream errorStream = process.getErrorStream()) {
-                logErrors(errorStream);
-            }
-
-            return videoInfoList;
         } catch (Exception e) {
-            try (InputStream errorStream = process.getErrorStream()) {
-                logErrors(errorStream);
-            }
             LOGGER.error("Failed command: '{}'", String.join(StringUtils.SPACE, command));
+            checkErrors(process);
             throw e;
         }
-    }
 
-    /**
-     * @deprecated use {@link #checkErrors} instead
-     */
-    @Deprecated
-    private void logErrors(InputStream errorStream) {
-        try {
-            IOUtils.readLines(errorStream, ctx.getSystemCharset())
-                    .forEach(LOGGER::warn);
-        } catch (IOException e) {
-            LOGGER.warn(e.getMessage());
-        }
+        checkErrors(process);
+
+        return videoInfoList;
     }
 
     /**
@@ -130,11 +113,11 @@ public class YoutubeDlManager {
                 version = reader.lines().findFirst().orElseThrow(ProcessException::new);
             } catch (Exception e) {
                 try (InputStream errorStream = process.getErrorStream()) {
-                    logErrors(errorStream);
+                    IOUtils.readLines(errorStream, ctx.getSystemCharset()).forEach(LOGGER::warn);
                 }
             }
         } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
 
         return version;

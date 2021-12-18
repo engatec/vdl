@@ -138,9 +138,9 @@ public class SearchComponentController extends VBox implements ComponentControll
         });
 
         downloadableSearchService.setOnFailed(it -> {
-            Throwable ex = it.getSource().getException();
-            LOGGER.error(ex.getMessage());
-            Dialogs.info("video.search.error");
+            String msg = it.getSource().getException().getMessage();
+            LOGGER.warn(msg);
+            Platform.runLater(() -> Dialogs.exception("video.search.notfound", msg));
         });
     }
 
