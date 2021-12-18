@@ -27,7 +27,7 @@ import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadableInfoFetc
 import com.github.engatec.vdl.core.youtubedl.processbuilder.VersionFetchProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlUpdateProcessBuilder;
-import com.github.engatec.vdl.exception.YoutubeDlProcessException;
+import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
@@ -56,7 +56,7 @@ public class YoutubeDlManager {
         List<String> command = pb.buildCommand();
         Process process = pb.buildProcess(command);
         try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            List<String> jsonList = reader.lines().collect(Collectors.toList());
+            List<String> jsonList = reader.lines().toList();
             List<VideoInfo> videoInfoList = new ArrayList<>(jsonList.size());
             for (String json : jsonList) {
                 VideoInfo videoInfo = objectMapper.readValue(json, VideoInfo.class);
@@ -81,12 +81,34 @@ public class YoutubeDlManager {
         }
     }
 
+    /**
+     * @deprecated use {@link #checkErrors} instead
+     */
+    @Deprecated
     private void logErrors(InputStream errorStream) {
         try {
             IOUtils.readLines(errorStream, ctx.getSystemCharset())
-                    .forEach(LOGGER::error);
+                    .forEach(LOGGER::warn);
         } catch (IOException e) {
             LOGGER.warn(e.getMessage());
+        }
+    }
+
+    /**
+     * @throws ProcessException if the process contained any errors
+     */
+    private void checkErrors(Process process) {
+        String errorMsg;
+        try (InputStream errorStream = process.getErrorStream()) {
+            errorMsg = IOUtils.readLines(errorStream, ctx.getSystemCharset()).stream()
+                    .collect(Collectors.joining(System.lineSeparator()));
+        } catch (IOException e) {
+            errorMsg = e.getMessage();
+        }
+
+        if (StringUtils.isNotBlank(errorMsg)) {
+            LOGGER.warn(errorMsg);
+            throw new ProcessException(errorMsg);
         }
     }
 
@@ -105,7 +127,7 @@ public class YoutubeDlManager {
             List<String> command = pb.buildCommand();
             Process process = pb.buildProcess(command);
             try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                version = reader.lines().findFirst().orElseThrow(YoutubeDlProcessException::new);
+                version = reader.lines().findFirst().orElseThrow(ProcessException::new);
             } catch (Exception e) {
                 try (InputStream errorStream = process.getErrorStream()) {
                     logErrors(errorStream);
@@ -119,54 +141,36 @@ public class YoutubeDlManager {
     }
 
     public void updateYoutubeDl() throws IOException, InterruptedException {
-        // LastModifiedTime is a bit "hacky" solution, but I need to be sure that the file will have actually updated
-        FileTime initialLastModifiedTime = Files.getLastModifiedTime(ctx.getDownloaderPath(Engine.YOUTUBE_DL));
-
-        List<YoutubeDlProcessBuilder> processBuilders = List.of(new CacheRemoveProcessBuilder(), new YoutubeDlUpdateProcessBuilder(Engine.YOUTUBE_DL));
-        String currentVersion = getCurrentVersion(Engine.YOUTUBE_DL);
-        boolean versionIsUpToDate = false;
-        for (YoutubeDlProcessBuilder pb : processBuilders) {
-            List<String> command = pb.buildCommand();
-            Process process = pb.buildProcess(command);
-            versionIsUpToDate |= IOUtils.readLines(process.getInputStream(), ctx.getSystemCharset())
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .anyMatch(it -> it.contains(currentVersion));
-            process.waitFor();
-        }
-
-        if (versionIsUpToDate) {
-            return;
-        }
-
-        FileTime currentLastModifiedTime = initialLastModifiedTime;
-        while (currentLastModifiedTime.compareTo(initialLastModifiedTime) == 0) {
-            try {
-                currentLastModifiedTime = Files.getLastModifiedTime(ctx.getDownloaderPath(Engine.YOUTUBE_DL));
-                TimeUnit.SECONDS.sleep(1);
-            } catch (IOException ignored) { // For extremely rare cases when getLastModifiedTime() is called when the old file already removed, but the new one hasn't been renamed yet
-                // ignore
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
+        doUpdate(Engine.YOUTUBE_DL);
     }
 
     public void updateYtdlp() throws IOException, InterruptedException {
-        // LastModifiedTime is a bit "hacky" solution, but I need to be sure that the file will have actually updated
-        FileTime initialLastModifiedTime = Files.getLastModifiedTime(ctx.getDownloaderPath(Engine.YT_DLP));
+        doUpdate(Engine.YT_DLP);
+    }
 
-        List<YoutubeDlProcessBuilder> processBuilders = List.of(new CacheRemoveProcessBuilder(), new YoutubeDlUpdateProcessBuilder(Engine.YT_DLP));
-        String currentVersion = getCurrentVersion(Engine.YT_DLP);
+    private void doUpdate(Engine engine) throws IOException, InterruptedException {
+        // LastModifiedTime is a bit "hacky" solution, but I need to be sure that the file will have actually updated
+        FileTime initialLastModifiedTime = Files.getLastModifiedTime(ctx.getDownloaderPath(engine));
+
+        List<YoutubeDlProcessBuilder> processBuilders = List.of(new CacheRemoveProcessBuilder(), new YoutubeDlUpdateProcessBuilder(engine));
+        String currentVersion = getCurrentVersion(engine);
         boolean versionIsUpToDate = false;
         for (YoutubeDlProcessBuilder pb : processBuilders) {
             List<String> command = pb.buildCommand();
             Process process = pb.buildProcess(command);
-            versionIsUpToDate |= IOUtils.readLines(process.getInputStream(), ctx.getSystemCharset())
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .anyMatch(it -> it.contains(currentVersion));
+            try (InputStream is = process.getInputStream()) {
+                versionIsUpToDate |= IOUtils.readLines(is, ctx.getSystemCharset())
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .peek(it -> {
+                            LOGGER.info(it);
+                            if (StringUtils.startsWith(it, "ERROR:")) {
+                                throw new ProcessException(it);
+                            }
+                        })
+                        .anyMatch(it -> it.contains(currentVersion));
+            }
+            checkErrors(process);
             process.waitFor();
         }
 
@@ -177,7 +181,7 @@ public class YoutubeDlManager {
         FileTime currentLastModifiedTime = initialLastModifiedTime;
         while (currentLastModifiedTime.compareTo(initialLastModifiedTime) == 0) {
             try {
-                currentLastModifiedTime = Files.getLastModifiedTime(ctx.getDownloaderPath(Engine.YT_DLP));
+                currentLastModifiedTime = Files.getLastModifiedTime(ctx.getDownloaderPath(engine));
                 TimeUnit.SECONDS.sleep(1);
             } catch (IOException ignored) { // For extremely rare cases when getLastModifiedTime() is called when the old file already removed, but the new one hasn't been renamed yet
                 // ignore

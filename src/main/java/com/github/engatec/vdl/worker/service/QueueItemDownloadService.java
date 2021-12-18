@@ -16,7 +16,7 @@ import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.YoutubeDlManager;
-import com.github.engatec.vdl.exception.YoutubeDlProcessException;
+import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.worker.data.DownloadProgressData;
@@ -253,7 +253,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                         .map(StringUtils::strip)
                         .anyMatch(it -> it.startsWith(ERROR_PREFIX));
                 if (hasErrors) {
-                    throw new YoutubeDlProcessException(msg);
+                    throw new ProcessException(msg);
                 } else {
                     LOGGER.warn(msg);
                 }

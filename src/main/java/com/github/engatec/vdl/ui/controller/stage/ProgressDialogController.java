@@ -1,6 +1,7 @@
 package com.github.engatec.vdl.ui.controller.stage;
 
 import com.github.engatec.vdl.core.AppExecutors;
+import com.github.engatec.vdl.ui.Dialogs;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -43,6 +44,7 @@ public class ProgressDialogController extends StageAwareController {
         task.setOnFailed(event -> {
             Throwable ex = event.getSource().getException();
             LOGGER.error(ex.getMessage(), ex);
+            Dialogs.error("stage.about.update.error.header", ex.getMessage());
             close(event);
         });
 

@@ -17,7 +17,9 @@ public class YoutubeDlUpdateProcessBuilder implements YoutubeDlProcessBuilder {
 
     @Override
     public List<String> buildCommand() {
-        YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance(engine).update();
+        YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance(engine)
+                .noCheckCertificate()
+                .update();
         YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
         return commandBuilder.buildAsList();
     }

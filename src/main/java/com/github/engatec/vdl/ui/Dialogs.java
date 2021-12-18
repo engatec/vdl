@@ -12,11 +12,15 @@ import javafx.stage.Stage;
 public class Dialogs {
 
     public static void error(String key) {
+        error(null, ApplicationContext.getInstance().getLocalizedString(key));
+    }
+
+    public static void error(String headerKey, String msg) {
         var ctx = ApplicationContext.getInstance();
         var alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(ctx.getLocalizedString("error"));
-        alert.setHeaderText(null);
-        alert.setContentText(ctx.getLocalizedString(key));
+        alert.setHeaderText(headerKey == null ? null : ctx.getLocalizedString(headerKey));
+        alert.setContentText(msg);
         alert.showAndWait();
     }
 
