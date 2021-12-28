@@ -12,15 +12,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.Engine;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
 import com.github.engatec.vdl.ui.Dialogs;
-import com.github.engatec.vdl.worker.UpdateYoutubeDlBinaryTask;
-import com.github.engatec.vdl.worker.UpdateYtdlpBinaryTask;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
@@ -64,26 +61,6 @@ public class AppUtils {
         }
 
         return downloadPath;
-    }
-
-    public static void updateYoutubeDl(Stage stage, Runnable onSuccessCallback) {
-        ApplicationContext ctx = ApplicationContext.getInstance();
-        if (!Files.isWritable(ctx.getDownloaderPath(Engine.YOUTUBE_DL))) {
-            Dialogs.error("update.youtubedl.nopermissions");
-            return;
-        }
-
-        Dialogs.progress("dialog.progress.title.label.updateinprogress", stage, new UpdateYoutubeDlBinaryTask(), onSuccessCallback);
-    }
-
-    public static void updateYtdlp(Stage stage, Runnable onSuccessCallback) {
-        ApplicationContext ctx = ApplicationContext.getInstance();
-        if (!Files.isWritable(ctx.getDownloaderPath(Engine.YT_DLP))) {
-            Dialogs.error("update.ytdlp.nopermissions");
-            return;
-        }
-
-        Dialogs.progress("dialog.progress.title.label.updateinprogress", stage, new UpdateYtdlpBinaryTask(), onSuccessCallback);
     }
 
     /**

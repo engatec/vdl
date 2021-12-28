@@ -19,6 +19,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormat
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.VdlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YtdlpStartupUpdatesCheckPref;
 import com.github.engatec.vdl.ui.Dialogs;
@@ -48,6 +49,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     @FXML private RadioButton askPathRadioBtn;
     @FXML private FxDirectoryChooser downloadPathDirectoryChooser;
 
+    @FXML private CheckBox vdlStartupUpdatesCheckBox;
     @FXML private CheckBox youtubeDlStartupUpdatesCheckBox;
     @FXML private CheckBox ytdlpStartupUpdatesCheckBox;
     @FXML private CheckBox autoSearchFromClipboardCheckBox;
@@ -97,6 +99,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         autoSelectFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AutoSelectFormatPref.class).getProperty());
         audioExtractionFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionFormatPref.class).getProperty());
         audioExtractionQualitySlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionQualityPref.class).getProperty());
+        vdlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(VdlStartupUpdatesCheckPref.class).getProperty());
         youtubeDlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getProperty());
         ytdlpStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(YtdlpStartupUpdatesCheckPref.class).getProperty());
         loadThumbnailsCheckbox.selectedProperty().bindBidirectional(configRegistry.get(LoadThumbnailsPref.class).getProperty());

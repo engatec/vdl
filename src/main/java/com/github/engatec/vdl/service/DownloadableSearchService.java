@@ -1,11 +1,11 @@
-package com.github.engatec.vdl.worker.service;
+package com.github.engatec.vdl.service;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.worker.task.CompleteVideoInfoSearchTask;
+import com.github.engatec.vdl.service.task.CompleteVideoInfoSearchTask;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;

@@ -1,9 +1,9 @@
-package com.github.engatec.vdl.worker.service;
+package com.github.engatec.vdl.service;
 
 import java.util.List;
 
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.worker.task.BasicVideoInfoSearchTask;
+import com.github.engatec.vdl.service.task.BasicVideoInfoSearchTask;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;

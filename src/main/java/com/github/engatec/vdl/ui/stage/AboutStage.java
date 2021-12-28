@@ -19,6 +19,7 @@ public class AboutStage extends AppStage {
     protected void init() {
         super.init();
         stage.setResizable(false);
+        stage.setTitle(ctx.getLocalizedString("stage.about.title"));
     }
 
     @Override

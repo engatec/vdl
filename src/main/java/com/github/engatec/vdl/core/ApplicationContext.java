@@ -13,6 +13,7 @@ import com.github.engatec.vdl.core.annotation.Order;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -112,5 +113,9 @@ public class ApplicationContext {
 
     public Path getDownloaderPath(Engine engine) {
         return appBinariesDir.resolve(engine.resolveFileName());
+    }
+
+    public String getAppVersion() {
+        return StringUtils.defaultIfBlank(getClass().getPackage().getImplementationVersion(), "unknown");
     }
 }

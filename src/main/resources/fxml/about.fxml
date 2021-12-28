@@ -30,6 +30,8 @@
                   <Font size="13.0" />
                </font>
             </Label>
+            <Button fx:id="vdlUpdateBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%update" GridPane.columnIndex="1" />
+            <ProgressIndicator fx:id="vdlUpdateProgress" GridPane.columnIndex="1" />
             <HBox alignment="CENTER_LEFT" GridPane.rowIndex="1">
                <children>
                   <Label fx:id="youtubeDlVersionLabel" minHeight="-Infinity" minWidth="-Infinity" text="%stage.about.label.version.youtubedl">
@@ -41,6 +43,7 @@
                </children>
             </HBox>
             <Button fx:id="youtubeDlUpdateBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%update" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ProgressIndicator fx:id="youtubeDlUpdateProgress" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <HBox alignment="CENTER_LEFT" GridPane.rowIndex="2">
                <children>
                   <Label fx:id="ytdlpVersionLabel" minHeight="-Infinity" minWidth="-Infinity" text="%stage.about.label.version.ytdlp">
@@ -52,6 +55,7 @@
                </children>
             </HBox>
             <Button fx:id="ytdlpUpdateBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%update" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ProgressIndicator fx:id="ytDlpUpdateProgress" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
       <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />

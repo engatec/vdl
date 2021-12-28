@@ -1,6 +1,7 @@
 package com.github.engatec.vdl;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.github.engatec.vdl.core.AppExecutors;
@@ -9,11 +10,16 @@ import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
-import com.github.engatec.vdl.core.YoutubeDlManager;
+import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.preferences.ConfigRegistryImpl;
 import com.github.engatec.vdl.db.DbManager;
+import com.github.engatec.vdl.model.preferences.wrapper.general.VdlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.YtdlpStartupUpdatesCheckPref;
+import com.github.engatec.vdl.service.newversion.Updater;
+import com.github.engatec.vdl.service.newversion.VdlUpdater;
+import com.github.engatec.vdl.service.newversion.YoutubeDlUpdater;
+import com.github.engatec.vdl.service.newversion.YtDlpUpdater;
 import com.github.engatec.vdl.ui.stage.MainStage;
 import javafx.application.Application;
 import javafx.scene.text.Font;
@@ -63,16 +69,24 @@ public class Main extends Application {
     }
 
     private void checkUpdates(Stage stage) {
-        ApplicationContext ctx = ApplicationContext.getInstance();
+        ConfigRegistry configRegistry = ApplicationContext.getInstance().getConfigRegistry();
+        List<Updater> updaters = new ArrayList<>();
 
-        Boolean needCheckYoutubeDlUpdate = ctx.getConfigRegistry().get(YoutubeDlStartupUpdatesCheckPref.class).getValue();
+        Boolean needCheckVdlUpdate = configRegistry.get(VdlStartupUpdatesCheckPref.class).getValue();
+        if (needCheckVdlUpdate) {
+            updaters.add(new VdlUpdater(stage));
+        }
+
+        Boolean needCheckYoutubeDlUpdate = configRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getValue();
         if (needCheckYoutubeDlUpdate) {
-            YoutubeDlManager.INSTANCE.checkLatestYoutubeDlVersion(stage);
+            updaters.add(new YoutubeDlUpdater(stage));
         }
 
-        Boolean needCheckYtdlpUpdate = ctx.getConfigRegistry().get(YtdlpStartupUpdatesCheckPref.class).getValue();
+        Boolean needCheckYtdlpUpdate = configRegistry.get(YtdlpStartupUpdatesCheckPref.class).getValue();
         if (needCheckYtdlpUpdate) {
-            YoutubeDlManager.INSTANCE.checkLatestYtdlpVersion(stage);
+            updaters.add(new YtDlpUpdater(stage));
         }
+
+        updaters.forEach(Updater::update);
     }
 }

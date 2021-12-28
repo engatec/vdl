@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.worker.data;
+package com.github.engatec.vdl.service.data;
 
 public class DownloadProgressData {
 

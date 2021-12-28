@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.worker.service;
+package com.github.engatec.vdl.service;
 
 import java.nio.file.Path;
 import java.util.HashSet;

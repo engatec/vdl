@@ -4,15 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -31,12 +25,7 @@ import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
-import com.github.engatec.vdl.ui.Dialogs;
-import com.github.engatec.vdl.util.AppUtils;
-import javafx.application.Platform;
-import javafx.stage.Stage;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,15 +113,7 @@ public class YoutubeDlManager {
         return version;
     }
 
-    public void updateYoutubeDl() throws IOException, InterruptedException {
-        doUpdate(Engine.YOUTUBE_DL);
-    }
-
-    public void updateYtdlp() throws IOException, InterruptedException {
-        doUpdate(Engine.YT_DLP);
-    }
-
-    private void doUpdate(Engine engine) throws IOException, InterruptedException {
+    public void updateVersion(Engine engine) throws IOException, InterruptedException {
         // LastModifiedTime is a bit "hacky" solution, but I need to be sure that the file will have actually updated
         FileTime initialLastModifiedTime = Files.getLastModifiedTime(ctx.getDownloaderPath(engine));
 
@@ -175,75 +156,5 @@ public class YoutubeDlManager {
                 break;
             }
         }
-    }
-
-    public void checkLatestYoutubeDlVersion(Stage stage) {
-        HttpClient client = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .connectTimeout(Duration.ofSeconds(30))
-                .build();
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.github.com/repos/ytdl-org/youtube-dl/releases/latest"))
-                .timeout(Duration.ofSeconds(30))
-                .header("Content-Type", "application/json")
-                .GET()
-                .build();
-
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(json -> {
-                    try {
-                        String latestVersion = String.valueOf(objectMapper.readValue(json, HashMap.class).get("tag_name"));
-                        String currentVersion = getCurrentVersion(Engine.YOUTUBE_DL);
-                        latestVersion = RegExUtils.replaceAll(latestVersion, "\\.", "");
-                        currentVersion = RegExUtils.replaceAll(currentVersion, "\\.", "");
-                        if (Integer.parseInt(latestVersion) > Integer.parseInt(currentVersion)) {
-                            Platform.runLater(() -> Dialogs.infoWithYesNoButtons(
-                                    "youtubedl.update.available",
-                                    () -> AppUtils.updateYoutubeDl(stage, null),
-                                    null
-                            ));
-                        }
-                    } catch (Exception e) { // No need to fail if version check went wrong
-                        LOGGER.warn(e.getMessage());
-                    }
-                });
-    }
-
-    public void checkLatestYtdlpVersion(Stage stage) {
-        HttpClient client = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .connectTimeout(Duration.ofSeconds(30))
-                .build();
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest"))
-                .timeout(Duration.ofSeconds(30))
-                .header("Content-Type", "application/json")
-                .GET()
-                .build();
-
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(json -> {
-                    try {
-                        String latestVersion = String.valueOf(objectMapper.readValue(json, HashMap.class).get("tag_name"));
-                        String currentVersion = getCurrentVersion(Engine.YT_DLP);
-                        latestVersion = RegExUtils.replaceAll(latestVersion, "\\.", "");
-                        currentVersion = RegExUtils.replaceAll(currentVersion, "\\.", "");
-                        if (Integer.parseInt(latestVersion) > Integer.parseInt(currentVersion)) {
-                            Platform.runLater(() -> Dialogs.infoWithYesNoButtons(
-                                    "ytdlp.update.available",
-                                    () -> AppUtils.updateYtdlp(stage, null),
-                                    null
-                            ));
-                        }
-                    } catch (Exception e) { // No need to fail if version check went wrong
-                        LOGGER.warn(e.getMessage());
-                    }
-                });
     }
 }

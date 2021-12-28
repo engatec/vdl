@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.worker.service;
+package com.github.engatec.vdl.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
-import com.github.engatec.vdl.worker.data.DownloadProgressData;
+import com.github.engatec.vdl.service.data.DownloadProgressData;
 import javafx.beans.property.DoubleProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;

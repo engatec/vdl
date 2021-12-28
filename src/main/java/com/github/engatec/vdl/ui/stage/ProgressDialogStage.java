@@ -1,20 +1,18 @@
 package com.github.engatec.vdl.ui.stage;
 
 import com.github.engatec.vdl.ui.controller.stage.ProgressDialogController;
-import javafx.concurrent.Task;
+import javafx.concurrent.Service;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class ProgressDialogStage extends AppStage {
 
     private final String title;
-    private final Task<?> task;
-    private final Runnable onSuccessCallback;
+    private final Service<?> service;
 
-    public ProgressDialogStage(String title, Task<?> task, Runnable onSuccessCallback) {
+    public ProgressDialogStage(String title, Service<?> service) {
         this.title = title;
-        this.task = task;
-        this.onSuccessCallback = onSuccessCallback;
+        this.service = service;
         init();
     }
 
@@ -32,6 +30,6 @@ public class ProgressDialogStage extends AppStage {
 
     @Override
     protected Callback<Class<?>, Object> getControllerFactory(Stage stage) {
-        return param -> new ProgressDialogController(stage, task, onSuccessCallback);
+        return param -> new ProgressDialogController(stage, service);
     }
 }

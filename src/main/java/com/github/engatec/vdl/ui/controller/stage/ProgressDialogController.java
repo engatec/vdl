@@ -1,62 +1,56 @@
 package com.github.engatec.vdl.ui.controller.stage;
 
-import com.github.engatec.vdl.core.AppExecutors;
-import com.github.engatec.vdl.ui.Dialogs;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
+import javafx.concurrent.Service;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ProgressDialogController extends StageAwareController {
 
-    private static final Logger LOGGER = LogManager.getLogger(ProgressDialogController.class);
-
-    private Task<?> task;
-    private Runnable onSuccessCallback;
+    private Service<?> service;
 
     @FXML private Button dialogProgressCancelButton;
 
     private ProgressDialogController() {
     }
 
-    public ProgressDialogController(Stage stage, Task<?> task, Runnable onSuccessCallback) {
+    public ProgressDialogController(Stage stage, Service<?> service) {
         super(stage);
-        this.task = task;
-        this.onSuccessCallback = onSuccessCallback;
+        this.service = service;
     }
 
     @FXML
     public void initialize() {
-        runTask();
-    }
-
-    private void runTask() {
-        task.setOnSucceeded(event -> {
-            if (onSuccessCallback != null) {
-                onSuccessCallback.run();
+        EventHandler<WorkerStateEvent> onSucceeded = service.getOnSucceeded();
+        service.setOnSucceeded(event -> {
+            if (onSucceeded != null) {
+                onSucceeded.handle(event);
             }
             close(event);
         });
 
-        task.setOnFailed(event -> {
-            Throwable ex = event.getSource().getException();
-            LOGGER.error(ex.getMessage(), ex);
-            Platform.runLater(() -> Dialogs.exception("stage.about.update.error.header", ex.getMessage()));
+        EventHandler<WorkerStateEvent> onFailed = service.getOnFailed();
+        service.setOnFailed(event -> {
+            if (onFailed != null) {
+                onFailed.handle(event);
+            }
             close(event);
         });
 
-        task.setOnCancelled(this::close);
-
-        dialogProgressCancelButton.setOnAction(e -> {
-            task.cancel();
-            e.consume();
+        EventHandler<WorkerStateEvent> onCancelled = service.getOnCancelled();
+        service.setOnCancelled(event -> {
+            if (onCancelled != null) {
+                onCancelled.handle(event);
+            }
+            close(event);
         });
 
-        AppExecutors.runTaskAsync(task);
+        dialogProgressCancelButton.setOnAction(e -> service.cancel());
+
+        service.start();
     }
 
     private void close(Event e) {
