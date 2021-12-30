@@ -1,7 +1,6 @@
 open module engatec.vdl {
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.web;
 
     requires java.prefs;
     requires java.net.http;
