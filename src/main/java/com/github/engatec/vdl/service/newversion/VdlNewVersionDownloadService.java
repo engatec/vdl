@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.StringJoiner;
@@ -31,7 +32,7 @@ public class VdlNewVersionDownloadService extends Service<Void> {
         return new Task<>() {
             @Override
             protected Void call() throws IOException, InterruptedException {
-                StringJoiner assetNameStringJoiner = new StringJoiner("_", StringUtils.EMPTY, ".jar").add("vdl");
+                StringJoiner assetNameStringJoiner = new StringJoiner("_", StringUtils.EMPTY, ".jar").add("upd");
                 if (SystemUtils.IS_OS_WINDOWS) {
                     assetNameStringJoiner.add("windows");
                 } else if (SystemUtils.IS_OS_LINUX) {
@@ -49,7 +50,9 @@ public class VdlNewVersionDownloadService extends Service<Void> {
                         .map(AssetDto::downloadUrl)
                         .findFirst()
                         .orElseThrow(() -> new AppException(String.format("No %s asset has been found", assetName)));
+
                 Path downloadPath = ApplicationContext.getInstance().getAppBinariesDir().resolve("vdl.jar.new");
+                Files.deleteIfExists(downloadPath);
 
                 HttpClient client = HttpClient.newBuilder()
                         .version(HttpClient.Version.HTTP_1_1)
