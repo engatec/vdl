@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.service.newversion;
 
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -65,7 +66,10 @@ public class VdlUpdater implements Updater {
             Dialogs.info(new FormattedResource("update.vdl.finished", releaseInfo.tagName()));
             try {
                 String updaterFileName = SystemUtils.IS_OS_WINDOWS ? "updater.cmd" : "updater";
-                new ProcessBuilder(ApplicationContext.getInstance().getAppBinariesDir().resolve(updaterFileName).toString()).start();
+                Path binariesDir = ApplicationContext.getInstance().getAppBinariesDir();
+                new ProcessBuilder(binariesDir.resolve(updaterFileName).toString())
+                        .directory(binariesDir.toFile())
+                        .start();
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
