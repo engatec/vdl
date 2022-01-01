@@ -12,13 +12,14 @@
             <useProjectArtifact>true</useProjectArtifact>
             <unpack>true</unpack>
             <unpackOptions>
-                <!-- Excluding binaries for other platforms -->
+                <!-- Excluding binaries for unsupported platforms -->
                 <excludes>
                     <exclude>org/sqlite/native/DragonFlyBSD/**</exclude>
                     <exclude>org/sqlite/native/FreeBSD/**</exclude>
                     <exclude>org/sqlite/native/Linux/**</exclude>
                     <exclude>org/sqlite/native/Linux-Alpine/**</exclude>
                     <exclude>org/sqlite/native/Windows/**</exclude>
+                    <exclude>org/sqlite/native/Mac/aarch64/**</exclude>
                 </excludes>
             </unpackOptions>
             <scope>runtime</scope>
