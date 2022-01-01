@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.service.newversion;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,6 +61,11 @@ public class VdlUpdater implements Updater {
     }
 
     private void downloadNewVersion(ReleaseDto releaseInfo) {
+        if (!Files.isWritable(ApplicationContext.getInstance().getAppBinariesDir())) {
+            Dialogs.error(new FormattedResource("update.nopermissions", "vdl"));
+            return;
+        }
+
         var newVersionDownloadService = new VdlNewVersionDownloadService(releaseInfo);
 
         newVersionDownloadService.setOnSucceeded(event -> {
