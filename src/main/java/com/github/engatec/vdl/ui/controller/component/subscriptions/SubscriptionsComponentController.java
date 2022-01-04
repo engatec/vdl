@@ -124,9 +124,18 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
     private void displaySubscriptions(List<Subscription> subscriptions) {
         ObservableList<Node> contentList = contentNode.getChildren();
         for (Subscription item : subscriptions) {
-            SubscriptionItemComponentController node = new SubscriptionItemComponent(stage, item, getOnSubscriptionDeleteButtonClickListener()).load();
+            SubscriptionItemComponentController node = new SubscriptionItemComponent(
+                    stage,
+                    item,
+                    getOnSubscriptionRefreshButtonClickListener(),
+                    getOnSubscriptionDeleteButtonClickListener()
+            ).load();
             contentList.add(node);
         }
+    }
+
+    private Consumer<Subscription> getOnSubscriptionRefreshButtonClickListener() {
+        return subscription -> ctx.getManager(SubscriptionsManager.class).updateSubscription(subscription);
     }
 
     private Consumer<Subscription> getOnSubscriptionDeleteButtonClickListener() {

@@ -3,13 +3,11 @@ package com.github.engatec.vdl.core;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
-import com.github.engatec.vdl.core.annotation.Order;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadThreadsPref;
@@ -26,16 +24,15 @@ public class ApplicationContext {
 
     private Path appBinariesDir;
     private Path appDataDir;
-    private String dbName;
     private ConfigRegistry configRegistry;
     private ResourceBundle resourceBundle;
-    private Map<Class<? extends VdlManager>, VdlManager> managersMap;
     private AppExecutors appExecutors;
 
-    public static synchronized void init(
+    private final Map<Class<? extends VdlManager>, VdlManager> managersMap = new HashMap<>();
+
+    public static synchronized void create(
             Path appBinariesDir,
             Path appDataDir,
-            String dbName,
             ConfigRegistry configRegistry,
             Collection<? extends VdlManager> managers
     ) {
@@ -47,26 +44,19 @@ public class ApplicationContext {
         var ctx = new ApplicationContext();
         ctx.appBinariesDir = appBinariesDir;
         ctx.appDataDir = appDataDir;
-        ctx.dbName = dbName;
         ctx.configRegistry = configRegistry;
+        ctx.appExecutors = new AppExecutors(configRegistry.get(DownloadThreadsPref.class).getValue());
 
         Language language = Language.getByLocaleCode(configRegistry.get(LanguagePref.class).getValue());
         ctx.resourceBundle = ResourceBundle.getBundle("lang", language.getLocale());
 
-        ctx.appExecutors = new AppExecutors(configRegistry.get(DownloadThreadsPref.class).getValue());
-
-        ctx.managersMap = new HashMap<>();
-        managers.stream()
-                .sorted(Comparator.comparingInt(it -> {
-                    var order = it.getClass().getAnnotation(Order.class);
-                    return order == null ? Integer.MAX_VALUE : order.value();
-                }))
-                .forEach(it -> {
-                    ctx.managersMap.put(it.getClass(), it);
-                    it.init(ctx);
-                });
+        managers.forEach(it -> ctx.managersMap.put(it.getClass(), it));
 
         ApplicationContext.INSTANCE = ctx;
+    }
+
+    public void init() {
+        managersMap.values().forEach(VdlManager::init);
     }
 
     public static ApplicationContext getInstance() {
@@ -104,10 +94,6 @@ public class ApplicationContext {
 
     public Path getAppDataDir() {
         return appDataDir;
-    }
-
-    public String getDbName() {
-        return dbName;
     }
 
     public Charset getSystemCharset() {

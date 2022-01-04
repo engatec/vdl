@@ -31,7 +31,9 @@ public class HistoryManager extends VdlManager {
     private DbManager dbManager;
 
     @Override
-    public void init(ApplicationContext ctx) {
+    public void init() {
+        ApplicationContext ctx = ApplicationContext.getInstance();
+
         configRegistry = ctx.getConfigRegistry();
         dbManager = ctx.getManager(DbManager.class);
         ExecutorService executor = ctx.appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR);

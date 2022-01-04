@@ -116,7 +116,8 @@ public class PlaylistContentsController implements InputForm {
         subscription.setName(subscriptionNameTextField.getText());
         subscription.setUrl(playlistUrl);
         subscription.setDownloadPath(subscriptionDownloadPathDirectoryChooser.getPath());
-        subscriptionsManager.subscribe(subscription, processedItems);
+        subscription.setProcessedItems(processedItems);
+        subscriptionsManager.subscribe(subscription);
         onSubscribeListener.accept(subscription);
     }
 

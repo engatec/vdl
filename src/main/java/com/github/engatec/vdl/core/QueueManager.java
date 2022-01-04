@@ -46,7 +46,9 @@ public class QueueManager extends VdlManager {
     private DbManager dbManager;
 
     @Override
-    public void init(ApplicationContext ctx) {
+    public void init() {
+        ApplicationContext ctx = ApplicationContext.getInstance();
+
         ExecutorService systemExecutor = ctx.appExecutors().get(AppExecutors.Type.SYSTEM_EXECUTOR);
         queueItems.addListener((ListChangeListener<QueueItem>) change -> {
             while (change.next()) {
@@ -71,9 +73,8 @@ public class QueueManager extends VdlManager {
             notifyItemsChanged(change.getList());
         });
 
-        ExecutorService commonExecutor = ctx.appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR);
         dbManager = ctx.getManager(DbManager.class);
-        dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems, commonExecutor)
+        dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems)
                 .thenAccept(dbItems -> {
                     fixState(dbItems);
                     Platform.runLater(() -> addAll(dbItems));

@@ -10,7 +10,6 @@ import java.util.function.Function;
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.VdlManager;
-import com.github.engatec.vdl.core.annotation.Order;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -20,18 +19,15 @@ import org.apache.logging.log4j.Logger;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.FlywayException;
 
-@Order(1)
 public class DbManager extends VdlManager {
 
     private static final Logger LOGGER = LogManager.getLogger(DbManager.class);
 
-    private String url;
+    private final String url;
+    private final SqlSessionFactory sessionFactory;
 
-    private SqlSessionFactory sessionFactory;
-
-    @Override
-    public void init(ApplicationContext ctx) {
-        url = "jdbc:sqlite:" + ctx.getAppDataDir().resolve(ctx.getDbName());
+    public DbManager(String url) {
+        this.url = url;
         try {
             updateSchema();
             sessionFactory = buildSqlSessionFactory();
@@ -57,22 +53,24 @@ public class DbManager extends VdlManager {
         return new SqlSessionFactoryBuilder().build(is, props);
     }
 
+    public <R, M> R doQuery(Class<M> mapperClass, Function<M, R> func) {
+        R result;
+        try (SqlSession session = sessionFactory.openSession()) {
+            M mapper = session.getMapper(mapperClass);
+            result = func.apply(mapper);
+            session.commit();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
+        }
+        return result;
+    }
+
     public <R, M> CompletableFuture<R> doQueryAsync(Class<M> mapperClass, Function<M, R> func) {
         return doQueryAsync(mapperClass, func, ApplicationContext.getInstance().appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR));
     }
 
     public <R, M> CompletableFuture<R> doQueryAsync(Class<M> mapperClass, Function<M, R> func, Executor executor) {
-        return CompletableFuture.supplyAsync(() -> {
-            R result;
-            try (SqlSession session = sessionFactory.openSession()) {
-                M mapper = session.getMapper(mapperClass);
-                result = func.apply(mapper);
-                session.commit();
-            } catch (Exception e) {
-                LOGGER.warn(e.getMessage(), e);
-                throw e;
-            }
-            return result;
-        }, executor);
+        return CompletableFuture.supplyAsync(() -> doQuery(mapperClass, func), executor);
     }
 }

@@ -10,25 +10,25 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 public class SubscriptionItemComponentController extends HBox {
 
-    private final Stage stage;
     private final Subscription subscription;
+    private final Consumer<Subscription> onRefreshButtonClickListener;
     private final Consumer<Subscription> onDeleteButtonClickListener;
 
     @FXML private Label titleLabel;
     @FXML private Label urlLabel;
+    @FXML private Button refreshBtn;
     @FXML private Button deleteBtn;
 
     public SubscriptionItemComponentController(
-            Stage stage,
             Subscription subscription,
+            Consumer<Subscription> onRefreshButtonClickListener,
             Consumer<Subscription> onDeleteButtonClickListener
     ) {
-        this.stage = stage;
         this.subscription = subscription;
+        this.onRefreshButtonClickListener = onRefreshButtonClickListener;
         this.onDeleteButtonClickListener = onDeleteButtonClickListener;
     }
 
@@ -36,11 +36,20 @@ public class SubscriptionItemComponentController extends HBox {
     public void initialize() {
         titleLabel.setText(subscription.getName());
         urlLabel.setText(subscription.getUrl());
+
+        refreshBtn.setGraphic(new ImageView(Icon.REFRESH_SMALL.getImage()));
+        refreshBtn.setOnAction(this::handleRefreshButtonClick);
+
         deleteBtn.setGraphic(new ImageView(Icon.DELETE_SMALL.getImage()));
-        deleteBtn.setOnAction(this::deleteButtonClickHandler);
+        deleteBtn.setOnAction(this::handleDeleteButtonClick);
     }
 
-    private void deleteButtonClickHandler(ActionEvent event) {
+    private void handleRefreshButtonClick(ActionEvent event) {
+        onRefreshButtonClickListener.accept(subscription);
+        event.consume();
+    }
+
+    private void handleDeleteButtonClick(ActionEvent event) {
         onDeleteButtonClickListener.accept(subscription);
         event.consume();
     }

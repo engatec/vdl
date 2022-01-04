@@ -32,23 +32,27 @@ public class Main extends Application {
     public void start(Stage stage) {
         loadFonts();
 
-        ApplicationContext.init(
-                Path.of(StringUtils.defaultString(System.getProperty("app.dir"), StringUtils.EMPTY)),
-                SystemUtils.getUserHome().toPath().resolve(".vdl"),
-                "data.db",
+        Path appBinariesDir = Path.of(StringUtils.defaultString(System.getProperty("app.dir"), StringUtils.EMPTY));
+        Path appDataDir = SystemUtils.getUserHome().toPath().resolve(".vdl");
+        ApplicationContext.create(
+                appBinariesDir,
+                appDataDir,
                 new ConfigRegistryImpl(),
                 List.of(
-                        new DbManager(),
+                        new DbManager("jdbc:sqlite:" + appDataDir.resolve("data.db")),
                         new QueueManager(),
                         new HistoryManager(),
                         new SubscriptionsManager()
                 )
         );
 
+        ApplicationContext ctx = ApplicationContext.getInstance();
+        ctx.init();
+
         new MainStage(stage).show();
 
         checkUpdates(stage);
-        ApplicationContext.getInstance().getManager(SubscriptionsManager.class).updateAllSubscriptions();
+        ctx.getManager(SubscriptionsManager.class).updateAllSubscriptions();
     }
 
     @Override

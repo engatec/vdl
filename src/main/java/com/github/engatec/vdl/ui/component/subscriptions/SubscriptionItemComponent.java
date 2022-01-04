@@ -10,11 +10,18 @@ import javafx.stage.Stage;
 public class SubscriptionItemComponent extends AppComponent<SubscriptionItemComponentController> {
 
     private final Subscription subscription;
+    private final Consumer<Subscription> onRefreshButtonClickListener;
     private final Consumer<Subscription> onDeleteButtonClickListener;
 
-    public SubscriptionItemComponent(Stage stage, Subscription subscription, Consumer<Subscription> onDeleteButtonClickListener) {
+    public SubscriptionItemComponent(
+            Stage stage,
+            Subscription subscription,
+            Consumer<Subscription> onRefreshButtonClickListener,
+            Consumer<Subscription> onDeleteButtonClickListener
+    ) {
         super(stage);
         this.subscription = subscription;
+        this.onRefreshButtonClickListener = onRefreshButtonClickListener;
         this.onDeleteButtonClickListener = onDeleteButtonClickListener;
     }
 
@@ -25,6 +32,6 @@ public class SubscriptionItemComponent extends AppComponent<SubscriptionItemComp
 
     @Override
     protected SubscriptionItemComponentController getController() {
-        return new SubscriptionItemComponentController(stage, subscription, onDeleteButtonClickListener);
+        return new SubscriptionItemComponentController(subscription, onRefreshButtonClickListener, onDeleteButtonClickListener);
     }
 }

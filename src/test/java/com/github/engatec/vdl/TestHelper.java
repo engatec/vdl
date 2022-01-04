@@ -35,13 +35,12 @@ public class TestHelper {
         Mockito.when(configRegistryMock.get(LanguagePref.class)).thenReturn(Mockito.mock(LanguagePref.class));
         Mockito.when(configRegistryMock.get(LanguagePref.class).getValue()).thenReturn("en");
 
-        ApplicationContext.init(
+        ApplicationContext.create(
                 APP_BINARIES_PATH,
                 APP_DATA_PATH,
-                DB_NAME,
                 configRegistryMock,
                 List.of(
-                        new DbManager(),
+                        new DbManager("jdbc:sqlite:" + APP_DATA_PATH.resolve(DB_NAME)),
                         new QueueManager(),
                         new HistoryManager(),
                         new SubscriptionsManager()

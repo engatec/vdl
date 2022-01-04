@@ -36,23 +36,18 @@ public class SubscriptionsManager extends VdlManager {
     private Consumer<Boolean> subscriptionsUpdateProgressListener;
 
     @Override
-    public void init(ApplicationContext ctx) {
+    public void init() {
+        ApplicationContext ctx = ApplicationContext.getInstance();
         dbManager = ctx.getManager(DbManager.class);
 
         // FIXME: deprecated in 1.7 For removal in 1.9
-        CompletableFuture.supplyAsync(() -> restoreFromJson(ctx.getAppDataDir().resolve("subscriptions.vdl")), ctx.appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR))
-                .thenAccept(items -> {
-                    for (Subscription it : ListUtils.emptyIfNull(items)) {
-                        ZonedDateTime dtm = LocalDateTime.parse(it.getCreatedAt(), AppUtils.DATE_TIME_FORMATTER).atZone(ZoneId.systemDefault());
-                        it.setCreatedAt(dtm.withZoneSameInstant(ZoneId.of("GMT")).format(AppUtils.DATE_TIME_FORMATTER_SQLITE));
-                        subscribe(it, it.getProcessedItemsForTraversal());
-                    }
-                }).join();
+        restoreFromJson(ctx.getAppDataDir().resolve("subscriptions.vdl"));
     }
 
-    public void subscribe(Subscription s, Set<String> processedItems) {
-        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> {
+    public void subscribe(Subscription s) {
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> {
             mapper.insertSubscription(s);
+            Set<String> processedItems = s.getProcessedItemsForTraversal();
             if (CollectionUtils.isNotEmpty(processedItems)) {
                 mapper.insertProcessedItems(s.getId(), processedItems);
             }
@@ -73,9 +68,9 @@ public class SubscriptionsManager extends VdlManager {
             return;
         }
 
+        s.getProcessedItems().addAll(processedItems);
         try {
-            dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(s.getId(), processedItems))
-                    .thenRun(() -> s.getProcessedItems().addAll(processedItems));
+            dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(s.getId(), processedItems));
         } catch (PersistenceException e) { // In case subscription has been removed before processed items insertion
             LOGGER.warn("Couldn't add processed items for subscription '{}'. Id '{}' doesn't exist.", s.getName(), s.getId());
         }
@@ -83,20 +78,25 @@ public class SubscriptionsManager extends VdlManager {
 
     // FIXME: transition from JSON files to sqlite.
     @Deprecated(since = "1.7", forRemoval = true)
-    public List<Subscription> restoreFromJson(Path subscriptionFilePath) {
+    public void restoreFromJson(Path subscriptionFilePath) {
         if (Files.notExists(subscriptionFilePath)) {
-            return List.of();
+            return;
         }
 
-        List<Subscription> result = List.of();
+        List<Subscription> items = List.of();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            result = mapper.readValue(subscriptionFilePath.toFile(), new TypeReference<>(){});
+            items = mapper.readValue(subscriptionFilePath.toFile(), new TypeReference<>(){});
             Files.delete(subscriptionFilePath);
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e);
         }
-        return result;
+
+        for (Subscription s : ListUtils.emptyIfNull(items)) {
+            ZonedDateTime dtm = LocalDateTime.parse(s.getCreatedAt(), AppUtils.DATE_TIME_FORMATTER).atZone(ZoneId.systemDefault());
+            s.setCreatedAt(dtm.withZoneSameInstant(ZoneId.of("GMT")).format(AppUtils.DATE_TIME_FORMATTER_SQLITE));
+            subscribe(s);
+        }
     }
 
     public void updateSubscription(Subscription subscription) {
