@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,18 +87,25 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     }
 
     @Override
-    public void restart() {
-        DownloadStatus status = queueItem.getStatus();
-        if (status != DownloadStatus.CANCELLED) {
-            String msg = "Queue item must be in state " + DownloadStatus.CANCELLED + ". Was in state " + status;
-            LOGGER.error(msg);
-            throw new IllegalStateException(msg);
-        }
+    public void reset() {
         queueItem.setStatus(DownloadStatus.READY);
 
         DoubleProperty progressProperty = queueItem.progressProperty();
         if (!progressProperty.isBound()) {
             progressProperty.bind(progressProperty());
+        }
+
+        super.reset();
+    }
+
+    @Override
+    public void restart() {
+        Set<DownloadStatus> restartableStates = Set.of(DownloadStatus.CANCELLED, DownloadStatus.FAILED);
+        DownloadStatus status = queueItem.getStatus();
+        if (!restartableStates.contains(status)) {
+            String msg = String.format("Queue item must be in one of the following states: %s. Was in state %s.", restartableStates, status);
+            LOGGER.error(msg);
+            throw new IllegalStateException(msg);
         }
 
         super.restart();

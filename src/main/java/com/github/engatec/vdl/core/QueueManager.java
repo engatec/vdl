@@ -201,6 +201,14 @@ public class QueueManager extends VdlManager {
     }
 
     public void resumeDownload(QueueItem item) {
+        restart(item);
+    }
+
+    public void retryDownload(QueueItem item) {
+        restart(item);
+    }
+
+    private void restart(QueueItem item) {
         itemServiceMap.computeIfAbsent(item, QueueItemDownloadService::new).restart();
     }
 

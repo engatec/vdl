@@ -88,6 +88,12 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             e.consume();
         });
 
+        MenuItem retryMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.retry"));
+        retryMenuItem.setOnAction(e -> {
+            queueManager.retryDownload(row.getItem());
+            e.consume();
+        });
+
         MenuItem deleteMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.delete"));
         deleteMenuItem.setOnAction(e -> {
             queueManager.removeItem(row.getItem());
@@ -107,10 +113,11 @@ public class DownloadsComponentController extends VBox implements ComponentContr
                     newValue.statusProperty())
             );
             resumeMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.CANCELLED, newValue.statusProperty()));
+            retryMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.FAILED, newValue.statusProperty()));
             deleteMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() != DownloadStatus.IN_PROGRESS, newValue.statusProperty()));
         });
 
-        ctxMenu.getItems().addAll(cancelMenuItem, resumeMenuItem, deleteMenuItem);
+        ctxMenu.getItems().addAll(cancelMenuItem, resumeMenuItem, retryMenuItem, deleteMenuItem);
         return ctxMenu;
     }
 
