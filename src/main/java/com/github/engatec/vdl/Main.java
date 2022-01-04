@@ -4,7 +4,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.Janitor;
@@ -54,8 +53,9 @@ public class Main extends Application {
 
     @Override
     public void stop() {
-        ApplicationContext.getInstance().getManager(HistoryManager.class).stripHistory();
-        AppExecutors.shutdownExecutors();
+        ApplicationContext ctx = ApplicationContext.getInstance();
+        ctx.getManager(HistoryManager.class).stripHistory();
+        ctx.appExecutors().shutdown();
     }
 
     public static void main(String[] args) {

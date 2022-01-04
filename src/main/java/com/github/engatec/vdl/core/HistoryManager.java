@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,9 +34,10 @@ public class HistoryManager extends VdlManager {
     public void init(ApplicationContext ctx) {
         configRegistry = ctx.getConfigRegistry();
         dbManager = ctx.getManager(DbManager.class);
+        ExecutorService executor = ctx.appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR);
 
         // FIXME: deprecated in 1.7 For removal in 1.9
-        CompletableFuture.supplyAsync(() -> restoreFromJson(ctx.getAppDataDir().resolve("history.vdl")), AppExecutors.COMMON_EXECUTOR)
+        CompletableFuture.supplyAsync(() -> restoreFromJson(ctx.getAppDataDir().resolve("history.vdl")), executor)
                 .thenAccept(items -> {
                     if (CollectionUtils.isNotEmpty(items)) {
                         dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items));
@@ -87,6 +89,7 @@ public class HistoryManager extends VdlManager {
 
     public void stripHistory() {
         Integer maxHistoryEntries = configRegistry.get(HistoryEntriesNumberPref.class).getValue();
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.stripHistory(maxHistoryEntries), AppExecutors.SYSTEM_EXECUTOR);
+        ExecutorService systemExecutor = ApplicationContext.getInstance().appExecutors().get(AppExecutors.Type.SYSTEM_EXECUTOR);
+        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.stripHistory(maxHistoryEntries), systemExecutor);
     }
 }

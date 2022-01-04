@@ -40,7 +40,7 @@ public class SubscriptionsManager extends VdlManager {
         dbManager = ctx.getManager(DbManager.class);
 
         // FIXME: deprecated in 1.7 For removal in 1.9
-        CompletableFuture.supplyAsync(() -> restoreFromJson(ctx.getAppDataDir().resolve("subscriptions.vdl")), AppExecutors.COMMON_EXECUTOR)
+        CompletableFuture.supplyAsync(() -> restoreFromJson(ctx.getAppDataDir().resolve("subscriptions.vdl")), ctx.appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR))
                 .thenAccept(items -> {
                     for (Subscription it : ListUtils.emptyIfNull(items)) {
                         ZonedDateTime dtm = LocalDateTime.parse(it.getCreatedAt(), AppUtils.DATE_TIME_FORMATTER).atZone(ZoneId.systemDefault());

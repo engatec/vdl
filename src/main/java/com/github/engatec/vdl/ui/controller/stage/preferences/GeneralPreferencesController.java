@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.ui.controller.stage.preferences;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.github.engatec.fxcontrols.FxDirectoryChooser;
@@ -17,6 +17,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionQ
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadThreadsPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.VdlStartupUpdatesCheckPref;
@@ -49,6 +50,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     @FXML private RadioButton askPathRadioBtn;
     @FXML private FxDirectoryChooser downloadPathDirectoryChooser;
 
+    @FXML private ComboBox<Integer> downloadThreadsComboBox;
     @FXML private CheckBox vdlStartupUpdatesCheckBox;
     @FXML private CheckBox youtubeDlStartupUpdatesCheckBox;
     @FXML private CheckBox ytdlpStartupUpdatesCheckBox;
@@ -65,6 +67,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         initDownloadPathSettings();
         initAutoSelectFormatSettings();
         initAudioExtractionSettings();
+        initDownloadThreadsSettings();
 
         bindPropertyHolder();
     }
@@ -72,7 +75,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     private void initLanguageSettings() {
         List<ComboBoxValueHolder<Language>> languages = Stream.of(Language.values())
                 .map(it -> new ComboBoxValueHolder<>(it.getLocalizedName(), it))
-                .collect(Collectors.toList());
+                .toList();
         languageComboBox.getItems().addAll(languages);
 
         Language currentLanguage = Language.getByLocaleCode(configRegistry.get(LanguagePref.class).getValue());
@@ -86,8 +89,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 Language newLanguage = newValue.getValue();
                 LanguagePref languagePref = configRegistry.get(LanguagePref.class);
                 languagePref.setValue(newLanguage.getLocaleCode());
-                languagePref.save();
-                Dialogs.info("preferences.general.language.dialog.info", newLanguage);
+                Dialogs.info("preferences.general.language.restartrequired", newLanguage);
             }
         });
     }
@@ -142,8 +144,23 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     private void initAudioExtractionSettings() {
         List<String> audioFormats = Stream.of(AudioFormat.values())
                 .map(AudioFormat::toString)
-                .collect(Collectors.toList());
+                .toList();
         audioExtractionFormatComboBox.setItems(FXCollections.observableArrayList(audioFormats));
+    }
+
+    private void initDownloadThreadsSettings() {
+        downloadThreadsComboBox.setItems(FXCollections.observableArrayList(
+                IntStream.rangeClosed(1, 10).boxed().toList()
+        ));
+
+        DownloadThreadsPref pref = configRegistry.get(DownloadThreadsPref.class);
+        downloadThreadsComboBox.getSelectionModel().select(pref.getValue());
+        downloadThreadsComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                pref.setValue(newValue);
+                Dialogs.info("preferences.general.download.threads.restartrequired");
+            }
+        });
     }
 
     @Override

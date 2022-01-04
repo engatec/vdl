@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -44,7 +45,9 @@ public class QueueManager extends VdlManager {
 
     private DbManager dbManager;
 
-    public QueueManager() {
+    @Override
+    public void init(ApplicationContext ctx) {
+        ExecutorService systemExecutor = ctx.appExecutors().get(AppExecutors.Type.SYSTEM_EXECUTOR);
         queueItems.addListener((ListChangeListener<QueueItem>) change -> {
             while (change.next()) {
                 List<? extends QueueItem> removedItems = change.getRemoved();
@@ -62,17 +65,15 @@ public class QueueManager extends VdlManager {
                         .map(Process::onExit)
                         .toArray(CompletableFuture[]::new);
 
-                CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> deleteTempData(removedItems), AppExecutors.SYSTEM_EXECUTOR);
+                CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> deleteTempData(removedItems), systemExecutor);
             }
 
             notifyItemsChanged(change.getList());
         });
-    }
 
-    @Override
-    public void init(ApplicationContext ctx) {
+        ExecutorService commonExecutor = ctx.appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR);
         dbManager = ctx.getManager(DbManager.class);
-        dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems)
+        dbManager.doQueryAsync(QueueMapper.class, QueueMapper::fetchQueueItems, commonExecutor)
                 .thenAccept(dbItems -> {
                     fixState(dbItems);
                     Platform.runLater(() -> addAll(dbItems));

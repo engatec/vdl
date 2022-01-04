@@ -62,7 +62,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     public QueueItemDownloadService(QueueItem queueItem) {
         super();
         this.queueItem = queueItem;
-        setExecutor(AppExecutors.QUEUE_EXECUTOR);
+        setExecutor(ctx.appExecutors().get(AppExecutors.Type.QUEUE_EXECUTOR));
 
         queueItem.progressProperty().bind(progressProperty());
         valueProperty().addListener((observable, oldValue, newValue) -> {

@@ -43,7 +43,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
 
     public SubscriptionsUpdateService(List<Subscription> subscriptions) {
         super();
-        setExecutor(AppExecutors.COMMON_EXECUTOR);
+        setExecutor(ctx.appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR));
         this.subscriptions = subscriptions;
         this.updatesCountDownLatch = new CountDownLatch(subscriptions.size());
     }

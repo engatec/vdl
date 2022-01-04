@@ -36,13 +36,25 @@
                     <Insets bottom="8.0" />
                 </VBox.margin>
             </VBox>
-         <CheckBox fx:id="vdlStartupUpdatesCheckBox" mnemonicParsing="false" text="%preferences.general.vdl.update.check" wrapText="true" />
+         <HBox alignment="CENTER_LEFT" spacing="8.0">
+            <children>
+               <Label text="%preferences.general.download.threads" />
+               <ComboBox fx:id="downloadThreadsComboBox" />
+            </children>
+         </HBox>
+         <CheckBox fx:id="vdlStartupUpdatesCheckBox" mnemonicParsing="false" text="%preferences.general.vdl.update.check" wrapText="true">
+            <VBox.margin>
+               <Insets top="8.0" />
+            </VBox.margin></CheckBox>
          <CheckBox fx:id="youtubeDlStartupUpdatesCheckBox" mnemonicParsing="false" text="%preferences.general.youtubedl.update.check" wrapText="true">
             <VBox.margin>
                <Insets bottom="8.0" top="8.0" />
             </VBox.margin>
          </CheckBox>
-         <CheckBox fx:id="ytdlpStartupUpdatesCheckBox" mnemonicParsing="false" text="%preferences.general.ytdlp.update.check" wrapText="true" />
+         <CheckBox fx:id="ytdlpStartupUpdatesCheckBox" mnemonicParsing="false" text="%preferences.general.ytdlp.update.check" wrapText="true">
+            <VBox.margin>
+               <Insets bottom="8.0" />
+            </VBox.margin></CheckBox>
          <CheckBox fx:id="loadThumbnailsCheckbox" mnemonicParsing="false" text="%preferences.general.loadthumbnails.label" wrapText="true">
             <VBox.margin>
                <Insets bottom="8.0" top="8.0" />

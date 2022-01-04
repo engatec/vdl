@@ -10,6 +10,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionQ
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
+import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadThreadsPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.VdlStartupUpdatesCheckPref;
@@ -56,6 +57,7 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new AutoSearchFromClipboardPref());
         addToRegistry(new DownloadPathPref());
         addToRegistry(new LanguagePref());
+        addToRegistry(new DownloadThreadsPref());
         addToRegistry(new VdlStartupUpdatesCheckPref());
         addToRegistry(new YoutubeDlStartupUpdatesCheckPref());
         addToRegistry(new YtdlpStartupUpdatesCheckPref());

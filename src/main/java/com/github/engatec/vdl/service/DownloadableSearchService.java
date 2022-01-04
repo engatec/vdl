@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import com.github.engatec.vdl.core.AppExecutors;
+import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.service.task.CompleteVideoInfoSearchTask;
 import javafx.beans.property.ObjectProperty;
@@ -20,7 +21,7 @@ public class DownloadableSearchService extends Service<List<VideoInfo>> {
 
     public DownloadableSearchService() {
         super();
-        setExecutor(AppExecutors.COMMON_EXECUTOR);
+        setExecutor(ApplicationContext.getInstance().appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR));
     }
 
     public String getUrl() {

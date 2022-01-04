@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import com.github.engatec.vdl.core.annotation.Order;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
+import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadThreadsPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -28,7 +29,8 @@ public class ApplicationContext {
     private String dbName;
     private ConfigRegistry configRegistry;
     private ResourceBundle resourceBundle;
-    public Map<Class<? extends VdlManager>, VdlManager> managersMap;
+    private Map<Class<? extends VdlManager>, VdlManager> managersMap;
+    private AppExecutors appExecutors;
 
     public static synchronized void init(
             Path appBinariesDir,
@@ -50,6 +52,8 @@ public class ApplicationContext {
 
         Language language = Language.getByLocaleCode(configRegistry.get(LanguagePref.class).getValue());
         ctx.resourceBundle = ResourceBundle.getBundle("lang", language.getLocale());
+
+        ctx.appExecutors = new AppExecutors(configRegistry.get(DownloadThreadsPref.class).getValue());
 
         ctx.managersMap = new HashMap<>();
         managers.stream()
@@ -117,5 +121,9 @@ public class ApplicationContext {
 
     public String getAppVersion() {
         return StringUtils.defaultIfBlank(getClass().getPackage().getImplementationVersion(), "unknown");
+    }
+
+    public AppExecutors appExecutors() {
+        return appExecutors;
     }
 }

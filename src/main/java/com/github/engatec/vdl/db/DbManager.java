@@ -58,7 +58,7 @@ public class DbManager extends VdlManager {
     }
 
     public <R, M> CompletableFuture<R> doQueryAsync(Class<M> mapperClass, Function<M, R> func) {
-        return doQueryAsync(mapperClass, func, AppExecutors.COMMON_EXECUTOR);
+        return doQueryAsync(mapperClass, func, ApplicationContext.getInstance().appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR));
     }
 
     public <R, M> CompletableFuture<R> doQueryAsync(Class<M> mapperClass, Function<M, R> func, Executor executor) {
