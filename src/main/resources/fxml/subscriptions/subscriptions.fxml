@@ -8,20 +8,24 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<fx:root fx:id="rootNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="16.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="rootNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox maxWidth="1.7976931348623157E308" spacing="2.0">
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0">
          <children>
-            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0">
-               <children>
-                  <TextField fx:id="urlTextField" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                  <ProgressBar fx:id="searchProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="searchButton" mnemonicParsing="false" styleClass="control-btn" text="%search" />
-                  <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="control-btn" text="%cancel" />
-               </children>
-            </HBox>
+            <TextField fx:id="urlTextField" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <ProgressBar fx:id="searchProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="searchButton" mnemonicParsing="false" styleClass="control-btn" text="%search" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="control-btn" text="%cancel" />
          </children>
-      </VBox>
+         <VBox.margin>
+            <Insets bottom="16.0" />
+         </VBox.margin>
+      </HBox>
+      <Button fx:id="refreshAllButton" mnemonicParsing="false" text="%subscriptions.updateall">
+         <VBox.margin>
+            <Insets bottom="8.0" />
+         </VBox.margin>
+      </Button>
       <ScrollPane fitToWidth="true" styleClass="no-border" VBox.vgrow="ALWAYS">
          <content>
             <Accordion fx:id="contentNode" />

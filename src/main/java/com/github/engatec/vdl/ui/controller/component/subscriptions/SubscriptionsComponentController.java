@@ -13,6 +13,8 @@ import com.github.engatec.vdl.ui.component.subscriptions.SubscriptionItemCompone
 import com.github.engatec.vdl.ui.controller.component.ComponentController;
 import com.github.engatec.vdl.ui.stage.PlaylistContentsStage;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -49,6 +51,7 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
 
     @FXML private ProgressBar searchProgressBar;
 
+    @FXML private Button refreshAllButton;
     @FXML private Accordion contentNode;
 
     public SubscriptionsComponentController(Stage stage) {
@@ -62,6 +65,12 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
 
         searchButton.setOnAction(this::handleSearchButtonClick);
         cancelButton.setOnAction(this::handleCancelButtonClick);
+
+        ObservableList<TitledPane> contentPanesObservableList = contentNode.getPanes();
+        BooleanBinding moreThanOneSubscriptionBinding = Bindings.createBooleanBinding(() -> contentPanesObservableList.size() > 1, contentPanesObservableList);
+        refreshAllButton.visibleProperty().bind(moreThanOneSubscriptionBinding);
+        refreshAllButton.managedProperty().bind(moreThanOneSubscriptionBinding);
+        refreshAllButton.setOnAction(this::handleRefreshAllButtonClick);
 
         subscriptionsManager.getSubscriptionsAsync()
                 .thenAccept(subscriptions ->
@@ -120,6 +129,11 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
     private void handleSearchButtonClick(Event event) {
         playlistDetailsSearchService.setUrl(urlTextField.getText());
         playlistDetailsSearchService.restart();
+        event.consume();
+    }
+
+    private void handleRefreshAllButtonClick(ActionEvent event) {
+        subscriptionsManager.refreshAll();
         event.consume();
     }
 
