@@ -31,6 +31,10 @@
         ORDER BY created_at
     </select>
 
+    <update id="updateSubscription">
+        UPDATE subscription SET download_path = #{s.downloadPath} WHERE id = #{s.id}
+    </update>
+
     <delete id="deleteSubscription">
         DELETE FROM subscription WHERE id = #{id}
     </delete>

@@ -3,12 +3,12 @@ package com.github.engatec.vdl.db.mapper;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import com.github.engatec.vdl.TestHelper;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.model.Subscription;
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.sqlite.SQLiteException;
@@ -38,23 +38,23 @@ public class SubscriptionMapperTest {
     void insertSubscription_shouldInsert() {
         var item = createSubscriptionItem();
         assertThat(item.getId()).isNull();
-        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertSubscription(item)).join();
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> mapper.insertSubscription(item));
         assertThat(item.getId()).isNotNull();
     }
 
     @Test
     void fetchSubscriptions_shouldFindMoreThanOne() {
         Subscription it1 = createSubscriptionItem();
-        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> {
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> {
             mapper.insertSubscription(it1);
             mapper.insertProcessedItems(it1.getId(), Set.of("id1", "id2"));
             return 0;
-        }).join();
+        });
 
         Subscription it2 = createSubscriptionItem();
-        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertSubscription(it2)).join();
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> mapper.insertSubscription(it2));
 
-        List<Subscription> dbItems = dbManager.doQueryAsync(SubscriptionMapper.class, SubscriptionMapper::fetchSubscriptions).join();
+        List<Subscription> dbItems = dbManager.doQuery(SubscriptionMapper.class, SubscriptionMapper::fetchSubscriptions);
         assertThat(dbItems)
                 .hasSizeGreaterThan(1)
                 .extracting(Subscription::getId)
@@ -75,22 +75,40 @@ public class SubscriptionMapperTest {
     }
 
     @Test
+    void update_shouldUpdateSubscription() {
+        Subscription s = createSubscriptionItem();
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> mapper.insertSubscription(s));
+
+        String newPath = UUID.randomUUID().toString();
+        assertThat(s.getDownloadPath()).isNotEqualTo(newPath);
+
+        s.setDownloadPath(newPath);
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> mapper.updateSubscription(s));
+
+        Subscription dbItem = dbManager.doQuery(SubscriptionMapper.class, SubscriptionMapper::fetchSubscriptions).stream()
+                .filter(it -> it.getId().equals(s.getId()))
+                .findFirst()
+                .orElseThrow();
+        assertThat(dbItem.getDownloadPath()).isEqualTo(newPath);
+    }
+
+    @Test
     void deleteSubscription_shouldDeleteSubscriptionAndProcessedItems() {
         Subscription it1 = createSubscriptionItem();
-        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> {
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> {
             mapper.insertSubscription(it1);
             mapper.insertProcessedItems(it1.getId(), Set.of("it1_id1", "it1_id2"));
             return 0;
-        }).join();
+        });
 
         Subscription it2 = createSubscriptionItem();
-        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> {
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> {
             mapper.insertSubscription(it2);
             mapper.insertProcessedItems(it2.getId(), Set.of("it2_id3"));
             return 0;
-        }).join();
+        });
 
-        List<Subscription> dbItems = dbManager.doQueryAsync(SubscriptionMapper.class, SubscriptionMapper::fetchSubscriptions).join();
+        List<Subscription> dbItems = dbManager.doQuery(SubscriptionMapper.class, SubscriptionMapper::fetchSubscriptions);
         assertThat(dbItems)
                 .extracting(Subscription::getId)
                 .contains(it1.getId(), it2.getId());
@@ -102,10 +120,10 @@ public class SubscriptionMapperTest {
                 .extracting(it -> it.getProcessedItems().size())
                 .containsSequence(2, 1);
 
-        Integer deletedSubscriptionEntries = dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.deleteSubscription(it1.getId())).join();
+        Integer deletedSubscriptionEntries = dbManager.doQuery(SubscriptionMapper.class, mapper -> mapper.deleteSubscription(it1.getId()));
         assertThat(deletedSubscriptionEntries).isEqualTo(1);
 
-        List<Subscription> dbItemsAfterDelete = dbManager.doQueryAsync(SubscriptionMapper.class, SubscriptionMapper::fetchSubscriptions).join();
+        List<Subscription> dbItemsAfterDelete = dbManager.doQuery(SubscriptionMapper.class, SubscriptionMapper::fetchSubscriptions);
         assertThat(dbItemsAfterDelete)
                 .extracting(Subscription::getId)
                 .doesNotContain(it1.getId());
@@ -119,26 +137,23 @@ public class SubscriptionMapperTest {
     }
 
     @Test
-    void insertQueueTempFile_insertionShouldFail_foreignKeyNull() {
-        assertThatThrownBy(() -> dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(null, Set.of("id1"))).join())
-                .hasCauseInstanceOf(PersistenceException.class)
-                .hasRootCauseInstanceOf(SQLiteException.class)
+    void insertProcessedItems_insertionShouldFail_foreignKeyNull() {
+        assertThatThrownBy(() -> dbManager.doQuery(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(null, Set.of("id1"))))
+                .hasCauseInstanceOf(SQLiteException.class)
                 .hasMessageContaining("SQLITE_CONSTRAINT_NOTNULL");
     }
 
     @Test
-    void insertQueueTempFile_insertionShouldFail_foreignKeyError() {
-        assertThatThrownBy(() -> dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(10000L, Set.of("id1"))).join())
-                .hasCauseInstanceOf(PersistenceException.class)
-                .hasRootCauseInstanceOf(SQLiteException.class)
+    void insertProcessedItems_insertionShouldFail_foreignKeyError() {
+        assertThatThrownBy(() -> dbManager.doQuery(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(10000L, Set.of("id1"))))
+                .hasCauseInstanceOf(SQLiteException.class)
                 .hasMessageContaining("SQLITE_CONSTRAINT_FOREIGNKEY");
     }
 
     @Test
-    void insertQueueTempFile_shouldInsert() {
+    void insertProcessedItems_shouldInsert() {
         Subscription item = createSubscriptionItem();
-        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertSubscription(item))
-                .thenRun(() -> dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(item.getId(), Set.of("id1"))))
-                .join();
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> mapper.insertSubscription(item));
+        dbManager.doQuery(SubscriptionMapper.class, mapper -> mapper.insertProcessedItems(item.getId(), Set.of("id1")));
     }
 }

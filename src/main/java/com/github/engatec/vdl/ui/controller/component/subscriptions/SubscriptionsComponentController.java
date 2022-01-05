@@ -101,7 +101,7 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
 
             Platform.runLater(() -> new PlaylistContentsStage(urlTextField.getText(), items, subscription -> {
                 displaySubscriptions(List.of(subscription));
-                subscriptionsManager.updateSubscription(subscription);
+                subscriptionsManager.refresh(subscription);
             }).modal(stage).showAndWait());
         });
 
@@ -143,7 +143,7 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
     }
 
     private Consumer<Subscription> getOnSubscriptionRefreshButtonClickListener() {
-        return subscription -> ctx.getManager(SubscriptionsManager.class).updateSubscription(subscription);
+        return subscription -> ctx.getManager(SubscriptionsManager.class).refresh(subscription);
     }
 
     private Consumer<Subscription> getOnSubscriptionDeleteButtonClickListener() {

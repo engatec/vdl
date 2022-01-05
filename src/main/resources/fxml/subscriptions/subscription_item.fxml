@@ -13,6 +13,7 @@
             <Insets left="8.0" right="8.0" />
          </HBox.margin></Pane>
       <Button fx:id="refreshBtn" mnemonicParsing="false" />
+      <Button fx:id="changeFolderBtn" mnemonicParsing="false" />
       <Button fx:id="deleteBtn" mnemonicParsing="false" />
    </children>
    <padding>

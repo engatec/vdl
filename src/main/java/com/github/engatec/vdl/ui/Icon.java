@@ -10,6 +10,7 @@ public enum Icon {
     DELETE_SMALL("/assets/icons/delete_18dp.png"),
     DOWNLOAD_SMALL("/assets/icons/download_icon_18dp.png"),
     FILTER_LIST_SMALL("/assets/icons/filter_list_18dp.png"),
+    FOLDER_SMALL("/assets/icons/folder_18dp.png"),
     HELP_MEDIUM("/assets/icons/help_24dp.png"),
     HISTORY_SMALL("/assets/icons/history_icon_18dp.png"),
     REFRESH_SMALL("/assets/icons/refresh_18dp.png"),

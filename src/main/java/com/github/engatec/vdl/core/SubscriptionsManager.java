@@ -76,6 +76,10 @@ public class SubscriptionsManager extends VdlManager {
         }
     }
 
+    public void update(Subscription s) {
+        dbManager.doQueryAsync(SubscriptionMapper.class, mapper -> mapper.updateSubscription(s));
+    }
+
     // FIXME: transition from JSON files to sqlite.
     @Deprecated(since = "1.7", forRemoval = true)
     public void restoreFromJson(Path subscriptionFilePath) {
@@ -99,15 +103,15 @@ public class SubscriptionsManager extends VdlManager {
         }
     }
 
-    public void updateSubscription(Subscription subscription) {
-        doSubscriptionsUpdate(List.of(subscription));
+    public void refresh(Subscription subscription) {
+        doRefresh(List.of(subscription));
     }
 
-    public void updateAllSubscriptions() {
-        getSubscriptionsAsync().thenAccept(subscriptions -> Platform.runLater(() -> doSubscriptionsUpdate(subscriptions)));
+    public void refreshAll() {
+        getSubscriptionsAsync().thenAccept(subscriptions -> Platform.runLater(() -> doRefresh(subscriptions)));
     }
 
-    private void doSubscriptionsUpdate(List<Subscription> subscriptions) {
+    private void doRefresh(List<Subscription> subscriptions) {
         if (CollectionUtils.isEmpty(subscriptions)) {
             return;
         }

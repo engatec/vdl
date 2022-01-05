@@ -16,5 +16,7 @@ public interface SubscriptionMapper {
 
     List<Subscription> fetchSubscriptions();
 
+    int updateSubscription(@Param("s") Subscription s);
+
     int deleteSubscription(@Param("id") Long id);
 }

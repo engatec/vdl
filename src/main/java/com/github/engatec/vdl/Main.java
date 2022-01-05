@@ -52,7 +52,7 @@ public class Main extends Application {
         new MainStage(stage).show();
 
         checkUpdates(stage);
-        ctx.getManager(SubscriptionsManager.class).updateAllSubscriptions();
+        ctx.getManager(SubscriptionsManager.class).refreshAll();
     }
 
     @Override
