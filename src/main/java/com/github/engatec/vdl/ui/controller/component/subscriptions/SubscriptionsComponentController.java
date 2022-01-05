@@ -18,7 +18,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -27,7 +26,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
@@ -135,10 +133,9 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
                     getOnSubscriptionRefreshButtonClickListener(),
                     getOnSubscriptionDeleteButtonClickListener()
             ).load();
-            node.setPadding(new Insets(8));
 
             TitledPane pane = new TitledPane(item.getName(), node);
-            pane.setFont(Font.font(14));
+            pane.getStyleClass().add("common-label");
             pane.setAnimated(false);
 
             contentPanes.add(pane);

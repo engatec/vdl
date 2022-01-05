@@ -7,7 +7,7 @@ import com.github.engatec.vdl.ui.Icon;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
@@ -17,8 +17,7 @@ public class SubscriptionItemComponentController extends HBox {
     private final Consumer<Subscription> onRefreshButtonClickListener;
     private final Consumer<Subscription> onDeleteButtonClickListener;
 
-    @FXML private Label titleLabel;
-    @FXML private Label urlLabel;
+    @FXML private TextField urlTextField;
     @FXML private Button refreshBtn;
     @FXML private Button deleteBtn;
 
@@ -34,8 +33,7 @@ public class SubscriptionItemComponentController extends HBox {
 
     @FXML
     public void initialize() {
-        titleLabel.setText(subscription.getName());
-        urlLabel.setText(subscription.getUrl());
+        urlTextField.setText(subscription.getUrl());
 
         refreshBtn.setGraphic(new ImageView(Icon.REFRESH_SMALL.getImage()));
         refreshBtn.setOnAction(this::handleRefreshButtonClick);
