@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
@@ -23,7 +24,7 @@
       </VBox>
       <ScrollPane fitToWidth="true" styleClass="no-border" VBox.vgrow="ALWAYS">
          <content>
-            <VBox fx:id="contentNode" spacing="16.0" />
+            <Accordion fx:id="contentNode" />
          </content>
       </ScrollPane>
    </children>
