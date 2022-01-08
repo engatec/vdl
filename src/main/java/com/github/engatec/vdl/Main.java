@@ -9,6 +9,7 @@ import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
+import com.github.engatec.vdl.core.preferences.ConfigManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.preferences.ConfigRegistryImpl;
 import com.github.engatec.vdl.db.DbManager;
@@ -33,7 +34,8 @@ public class Main extends Application {
         loadFonts();
 
         Path appBinariesDir = Path.of(StringUtils.defaultString(System.getProperty("app.dir"), StringUtils.EMPTY));
-        Path appDataDir = SystemUtils.getUserHome().toPath().resolve(".vdl");
+        boolean portable = Boolean.parseBoolean(System.getProperty("app.portable"));
+        Path appDataDir = portable ? appBinariesDir : SystemUtils.getUserHome().toPath().resolve(".vdl");
         ApplicationContext.create(
                 appBinariesDir,
                 appDataDir,
@@ -57,6 +59,7 @@ public class Main extends Application {
 
     @Override
     public void stop() {
+        ConfigManager.INSTANCE.flush();
         ApplicationContext ctx = ApplicationContext.getInstance();
         ctx.getManager(HistoryManager.class).stripHistory();
         ctx.appExecutors().shutdown();

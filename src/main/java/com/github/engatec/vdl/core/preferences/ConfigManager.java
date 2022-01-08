@@ -1,18 +1,24 @@
 package com.github.engatec.vdl.core.preferences;
 
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import com.github.engatec.vdl.Main;
+import com.github.engatec.vdl.core.preferences.portable.PortablePreferences;
 import com.github.engatec.vdl.model.preferences.ConfigItem;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ConfigManager {
+
+    private static final Logger LOGGER = LogManager.getLogger(ConfigManager.class);
 
     public static final ConfigManager INSTANCE = new ConfigManager();
 
     private final Preferences preferences;
 
     private ConfigManager() {
-        preferences = Preferences.userNodeForPackage(Main.class);
+        preferences = Boolean.parseBoolean(System.getProperty("app.portable")) ? new PortablePreferences() : Preferences.userNodeForPackage(Main.class);
     }
 
     public <T> T getValue(ConfigItem<T> configItem) {
@@ -33,5 +39,13 @@ public class ConfigManager {
 
     public void remove(String key) {
         preferences.remove(key);
+    }
+
+    public void flush() {
+        try {
+            preferences.flush();
+        } catch (BackingStoreException e) {
+            LOGGER.warn("Couldn't flush preferences", e);
+        }
     }
 }

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_DIR">${sys:app.logPath:-${sys:user.home}/.vdl}</Property>
+    </Properties>
+
     <Appenders>
-        <RollingFile name="File" fileName="${sys:user.home}/.vdl/log/vdl.log"
+        <RollingFile name="File" fileName="${LOG_DIR}/log/vdl.log"
                      filePattern="${sys:user.home}/.vdl/log/vdl.log.%i">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
             <Policies>
