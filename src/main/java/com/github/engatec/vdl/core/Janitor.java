@@ -1,6 +1,16 @@
 package com.github.engatec.vdl.core;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
+import com.github.engatec.vdl.Main;
 import com.github.engatec.vdl.core.preferences.ConfigManager;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,17 +20,45 @@ public class Janitor {
 
     public static void cleanUp() {
         try {
-            cleanUpOldConfig();
+            fixPortability();
         } catch (Exception e) {
             LOGGER.warn(e);
         }
     }
 
-    private static void cleanUpOldConfig() {
-        ConfigManager cfg = ConfigManager.INSTANCE;
-        cfg.remove("general.autodownload");
-        cfg.remove("general.autodownloadFormat");
-        cfg.remove("general.skipDownloadableDetailsSearch");
-        cfg.remove("misc.queueAutostartDownload");
+    private static void fixPortability() throws Exception {
+        if (!Boolean.parseBoolean(System.getProperty("app.portable"))) {
+            return;
+        }
+
+        fixPreferences();
+        fixAppData();
+    }
+
+    private static void fixPreferences() throws BackingStoreException {
+        if (!Preferences.userRoot().nodeExists("/com/github/engatec/vdl")) {
+            return;
+        }
+
+        Preferences preferences = Preferences.userNodeForPackage(Main.class);
+        for (String key : preferences.keys()) {
+            ConfigManager.INSTANCE.setValue(key, preferences.get(key, null));
+        }
+        preferences.parent().removeNode();
+        preferences.flush();
+    }
+
+    private static void fixAppData() throws IOException {
+        Path appDataDir = SystemUtils.getUserHome().toPath().resolve(".vdl");
+        if (Files.notExists(appDataDir)) {
+            return;
+        }
+
+        Path appBinariesDir = Path.of(StringUtils.defaultString(System.getProperty("app.dir"), StringUtils.EMPTY));
+        Files.copy(appDataDir.resolve("queue.vdl"), appBinariesDir.resolve("queue.vdl"));
+        Files.copy(appDataDir.resolve("history.vdl"), appBinariesDir.resolve("history.vdl"));
+        Files.copy(appDataDir.resolve("subscriptions.vdl"), appBinariesDir.resolve("subscriptions.vdl"));
+
+        FileUtils.forceDelete(appDataDir.toFile());
     }
 }
