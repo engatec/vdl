@@ -3,6 +3,7 @@ package com.github.engatec.vdl.core;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -55,9 +56,13 @@ public class Janitor {
         }
 
         Path appBinariesDir = Path.of(StringUtils.defaultString(System.getProperty("app.dir"), StringUtils.EMPTY));
-        Files.copy(appDataDir.resolve("queue.vdl"), appBinariesDir.resolve("queue.vdl"));
-        Files.copy(appDataDir.resolve("history.vdl"), appBinariesDir.resolve("history.vdl"));
-        Files.copy(appDataDir.resolve("subscriptions.vdl"), appBinariesDir.resolve("subscriptions.vdl"));
+        for (String it : List.of("queue.vdl", "history.vdl", "subscriptions.vdl")) {
+            try {
+                Files.copy(appDataDir.resolve(it), appBinariesDir.resolve(it));
+            } catch (Exception ignored) {
+                // Ignore exception and go to the next file
+            }
+        }
 
         FileUtils.forceDelete(appDataDir.toFile());
     }
