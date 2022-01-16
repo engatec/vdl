@@ -14,4 +14,4 @@ Create subscriptions and don't miss anything from your favorite channels.
 ![pic4](https://user-images.githubusercontent.com/6572208/149672271-1fc12a0c-7aff-452b-b0f2-85ea5dd84d0e.png)
 
 ## Installation
-[Download](https://github.com/engatec/vdl/releases) installer or portable version for your system and run it.  
+[Download](https://github.com/engatec/vdl/releases) installer or portable version for your operating system and run it.  
