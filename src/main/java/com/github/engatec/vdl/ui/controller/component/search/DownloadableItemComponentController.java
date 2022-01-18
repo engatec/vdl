@@ -1,10 +1,15 @@
 package com.github.engatec.vdl.ui.controller.component.search;
 
+import java.io.File;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
@@ -22,6 +27,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionF
 import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionQualityPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
+import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
@@ -30,20 +36,27 @@ import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DownloadableItemComponentController extends HBox {
+
+    private static final Logger LOGGER = LogManager.getLogger(DownloadableItemComponentController.class);
 
     private static final String CUSTOM_FORMAT_LABEL = "Custom format";
 
@@ -118,7 +131,7 @@ public class DownloadableItemComponentController extends HBox {
                 .filter(it -> it > 0) // Should never happen, just a sanity check in case there's a bug in youtube-dl
                 .distinct()
                 .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
+                .toList();
 
         ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
         Integer autoSelectFormat = ctx.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
@@ -163,8 +176,48 @@ public class DownloadableItemComponentController extends HBox {
 
         Image image = new Image(AppUtils.normalizeThumbnailUrl(videoInfo));
         if (image.getException() == null) {
+            thumbnailImageView.setCursor(Cursor.HAND);
             thumbnailImageView.setImage(image);
+            thumbnailImageView.setOnMouseClicked(event -> {
+                String thumbnailUrl = AppUtils.normalizeThumbnailUrlMaxRes(videoInfo);
+                FileChooser fileChooser = new FileChooser();
+                File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
+                if (recentDownloadPath.isDirectory()) {
+                    fileChooser.setInitialDirectory(recentDownloadPath);
+                }
+                String extension = StringUtils.substringAfterLast(thumbnailUrl, ".");
+                if (StringUtils.isNotBlank(extension)) {
+                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*." + extension, "*." + extension));
+                }
+                fileChooser.setInitialFileName("thumbnail_img");
+                File downloadPath = fileChooser.showSaveDialog(stage);
+                if (downloadPath != null) {
+                    handleThumbnailImageViewMouseClick(event, URI.create(thumbnailUrl), downloadPath.toPath());
+                }
+            });
         }
+    }
+
+    private void handleThumbnailImageViewMouseClick(MouseEvent event, URI uri, Path downloadPath) {
+        HttpClient client = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .connectTimeout(Duration.ofSeconds(30))
+                .build();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uri)
+                .timeout(Duration.ofMinutes(1))
+                .GET()
+                .build();
+
+        client.sendAsync(request, HttpResponse.BodyHandlers.ofFile(downloadPath))
+                .exceptionally(throwable -> {
+                    LOGGER.warn(throwable.getMessage(), throwable);
+                    return null;
+                });
+
+        event.consume();
     }
 
     public void setSelectable(boolean selectable) {
