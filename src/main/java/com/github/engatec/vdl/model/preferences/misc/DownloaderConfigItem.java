@@ -6,7 +6,7 @@ import com.github.engatec.vdl.core.Engine;
 
 public class DownloaderConfigItem extends MiscConfigItem<Integer> {
 
-    private static final int DEFAULT = Engine.YOUTUBE_DL.getConfigValue();
+    private static final int DEFAULT = Engine.YT_DLP.getConfigValue();
 
     @Override
     protected String getName() {
