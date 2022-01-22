@@ -1,8 +1,11 @@
 package com.github.engatec.vdl.model;
 
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.github.engatec.vdl.core.json.SubtitlesJsonDeserializer;
 
 /**
  * Parameters explanation can be found here: https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/common.py
@@ -26,6 +29,10 @@ public class VideoInfo {
     private String title;
     private Integer duration;
     private String thumbnail;
+
+    @JsonDeserialize(using = SubtitlesJsonDeserializer.class)
+    private Set<String> subtitles;
+
     private List<Format> formats;
 
     public String getId() {
@@ -90,6 +97,14 @@ public class VideoInfo {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public Set<String> getSubtitles() {
+        return subtitles;
+    }
+
+    public void setSubtitles(Set<String> subtitles) {
+        this.subtitles = subtitles;
     }
 
     public List<Format> getFormats() {

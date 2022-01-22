@@ -1,15 +1,15 @@
 package com.github.engatec.vdl.ui.controller.component.search;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import javax.imageio.ImageIO;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
@@ -28,11 +28,14 @@ import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionQ
 import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
+import com.github.engatec.vdl.service.SubtitlesDownloadService;
+import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
 import com.github.engatec.vdl.ui.stage.FormatsStage;
 import com.github.engatec.vdl.util.AppUtils;
+import com.github.engatec.vdl.util.Thumbnails;
 import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -43,11 +46,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -73,6 +76,7 @@ public class DownloadableItemComponentController extends HBox {
     @FXML private ComboBox<ComboBoxValueHolder<String>> formatsComboBox;
     @FXML private Button allFormatsButton;
     @FXML private Button audioButton;
+    @FXML private Button closedCaptionButton;
     @FXML private CheckBox itemSelectedCheckBox;
 
     @FXML private ImageView thumbnailImageView;
@@ -112,6 +116,28 @@ public class DownloadableItemComponentController extends HBox {
             }).modal(stage).show();
             e.consume();
         });
+
+        if (CollectionUtils.isNotEmpty(videoInfo.getSubtitles())) {
+            closedCaptionButton.setGraphic(new ImageView(Icon.CLOSED_CAPTION_SMALL.getImage()));
+            closedCaptionButton.setTooltip(Tooltips.createNew("download.subtitles"));
+            closedCaptionButton.setOnAction(e -> {
+                FileChooser fileChooser = new FileChooser();
+                File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
+                if (recentDownloadPath.isDirectory()) {
+                    fileChooser.setInitialDirectory(recentDownloadPath);
+                }
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*.srt", "*.srt"));
+                fileChooser.setInitialFileName("subtitles");
+                File downloadPath = fileChooser.showSaveDialog(stage);
+                if (downloadPath != null) {
+                    new SubtitlesDownloadService(videoInfo.getBaseUrl(), videoInfo.getSubtitles(), downloadPath.toPath()).start();
+                }
+                e.consume();
+            });
+        } else {
+            closedCaptionButton.setVisible(false);
+            closedCaptionButton.setManaged(false);
+        }
 
         formatsComboBox.prefHeightProperty().bind(allFormatsButton.heightProperty());
     }
@@ -174,50 +200,67 @@ public class DownloadableItemComponentController extends HBox {
             return;
         }
 
-        Image image = new Image(AppUtils.normalizeThumbnailUrl(videoInfo));
+        String thumbnailUrl = Thumbnails.normalizeThumbnailUrl(videoInfo, Thumbnails.Quality.MEDIUM);
+        if (StringUtils.isBlank(thumbnailUrl)) {
+            return;
+        }
+
+        Image image;
+        try {
+            image = new Image(thumbnailUrl);
+        } catch (Exception e) {
+            // In case image constructor threw an exception, show no thumbnail
+            LOGGER.warn(e.getMessage(), e);
+            return;
+        }
+
         if (image.getException() == null) {
             thumbnailImageView.setCursor(Cursor.HAND);
             thumbnailImageView.setImage(image);
             thumbnailImageView.setOnMouseClicked(event -> {
-                String thumbnailUrl = AppUtils.normalizeThumbnailUrlMaxRes(videoInfo);
                 FileChooser fileChooser = new FileChooser();
                 File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
                 if (recentDownloadPath.isDirectory()) {
                     fileChooser.setInitialDirectory(recentDownloadPath);
                 }
-                String extension = StringUtils.substringAfterLast(thumbnailUrl, ".");
-                if (StringUtils.isNotBlank(extension)) {
-                    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*." + extension, "*." + extension));
-                }
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*.jpg", "*.jpg"));
                 fileChooser.setInitialFileName("thumbnail_img");
                 File downloadPath = fileChooser.showSaveDialog(stage);
                 if (downloadPath != null) {
-                    handleThumbnailImageViewMouseClick(event, URI.create(thumbnailUrl), downloadPath.toPath());
+                    boolean saved = saveImage(videoInfo, downloadPath);
+                    if (!saved) {
+                        Dialogs.error("image.save.error");
+                    }
+                    event.consume();
                 }
             });
         }
     }
 
-    private void handleThumbnailImageViewMouseClick(MouseEvent event, URI uri, Path downloadPath) {
-        HttpClient client = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .connectTimeout(Duration.ofSeconds(30))
-                .build();
+    private boolean saveImage(VideoInfo videoInfo, File downloadPath) {
+        BufferedImage origImg = null;
+        for (Thumbnails.Quality quality : List.of(Thumbnails.Quality.MAX, Thumbnails.Quality.HIGH, Thumbnails.Quality.MEDIUM)) {
+            try {
+                origImg = ImageIO.read(new URL(Thumbnails.normalizeThumbnailUrl(videoInfo, quality)));
+                break;
+            } catch (IOException e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
+        }
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .timeout(Duration.ofMinutes(1))
-                .GET()
-                .build();
+        boolean saved = false;
+        if (origImg != null) {
+            final BufferedImage convertedImg = new BufferedImage(origImg.getWidth(), origImg.getHeight(), BufferedImage.TYPE_INT_RGB);
+            convertedImg.createGraphics().drawImage(origImg, 0, 0, Color.WHITE, null);
 
-        client.sendAsync(request, HttpResponse.BodyHandlers.ofFile(downloadPath))
-                .exceptionally(throwable -> {
-                    LOGGER.warn(throwable.getMessage(), throwable);
-                    return null;
-                });
+            try {
+                saved = ImageIO.write(convertedImg, "jpg", downloadPath);
+            } catch (IOException e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
+        }
 
-        event.consume();
+        return saved;
     }
 
     public void setSelectable(boolean selectable) {

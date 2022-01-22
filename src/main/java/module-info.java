@@ -4,6 +4,7 @@ open module engatec.vdl {
 
     requires java.prefs;
     requires java.net.http;
+    requires java.desktop;
 
     requires org.apache.commons.lang3;
     requires org.apache.commons.collections4;

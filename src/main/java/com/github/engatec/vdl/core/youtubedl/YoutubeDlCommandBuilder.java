@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.Engine;
@@ -116,6 +117,31 @@ public class YoutubeDlCommandBuilder {
     public YoutubeDlCommandBuilder rateLimit(String limit) {
         commandList.add("-r");
         commandList.add(limit);
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder skipDownload() {
+        commandList.add("--skip-download");
+        return this;
+    }
+
+    /* Subtitles Options */
+    public YoutubeDlCommandBuilder writeSub(Set<String> languages) {
+        if (CollectionUtils.isEmpty(languages)) {
+            throw new IllegalArgumentException("Subtitle languages must not be empty");
+        }
+        commandList.add("--write-sub");
+        commandList.add("--sub-lang");
+        commandList.add(String.join(",", languages));
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder convertSub(String format) {
+        if (StringUtils.isBlank(format)) {
+            throw new IllegalArgumentException("Subtitles format must not be blank");
+        }
+        commandList.add("--convert-subs");
+        commandList.add(format);
         return this;
     }
 

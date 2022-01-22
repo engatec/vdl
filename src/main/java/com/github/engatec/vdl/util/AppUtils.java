@@ -8,12 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
-import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
@@ -26,7 +24,6 @@ public class AppUtils {
 
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
     public static final DateTimeFormatter DATE_TIME_FORMATTER_SQLITE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final Pattern YOUTUBE_PATTERN = Pattern.compile(".*youtube\\.com/.*");
 
     public static Optional<Path> resolveDownloadPath(Stage stage) {
         Path path = doResolveDownloadPath(stage);
@@ -94,13 +91,5 @@ public class AppUtils {
         }
 
         return url.getProtocol() + "://" + url.getAuthority() + url.getPath() + '?' + videoIdQueryParam;
-    }
-
-    public static String normalizeThumbnailUrl(VideoInfo vi) {
-        return YOUTUBE_PATTERN.matcher(vi.getBaseUrl()).matches() ? String.format("https://img.youtube.com/vi/%s/mqdefault.jpg", vi.getId()) : vi.getThumbnail();
-    }
-
-    public static String normalizeThumbnailUrlMaxRes(VideoInfo vi) {
-        return YOUTUBE_PATTERN.matcher(vi.getBaseUrl()).matches() ? String.format("https://img.youtube.com/vi/%s/maxresdefault.jpg", vi.getId()) : vi.getThumbnail();
     }
 }
