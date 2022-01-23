@@ -6,6 +6,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.preferences.category.Category;
 import com.github.engatec.vdl.core.preferences.category.GeneralCategory;
+import com.github.engatec.vdl.core.preferences.category.UpdatesCategory;
 import com.github.engatec.vdl.core.preferences.category.YoutubeDlCategory;
 import com.github.engatec.vdl.ui.controller.stage.StageAwareController;
 import javafx.event.ActionEvent;
@@ -46,7 +47,8 @@ public class PreferencesController extends StageAwareController {
 
         List<TreeItem<Category>> categories = List.of(
                 createGeneral(),
-                createYoutubeDl()
+                createYoutubeDl(),
+                createUpdates()
         );
         TreeItem<Category> root = createRoot();
         root.getChildren().addAll(categories);
@@ -72,6 +74,10 @@ public class PreferencesController extends StageAwareController {
 
     private TreeItem<Category> createYoutubeDl() {
         return new TreeItem<>(new YoutubeDlCategory(ctx.getLocalizedString("preferences.category.youtubedl")));
+    }
+
+    private TreeItem<Category> createUpdates() {
+        return new TreeItem<>(new UpdatesCategory(ctx.getLocalizedString("preferences.category.updates")));
     }
 
     private void handleCancelBtnClick(ActionEvent event) {
