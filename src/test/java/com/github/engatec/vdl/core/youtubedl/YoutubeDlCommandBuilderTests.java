@@ -2,6 +2,7 @@ package com.github.engatec.vdl.core.youtubedl;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import com.github.engatec.vdl.TestHelper;
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -43,7 +44,7 @@ public class YoutubeDlCommandBuilderTests {
 
     @Nested
     @DisplayName("General options")
-    class GeneralOptions {
+    class GeneralOptionsTests {
 
         @Test
         void shouldCreateMarkWatched() {
@@ -79,7 +80,7 @@ public class YoutubeDlCommandBuilderTests {
 
     @Nested
     @DisplayName("Network options")
-    class NetworkOptions {
+    class NetworkOptionsTests {
 
         @Test
         void shouldCreateProxyUrl() {
@@ -117,18 +118,58 @@ public class YoutubeDlCommandBuilderTests {
 
     @Nested
     @DisplayName("Download options")
-    class DownloadOptions {
+    class DownloadOptionsTests {
         @Test
         void shouldCreateRateLimit() {
             String limit = "4.2M";
             List<String> command = YoutubeDlCommandBuilder.newInstance().rateLimit(limit).buildAsList();
             doAssertions(command, "-r", limit);
         }
+
+        @Test
+        void shouldCreateSkipDownload() {
+            List<String> command = YoutubeDlCommandBuilder.newInstance().skipDownload().buildAsList();
+            doAssertions(command, "--skip-download");
+        }
+    }
+
+    @Nested
+    @DisplayName("Subtitles options")
+    class SubtutlesOptionsTests {
+        @Test
+        void shouldCreateWriteSubWithSubLang() {
+            List<String> command = YoutubeDlCommandBuilder.newInstance().writeSub(Set.of("en", "ru")).buildAsList();
+            assertThat(command)
+                    .hasSize(4)
+                    .containsAll(List.of("--write-sub", "--sub-lang"))
+                    .containsAnyOf("en,ru", "ru,en"); // Since set is passed, can't be sure what order is going to be when joining the elements
+        }
+
+        @Test
+        void shouldCreateWriteSubAndAllSubsWithoutSubLang() {
+            List<String> command = YoutubeDlCommandBuilder.newInstance().writeSub(Set.of()).buildAsList();
+            assertThat(command)
+                    .hasSize(3)
+                    .contains("--write-sub", "--all-subs");
+        }
+
+        @Test
+        void shouldCreateEmbedSub() {
+            List<String> command = YoutubeDlCommandBuilder.newInstance().embedSub().buildAsList();
+            doAssertions(command, "--embed-subs");
+        }
+
+        @Test
+        void shouldCreateConvertSub() {
+            String value = "srt";
+            List<String> command = YoutubeDlCommandBuilder.newInstance().convertSub(value).buildAsList();
+            doAssertions(command, "--convert-subs", value);
+        }
     }
 
     @Nested
     @DisplayName("Authentication options")
-    class AuthenticationOptions {
+    class AuthenticationOptionsTests {
 
         @Test
         void shouldCreateUsername() {

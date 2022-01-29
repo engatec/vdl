@@ -57,6 +57,27 @@
             </VBox>
          <HBox alignment="BASELINE_LEFT" spacing="8.0">
             <children>
+               <Label styleClass="preferences-category-title" text="%preferences.youtubedl.subtitles.title" />
+               <Separator HBox.hgrow="ALWAYS" />
+            </children>
+         </HBox>
+         <VBox spacing="12.0">
+            <padding>
+               <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />
+            </padding>
+            <children>
+               <CheckBox fx:id="writeSubtitlesCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.subtitles.download" wrapText="true" />
+               <CheckBox fx:id="embedSubtitlesCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.subtitles.embed" wrapText="true" />
+               <HBox alignment="BASELINE_LEFT" spacing="4.0">
+                  <children>
+                     <Label fx:id="subtitlesLanguagesLabel" minHeight="-Infinity" minWidth="-Infinity" text="%preferences.youtubedl.subtitles.languages" />
+                     <FxTextField fx:id="subtitlesLanguagesTextField" HBox.hgrow="ALWAYS" />
+                  </children>
+               </HBox>
+            </children>
+         </VBox>
+         <HBox alignment="BASELINE_LEFT" spacing="8.0">
+            <children>
                <Label styleClass="preferences-category-title" text="%preferences.youtubedl.download.title" />
                <Separator HBox.hgrow="ALWAYS" />
             </children>

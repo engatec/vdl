@@ -73,7 +73,7 @@ public class PreferencesController extends StageAwareController {
     }
 
     private TreeItem<Category> createYoutubeDl() {
-        return new TreeItem<>(new YoutubeDlCategory(ctx.getLocalizedString("preferences.category.youtubedl")));
+        return new TreeItem<>(new YoutubeDlCategory(ctx.getLocalizedString("preferences.category.youtubedl_ytdlp")));
     }
 
     private TreeItem<Category> createUpdates() {

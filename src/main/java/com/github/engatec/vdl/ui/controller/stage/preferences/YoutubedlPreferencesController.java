@@ -11,6 +11,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPr
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.EmbedSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
@@ -19,6 +20,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.PreferredSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
@@ -27,11 +29,14 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressP
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.WriteSubtitlesPref;
 import com.github.engatec.vdl.ui.SvgIcons;
 import com.github.engatec.vdl.validation.InputForm;
+import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import org.apache.commons.lang3.BooleanUtils;
@@ -48,6 +53,11 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     @FXML private FxTextField proxyUrlTextField;
     @FXML private FxTextField socketTimoutTextField;
     @FXML private FxTextField sourceAddressTextField;
+
+    @FXML private CheckBox writeSubtitlesCheckbox;
+    @FXML private CheckBox embedSubtitlesCheckbox;
+    @FXML private Label subtitlesLanguagesLabel;
+    @FXML private FxTextField subtitlesLanguagesTextField;
 
     @FXML private CheckBox forceIpV4CheckBox;
     @FXML private CheckBox forceIpV6CheckBox;
@@ -77,6 +87,7 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     @FXML
     public void initialize() {
         initGeneralSettings();
+        initSubtitlesSettings();
         initDownloadSettings();
         initNetworkSettings();
         initAuthenticationSettings();
@@ -93,6 +104,15 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
 
         cookiesFileChooser.setButtonText(ctx.getLocalizedString("button.filechoose"));
         cookiesFileChooser.disableProperty().bind(readCookiesCheckbox.selectedProperty().not());
+    }
+
+    private void initSubtitlesSettings() {
+        BooleanBinding noNeedDownloadSubtitlesBinding = writeSubtitlesCheckbox.selectedProperty().not();
+        embedSubtitlesCheckbox.disableProperty().bind(noNeedDownloadSubtitlesBinding);
+        subtitlesLanguagesLabel.disableProperty().bind(noNeedDownloadSubtitlesBinding);
+        subtitlesLanguagesTextField.disableProperty().bind(noNeedDownloadSubtitlesBinding);
+
+        subtitlesLanguagesTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.subtitles.languages.hint"));
     }
 
     private void initDownloadSettings() {
@@ -143,6 +163,10 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
         sourceAddressTextField.textProperty().bindBidirectional(configRegistry.get(SourceAddressPref.class).getProperty());
         forceIpV4CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV4Pref.class).getProperty());
         forceIpV6CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV6Pref.class).getProperty());
+
+        writeSubtitlesCheckbox.selectedProperty().bindBidirectional(configRegistry.get(WriteSubtitlesPref.class).getProperty());
+        embedSubtitlesCheckbox.selectedProperty().bindBidirectional(configRegistry.get(EmbedSubtitlesPref.class).getProperty());
+        subtitlesLanguagesTextField.textProperty().bindBidirectional(configRegistry.get(PreferredSubtitlesPref.class).getProperty());
 
         rateLimitTextField.textProperty().bindBidirectional(configRegistry.get(RateLimitPref.class).getProperty());
 

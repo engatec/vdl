@@ -118,7 +118,7 @@ public class DownloadableItemComponentController extends HBox {
         });
 
         if (CollectionUtils.isNotEmpty(videoInfo.getSubtitles())) {
-            closedCaptionButton.setGraphic(new ImageView(Icon.CLOSED_CAPTION_SMALL.getImage()));
+            closedCaptionButton.setGraphic(new ImageView(Icon.SUBTITLES_SMALL.getImage()));
             closedCaptionButton.setTooltip(Tooltips.createNew("download.subtitles"));
             closedCaptionButton.setOnAction(e -> {
                 FileChooser fileChooser = new FileChooser();
@@ -130,7 +130,7 @@ public class DownloadableItemComponentController extends HBox {
                 fileChooser.setInitialFileName("subtitles");
                 File downloadPath = fileChooser.showSaveDialog(stage);
                 if (downloadPath != null) {
-                    new SubtitlesDownloadService(videoInfo.getBaseUrl(), videoInfo.getSubtitles(), downloadPath.toPath()).start();
+                    new SubtitlesDownloadService(videoInfo.getBaseUrl(), downloadPath.toPath()).start();
                 }
                 e.consume();
             });

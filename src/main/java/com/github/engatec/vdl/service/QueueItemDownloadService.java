@@ -16,10 +16,13 @@ import java.util.regex.Pattern;
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
-import com.github.engatec.vdl.core.YoutubeDlManager;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadProcessBuilder;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadWithConfigFileProcessBuilder;
+import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuilder;
 import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.service.data.DownloadProgressData;
 import javafx.beans.property.DoubleProperty;
 import javafx.concurrent.Service;
@@ -194,7 +197,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
             @Override
             protected DownloadProgressData call() throws Exception {
-                Process process = YoutubeDlManager.INSTANCE.download(queueItem);
+                Process process = createDownloadProcess();
                 addProcess(process);
                 try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ctx.getSystemCharset()))) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
@@ -239,6 +242,13 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                 }
 
                 return null;
+            }
+
+            private Process createDownloadProcess() throws IOException {
+                Boolean useConfigFile = ctx.getConfigRegistry().get(UseConfigFilePref.class).getValue();
+                YoutubeDlProcessBuilder pb = useConfigFile ? new DownloadWithConfigFileProcessBuilder(queueItem) : new DownloadProcessBuilder(queueItem);
+                List<String> command = pb.buildCommand();
+                return pb.buildProcess(command);
             }
 
             /**

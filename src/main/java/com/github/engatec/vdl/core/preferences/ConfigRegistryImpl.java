@@ -27,6 +27,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPr
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.EmbedSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
@@ -35,6 +36,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.PreferredSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
@@ -43,6 +45,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressP
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.WriteSubtitlesPref;
 
 public class ConfigRegistryImpl implements ConfigRegistry {
 
@@ -84,6 +87,9 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new TwoFactorCodePref());
         addToRegistry(new NetrcPref());
         addToRegistry(new VideoPasswordPref());
+        addToRegistry(new WriteSubtitlesPref());
+        addToRegistry(new EmbedSubtitlesPref());
+        addToRegistry(new PreferredSubtitlesPref());
 
         /* Misc */
         addToRegistry(new DownloaderPref());

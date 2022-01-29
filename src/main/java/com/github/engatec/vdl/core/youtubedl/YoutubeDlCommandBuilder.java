@@ -28,6 +28,10 @@ public class YoutubeDlCommandBuilder {
         var o = new YoutubeDlCommandBuilder();
         o.commandList = new ArrayList<>();
         o.commandList.add(ApplicationContext.getInstance().getDownloaderPath(engine).toString());
+        if (engine == Engine.YT_DLP) {
+            o.commandList.add("--compat-options");
+            o.commandList.add("all");
+        }
         return o;
     }
 
@@ -127,12 +131,18 @@ public class YoutubeDlCommandBuilder {
 
     /* Subtitles Options */
     public YoutubeDlCommandBuilder writeSub(Set<String> languages) {
-        if (CollectionUtils.isEmpty(languages)) {
-            throw new IllegalArgumentException("Subtitle languages must not be empty");
-        }
         commandList.add("--write-sub");
-        commandList.add("--sub-lang");
-        commandList.add(String.join(",", languages));
+        if (CollectionUtils.isNotEmpty(languages)) {
+            commandList.add("--sub-lang");
+            commandList.add(String.join(",", languages));
+        } else {
+            commandList.add("--all-subs");
+        }
+        return this;
+    }
+
+    public YoutubeDlCommandBuilder embedSub() {
+        commandList.add("--embed-subs");
         return this;
     }
 

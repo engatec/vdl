@@ -2,6 +2,9 @@ package com.github.engatec.vdl.core.youtubedl;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
@@ -9,6 +12,7 @@ import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.EmbedSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
@@ -17,6 +21,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.PreferredSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
@@ -24,6 +29,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutP
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.WriteSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.youtubedl.RateLimitConfigItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -71,6 +77,26 @@ public class YoutubeDlCommandHelper {
             if (Files.exists(cookiesPath) && Files.isReadable(cookiesPath)) {
                 commandBuilder.cookiesFile(Path.of(cookiesFileLocation));
             }
+        }
+    }
+
+    public static void setSubtitlesOptions(YoutubeDlCommandBuilder commandBuilder) {
+        Boolean writeSubtitles = configRegistry.get(WriteSubtitlesPref.class).getValue();
+        if (!writeSubtitles) {
+            return;
+        }
+
+        String preferredSubtitlesConfigValue = configRegistry.get(PreferredSubtitlesPref.class).getValue();
+        Set<String> preferredSubtitles = Arrays.stream(preferredSubtitlesConfigValue.split(","))
+                .filter(StringUtils::isNotBlank)
+                .map(StringUtils::strip)
+                .collect(Collectors.toSet());
+        commandBuilder.writeSub(preferredSubtitles);
+        commandBuilder.convertSub("srt");
+
+        Boolean embedSubtitles = configRegistry.get(EmbedSubtitlesPref.class).getValue();
+        if (embedSubtitles) {
+            commandBuilder.embedSub();
         }
     }
 

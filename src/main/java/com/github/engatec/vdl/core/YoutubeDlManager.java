@@ -15,16 +15,12 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.CacheRemoveProcessBuilder;
-import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadProcessBuilder;
-import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadWithConfigFileProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.DownloadableInfoFetchProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.VersionFetchProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuilder;
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlUpdateProcessBuilder;
 import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -83,13 +79,6 @@ public class YoutubeDlManager {
             process.destroy();
             throw new ProcessException(errorMsg);
         }
-    }
-
-    public Process download(Downloadable downloadable) throws IOException {
-        Boolean useConfigFile = ctx.getConfigRegistry().get(UseConfigFilePref.class).getValue();
-        YoutubeDlProcessBuilder pb = useConfigFile ? new DownloadWithConfigFileProcessBuilder(downloadable) : new DownloadProcessBuilder(downloadable);
-        List<String> command = pb.buildCommand();
-        return pb.buildProcess(command);
     }
 
     public String getCurrentVersion(Engine engine) {

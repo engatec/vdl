@@ -11,6 +11,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.misc.DownloaderPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.EmbedSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
@@ -18,6 +19,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.PreferredSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
@@ -25,6 +27,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutP
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.WriteSubtitlesPref;
 import com.github.engatec.vdl.model.preferences.youtubedl.RateLimitConfigItem;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,7 +69,7 @@ public class YoutubeDlCommandHelperTests {
 
     @Nested
     @DisplayName("General options")
-    class GeneralOptions {
+    class GeneralOptionsTests {
 
         @BeforeEach
         void setUp() {
@@ -145,8 +148,63 @@ public class YoutubeDlCommandHelperTests {
     }
 
     @Nested
+    @DisplayName("Subtitles options")
+    class SubtitlesOptionsTests {
+        @BeforeEach
+        void setUp() {
+            mockPreference(WriteSubtitlesPref.class, false);
+            mockPreference(EmbedSubtitlesPref.class, true);
+            mockPreference(PreferredSubtitlesPref.class, StringUtils.EMPTY);
+        }
+
+        private List<String> buildCommand() {
+            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
+            YoutubeDlCommandHelper.setSubtitlesOptions(commandBuilder);
+            return commandBuilder.buildAsList();
+        }
+
+        @Test
+        void shouldNotHaveAnySubtitlesOption() {
+            assertThat(buildCommand())
+                    .hasSize(1)
+                    .doesNotContainAnyElementsOf(List.of("--write-sub", "--sub-lang", "--embed-subs"));
+        }
+
+        @Test
+        void shouldHaveNeitherEmbedSubsNorSubLang() {
+            mockPreference(WriteSubtitlesPref.class, true);
+            mockPreference(EmbedSubtitlesPref.class, false);
+            assertThat(buildCommand())
+                    .hasSize(5)
+                    .contains("--write-sub", "--all-subs", "--convert-subs", "srt")
+                    .doesNotContain("--sub-lang", "--embed-subs");
+        }
+
+        @Test
+        void shouldHaveSubLang() {
+            mockPreference(WriteSubtitlesPref.class, true);
+            mockPreference(EmbedSubtitlesPref.class, false);
+            mockPreference(PreferredSubtitlesPref.class, "en,ru");
+            assertThat(buildCommand())
+                    .hasSize(6)
+                    .contains("--write-sub", "--sub-lang", "--convert-subs", "srt")
+                    .containsAnyOf("en,ru", "ru,en");
+        }
+
+        @Test
+        void shouldHaveEmbedSub() {
+            mockPreference(WriteSubtitlesPref.class, true);
+            mockPreference(EmbedSubtitlesPref.class, true);
+            assertThat(buildCommand())
+                    .hasSize(6)
+                    .contains("--write-sub", "--all-subs", "--convert-subs", "srt", "--embed-subs")
+                    .doesNotContain("--sub-lang");
+        }
+    }
+
+    @Nested
     @DisplayName("Download options")
-    class DownloadOptions {
+    class DownloadOptionsTests {
 
         @BeforeEach
         void setUp() {
@@ -178,7 +236,7 @@ public class YoutubeDlCommandHelperTests {
 
     @Nested
     @DisplayName("Network options")
-    class NetworkOptions {
+    class NetworkOptionsTests {
 
         @BeforeEach
         void setUp() {
@@ -250,7 +308,7 @@ public class YoutubeDlCommandHelperTests {
 
     @Nested
     @DisplayName("Authenticated options")
-    class AuthenticationOptions {
+    class AuthenticationOptionsTests {
 
         @BeforeEach
         void setUp() {

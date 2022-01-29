@@ -29,12 +29,10 @@ public class SubtitlesDownloadService extends Service<Void> {
     private static final Pattern DOWNLOAD_DESTINATION_PATTERN = Pattern.compile("\\s*\\[info] Writing video subtitles to:(?<destination>.*)");
 
     private final String url;
-    private final Set<String> languages;
     private final Path downloadPath;
 
-    public SubtitlesDownloadService(String url, Set<String> languages, Path downloadPath) {
+    public SubtitlesDownloadService(String url, Path downloadPath) {
         this.url = url;
-        this.languages = languages;
         this.downloadPath = downloadPath;
     }
 
@@ -54,7 +52,7 @@ public class SubtitlesDownloadService extends Service<Void> {
             protected Void call() throws Exception {
                 List<String> command = YoutubeDlCommandBuilder.newInstance()
                         .outputPath(FilenameUtils.removeExtension(downloadPath.toString()))
-                        .writeSub(languages)
+                        .writeSub(Set.of())
                         .convertSub("srt")
                         .skipDownload()
                         .urls(List.of(url))
