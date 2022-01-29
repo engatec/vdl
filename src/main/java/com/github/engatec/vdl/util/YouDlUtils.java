@@ -10,7 +10,10 @@ import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
+import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.WriteSubtitlesPref;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,8 +37,12 @@ public class YouDlUtils {
     }
 
     public static void deleteTempFiles(Collection<? extends String> paths) {
+        Boolean subtitlesEnabled = ApplicationContext.getInstance().getConfigRegistry().get(WriteSubtitlesPref.class).getValue();
         for (String path : CollectionUtils.emptyIfNull(paths)) {
             deleteTempFiles(path, 0);
+            if (subtitlesEnabled) {
+                deleteSubtitles(path);
+            }
         }
     }
 
@@ -78,6 +85,23 @@ public class YouDlUtils {
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
+        }
+    }
+
+    public static void deleteSubtitles(String path) {
+        if (StringUtils.isBlank(path)) {
+            return;
+        }
+
+        try {
+            Path normalizedPath = Path.of(StringUtils.strip(path));
+            boolean deleted = Files.deleteIfExists(normalizedPath);
+            if (!deleted) {
+                Path convertedPath = Path.of(FilenameUtils.removeExtension(StringUtils.strip(path)) + ".srt");
+                Files.deleteIfExists(convertedPath);
+            }
+        } catch (IOException e) {
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 }

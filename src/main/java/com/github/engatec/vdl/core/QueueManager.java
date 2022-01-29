@@ -149,6 +149,10 @@ public class QueueManager extends VdlManager {
     }
 
     private void deleteTempData(List<? extends QueueItem> removedItems) {
+        if (CollectionUtils.isEmpty(removedItems)) {
+            return;
+        }
+
         List<Long> ids = removedItems.stream()
                 .map(QueueItem::getId)
                 .toList();
