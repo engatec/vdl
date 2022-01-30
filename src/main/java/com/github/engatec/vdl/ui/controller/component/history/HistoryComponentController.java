@@ -26,6 +26,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.SystemUtils;
@@ -98,13 +99,17 @@ public class HistoryComponentController extends VBox implements ComponentControl
             );
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    Path downloadPath = row.getItem().getDownloadPath();
-                    if (Files.isRegularFile(downloadPath)) {
-                        openFileOrFolder(downloadPath, "stage.history.ctxmenu.play.error");
-                    }
+                    playFile(row.getItem().getDownloadPath());
                 }
             });
+
             return row;
+        });
+
+        historyTableView.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER && event.getSource() instanceof TableView<?> tv && tv.getSelectionModel().getSelectedItem() instanceof HistoryItem item) {
+                playFile(item.getDownloadPath());
+            }
         });
     }
 
@@ -138,6 +143,12 @@ public class HistoryComponentController extends VBox implements ComponentControl
         ctxMenu.setOnShowing(event -> play.setVisible(Files.isRegularFile(row.getItem().getDownloadPath())));
 
         return ctxMenu;
+    }
+
+    private void playFile(Path path) {
+        if (Files.isRegularFile(path)) {
+            openFileOrFolder(path, "stage.history.ctxmenu.play.error");
+        }
     }
 
     private void openFileOrFolder(Path path, String errorMsgKey) {
