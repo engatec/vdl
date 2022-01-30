@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.model.QueueItem;
@@ -35,7 +34,6 @@ public class SubscriptionsUpdateService extends Service<Void> {
 
     private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final QueueManager queueManager = ctx.getManager(QueueManager.class);
-    private final HistoryManager historyManager = ctx.getManager(HistoryManager.class);
     private final SubscriptionsManager subscriptionsManager = ctx.getManager(SubscriptionsManager.class);
 
     private final CountDownLatch updatesCountDownLatch;
@@ -113,12 +111,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
                     downloadable.setTitle(vi.getTitle());
                     downloadable.setFormatId(formatId);
                     downloadable.setDownloadPath(Path.of(subscription.getDownloadPath()));
-
-                    Platform.runLater(() -> {
-                        historyManager.addToHistory(downloadable);
-                        queueManager.addItem(new QueueItem(downloadable));
-                    });
-
+                    Platform.runLater(() -> queueManager.addItem(new QueueItem(downloadable)));
                 }
 
                 subscriptionsManager.addProcessedItems(subscription, newItems.stream().map(subscriptionsManager::buildPlaylistItemId).collect(Collectors.toSet()));

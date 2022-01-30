@@ -1,5 +1,6 @@
 package com.github.engatec.vdl.ui.controller.component.history;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -95,6 +96,14 @@ public class HistoryComponentController extends VBox implements ComponentControl
                             .then(contextMenu)
                             .otherwise((ContextMenu) null)
             );
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Path downloadPath = row.getItem().getDownloadPath();
+                    if (Files.isRegularFile(downloadPath)) {
+                        openFileOrFolder(downloadPath, "stage.history.ctxmenu.play.error");
+                    }
+                }
+            });
             return row;
         });
     }
@@ -102,18 +111,17 @@ public class HistoryComponentController extends VBox implements ComponentControl
     private ContextMenu createContextMenu(TableRow<HistoryItem> row) {
         ContextMenu ctxMenu = new ContextMenu();
 
+        MenuItem play = new MenuItem(ctx.getLocalizedString("stage.history.ctxmenu.play"));
+        play.setOnAction(event -> {
+            openFileOrFolder(row.getItem().getDownloadPath(), "stage.history.ctxmenu.play.error");
+            event.consume();
+        });
+
         MenuItem openFolder = new MenuItem(ctx.getLocalizedString("stage.history.ctxmenu.openfolder"));
         openFolder.setOnAction(event -> {
-            Path path = row.getItem().getDownloadPath();
-            try {
-                // Avoid using Desktop from awt package to open folders as it's crap! It hangs or doesn't work on Linux and Mac
-                String command = SystemUtils.IS_OS_WINDOWS ? "explorer" :
-                        (SystemUtils.IS_OS_LINUX ? "xdg-open" : "open");
-                Runtime.getRuntime().exec(new String[] {command, path.toString()});
-            } catch (Exception e) {
-                LOGGER.warn(e.getMessage());
-                Dialogs.error("stage.history.ctxmenu.openfolder.error");
-            }
+            Path downloadPath = row.getItem().getDownloadPath();
+            Path folderPath = Files.isDirectory(downloadPath) ? downloadPath : downloadPath.getParent();
+            openFileOrFolder(folderPath, "stage.history.ctxmenu.openfolder.error");
             event.consume();
         });
 
@@ -125,9 +133,23 @@ public class HistoryComponentController extends VBox implements ComponentControl
             event.consume();
         });
 
-        ctxMenu.getItems().addAll(openFolder, copyUrl);
+        ctxMenu.getItems().addAll(play, openFolder, copyUrl);
+
+        ctxMenu.setOnShowing(event -> play.setVisible(Files.isRegularFile(row.getItem().getDownloadPath())));
 
         return ctxMenu;
+    }
+
+    private void openFileOrFolder(Path path, String errorMsgKey) {
+        try {
+            // Avoid using Desktop from awt package to open files/folders as it's crap! It hangs or doesn't work on Linux and Mac
+            String command = SystemUtils.IS_OS_WINDOWS ? "explorer" :
+                    (SystemUtils.IS_OS_LINUX ? "xdg-open" : "open");
+            Runtime.getRuntime().exec(new String[] {command, path.toString()});
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage());
+            Dialogs.error(errorMsgKey);
+        }
     }
 
     private void handleClearHistoryBtnClick(ActionEvent e) {

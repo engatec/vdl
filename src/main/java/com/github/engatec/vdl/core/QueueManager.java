@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +69,20 @@ public class QueueManager extends VdlManager {
                         .map(Process::onExit)
                         .toArray(CompletableFuture[]::new);
 
-                CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(() -> deleteTempData(removedItems), systemExecutor);
+                CompletableFuture.allOf(onExitCompletableFutures).thenRunAsync(
+                        () -> {
+                            if (CollectionUtils.isEmpty(removedItems)) {
+                                return;
+                            }
+
+                            List<Long> ids = removedItems.stream().map(QueueItem::getId).toList();
+                            dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.deleteQueueItems(ids));
+
+                            updateHistory(ctx.getManager(HistoryManager.class), removedItems);
+                            deleteTempData(removedItems);
+                        },
+                        systemExecutor
+                );
             }
 
             notifyItemsChanged(change.getList());
@@ -149,19 +164,27 @@ public class QueueManager extends VdlManager {
     }
 
     private void deleteTempData(List<? extends QueueItem> removedItems) {
-        if (CollectionUtils.isEmpty(removedItems)) {
-            return;
-        }
-
-        List<Long> ids = removedItems.stream()
-                .map(QueueItem::getId)
-                .toList();
-        dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.deleteQueueItems(ids));
-
         for (QueueItem ri : removedItems) {
             if (ri.getStatus() != FINISHED) {
                 YouDlUtils.deleteTempFiles(ri.getDestinationsForTraversal());
             }
+        }
+    }
+
+    private void updateHistory(HistoryManager historyManager, List<? extends QueueItem> finishedItems) {
+        for (QueueItem fi : finishedItems) {
+            if (fi.getStatus() != FINISHED) {
+                continue;
+            }
+
+            fi.getDestinationsForTraversal().stream()
+                    .map(StringUtils::strip)
+                    .map(Path::of)
+                    .filter(Files::exists)
+                    .max(Comparator.comparing(it -> it.toFile().length()))
+                    .ifPresent(fi::setDownloadPath);
+
+            historyManager.addToHistory(fi);
         }
     }
 

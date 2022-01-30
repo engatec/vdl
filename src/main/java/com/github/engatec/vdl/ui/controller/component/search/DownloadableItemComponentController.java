@@ -12,7 +12,6 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.AudioFormat;
@@ -65,7 +64,6 @@ public class DownloadableItemComponentController extends HBox {
 
     private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final QueueManager queueManager = ctx.getManager(QueueManager.class);
-    private final HistoryManager historyManager = ctx.getManager(HistoryManager.class);
 
     private final Stage stage;
     private final VideoInfo videoInfo;
@@ -291,7 +289,6 @@ public class DownloadableItemComponentController extends HBox {
     public void download(Path path) {
         Downloadable downloadable = getDownloadable();
         downloadable.setDownloadPath(path);
-        historyManager.addToHistory(downloadable);
         queueManager.addItem(new QueueItem(downloadable));
     }
 
@@ -304,7 +301,6 @@ public class DownloadableItemComponentController extends HBox {
         downloadable.setDownloadPath(path);
         downloadable.setFormatId("bestaudio"); // No need to download video if user only wants to extract audio
         downloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(format, quality)));
-        historyManager.addToHistory(downloadable);
         queueManager.addItem(new QueueItem(downloadable));
     }
 }

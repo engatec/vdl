@@ -48,6 +48,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     private static final String GROUP_SIZE = "size";
     private static final String GROUP_THROUGHPUT = "throughput";
     private static final String GROUP_DESTINATION = "destination";
+    private static final String GROUP_MERGE = "merge";
 
     private static final Pattern DOWNLOAD_PROGRESS_PATTERN = Pattern.compile(
             "\\s*\\[download]\\s+" +
@@ -58,6 +59,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     );
 
     private static final Pattern DOWNLOAD_DESTINATION_PATTERN = Pattern.compile("\\s*\\[download] Destination:(?<destination>.*)");
+    private static final Pattern MERGE_PATTERN = Pattern.compile("\\s*(\\[Merger]|\\[ffmpeg]) Merging formats into \"(?<merge>.*)\"");
 
     private final List<Process> processes = Collections.synchronizedList(new ArrayList<>());
     private final QueueItem queueItem;
@@ -224,11 +226,14 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                             updateValue(getProgressData());
                         } else {
                             Matcher destinationMatcher = DOWNLOAD_DESTINATION_PATTERN.matcher(it);
+                            Matcher mergeMatcher = MERGE_PATTERN.matcher(it);
                             if (destinationMatcher.matches()) {
                                 queueManager.addDestination(queueItem, destinationMatcher.group(GROUP_DESTINATION));
                                 if (StringUtils.isNotBlank(progressDataCurrent.getSize())) {
                                     updateProgressData(0, progressDataCurrent.getThroughput(), progressDataCurrent.getSize() + SIZE_SEPARATOR);
                                 }
+                            } else if (mergeMatcher.matches()) {
+                                queueManager.addDestination(queueItem, mergeMatcher.group(GROUP_MERGE));
                             }
                         }
                     });
