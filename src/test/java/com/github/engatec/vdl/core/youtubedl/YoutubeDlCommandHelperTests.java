@@ -20,6 +20,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.PreferredSubtitlesPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyEnabledPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
@@ -260,10 +261,26 @@ public class YoutubeDlCommandHelperTests {
         }
 
         @Test
-        void shouldSetProxyUrl() {
+        void shouldSetProxy() {
             String proxyUrl = "http://proxy";
+            mockPreference(ProxyEnabledPref.class, true);
             mockPreference(ProxyUrlPref.class, proxyUrl);
             doAssertions(buildCommand(), "--proxy", proxyUrl);
+        }
+
+        @Test
+        void shouldNotSetProxy_proxyDisabled() {
+            mockPreference(ProxyEnabledPref.class, false);
+            mockPreference(ProxyUrlPref.class, "http://proxy");
+            List<String> command = buildCommand();
+            assertThat(command).hasSize(1);
+        }
+
+        @Test
+        void shouldNotSetProxy_proxyUrlEmpty() {
+            mockPreference(ProxyEnabledPref.class, true);
+            List<String> command = buildCommand();
+            assertThat(command).hasSize(1);
         }
 
         @Test
@@ -294,6 +311,7 @@ public class YoutubeDlCommandHelperTests {
 
         @Test
         void shouldSetMultiple() {
+            mockPreference(ProxyEnabledPref.class, true);
             mockPreference(ProxyUrlPref.class, "http://proxy");
             mockPreference(SocketTimeoutPref.class, "10");
             mockPreference(SourceAddressPref.class, "127.0.0.1");

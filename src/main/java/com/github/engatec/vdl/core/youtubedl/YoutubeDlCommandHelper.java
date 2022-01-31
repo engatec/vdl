@@ -22,6 +22,7 @@ import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.PreferredSubtitlesPref;
+import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyEnabledPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
 import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
@@ -108,8 +109,9 @@ public class YoutubeDlCommandHelper {
     }
 
     public static void setNetworkOptions(YoutubeDlCommandBuilder commandBuilder) {
+        Boolean proxyEnabled = configRegistry.get(ProxyEnabledPref.class).getValue();
         String proxyUrl = strip(configRegistry.get(ProxyUrlPref.class).getValue());
-        if (isNotBlank(proxyUrl)) {
+        if (proxyEnabled && isNotBlank(proxyUrl)) {
             commandBuilder.proxy(proxyUrl);
         }
 
