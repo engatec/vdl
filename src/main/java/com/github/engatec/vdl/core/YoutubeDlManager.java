@@ -9,6 +9,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuil
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlUpdateProcessBuilder;
 import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -53,19 +55,22 @@ public class YoutubeDlManager {
             }
         } catch (Exception e) {
             LOGGER.error("Failed command: '{}'", String.join(StringUtils.SPACE, command));
-            checkErrors(process);
+            fetchProcessError(process).ifPresent(LOGGER::warn);
+            process.destroy();
             throw e;
         }
 
-        checkErrors(process);
+        fetchProcessError(process).ifPresent(it -> {
+            LOGGER.warn(it);
+            if (CollectionUtils.isEmpty(videoInfoList)) {
+                process.destroy();
+            }
+        });
 
         return videoInfoList;
     }
 
-    /**
-     * @throws ProcessException if the process contained any errors
-     */
-    private void checkErrors(Process process) {
+    private Optional<String> fetchProcessError(Process process) {
         String errorMsg;
         try (InputStream errorStream = process.getErrorStream()) {
             errorMsg = IOUtils.readLines(errorStream, ctx.getSystemCharset()).stream()
@@ -74,11 +79,7 @@ public class YoutubeDlManager {
             errorMsg = e.getMessage();
         }
 
-        if (StringUtils.isNotBlank(errorMsg)) {
-            LOGGER.warn(errorMsg);
-            process.destroy();
-            throw new ProcessException(errorMsg);
-        }
+        return StringUtils.isNotBlank(errorMsg) ? Optional.of(errorMsg) : Optional.empty();
     }
 
     public String getCurrentVersion(Engine engine) {
@@ -125,7 +126,11 @@ public class YoutubeDlManager {
                         })
                         .anyMatch(it -> it.contains(currentVersion));
             }
-            checkErrors(process);
+            fetchProcessError(process).ifPresent(it -> {
+                LOGGER.warn(it);
+                process.destroy();
+                throw new ProcessException(it);
+            });
             process.waitFor();
         }
 
