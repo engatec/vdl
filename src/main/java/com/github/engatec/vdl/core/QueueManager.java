@@ -1,6 +1,5 @@
 package com.github.engatec.vdl.core;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,8 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.db.mapper.QueueMapper;
 import com.github.engatec.vdl.model.QueueItem;
@@ -93,38 +90,7 @@ public class QueueManager extends VdlManager {
                 .thenAccept(dbItems -> {
                     fixState(dbItems);
                     Platform.runLater(() -> addAll(dbItems));
-                })
-                .thenRun(() -> { // FIXME: deprecated in 1.7 For removal in 1.9
-                    List<QueueItem> queueItems = restoreFromJson(ctx.getAppDataDir().resolve("queue.vdl"));
-                    if (CollectionUtils.isEmpty(queueItems)) {
-                        return;
-                    }
-                    fixState(queueItems);
-                    Platform.runLater(() -> {
-                        for (QueueItem it : queueItems) {
-                            addItem(it);
-                        }
-                    });
                 });
-    }
-
-    // FIXME: transition from JSON files to sqlite.
-    @Deprecated(since = "1.7", forRemoval = true)
-    private List<QueueItem> restoreFromJson(Path queueFilePath) {
-        if (Files.notExists(queueFilePath)) {
-            return List.of();
-        }
-
-        List<QueueItem> result = List.of();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            result = mapper.readValue(queueFilePath.toFile(), new TypeReference<>(){});
-            result.removeIf(it -> it.getStatus() == FINISHED);
-            Files.delete(queueFilePath);
-        } catch (IOException e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-        return result;
     }
 
     public void addItem(QueueItem item) {
