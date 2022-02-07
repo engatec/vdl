@@ -10,16 +10,16 @@ import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Resolution;
-import com.github.engatec.vdl.model.preferences.general.AutoSelectFormatConfigItem;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionFormatPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionQualityPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadThreadsPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
+import com.github.engatec.vdl.preference.configitem.general.AutoSelectFormatConfigItem;
+import com.github.engatec.vdl.preference.property.general.AlwaysAskDownloadPathConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionFormatConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionQualityConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AutoSearchFromClipboardConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AutoSelectFormatConfigProperty;
+import com.github.engatec.vdl.preference.property.general.DownloadPathConfigProperty;
+import com.github.engatec.vdl.preference.property.general.DownloadThreadsConfigProperty;
+import com.github.engatec.vdl.preference.property.general.LanguageConfigProperty;
+import com.github.engatec.vdl.preference.property.general.LoadThumbnailsConfigProperty;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
 import com.github.engatec.vdl.validation.InputForm;
@@ -72,7 +72,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 .toList();
         languageComboBox.getItems().addAll(languages);
 
-        Language currentLanguage = Language.getByLocaleCode(configRegistry.get(LanguagePref.class).getValue());
+        Language currentLanguage = Language.getByLocaleCode(configRegistry.get(LanguageConfigProperty.class).getValue());
         languages.stream()
                 .filter(it -> it.getValue() == currentLanguage)
                 .findFirst()
@@ -81,21 +81,21 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         languageComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 Language newLanguage = newValue.getValue();
-                LanguagePref languagePref = configRegistry.get(LanguagePref.class);
-                languagePref.setValue(newLanguage.getLocaleCode());
+                LanguageConfigProperty languageConfigProperty = configRegistry.get(LanguageConfigProperty.class);
+                languageConfigProperty.setValue(newLanguage.getLocaleCode());
                 Dialogs.info("preferences.general.language.restartrequired", newLanguage);
             }
         });
     }
 
     private void bindPropertyHolder() {
-        askPathRadioBtn.selectedProperty().bindBidirectional(configRegistry.get(AlwaysAskDownloadPathPref.class).getProperty());
-        downloadPathDirectoryChooser.pathProperty().bindBidirectional(configRegistry.get(DownloadPathPref.class).getProperty());
-        autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(configRegistry.get(AutoSearchFromClipboardPref.class).getProperty());
-        autoSelectFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AutoSelectFormatPref.class).getProperty());
-        audioExtractionFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionFormatPref.class).getProperty());
-        audioExtractionQualitySlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionQualityPref.class).getProperty());
-        loadThumbnailsCheckbox.selectedProperty().bindBidirectional(configRegistry.get(LoadThumbnailsPref.class).getProperty());
+        askPathRadioBtn.selectedProperty().bindBidirectional(configRegistry.get(AlwaysAskDownloadPathConfigProperty.class).getProperty());
+        downloadPathDirectoryChooser.pathProperty().bindBidirectional(configRegistry.get(DownloadPathConfigProperty.class).getProperty());
+        autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(configRegistry.get(AutoSearchFromClipboardConfigProperty.class).getProperty());
+        autoSelectFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AutoSelectFormatConfigProperty.class).getProperty());
+        audioExtractionFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionFormatConfigProperty.class).getProperty());
+        audioExtractionQualitySlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionQualityConfigProperty.class).getProperty());
+        loadThumbnailsCheckbox.selectedProperty().bindBidirectional(configRegistry.get(LoadThumbnailsConfigProperty.class).getProperty());
     }
 
     private void initDownloadPathSettings() {
@@ -144,7 +144,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 IntStream.rangeClosed(1, 10).boxed().toList()
         ));
 
-        DownloadThreadsPref pref = configRegistry.get(DownloadThreadsPref.class);
+        DownloadThreadsConfigProperty pref = configRegistry.get(DownloadThreadsConfigProperty.class);
         downloadThreadsComboBox.getSelectionModel().select(pref.getValue());
         downloadThreadsComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {

@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.Engine;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.DownloaderPref;
+import com.github.engatec.vdl.preference.property.misc.DownloaderConfigProperty;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,7 +20,7 @@ public class YoutubeDlCommandBuilder {
     }
 
     public static YoutubeDlCommandBuilder newInstance() {
-        Engine engine = Engine.getByConfigValue(ApplicationContext.getInstance().getConfigRegistry().get(DownloaderPref.class).getValue());
+        Engine engine = Engine.getByConfigValue(ApplicationContext.getInstance().getConfigRegistry().get(DownloaderConfigProperty.class).getValue());
         return newInstance(engine);
     }
 

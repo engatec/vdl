@@ -17,8 +17,8 @@ import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
-import com.github.engatec.vdl.model.preferences.general.AutoSelectFormatConfigItem;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
+import com.github.engatec.vdl.preference.configitem.general.AutoSelectFormatConfigItem;
+import com.github.engatec.vdl.preference.property.general.AutoSelectFormatConfigProperty;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.application.Platform;
@@ -100,7 +100,7 @@ public class SubscriptionsUpdateService extends Service<Void> {
                         .filter(Predicate.not(it -> processedItems.contains(subscriptionsManager.buildPlaylistItemId(it))))
                         .toList();
 
-                Integer selectedVideoHeight = ctx.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
+                Integer selectedVideoHeight = ctx.getConfigRegistry().get(AutoSelectFormatConfigProperty.class).getValue();
                 selectedVideoHeight = AutoSelectFormatConfigItem.DEFAULT.equals(selectedVideoHeight) ? null : selectedVideoHeight;
 
                 for (VideoInfo vi : newItems) {

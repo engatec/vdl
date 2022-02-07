@@ -5,7 +5,7 @@ import java.util.prefs.Preferences;
 
 import com.github.engatec.vdl.Main;
 import com.github.engatec.vdl.core.preferences.portable.PortablePreferences;
-import com.github.engatec.vdl.model.preferences.ConfigItem;
+import com.github.engatec.vdl.preference.configitem.ConfigItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

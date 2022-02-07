@@ -6,30 +6,30 @@ import java.util.List;
 
 import com.github.engatec.vdl.TestHelper;
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.DownloaderPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.EmbedSubtitlesPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.PreferredSubtitlesPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyEnabledPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.WriteSubtitlesPref;
-import com.github.engatec.vdl.model.preferences.youtubedl.RateLimitConfigItem;
+import com.github.engatec.vdl.preference.configitem.youtubedl.RateLimitConfigItem;
+import com.github.engatec.vdl.preference.property.ConfigProperty;
+import com.github.engatec.vdl.preference.property.misc.DownloaderConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.AuthPasswordConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.AuthUsernameConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.CookiesFileLocationConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.EmbedSubtitlesConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ForceIpV4ConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ForceIpV6ConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.MarkWatchedConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.NetrcConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.NoContinueConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.NoMTimeConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.NoPartConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.PreferredSubtitlesConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ProxyEnabledConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ProxyUrlConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.RateLimitConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ReadCookiesConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.SocketTimeoutConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.SourceAddressConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.TwoFactorCodeConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.VideoPasswordConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,10 +48,10 @@ public class YoutubeDlCommandHelperTests {
     @BeforeAll
     static void setUp() {
         TestHelper.initTestApplicationContext();
-        mockPreference(DownloaderPref.class, 1);
+        mockPreference(DownloaderConfigProperty.class, 1);
     }
 
-    private static <V, T extends ConfigItemWrapper<?, V>> void mockPreference(Class<T> configItemClass, V value) {
+    private static <V, T extends ConfigProperty<?, V>> void mockPreference(Class<T> configItemClass, V value) {
         T prefMock = Mockito.mock(configItemClass);
         Mockito.when(ApplicationContext.getInstance().getConfigRegistry().get(configItemClass)).thenReturn(prefMock);
         Mockito.when(prefMock.getValue()).thenReturn(value);
@@ -74,12 +74,12 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            mockPreference(MarkWatchedPref.class, false);
-            mockPreference(NoContinuePref.class, false);
-            mockPreference(NoPartPref.class, false);
-            mockPreference(NoMTimePref.class, false);
-            mockPreference(ReadCookiesPref.class, false);
-            mockPreference(CookiesFileLocationPref.class, StringUtils.EMPTY);
+            mockPreference(MarkWatchedConfigProperty.class, false);
+            mockPreference(NoContinueConfigProperty.class, false);
+            mockPreference(NoPartConfigProperty.class, false);
+            mockPreference(NoMTimeConfigProperty.class, false);
+            mockPreference(ReadCookiesConfigProperty.class, false);
+            mockPreference(CookiesFileLocationConfigProperty.class, StringUtils.EMPTY);
         }
 
         private List<String> buildCommand() {
@@ -96,33 +96,33 @@ public class YoutubeDlCommandHelperTests {
 
         @Test
         void shouldSetMarkWatched() {
-            mockPreference(MarkWatchedPref.class, true);
+            mockPreference(MarkWatchedConfigProperty.class, true);
             doAssertions(buildCommand(), "--mark-watched");
         }
 
         @Test
         void shouldSetNoContinue() {
-            mockPreference(NoContinuePref.class, true);
+            mockPreference(NoContinueConfigProperty.class, true);
             doAssertions(buildCommand(), "--no-continue");
         }
 
         @Test
         void shouldSetNoPart() {
-            mockPreference(NoPartPref.class, true);
+            mockPreference(NoPartConfigProperty.class, true);
             doAssertions(buildCommand(), "--no-part");
         }
 
         @Test
         void shouldSetNoMTime() {
-            mockPreference(NoMTimePref.class, true);
+            mockPreference(NoMTimeConfigProperty.class, true);
             doAssertions(buildCommand(), "--no-mtime");
         }
 
         @Test
         void shouldSetCookies() throws Exception {
             Path tempFile = Files.createTempFile(null, null);
-            mockPreference(ReadCookiesPref.class, true);
-            mockPreference(CookiesFileLocationPref.class, tempFile.toString());
+            mockPreference(ReadCookiesConfigProperty.class, true);
+            mockPreference(CookiesFileLocationConfigProperty.class, tempFile.toString());
             doAssertions(buildCommand(), "--cookies", tempFile.toString());
             Files.deleteIfExists(tempFile);
         }
@@ -130,8 +130,8 @@ public class YoutubeDlCommandHelperTests {
         @Test
         void shouldNotSetCookies_fileNotExists() {
             String path = "path";
-            mockPreference(ReadCookiesPref.class, true);
-            mockPreference(CookiesFileLocationPref.class, path);
+            mockPreference(ReadCookiesConfigProperty.class, true);
+            mockPreference(CookiesFileLocationConfigProperty.class, path);
             assertThat(buildCommand())
                     .hasSize(1)
                     .doesNotContain("--cookies");
@@ -140,8 +140,8 @@ public class YoutubeDlCommandHelperTests {
         @Test
         void shouldNoSetCookies_readCookiesPropertyIsFalse() {
             String path = "path";
-            mockPreference(ReadCookiesPref.class, false);
-            mockPreference(CookiesFileLocationPref.class, path);
+            mockPreference(ReadCookiesConfigProperty.class, false);
+            mockPreference(CookiesFileLocationConfigProperty.class, path);
             assertThat(buildCommand())
                     .hasSize(1)
                     .doesNotContain("--cookies");
@@ -153,9 +153,9 @@ public class YoutubeDlCommandHelperTests {
     class SubtitlesOptionsTests {
         @BeforeEach
         void setUp() {
-            mockPreference(WriteSubtitlesPref.class, false);
-            mockPreference(EmbedSubtitlesPref.class, true);
-            mockPreference(PreferredSubtitlesPref.class, StringUtils.EMPTY);
+            mockPreference(WriteSubtitlesConfigProperty.class, false);
+            mockPreference(EmbedSubtitlesConfigProperty.class, true);
+            mockPreference(PreferredSubtitlesConfigProperty.class, StringUtils.EMPTY);
         }
 
         private List<String> buildCommand() {
@@ -173,8 +173,8 @@ public class YoutubeDlCommandHelperTests {
 
         @Test
         void shouldHaveNeitherEmbedSubsNorSubLang() {
-            mockPreference(WriteSubtitlesPref.class, true);
-            mockPreference(EmbedSubtitlesPref.class, false);
+            mockPreference(WriteSubtitlesConfigProperty.class, true);
+            mockPreference(EmbedSubtitlesConfigProperty.class, false);
             assertThat(buildCommand())
                     .hasSize(5)
                     .contains("--write-sub", "--all-subs", "--convert-subs", "srt")
@@ -183,9 +183,9 @@ public class YoutubeDlCommandHelperTests {
 
         @Test
         void shouldHaveSubLang() {
-            mockPreference(WriteSubtitlesPref.class, true);
-            mockPreference(EmbedSubtitlesPref.class, false);
-            mockPreference(PreferredSubtitlesPref.class, "en,ru");
+            mockPreference(WriteSubtitlesConfigProperty.class, true);
+            mockPreference(EmbedSubtitlesConfigProperty.class, false);
+            mockPreference(PreferredSubtitlesConfigProperty.class, "en,ru");
             assertThat(buildCommand())
                     .hasSize(6)
                     .contains("--write-sub", "--sub-lang", "--convert-subs", "srt")
@@ -194,8 +194,8 @@ public class YoutubeDlCommandHelperTests {
 
         @Test
         void shouldHaveEmbedSub() {
-            mockPreference(WriteSubtitlesPref.class, true);
-            mockPreference(EmbedSubtitlesPref.class, true);
+            mockPreference(WriteSubtitlesConfigProperty.class, true);
+            mockPreference(EmbedSubtitlesConfigProperty.class, true);
             assertThat(buildCommand())
                     .hasSize(6)
                     .contains("--write-sub", "--all-subs", "--convert-subs", "srt", "--embed-subs")
@@ -209,7 +209,7 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            mockPreference(RateLimitPref.class, RateLimitConfigItem.DEFAULT);
+            mockPreference(RateLimitConfigProperty.class, RateLimitConfigItem.DEFAULT);
         }
 
         private List<String> buildCommand() {
@@ -221,7 +221,7 @@ public class YoutubeDlCommandHelperTests {
         @ParameterizedTest
         @ValueSource(strings = {"50", "4.2M"})
         void shouldSetRateLimit(String limit) {
-            mockPreference(RateLimitPref.class, limit);
+            mockPreference(RateLimitConfigProperty.class, limit);
             List<String> command = buildCommand();
             assertThat(command).hasSize(3).contains("-r", limit);
         }
@@ -229,7 +229,7 @@ public class YoutubeDlCommandHelperTests {
         @ParameterizedTest
         @ValueSource(strings = {StringUtils.EMPTY, RateLimitConfigItem.DEFAULT})
         void shouldNotSetRateLimit(String limit) {
-            mockPreference(RateLimitPref.class, limit);
+            mockPreference(RateLimitConfigProperty.class, limit);
             List<String> command = buildCommand();
             assertThat(command).hasSize(1).doesNotContain("-r");
         }
@@ -241,11 +241,11 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            mockPreference(ProxyUrlPref.class, StringUtils.EMPTY);
-            mockPreference(SocketTimeoutPref.class, StringUtils.EMPTY);
-            mockPreference(SourceAddressPref.class, StringUtils.EMPTY);
-            mockPreference(ForceIpV4Pref.class, false);
-            mockPreference(ForceIpV6Pref.class, false);
+            mockPreference(ProxyUrlConfigProperty.class, StringUtils.EMPTY);
+            mockPreference(SocketTimeoutConfigProperty.class, StringUtils.EMPTY);
+            mockPreference(SourceAddressConfigProperty.class, StringUtils.EMPTY);
+            mockPreference(ForceIpV4ConfigProperty.class, false);
+            mockPreference(ForceIpV6ConfigProperty.class, false);
         }
 
         private List<String> buildCommand() {
@@ -263,22 +263,22 @@ public class YoutubeDlCommandHelperTests {
         @Test
         void shouldSetProxy() {
             String proxyUrl = "http://proxy";
-            mockPreference(ProxyEnabledPref.class, true);
-            mockPreference(ProxyUrlPref.class, proxyUrl);
+            mockPreference(ProxyEnabledConfigProperty.class, true);
+            mockPreference(ProxyUrlConfigProperty.class, proxyUrl);
             doAssertions(buildCommand(), "--proxy", proxyUrl);
         }
 
         @Test
         void shouldNotSetProxy_proxyDisabled() {
-            mockPreference(ProxyEnabledPref.class, false);
-            mockPreference(ProxyUrlPref.class, "http://proxy");
+            mockPreference(ProxyEnabledConfigProperty.class, false);
+            mockPreference(ProxyUrlConfigProperty.class, "http://proxy");
             List<String> command = buildCommand();
             assertThat(command).hasSize(1);
         }
 
         @Test
         void shouldNotSetProxy_proxyUrlEmpty() {
-            mockPreference(ProxyEnabledPref.class, true);
+            mockPreference(ProxyEnabledConfigProperty.class, true);
             List<String> command = buildCommand();
             assertThat(command).hasSize(1);
         }
@@ -286,36 +286,36 @@ public class YoutubeDlCommandHelperTests {
         @Test
         void shouldSetSocketTimeout() {
             String timeout = "10";
-            mockPreference(SocketTimeoutPref.class, timeout);
+            mockPreference(SocketTimeoutConfigProperty.class, timeout);
             doAssertions(buildCommand(), "--socket-timeout", timeout);
         }
 
         @Test
         void shouldSetSourceAddress() {
             String ip = "127.0.0.1";
-            mockPreference(SourceAddressPref.class, ip);
+            mockPreference(SourceAddressConfigProperty.class, ip);
             doAssertions(buildCommand(), "--source-address", ip);
         }
 
         @Test
         void shouldSetForceIpV4() {
-            mockPreference(ForceIpV4Pref.class, true);
+            mockPreference(ForceIpV4ConfigProperty.class, true);
             doAssertions(buildCommand(), "--force-ipv4");
         }
 
         @Test
         void shouldSetForceIpV6() {
-            mockPreference(ForceIpV6Pref.class, true);
+            mockPreference(ForceIpV6ConfigProperty.class, true);
             doAssertions(buildCommand(), "--force-ipv6");
         }
 
         @Test
         void shouldSetMultiple() {
-            mockPreference(ProxyEnabledPref.class, true);
-            mockPreference(ProxyUrlPref.class, "http://proxy");
-            mockPreference(SocketTimeoutPref.class, "10");
-            mockPreference(SourceAddressPref.class, "127.0.0.1");
-            mockPreference(ForceIpV4Pref.class, true);
+            mockPreference(ProxyEnabledConfigProperty.class, true);
+            mockPreference(ProxyUrlConfigProperty.class, "http://proxy");
+            mockPreference(SocketTimeoutConfigProperty.class, "10");
+            mockPreference(SourceAddressConfigProperty.class, "127.0.0.1");
+            mockPreference(ForceIpV4ConfigProperty.class, true);
             List<String> command = buildCommand();
             assertThat(command)
                     .hasSize(8)
@@ -330,11 +330,11 @@ public class YoutubeDlCommandHelperTests {
 
         @BeforeEach
         void setUp() {
-            mockPreference(AuthUsernamePref.class, StringUtils.EMPTY);
-            mockPreference(AuthPasswordPref.class, StringUtils.EMPTY);
-            mockPreference(TwoFactorCodePref.class, StringUtils.EMPTY);
-            mockPreference(NetrcPref.class, false);
-            mockPreference(VideoPasswordPref.class, StringUtils.EMPTY);
+            mockPreference(AuthUsernameConfigProperty.class, StringUtils.EMPTY);
+            mockPreference(AuthPasswordConfigProperty.class, StringUtils.EMPTY);
+            mockPreference(TwoFactorCodeConfigProperty.class, StringUtils.EMPTY);
+            mockPreference(NetrcConfigProperty.class, false);
+            mockPreference(VideoPasswordConfigProperty.class, StringUtils.EMPTY);
         }
 
         private List<String> buildCommand() {
@@ -352,53 +352,53 @@ public class YoutubeDlCommandHelperTests {
         @Test
         void shouldSetUsername() {
             String username = "usr";
-            mockPreference(AuthUsernamePref.class, username);
+            mockPreference(AuthUsernameConfigProperty.class, username);
             doAssertions(buildCommand(), "-u", username);
         }
 
         @Test
         void shouldSetPassword() {
             String password = "pass";
-            mockPreference(AuthPasswordPref.class, password);
+            mockPreference(AuthPasswordConfigProperty.class, password);
             doAssertions(buildCommand(), "-p", password);
         }
 
         @Test
         void shouldNotSetTwoFactorCode_noUsernameOrPassword() {
             String code = "pass";
-            mockPreference(TwoFactorCodePref.class, code);
+            mockPreference(TwoFactorCodeConfigProperty.class, code);
             assertThat(buildCommand()).hasSize(1).doesNotContain("-2");
         }
 
         @Test
         void shouldSetTwoFactorCode() {
             String code = "pass";
-            mockPreference(AuthUsernamePref.class, "usr");
-            mockPreference(AuthPasswordPref.class, "pass");
-            mockPreference(TwoFactorCodePref.class, code);
+            mockPreference(AuthUsernameConfigProperty.class, "usr");
+            mockPreference(AuthPasswordConfigProperty.class, "pass");
+            mockPreference(TwoFactorCodeConfigProperty.class, code);
             assertThat(buildCommand()).hasSize(7)
                     .contains("-2", "-u", "-p");
         }
 
         @Test
         void shouldSetNetrc() {
-            mockPreference(NetrcPref.class, true);
+            mockPreference(NetrcConfigProperty.class, true);
             doAssertions(buildCommand(), "--netrc");
         }
 
         @Test
         void shouldSetVideoPassword() {
             String code = "pass";
-            mockPreference(VideoPasswordPref.class, code);
+            mockPreference(VideoPasswordConfigProperty.class, code);
             doAssertions(buildCommand(), "--video-password", code);
         }
 
         @Test
         void shouldSetMultiple() {
-            mockPreference(AuthUsernamePref.class, "usr");
-            mockPreference(AuthPasswordPref.class, "pass");
-            mockPreference(TwoFactorCodePref.class, "pass");
-            mockPreference(VideoPasswordPref.class, "pass");
+            mockPreference(AuthUsernameConfigProperty.class, "usr");
+            mockPreference(AuthPasswordConfigProperty.class, "pass");
+            mockPreference(TwoFactorCodeConfigProperty.class, "pass");
+            mockPreference(VideoPasswordConfigProperty.class, "pass");
             List<String> command = buildCommand();
             assertThat(command)
                     .hasSize(9)

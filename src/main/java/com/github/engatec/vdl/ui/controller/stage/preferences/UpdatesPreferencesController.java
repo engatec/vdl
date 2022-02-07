@@ -2,9 +2,9 @@ package com.github.engatec.vdl.ui.controller.stage.preferences;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
-import com.github.engatec.vdl.model.preferences.wrapper.general.VdlStartupUpdatesCheckPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.YtdlpStartupUpdatesCheckPref;
+import com.github.engatec.vdl.preference.property.general.VdlStartupUpdatesCheckConfigProperty;
+import com.github.engatec.vdl.preference.property.general.YoutubeDlStartupUpdatesCheckConfigProperty;
+import com.github.engatec.vdl.preference.property.general.YtdlpStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -21,9 +21,9 @@ public class UpdatesPreferencesController extends ScrollPane implements InputFor
 
     @FXML
     public void initialize() {
-        vdlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(VdlStartupUpdatesCheckPref.class).getProperty());
-        youtubeDlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getProperty());
-        ytdlpStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(YtdlpStartupUpdatesCheckPref.class).getProperty());
+        vdlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(VdlStartupUpdatesCheckConfigProperty.class).getProperty());
+        youtubeDlStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(YoutubeDlStartupUpdatesCheckConfigProperty.class).getProperty());
+        ytdlpStartupUpdatesCheckBox.selectedProperty().bindBidirectional(configRegistry.get(YtdlpStartupUpdatesCheckConfigProperty.class).getProperty());
     }
 
     @Override

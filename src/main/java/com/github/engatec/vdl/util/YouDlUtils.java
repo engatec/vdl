@@ -11,7 +11,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.WriteSubtitlesPref;
+import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,7 @@ public class YouDlUtils {
     }
 
     public static void deleteTempFiles(Collection<? extends String> paths) {
-        Boolean subtitlesEnabled = ApplicationContext.getInstance().getConfigRegistry().get(WriteSubtitlesPref.class).getValue();
+        Boolean subtitlesEnabled = ApplicationContext.getInstance().getConfigRegistry().get(WriteSubtitlesConfigProperty.class).getValue();
         for (String path : CollectionUtils.emptyIfNull(paths)) {
             deleteTempFiles(path, 0);
             if (subtitlesEnabled) {

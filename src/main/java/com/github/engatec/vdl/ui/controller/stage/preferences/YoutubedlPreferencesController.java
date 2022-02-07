@@ -7,29 +7,29 @@ import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.handler.textformatter.IntegerTextFormatter;
 import com.github.engatec.vdl.handler.textformatter.NotBlankTextFormatter;
 import com.github.engatec.vdl.handler.textformatter.RegexTextFormatter;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthPasswordPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.AuthUsernamePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.EmbedSubtitlesPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV4Pref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ForceIpV6Pref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.MarkWatchedPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NetrcPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoContinuePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoMTimePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.NoPartPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.OutputTemplatePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.PreferredSubtitlesPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ProxyUrlPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.RateLimitPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SocketTimeoutPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.SourceAddressPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.TwoFactorCodePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.VideoPasswordPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.WriteSubtitlesPref;
+import com.github.engatec.vdl.preference.property.youtubedl.AuthPasswordConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.AuthUsernameConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ConfigFilePathConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.CookiesFileLocationConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.EmbedSubtitlesConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ForceIpV4ConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ForceIpV6ConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.MarkWatchedConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.NetrcConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.NoContinueConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.NoMTimeConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.NoPartConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.OutputTemplateConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.PreferredSubtitlesConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ProxyUrlConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.RateLimitConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ReadCookiesConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.SocketTimeoutConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.SourceAddressConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.TwoFactorCodeConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.UseConfigFileConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.VideoPasswordConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
 import com.github.engatec.vdl.ui.SvgIcons;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.beans.binding.BooleanBinding;
@@ -158,35 +158,35 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
 
     private void bindProperties() {
         ConfigRegistry configRegistry = ctx.getConfigRegistry();
-        proxyUrlTextField.textProperty().bindBidirectional(configRegistry.get(ProxyUrlPref.class).getProperty());
-        socketTimoutTextField.textProperty().bindBidirectional(configRegistry.get(SocketTimeoutPref.class).getProperty());
-        sourceAddressTextField.textProperty().bindBidirectional(configRegistry.get(SourceAddressPref.class).getProperty());
-        forceIpV4CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV4Pref.class).getProperty());
-        forceIpV6CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV6Pref.class).getProperty());
+        proxyUrlTextField.textProperty().bindBidirectional(configRegistry.get(ProxyUrlConfigProperty.class).getProperty());
+        socketTimoutTextField.textProperty().bindBidirectional(configRegistry.get(SocketTimeoutConfigProperty.class).getProperty());
+        sourceAddressTextField.textProperty().bindBidirectional(configRegistry.get(SourceAddressConfigProperty.class).getProperty());
+        forceIpV4CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV4ConfigProperty.class).getProperty());
+        forceIpV6CheckBox.selectedProperty().bindBidirectional(configRegistry.get(ForceIpV6ConfigProperty.class).getProperty());
 
-        writeSubtitlesCheckbox.selectedProperty().bindBidirectional(configRegistry.get(WriteSubtitlesPref.class).getProperty());
-        embedSubtitlesCheckbox.selectedProperty().bindBidirectional(configRegistry.get(EmbedSubtitlesPref.class).getProperty());
-        subtitlesLanguagesTextField.textProperty().bindBidirectional(configRegistry.get(PreferredSubtitlesPref.class).getProperty());
+        writeSubtitlesCheckbox.selectedProperty().bindBidirectional(configRegistry.get(WriteSubtitlesConfigProperty.class).getProperty());
+        embedSubtitlesCheckbox.selectedProperty().bindBidirectional(configRegistry.get(EmbedSubtitlesConfigProperty.class).getProperty());
+        subtitlesLanguagesTextField.textProperty().bindBidirectional(configRegistry.get(PreferredSubtitlesConfigProperty.class).getProperty());
 
-        rateLimitTextField.textProperty().bindBidirectional(configRegistry.get(RateLimitPref.class).getProperty());
+        rateLimitTextField.textProperty().bindBidirectional(configRegistry.get(RateLimitConfigProperty.class).getProperty());
 
-        usernameTextField.textProperty().bindBidirectional(configRegistry.get(AuthUsernamePref.class).getProperty());
-        passwordTextField.textProperty().bindBidirectional(configRegistry.get(AuthPasswordPref.class).getProperty());
-        twoFactorTextField.textProperty().bindBidirectional(configRegistry.get(TwoFactorCodePref.class).getProperty());
-        videoPasswordTextField.textProperty().bindBidirectional(configRegistry.get(VideoPasswordPref.class).getProperty());
-        netrcCheckbox.selectedProperty().bindBidirectional(configRegistry.get(NetrcPref.class).getProperty());
+        usernameTextField.textProperty().bindBidirectional(configRegistry.get(AuthUsernameConfigProperty.class).getProperty());
+        passwordTextField.textProperty().bindBidirectional(configRegistry.get(AuthPasswordConfigProperty.class).getProperty());
+        twoFactorTextField.textProperty().bindBidirectional(configRegistry.get(TwoFactorCodeConfigProperty.class).getProperty());
+        videoPasswordTextField.textProperty().bindBidirectional(configRegistry.get(VideoPasswordConfigProperty.class).getProperty());
+        netrcCheckbox.selectedProperty().bindBidirectional(configRegistry.get(NetrcConfigProperty.class).getProperty());
 
-        outputTemplateTextField.textProperty().bindBidirectional(configRegistry.get(OutputTemplatePref.class).getProperty());
-        markWatchedCheckbox.selectedProperty().bindBidirectional(configRegistry.get(MarkWatchedPref.class).getProperty());
-        noContinueCheckbox.selectedProperty().bindBidirectional(configRegistry.get(NoContinuePref.class).getProperty());
-        noPartCheckBox.selectedProperty().bindBidirectional(configRegistry.get(NoPartPref.class).getProperty());
-        noMTimeCheckBox.selectedProperty().bindBidirectional(configRegistry.get(NoMTimePref.class).getProperty());
+        outputTemplateTextField.textProperty().bindBidirectional(configRegistry.get(OutputTemplateConfigProperty.class).getProperty());
+        markWatchedCheckbox.selectedProperty().bindBidirectional(configRegistry.get(MarkWatchedConfigProperty.class).getProperty());
+        noContinueCheckbox.selectedProperty().bindBidirectional(configRegistry.get(NoContinueConfigProperty.class).getProperty());
+        noPartCheckBox.selectedProperty().bindBidirectional(configRegistry.get(NoPartConfigProperty.class).getProperty());
+        noMTimeCheckBox.selectedProperty().bindBidirectional(configRegistry.get(NoMTimeConfigProperty.class).getProperty());
 
-        readCookiesCheckbox.selectedProperty().bindBidirectional(configRegistry.get(ReadCookiesPref.class).getProperty());
-        cookiesFileChooser.pathProperty().bindBidirectional(configRegistry.get(CookiesFileLocationPref.class).getProperty());
+        readCookiesCheckbox.selectedProperty().bindBidirectional(configRegistry.get(ReadCookiesConfigProperty.class).getProperty());
+        cookiesFileChooser.pathProperty().bindBidirectional(configRegistry.get(CookiesFileLocationConfigProperty.class).getProperty());
 
-        useConfigFileCheckBox.selectedProperty().bindBidirectional(configRegistry.get(UseConfigFilePref.class).getProperty());
-        configFileChooser.pathProperty().bindBidirectional(configRegistry.get(ConfigFilePathPref.class).getProperty());
+        useConfigFileCheckBox.selectedProperty().bindBidirectional(configRegistry.get(UseConfigFileConfigProperty.class).getProperty());
+        configFileChooser.pathProperty().bindBidirectional(configRegistry.get(ConfigFilePathConfigProperty.class).getProperty());
     }
 
     @Override

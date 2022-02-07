@@ -10,8 +10,8 @@ import java.util.ResourceBundle;
 
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
-import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadThreadsPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.preference.property.general.DownloadThreadsConfigProperty;
+import com.github.engatec.vdl.preference.property.general.LanguageConfigProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,9 +45,9 @@ public class ApplicationContext {
         ctx.appBinariesDir = appBinariesDir;
         ctx.appDataDir = appDataDir;
         ctx.configRegistry = configRegistry;
-        ctx.appExecutors = new AppExecutors(configRegistry.get(DownloadThreadsPref.class).getValue());
+        ctx.appExecutors = new AppExecutors(configRegistry.get(DownloadThreadsConfigProperty.class).getValue());
 
-        Language language = Language.getByLocaleCode(configRegistry.get(LanguagePref.class).getValue());
+        Language language = Language.getByLocaleCode(configRegistry.get(LanguageConfigProperty.class).getValue());
         ctx.resourceBundle = ResourceBundle.getBundle("lang", language.getLocale());
 
         managers.forEach(it -> ctx.managersMap.put(it.getClass(), it));

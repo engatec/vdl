@@ -12,7 +12,7 @@ import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.handler.textformatter.NotBlankTextFormatter;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
+import com.github.engatec.vdl.preference.property.general.DownloadPathConfigProperty;
 import com.github.engatec.vdl.ui.CheckBoxGroup;
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.collections.ObservableList;
@@ -61,7 +61,7 @@ public class PlaylistContentsController implements InputForm {
         subscriptionNameTextField.setTextFormatter(new NotBlankTextFormatter());
         subscriptionNameTextField.textProperty().addListener((observable, oldValue, newValue) -> subscriptionNameTextField.clearError());
         subscriptionDownloadPathDirectoryChooser.setButtonText(ctx.getLocalizedString("button.directorychoose"));
-        subscriptionDownloadPathDirectoryChooser.setPath(ctx.getConfigRegistry().get(DownloadPathPref.class).getValue());
+        subscriptionDownloadPathDirectoryChooser.setPath(ctx.getConfigRegistry().get(DownloadPathConfigProperty.class).getValue());
         subscribeBtn.setOnAction(this::handleSubscribeButtonClick);
         closeBtn.setOnAction(this::handleCloseButtonClick);
 

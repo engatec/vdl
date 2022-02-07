@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
+import com.github.engatec.vdl.preference.property.general.AlwaysAskDownloadPathConfigProperty;
+import com.github.engatec.vdl.preference.property.general.DownloadPathConfigProperty;
+import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
 import com.github.engatec.vdl.ui.Dialogs;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -37,7 +37,7 @@ public class AppUtils {
             return Optional.empty();
         }
 
-        ApplicationContext.getInstance().getConfigRegistry().get(RecentDownloadPathPref.class).setValue(path.toString());
+        ApplicationContext.getInstance().getConfigRegistry().get(RecentDownloadPathConfigProperty.class).setValue(path.toString());
 
         return Optional.of(path);
     }
@@ -45,11 +45,11 @@ public class AppUtils {
     private static Path doResolveDownloadPath(Stage stage) {
         ApplicationContext ctx = ApplicationContext.getInstance();
         ConfigRegistry configRegistry = ctx.getConfigRegistry();
-        Path downloadPath = Paths.get(configRegistry.get(DownloadPathPref.class).getValue());
-        boolean askPath = configRegistry.get(AlwaysAskDownloadPathPref.class).getValue();
+        Path downloadPath = Paths.get(configRegistry.get(DownloadPathConfigProperty.class).getValue());
+        boolean askPath = configRegistry.get(AlwaysAskDownloadPathConfigProperty.class).getValue();
         if (askPath) {
             var directoryChooser = new DirectoryChooser();
-            File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
+            File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathConfigProperty.class).getValue()).toFile();
             if (recentDownloadPath.isDirectory()) {
                 directoryChooser.setInitialDirectory(recentDownloadPath);
             }

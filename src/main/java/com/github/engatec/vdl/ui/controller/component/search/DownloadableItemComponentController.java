@@ -22,11 +22,11 @@ import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionFormatPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AudioExtractionQualityPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSelectFormatPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.LoadThumbnailsPref;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionFormatConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionQualityConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AutoSelectFormatConfigProperty;
+import com.github.engatec.vdl.preference.property.general.LoadThumbnailsConfigProperty;
+import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
 import com.github.engatec.vdl.service.SubtitlesDownloadService;
 import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.Icon;
@@ -120,7 +120,7 @@ public class DownloadableItemComponentController extends HBox {
             closedCaptionButton.setTooltip(Tooltips.createNew("download.subtitles"));
             closedCaptionButton.setOnAction(e -> {
                 FileChooser fileChooser = new FileChooser();
-                File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
+                File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathConfigProperty.class).getValue()).toFile();
                 if (recentDownloadPath.isDirectory()) {
                     fileChooser.setInitialDirectory(recentDownloadPath);
                 }
@@ -158,7 +158,7 @@ public class DownloadableItemComponentController extends HBox {
                 .toList();
 
         ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
-        Integer autoSelectFormat = ctx.getConfigRegistry().get(AutoSelectFormatPref.class).getValue();
+        Integer autoSelectFormat = ctx.getConfigRegistry().get(AutoSelectFormatConfigProperty.class).getValue();
         ComboBoxValueHolder<String> selectedItem = null;
         for (Integer height : commonAvailableHeights) {
             ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), YouDlUtils.createFormatByHeight(height));
@@ -192,7 +192,7 @@ public class DownloadableItemComponentController extends HBox {
     }
 
     private void initThumbnail() {
-        if (!ctx.getConfigRegistry().get(LoadThumbnailsPref.class).getValue()) {
+        if (!ctx.getConfigRegistry().get(LoadThumbnailsConfigProperty.class).getValue()) {
             thumbnailWrapperPane.setVisible(false);
             thumbnailWrapperPane.setManaged(false);
             return;
@@ -217,7 +217,7 @@ public class DownloadableItemComponentController extends HBox {
             thumbnailImageView.setImage(image);
             thumbnailImageView.setOnMouseClicked(event -> {
                 FileChooser fileChooser = new FileChooser();
-                File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
+                File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathConfigProperty.class).getValue()).toFile();
                 if (recentDownloadPath.isDirectory()) {
                     fileChooser.setInitialDirectory(recentDownloadPath);
                 }
@@ -294,9 +294,9 @@ public class DownloadableItemComponentController extends HBox {
 
     public void downloadAudio(Path path) {
         ConfigRegistry configRegistry = ctx.getConfigRegistry();
-        String format = configRegistry.get(AudioExtractionFormatPref.class).getValue();
+        String format = configRegistry.get(AudioExtractionFormatConfigProperty.class).getValue();
         // Youtube-dl quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
-        int quality = Math.abs(configRegistry.get(AudioExtractionQualityPref.class).getValue() - AudioFormat.BEST_QUALITY);
+        int quality = Math.abs(configRegistry.get(AudioExtractionQualityConfigProperty.class).getValue() - AudioFormat.BEST_QUALITY);
         Downloadable downloadable = getDownloadable();
         downloadable.setDownloadPath(path);
         downloadable.setFormatId("bestaudio"); // No need to download video if user only wants to extract audio
