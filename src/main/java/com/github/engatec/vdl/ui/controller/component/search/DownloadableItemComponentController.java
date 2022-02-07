@@ -9,11 +9,13 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import javax.imageio.ImageIO;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.QueueItem;
@@ -150,7 +152,11 @@ public class DownloadableItemComponentController extends HBox {
     }
 
     private void initFormats() {
+        final String noCodec = YoutubeDlAttr.NO_CODEC.getValue();
+        Predicate<Format> anyCodecDefined = it -> !noCodec.equals(it.getVcodec()) || !noCodec.equals(it.getAcodec());
+
         List<Integer> commonAvailableHeights = ListUtils.emptyIfNull(videoInfo.getFormats()).stream()
+                .filter(anyCodecDefined)
                 .map(Format::getHeight)
                 .filter(Objects::nonNull)
                 .filter(it -> it > 0) // Should never happen, just a sanity check in case there's a bug in youtube-dl
