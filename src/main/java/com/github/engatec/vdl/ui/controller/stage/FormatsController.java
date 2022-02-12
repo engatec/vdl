@@ -100,14 +100,16 @@ public class FormatsController {
 
         List<Video> videoList = new ArrayList<>();
         List<Audio> audioList = new ArrayList<>();
-        final String codecAbsenseAttr = YoutubeDlAttr.NO_CODEC.getValue();
+        final String noCodec = YoutubeDlAttr.NO_CODEC.getValue();
 
         for (Format format : formats) {
             String acodec = format.getAcodec();
             String vcodec = format.getVcodec();
-            if (codecAbsenseAttr.equals(vcodec)) {
+            if (noCodec.equals(vcodec) && noCodec.equals(acodec)) {
+                continue;
+            } else if (noCodec.equals(vcodec)) {
                 audioList.add(new Audio(format));
-            } else if (codecAbsenseAttr.equals(acodec)) {
+            } else if (noCodec.equals(acodec)) {
                 videoList.add(new Video(format));
             } else {
                 videoList.add(new Video(format, new Audio(format)));

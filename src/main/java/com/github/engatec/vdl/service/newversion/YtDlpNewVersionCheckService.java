@@ -8,7 +8,6 @@ import com.github.engatec.vdl.dto.github.ReleaseDto;
 import com.github.engatec.vdl.util.GithubUtils;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import org.apache.commons.lang3.RegExUtils;
 
 public class YtDlpNewVersionCheckService extends Service<Optional<ReleaseDto>> {
 
@@ -18,9 +17,9 @@ public class YtDlpNewVersionCheckService extends Service<Optional<ReleaseDto>> {
             @Override
             protected Optional<ReleaseDto> call() {
                 ReleaseDto releaseInfo = GithubUtils.getLatestReleaseInfo("yt-dlp", "yt-dlp");
-                String latestVersion = RegExUtils.replaceAll(releaseInfo.tagName(), "\\.", "");
-                String currentVersion = RegExUtils.replaceAll(YoutubeDlManager.INSTANCE.getCurrentVersion(Engine.YT_DLP), "\\.", "");
-                return Integer.parseInt(latestVersion) > Integer.parseInt(currentVersion) ? Optional.of(releaseInfo) : Optional.empty();
+                String latestVersion = releaseInfo.tagName();
+                String currentVersion = YoutubeDlManager.INSTANCE.getCurrentVersion(Engine.YT_DLP);
+                return new NewVersionPredicate().test(latestVersion, currentVersion) ? Optional.of(releaseInfo) : Optional.empty();
             }
         };
     }

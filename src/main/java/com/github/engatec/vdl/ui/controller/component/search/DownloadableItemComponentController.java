@@ -9,11 +9,13 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import javax.imageio.ImageIO;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.QueueItem;
@@ -61,6 +63,7 @@ public class DownloadableItemComponentController extends HBox {
     private static final Logger LOGGER = LogManager.getLogger(DownloadableItemComponentController.class);
 
     private static final String CUSTOM_FORMAT_LABEL = "Custom format";
+    private static final String N_A_FORMAT_LABEL = "N/A";
 
     private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final QueueManager queueManager = ctx.getManager(QueueManager.class);
@@ -149,7 +152,11 @@ public class DownloadableItemComponentController extends HBox {
     }
 
     private void initFormats() {
+        final String noCodec = YoutubeDlAttr.NO_CODEC.getValue();
+        Predicate<Format> anyCodecDefined = it -> !noCodec.equals(it.getVcodec()) || !noCodec.equals(it.getAcodec());
+
         List<Integer> commonAvailableHeights = ListUtils.emptyIfNull(videoInfo.getFormats()).stream()
+                .filter(anyCodecDefined)
                 .map(Format::getHeight)
                 .filter(Objects::nonNull)
                 .filter(it -> it > 0) // Should never happen, just a sanity check in case there's a bug in youtube-dl
@@ -167,6 +174,10 @@ public class DownloadableItemComponentController extends HBox {
             if (selectedItem == null && height <= autoSelectFormat) {
                 selectedItem = item;
             }
+        }
+
+        if (comboBoxItems.isEmpty()) {
+            comboBoxItems.add(new ComboBoxValueHolder<>(N_A_FORMAT_LABEL, YouDlUtils.createFormatByHeight(null)));
         }
 
         if (selectedItem == null) {
@@ -299,7 +310,9 @@ public class DownloadableItemComponentController extends HBox {
         int quality = Math.abs(configRegistry.get(AudioExtractionQualityConfigProperty.class).getValue() - AudioFormat.BEST_QUALITY);
         Downloadable downloadable = getDownloadable();
         downloadable.setDownloadPath(path);
-        downloadable.setFormatId("bestaudio"); // No need to download video if user only wants to extract audio
+        // No need to download video if user only wants to extract audio. However if formats are empty chances are this is a music only service,
+        // then it might not have "bestaudio" format and "best" must be used
+        downloadable.setFormatId("bestaudio" + (CollectionUtils.isEmpty(videoInfo.getFormats()) ? "/best" : ""));
         downloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(format, quality)));
         queueManager.addItem(new QueueItem(downloadable));
     }
