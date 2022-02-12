@@ -6,9 +6,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
+import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.property.youtubedl.CookiesFileLocationConfigProperty;
 import com.github.engatec.vdl.preference.property.youtubedl.ReadCookiesConfigProperty;
 import org.apache.commons.collections4.CollectionUtils;

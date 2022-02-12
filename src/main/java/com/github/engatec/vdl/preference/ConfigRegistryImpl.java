@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.core.preferences;
+package com.github.engatec.vdl.preference;
 
 import java.util.HashMap;
 import java.util.Map;

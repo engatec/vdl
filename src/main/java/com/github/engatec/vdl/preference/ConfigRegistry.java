@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.core.preferences;
+package com.github.engatec.vdl.preference;
 
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 

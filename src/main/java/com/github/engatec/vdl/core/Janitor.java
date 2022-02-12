@@ -8,7 +8,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import com.github.engatec.vdl.Main;
-import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.preference.ConfigManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;

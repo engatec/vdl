@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.property.general.AlwaysAskDownloadPathConfigProperty;
 import com.github.engatec.vdl.preference.property.general.DownloadPathConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;

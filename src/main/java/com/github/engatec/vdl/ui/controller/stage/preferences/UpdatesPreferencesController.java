@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.ui.controller.stage.preferences;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.property.general.VdlStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.preference.property.general.YoutubeDlStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.preference.property.general.YtdlpStartupUpdatesCheckConfigProperty;

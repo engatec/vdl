@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.core.preferences.category;
+package com.github.engatec.vdl.preference.ui;
 
 import com.github.engatec.vdl.validation.InputForm;
 import javafx.scene.Node;

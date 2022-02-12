@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.configitem.youtubedl.RateLimitConfigItem;
 import com.github.engatec.vdl.preference.property.youtubedl.AuthPasswordConfigProperty;
 import com.github.engatec.vdl.preference.property.youtubedl.AuthUsernameConfigProperty;

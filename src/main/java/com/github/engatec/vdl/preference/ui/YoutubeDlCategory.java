@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.core.preferences.category;
+package com.github.engatec.vdl.preference.ui;
 
 import com.github.engatec.vdl.ui.component.preferences.YoutubeDlPreferencesComponent;
 import com.github.engatec.vdl.ui.controller.stage.preferences.YoutubedlPreferencesController;

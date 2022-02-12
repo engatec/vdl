@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.Language;
+import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.property.general.DownloadThreadsConfigProperty;
 import com.github.engatec.vdl.preference.property.general.LanguageConfigProperty;
 import org.apache.commons.lang3.StringUtils;

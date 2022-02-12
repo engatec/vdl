@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.ui.stage;
 
 import com.github.engatec.vdl.core.QueueManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
+import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.property.ui.MainWindowHeightConfigProperty;
 import com.github.engatec.vdl.preference.property.ui.MainWindowPosXConfigProperty;
 import com.github.engatec.vdl.preference.property.ui.MainWindowPosYConfigProperty;

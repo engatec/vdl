@@ -3,11 +3,11 @@ package com.github.engatec.vdl.ui.controller.stage.preferences;
 import java.util.List;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
-import com.github.engatec.vdl.core.preferences.category.Category;
-import com.github.engatec.vdl.core.preferences.category.GeneralCategory;
-import com.github.engatec.vdl.core.preferences.category.UpdatesCategory;
-import com.github.engatec.vdl.core.preferences.category.YoutubeDlCategory;
+import com.github.engatec.vdl.preference.ConfigRegistry;
+import com.github.engatec.vdl.preference.ui.Category;
+import com.github.engatec.vdl.preference.ui.GeneralCategory;
+import com.github.engatec.vdl.preference.ui.UpdatesCategory;
+import com.github.engatec.vdl.preference.ui.YoutubeDlCategory;
 import com.github.engatec.vdl.ui.controller.stage.StageAwareController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

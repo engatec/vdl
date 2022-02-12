@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.core.preferences.portable;
+package com.github.engatec.vdl.preference;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

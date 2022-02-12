@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.db.mapper.HistoryMapper;
 import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
+import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.property.misc.HistoryEntriesNumberConfigProperty;
 
 public class HistoryManager extends VdlManager {

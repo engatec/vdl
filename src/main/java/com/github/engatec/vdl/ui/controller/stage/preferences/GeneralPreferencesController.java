@@ -6,10 +6,10 @@ import java.util.stream.Stream;
 
 import com.github.engatec.fxcontrols.FxDirectoryChooser;
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Resolution;
+import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.configitem.general.AutoSelectFormatConfigItem;
 import com.github.engatec.vdl.preference.property.general.AlwaysAskDownloadPathConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionFormatConfigProperty;

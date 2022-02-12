@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.preference.property;
 
-import com.github.engatec.vdl.core.preferences.ConfigManager;
+import com.github.engatec.vdl.preference.ConfigManager;
 import com.github.engatec.vdl.preference.configitem.ConfigItem;
 import javafx.beans.property.Property;
 

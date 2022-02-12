@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.Format;
@@ -24,6 +23,7 @@ import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
+import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionFormatConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionQualityConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AutoSelectFormatConfigProperty;
