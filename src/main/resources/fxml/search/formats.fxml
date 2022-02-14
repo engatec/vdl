@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<VBox spacing="32.0" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.ui.controller.stage.FormatsController">
+<VBox spacing="32.0" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.ui.stage.controller.FormatsController">
    <children>
       <ScrollPane fitToWidth="true" styleClass="no-border">
          <content>

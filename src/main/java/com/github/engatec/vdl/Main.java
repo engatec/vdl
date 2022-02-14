@@ -20,7 +20,7 @@ import com.github.engatec.vdl.service.newversion.Updater;
 import com.github.engatec.vdl.service.newversion.VdlUpdater;
 import com.github.engatec.vdl.service.newversion.YoutubeDlUpdater;
 import com.github.engatec.vdl.service.newversion.YtDlpUpdater;
-import com.github.engatec.vdl.ui.stage.MainStage;
+import com.github.engatec.vdl.ui.stage.core.MainStage;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;

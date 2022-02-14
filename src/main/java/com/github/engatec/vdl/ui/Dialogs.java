@@ -3,7 +3,7 @@ package com.github.engatec.vdl.ui;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.FormattedResource;
 import com.github.engatec.vdl.model.Language;
-import com.github.engatec.vdl.ui.stage.ProgressDialogStage;
+import com.github.engatec.vdl.ui.stage.core.ProgressDialogStage;
 import javafx.concurrent.Service;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
