@@ -1,7 +1,7 @@
 package com.github.engatec.vdl.util;
 
-import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.github.engatec.vdl.model.downloadable.Audio;
 import org.apache.commons.io.FileUtils;
@@ -41,10 +41,7 @@ public class LabelUtils {
     }
 
     public static String formatAudio(Audio item) {
-        return List.of(
-                item.getExtension(),
-                formatSize(item.getFilesize(), StringUtils.EMPTY)
-        ).stream()
+        return Stream.of(item.getExtension(), formatSize(item.getFilesize(), StringUtils.EMPTY))
                 .filter(StringUtils::isNotBlank)
                 .collect(Collectors.joining(AUDIO_LABEL_DELIMITER));
     }

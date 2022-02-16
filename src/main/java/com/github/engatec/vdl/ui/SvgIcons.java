@@ -1,9 +1,11 @@
 package com.github.engatec.vdl.ui;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.util.Svg;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
 public class SvgIcons {
@@ -30,5 +32,46 @@ public class SvgIcons {
         tooltip.setShowDuration(Duration.INDEFINITE);
         Tooltip.install(infoIcon, tooltip);
         return infoIcon;
+    }
+
+    private static class Svg {
+
+        public static Group create(Node... path) {
+            return new Group(path);
+        }
+
+        public static void scale(Group svg, double scaleFactor) {
+            svg.setScaleX(scaleFactor);
+            svg.setScaleY(scaleFactor);
+        }
+
+        public static PathBuilder pathBuilder() {
+            return new PathBuilder();
+        }
+
+        public static class PathBuilder {
+            private String d;
+            private String fill;
+
+            private PathBuilder() {
+            }
+
+            public PathBuilder d(String value) {
+                d = value;
+                return this;
+            }
+
+            public PathBuilder fill(String rgb) {
+                fill = rgb;
+                return this;
+            }
+
+            public SVGPath build() {
+                SVGPath path = new SVGPath();
+                path.setContent(d);
+                path.setFill(fill == null ? null : Color.web(fill));
+                return path;
+            }
+        }
     }
 }
