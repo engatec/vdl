@@ -30,8 +30,8 @@ import com.github.engatec.vdl.preference.property.youtubedl.TwoFactorCodeConfigP
 import com.github.engatec.vdl.preference.property.youtubedl.UseConfigFileConfigProperty;
 import com.github.engatec.vdl.preference.property.youtubedl.VideoPasswordConfigProperty;
 import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
-import com.github.engatec.vdl.ui.SvgIcons;
-import com.github.engatec.vdl.validation.InputForm;
+import com.github.engatec.vdl.ui.helper.SvgIcons;
+import com.github.engatec.vdl.ui.validation.InputForm;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;

@@ -8,7 +8,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.SubscriptionsManager;
 import com.github.engatec.vdl.model.Subscription;
 import com.github.engatec.vdl.ui.Icon;
-import com.github.engatec.vdl.ui.Tooltips;
+import com.github.engatec.vdl.ui.helper.Tooltips;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -44,15 +44,15 @@ public class SubscriptionItemComponentController extends HBox {
 
         refreshBtn.setGraphic(new ImageView(Icon.REFRESH_SMALL.getImage()));
         refreshBtn.setOnAction(this::handleRefreshButtonClick);
-        refreshBtn.setTooltip(Tooltips.createNew("subscriptions.tooltip.refresh"));
+        refreshBtn.setTooltip(Tooltips.create("subscriptions.tooltip.refresh"));
 
         changeFolderBtn.setGraphic(new ImageView(Icon.FOLDER_SMALL.getImage()));
         changeFolderBtn.setOnAction(this::handleChangeFolderButtonClick);
-        changeFolderBtn.setTooltip(Tooltips.createNew("subscriptions.tooltip.changefolder"));
+        changeFolderBtn.setTooltip(Tooltips.create("subscriptions.tooltip.changefolder"));
 
         deleteBtn.setGraphic(new ImageView(Icon.DELETE_SMALL.getImage()));
         deleteBtn.setOnAction(this::handleDeleteButtonClick);
-        deleteBtn.setTooltip(Tooltips.createNew("subscriptions.tooltip.delete"));
+        deleteBtn.setTooltip(Tooltips.create("subscriptions.tooltip.delete"));
     }
 
     private void handleRefreshButtonClick(ActionEvent event) {

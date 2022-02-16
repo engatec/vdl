@@ -20,9 +20,9 @@ import com.github.engatec.vdl.preference.property.general.DownloadPathConfigProp
 import com.github.engatec.vdl.preference.property.general.DownloadThreadsConfigProperty;
 import com.github.engatec.vdl.preference.property.general.LanguageConfigProperty;
 import com.github.engatec.vdl.preference.property.general.LoadThumbnailsConfigProperty;
-import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
-import com.github.engatec.vdl.validation.InputForm;
+import com.github.engatec.vdl.ui.helper.Dialogs;
+import com.github.engatec.vdl.ui.validation.InputForm;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

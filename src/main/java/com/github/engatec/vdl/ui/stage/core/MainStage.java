@@ -6,7 +6,7 @@ import com.github.engatec.vdl.preference.property.ui.MainWindowHeightConfigPrope
 import com.github.engatec.vdl.preference.property.ui.MainWindowPosXConfigProperty;
 import com.github.engatec.vdl.preference.property.ui.MainWindowPosYConfigProperty;
 import com.github.engatec.vdl.preference.property.ui.MainWindowWidthConfigProperty;
-import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.helper.Dialogs;
 import com.github.engatec.vdl.ui.stage.controller.MainController;
 import javafx.beans.property.DoubleProperty;
 import javafx.stage.Stage;

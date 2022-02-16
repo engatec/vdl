@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.ui;
+package com.github.engatec.vdl.ui.data;
 
 import java.util.List;
 import java.util.function.Consumer;

@@ -15,7 +15,7 @@ import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.property.general.AlwaysAskDownloadPathConfigProperty;
 import com.github.engatec.vdl.preference.property.general.DownloadPathConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
-import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.helper.Dialogs;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;

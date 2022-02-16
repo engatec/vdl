@@ -5,7 +5,7 @@ import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.property.general.VdlStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.preference.property.general.YoutubeDlStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.preference.property.general.YtdlpStartupUpdatesCheckConfigProperty;
-import com.github.engatec.vdl.validation.InputForm;
+import com.github.engatec.vdl.ui.validation.InputForm;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;

@@ -19,7 +19,7 @@ import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.preference.configitem.general.AutoSelectFormatConfigItem;
 import com.github.engatec.vdl.preference.property.general.AutoSelectFormatConfigProperty;
-import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.helper.Dialogs;
 import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Service;

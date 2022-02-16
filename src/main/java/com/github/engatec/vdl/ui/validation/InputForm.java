@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.validation;
+package com.github.engatec.vdl.ui.validation;
 
 public interface InputForm {
 

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
-import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.helper.Dialogs;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import org.apache.commons.io.FilenameUtils;

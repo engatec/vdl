@@ -1,6 +1,6 @@
 package com.github.engatec.vdl.ui.preference;
 
-import com.github.engatec.vdl.validation.InputForm;
+import com.github.engatec.vdl.ui.validation.InputForm;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 

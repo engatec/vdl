@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.ui;
+package com.github.engatec.vdl.ui.helper;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import javafx.scene.Group;

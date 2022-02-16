@@ -30,10 +30,10 @@ import com.github.engatec.vdl.preference.property.general.AutoSelectFormatConfig
 import com.github.engatec.vdl.preference.property.general.LoadThumbnailsConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
 import com.github.engatec.vdl.service.SubtitlesDownloadService;
-import com.github.engatec.vdl.ui.Dialogs;
 import com.github.engatec.vdl.ui.Icon;
-import com.github.engatec.vdl.ui.Tooltips;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
+import com.github.engatec.vdl.ui.helper.Dialogs;
+import com.github.engatec.vdl.ui.helper.Tooltips;
 import com.github.engatec.vdl.ui.stage.core.FormatsStage;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.Thumbnails;
@@ -98,14 +98,14 @@ public class DownloadableItemComponentController extends HBox {
 
     private void initControlButtons() {
         audioButton.setGraphic(new ImageView(Icon.AUDIOTRACK_SMALL.getImage()));
-        audioButton.setTooltip(Tooltips.createNew("download.audio"));
+        audioButton.setTooltip(Tooltips.create("download.audio"));
         audioButton.setOnAction(e -> {
             AppUtils.resolveDownloadPath(stage).ifPresent(this::downloadAudio);
             e.consume();
         });
 
         allFormatsButton.setGraphic(new ImageView(Icon.FILTER_LIST_SMALL.getImage()));
-        allFormatsButton.setTooltip(Tooltips.createNew("format.all"));
+        allFormatsButton.setTooltip(Tooltips.create("format.all"));
         allFormatsButton.setOnAction(e -> {
             new FormatsStage(videoInfo, customFormat, formatId -> {
                 customFormat = formatId;
@@ -120,7 +120,7 @@ public class DownloadableItemComponentController extends HBox {
 
         if (CollectionUtils.isNotEmpty(videoInfo.getSubtitles())) {
             closedCaptionButton.setGraphic(new ImageView(Icon.SUBTITLES_SMALL.getImage()));
-            closedCaptionButton.setTooltip(Tooltips.createNew("download.subtitles"));
+            closedCaptionButton.setTooltip(Tooltips.create("download.subtitles"));
             closedCaptionButton.setOnAction(e -> {
                 FileChooser fileChooser = new FileChooser();
                 File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathConfigProperty.class).getValue()).toFile();
