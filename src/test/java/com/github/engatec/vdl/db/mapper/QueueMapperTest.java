@@ -5,7 +5,6 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.sqlite.SQLiteException;
@@ -129,16 +128,14 @@ public class QueueMapperTest {
     @Test
     void insertQueueTempFile_insertionShouldFail_foreignKeyNull() {
         assertThatThrownBy(() -> dbManager.doQuery(QueueMapper.class, mapper -> mapper.insertQueueTempFile(null, "~/Downloads/abc.mp4")))
-                .hasCauseInstanceOf(PersistenceException.class)
-                .hasRootCauseInstanceOf(SQLiteException.class)
+                .hasCauseInstanceOf(SQLiteException.class)
                 .hasMessageContaining("SQLITE_CONSTRAINT_NOTNULL");
     }
 
     @Test
     void insertQueueTempFile_insertionShouldFail_foreignKeyError() {
         assertThatThrownBy(() -> dbManager.doQuery(QueueMapper.class, mapper -> mapper.insertQueueTempFile(10000L, "~/Downloads/abc.mp4")))
-                .hasCauseInstanceOf(PersistenceException.class)
-                .hasRootCauseInstanceOf(SQLiteException.class)
+                .hasCauseInstanceOf(SQLiteException.class)
                 .hasMessageContaining("SQLITE_CONSTRAINT_FOREIGNKEY");
     }
 
