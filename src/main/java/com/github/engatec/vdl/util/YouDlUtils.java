@@ -1,5 +1,13 @@
 package com.github.engatec.vdl.util;
 
+import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
@@ -9,14 +17,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
-
-import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.stream.Stream;
 
 public class YouDlUtils {
 
@@ -62,15 +63,17 @@ public class YouDlUtils {
                 Path tempFilePath = Path.of(normalizedPath);
                 String normalizedNameNoRubbishSymbols = tempFilePath.getFileName().toString().replaceAll(regex, StringUtils.EMPTY);
                 String partFileNameNoRubbishSymbols = StringUtils.appendIfMissing(normalizedNameNoRubbishSymbols, ".part");
-                Optional<Path> foundTempFileOptional = Files.list(tempFilePath.getParent())
-                        .filter(Files::isRegularFile)
-                        .filter(it -> {
-                            String s = it.getFileName().toString().replaceAll(regex, StringUtils.EMPTY);
-                            return s.equals(normalizedNameNoRubbishSymbols) || s.equals(partFileNameNoRubbishSymbols);
-                        })
-                        .findFirst();
-                if (foundTempFileOptional.isPresent()) {
-                    Files.deleteIfExists(foundTempFileOptional.get());
+                try (Stream<Path> files = Files.list(tempFilePath.getParent())) {
+                    Optional<Path> foundTempFileOptional = files
+                            .filter(Files::isRegularFile)
+                            .filter(it -> {
+                                String s = it.getFileName().toString().replaceAll(regex, StringUtils.EMPTY);
+                                return s.equals(normalizedNameNoRubbishSymbols) || s.equals(partFileNameNoRubbishSymbols);
+                            })
+                            .findFirst();
+                    if (foundTempFileOptional.isPresent()) {
+                        Files.deleteIfExists(foundTempFileOptional.get());
+                    }
                 }
             }
         } catch (InvalidPathException e) {
