@@ -151,12 +151,15 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private void handleSearchButtonClick(Event event) {
         String url = urlTextField.getText();
-        clearSearchPane(false);
-        if (isUrlBeingDownloaded(url)) {
-            Dialogs.infoWithYesNoButtons("stage.main.search.dialog.suchitemisbeingdownloaded", () -> startSearch(url), null);
-        } else {
-            startSearch(url);
+        if (StringUtils.isNotBlank(url)) {
+            clearSearchPane(false);
+            if (isUrlBeingDownloaded(url)) {
+                Dialogs.infoWithYesNoButtons("stage.main.search.dialog.suchitemisbeingdownloaded", () -> startSearch(url), null);
+            } else {
+                startSearch(url);
+            }
         }
+
         event.consume();
     }
 

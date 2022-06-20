@@ -30,6 +30,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -127,8 +128,12 @@ public class SubscriptionsComponentController extends VBox implements ComponentC
     }
 
     private void handleSearchButtonClick(Event event) {
-        playlistDetailsSearchService.setUrl(urlTextField.getText());
-        playlistDetailsSearchService.restart();
+        String url = urlTextField.getText();
+        if (StringUtils.isNotBlank(url)) {
+            playlistDetailsSearchService.setUrl(url);
+            playlistDetailsSearchService.restart();
+        }
+
         event.consume();
     }
 
