@@ -9,11 +9,14 @@ import com.github.engatec.vdl.service.newversion.VdlUpdater;
 import com.github.engatec.vdl.service.newversion.YoutubeDlUpdater;
 import com.github.engatec.vdl.service.newversion.YtDlpUpdater;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,21 +52,38 @@ public class AboutController extends StageAwareController {
     @FXML
     public void initialize() {
         vdlVersionLabel.setText(String.format(ctx.getLocalizedString("stage.about.label.version.vdl"), ctx.getAppVersion()));
-        vdlUpdateProgress.managedProperty().bind(vdlUpdateBtn.visibleProperty().not());
-        vdlUpdateProgress.visibleProperty().bind(vdlUpdateBtn.visibleProperty().not());
+        initializeButtonProgressProperty(vdlUpdateProgress, vdlUpdateBtn);
         vdlUpdateBtn.setOnAction(this::handleVdlUpdateButtonClick);
 
         setYoutubeDlVersionLabel();
-        youtubeDlUpdateProgress.managedProperty().bind(youtubeDlUpdateBtn.visibleProperty().not());
-        youtubeDlUpdateProgress.visibleProperty().bind(youtubeDlUpdateBtn.visibleProperty().not());
+        initializeButtonProgressProperty(youtubeDlUpdateProgress, youtubeDlUpdateBtn);
+        initializeVersionProgressProperty(youtubeDlVersionProgress, youtubeDlUpdateBtn);
         youtubeDlUpdateBtn.setOnAction(this::handleYoutubeDlUpdateButtonClick);
 
         setYtdlpVersionLabel();
-        ytDlpUpdateProgress.managedProperty().bind(ytdlpUpdateBtn.visibleProperty().not());
-        ytDlpUpdateProgress.visibleProperty().bind(ytdlpUpdateBtn.visibleProperty().not());
+        initializeButtonProgressProperty(ytDlpUpdateProgress, ytdlpUpdateBtn);
+        initializeVersionProgressProperty(ytdlpVersionProgress, ytdlpUpdateBtn);
         ytdlpUpdateBtn.setOnAction(this::handleYtdlpUpdateButtonClick);
 
         closeBtn.setOnAction(this::handleCloseButtonClick);
+    }
+
+    private void initializeButtonProgressProperty(ProgressIndicator progress, Button button) {
+        BooleanBinding buttonInvisibleProperty = button.visibleProperty().not();
+        progress.managedProperty().bind(buttonInvisibleProperty);
+        progress.visibleProperty().bind(buttonInvisibleProperty);
+
+        ReadOnlyDoubleProperty buttonHeightProperty = button.heightProperty();
+        progress.minHeightProperty().bind(buttonHeightProperty);
+        progress.prefHeightProperty().bind(buttonHeightProperty);
+        progress.maxHeightProperty().bind(buttonHeightProperty);
+    }
+
+    private void initializeVersionProgressProperty(ProgressIndicator progress, Region node) {
+        ReadOnlyDoubleProperty nodeHeightProperty = node.heightProperty();
+        progress.minHeightProperty().bind(nodeHeightProperty);
+        progress.prefHeightProperty().bind(nodeHeightProperty);
+        progress.maxHeightProperty().bind(nodeHeightProperty);
     }
 
     private void setYoutubeDlVersionLabel() {

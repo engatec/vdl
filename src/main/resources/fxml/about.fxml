@@ -8,21 +8,21 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="300.0" spacing="8.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.ui.stage.controller.AboutController">
+<VBox spacing="8.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.ui.stage.controller.AboutController">
    <children>
       <GridPane alignment="CENTER_LEFT" hgap="8.0" vgap="12.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" />
-          <ColumnConstraints halignment="RIGHT" hgrow="NEVER" />
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
-          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="-Infinity" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label fx:id="vdlVersionLabel" text="%stage.about.label.version.vdl">
@@ -30,8 +30,12 @@
                   <Font size="13.0" />
                </font>
             </Label>
-            <Button fx:id="vdlUpdateBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%update" GridPane.columnIndex="1" />
-            <ProgressIndicator fx:id="vdlUpdateProgress" GridPane.columnIndex="1" />
+            <StackPane GridPane.columnIndex="1">
+               <children>
+                  <Button fx:id="vdlUpdateBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%update.check" />
+                  <ProgressIndicator fx:id="vdlUpdateProgress" />
+               </children>
+            </StackPane>
             <HBox alignment="CENTER_LEFT" GridPane.rowIndex="1">
                <children>
                   <Label fx:id="youtubeDlVersionLabel" minHeight="-Infinity" minWidth="-Infinity" text="%stage.about.label.version.youtubedl">
@@ -42,8 +46,12 @@
                   <ProgressIndicator fx:id="youtubeDlVersionProgress" />
                </children>
             </HBox>
-            <Button fx:id="youtubeDlUpdateBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%update" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <ProgressIndicator fx:id="youtubeDlUpdateProgress" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <Button fx:id="youtubeDlUpdateBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%update.check" />
+                  <ProgressIndicator fx:id="youtubeDlUpdateProgress" />
+               </children>
+            </StackPane>
             <HBox alignment="CENTER_LEFT" GridPane.rowIndex="2">
                <children>
                   <Label fx:id="ytdlpVersionLabel" minHeight="-Infinity" minWidth="-Infinity" text="%stage.about.label.version.ytdlp">
@@ -54,15 +62,21 @@
                   <ProgressIndicator fx:id="ytdlpVersionProgress" />
                </children>
             </HBox>
-            <Button fx:id="ytdlpUpdateBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%update" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <ProgressIndicator fx:id="ytDlpUpdateProgress" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <StackPane GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <children>
+                  <Button fx:id="ytdlpUpdateBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="%update.check" />
+                  <ProgressIndicator fx:id="ytDlpUpdateProgress" />
+               </children>
+            </StackPane>
          </children>
       </GridPane>
-      <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
       <AnchorPane>
          <children>
             <Button fx:id="closeBtn" mnemonicParsing="false" styleClass="control-btn" text="%close" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
+         <VBox.margin>
+            <Insets top="16.0" />
+         </VBox.margin>
       </AnchorPane>
    </children>
    <padding>
