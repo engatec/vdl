@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<fx:root fx:id="rootNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="rootNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox maxWidth="1.7976931348623157E308" spacing="2.0">
          <children>
@@ -32,12 +32,12 @@
       </VBox>
       <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%checkbox.selectall">
          <VBox.margin>
-            <Insets bottom="8.0" top="16.0" />
+            <Insets top="16.0" />
          </VBox.margin>
       </CheckBox>
       <ScrollPane fitToWidth="true" styleClass="no-border" VBox.vgrow="ALWAYS">
          <content>
-            <VBox fx:id="contentNode" spacing="16.0" />
+            <VBox fx:id="contentNode" />
          </content>
          <padding>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
