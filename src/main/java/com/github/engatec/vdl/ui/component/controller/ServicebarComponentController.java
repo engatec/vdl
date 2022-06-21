@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.Engine;
+import com.github.engatec.vdl.handler.ComboBoxRollingScrollHandler;
 import com.github.engatec.vdl.preference.property.misc.DownloaderConfigProperty;
 import com.github.engatec.vdl.preference.property.youtubedl.ProxyEnabledConfigProperty;
 import com.github.engatec.vdl.preference.property.youtubedl.ProxyUrlConfigProperty;
@@ -66,6 +67,7 @@ public class ServicebarComponentController extends HBox {
             }
         });
         downloaderComboBox.valueProperty().bindBidirectional(ctx.getConfigRegistry().get(DownloaderConfigProperty.class).getProperty());
+        downloaderComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
 
         helpButton.setOnMouseClicked(e -> {
             new AboutStage().modal(stage).showAndWait();

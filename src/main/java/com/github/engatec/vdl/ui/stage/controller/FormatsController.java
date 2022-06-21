@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
+import com.github.engatec.vdl.handler.ComboBoxRollingScrollHandler;
 import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.model.downloadable.Audio;
@@ -236,6 +237,8 @@ public class FormatsController {
             video.setAudio(audio);
             event.consume();
         });
+
+        comboBox.setOnScroll(new ComboBoxRollingScrollHandler());
 
         SingleSelectionModel<Audio> selectionModel = comboBox.getSelectionModel();
         String matchedAudioExtension = videoExtToAudioExtMap.get(video.getExtension());

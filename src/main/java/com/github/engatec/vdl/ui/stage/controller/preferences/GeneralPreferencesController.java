@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import com.github.engatec.fxcontrols.FxDirectoryChooser;
 import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.handler.ComboBoxRollingScrollHandler;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Resolution;
@@ -86,6 +87,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 Dialogs.info("preferences.general.language.restartrequired", newLanguage);
             }
         });
+        languageComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
     }
 
     private void bindPropertyHolder() {
@@ -130,6 +132,8 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 return BEST_FORMAT.equals(string) ? AutoSelectFormatConfigItem.DEFAULT : Integer.parseInt(StringUtils.substringBefore(string, "p"));
             }
         });
+
+        autoSelectFormatComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
     }
 
     private void initAudioExtractionSettings() {
@@ -137,6 +141,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 .map(AudioFormat::toString)
                 .toList();
         audioExtractionFormatComboBox.setItems(FXCollections.observableArrayList(audioFormats));
+        audioExtractionFormatComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
     }
 
     private void initDownloadThreadsSettings() {
@@ -152,6 +157,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 Dialogs.info("preferences.general.download.threads.restartrequired");
             }
         });
+        downloadThreadsComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
     }
 
     @Override

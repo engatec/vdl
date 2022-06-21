@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
+import com.github.engatec.vdl.handler.ComboBoxRollingScrollHandler;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.QueueItem;
@@ -141,6 +142,7 @@ public class DownloadableItemComponentController extends HBox {
         }
 
         formatsComboBox.prefHeightProperty().bind(allFormatsButton.heightProperty());
+        formatsComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
     }
 
     private void initLabels() {
