@@ -73,6 +73,8 @@ public class DownloadableItemComponentController extends HBox {
     private final VideoInfo videoInfo;
     private String customFormat;
 
+    @FXML private HBox rootHBox;
+
     @FXML private Label titleLabel;
     @FXML private Label durationLabel;
     @FXML private ComboBox<ComboBoxValueHolder<String>> formatsComboBox;
@@ -95,6 +97,8 @@ public class DownloadableItemComponentController extends HBox {
         initLabels();
         initFormats();
         initThumbnail();
+
+        rootHBox.setOnMouseClicked(event -> itemSelectedCheckBox.setSelected(!itemSelectedCheckBox.isSelected()));
     }
 
     private void initControlButtons() {
@@ -242,8 +246,8 @@ public class DownloadableItemComponentController extends HBox {
                     if (!saved) {
                         Dialogs.error("image.save.error");
                     }
-                    event.consume();
                 }
+                event.consume();
             });
         }
     }

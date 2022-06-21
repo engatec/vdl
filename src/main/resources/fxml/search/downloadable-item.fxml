@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<fx:root alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="16.0" stylesheets="@../../styles.css" type="HBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="rootHBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="16.0" stylesheets="@../../styles.css" type="HBox" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <CheckBox fx:id="itemSelectedCheckBox" mnemonicParsing="false" />
       <StackPane fx:id="thumbnailWrapperPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="100.0">
