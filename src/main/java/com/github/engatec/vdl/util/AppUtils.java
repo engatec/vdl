@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -21,9 +20,6 @@ import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 public class AppUtils {
-
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-    public static final DateTimeFormatter DATE_TIME_FORMATTER_SQLITE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Optional<Path> resolveDownloadPath(Stage stage) {
         Path path = doResolveDownloadPath(stage);
