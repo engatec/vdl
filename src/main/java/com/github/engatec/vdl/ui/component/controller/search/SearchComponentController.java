@@ -205,14 +205,18 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void handleDownloadButtonClick(ActionEvent e) {
-        AppUtils.resolveDownloadPath(stage).ifPresent(path -> getSelectedItems().forEach(it -> it.download(path)));
-        clearSearchPane(true);
+        AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
+            getSelectedItems().forEach(it -> it.download(path));
+            clearSearchPane(true);
+        });
         e.consume();
     }
 
     private void handleDownloadAudioButtonClick(ActionEvent e) {
-        AppUtils.resolveDownloadPath(stage).ifPresent(path -> getSelectedItems().forEach(it -> it.downloadAudio(path)));
-        clearSearchPane(true);
+        AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
+            getSelectedItems().forEach(it -> it.downloadAudio(path));
+            clearSearchPane(true);
+        });
         e.consume();
     }
 
