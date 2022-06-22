@@ -6,6 +6,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
+import com.github.engatec.vdl.ui.scene.control.cell.ProgressBarWithPercentTableCell;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -19,7 +20,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.ProgressBarTableCell;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,7 +54,7 @@ public class DownloadsComponentController extends VBox implements ComponentContr
         downloadPathTableColumn.setCellValueFactory(it -> new ReadOnlyObjectWrapper<>(it.getValue().getDownloadPath()));
 
         progressTableColumn.setCellValueFactory(it -> it.getValue().progressProperty().asObject());
-        progressTableColumn.setCellFactory(ProgressBarTableCell.forTableColumn());
+        progressTableColumn.setCellFactory(ProgressBarWithPercentTableCell.forTableColumn());
         downloadQueueTableView.setItems(data);
 
         startAllBtn.setOnAction(this::handleStartAllButtonClick);
