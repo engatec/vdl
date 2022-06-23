@@ -2,12 +2,23 @@ package com.github.engatec.vdl.ui.component.controller.history;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.handler.ComboBoxRollingScrollHandler;
 import com.github.engatec.vdl.model.HistoryItem;
+import com.github.engatec.vdl.preference.model.TableColumnConfigModel;
+import com.github.engatec.vdl.preference.model.TableConfigModel;
 import com.github.engatec.vdl.preference.property.misc.HistoryEntriesNumberConfigProperty;
+import com.github.engatec.vdl.preference.property.misc.HistoryTableConfigProperty;
 import com.github.engatec.vdl.ui.component.controller.ComponentController;
 import com.github.engatec.vdl.ui.helper.Dialogs;
 import javafx.application.Platform;
@@ -23,6 +34,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumnBase;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
@@ -30,6 +42,8 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,13 +55,21 @@ public class HistoryComponentController extends VBox implements ComponentControl
     private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final HistoryManager historyManager = ctx.getManager(HistoryManager.class);
 
+    // This map allows to change column field names without affecting the code as ids are used to save and restore table view state
+    private static final Map<String, Integer> COLUMN_ID_MAP = new HashMap<>();
+    static {
+        COLUMN_ID_MAP.put("titleTableColumn", 1);
+        COLUMN_ID_MAP.put("urlTableColumn", 2);
+        COLUMN_ID_MAP.put("locationTableColumn", 3);
+        COLUMN_ID_MAP.put("dtmTableColumn", 4);
+    }
+
     @FXML private TableView<HistoryItem> historyTableView;
     @FXML private TableColumn<HistoryItem, String> titleTableColumn;
     @FXML private TableColumn<HistoryItem, String> urlTableColumn;
     @FXML private TableColumn<HistoryItem, Path> locationTableColumn;
     @FXML private TableColumn<HistoryItem, String> dtmTableColumn;
 
-    @FXML private Label entriesNumberLabel;
     @FXML private ComboBox<Integer> entriesNumberComboBox;
     @FXML private Button clearHistoryBtn;
 
@@ -115,6 +137,50 @@ public class HistoryComponentController extends VBox implements ComponentControl
         });
     }
 
+    private void restoreTableViewStateFromConfig() {
+        TableConfigModel tableConfigModel = ctx.getConfigRegistry().get(HistoryTableConfigProperty.class).getValue();
+
+        Map<Integer, TableColumnConfigModel> tableConfigModelMap = SetUtils.emptyIfNull(tableConfigModel.columnConfigModels()).stream()
+                .collect(Collectors.toMap(TableColumnConfigModel::id, Function.identity()));
+
+        if (tableConfigModelMap.isEmpty()) {
+            return;
+        }
+
+        historyTableView.getColumns().sort((c1, c2) -> {
+            TableColumnConfigModel c1Config = tableConfigModelMap.get(COLUMN_ID_MAP.get(c1.getId()));
+            TableColumnConfigModel c2Config = tableConfigModelMap.get(COLUMN_ID_MAP.get(c2.getId()));
+            return Integer.compare(c1Config.pos(), c2Config.pos());
+        });
+
+        historyTableView.getColumns().forEach(column -> {
+            TableColumnConfigModel config = tableConfigModelMap.get(COLUMN_ID_MAP.get(column.getId()));
+            if (config == null) {
+                LOGGER.warn("Config for column {} is null", column.getId());
+                return;
+            }
+
+            column.setPrefWidth(config.width());
+            column.setSortType(config.sortType());
+        });
+
+        // Restore sort order
+        List<Integer> sortOrderColumnIds = ListUtils.emptyIfNull(tableConfigModel.sortOrderColumnIds());
+        List<TableColumn<HistoryItem, ?>> sortOrderColumns = new ArrayList<>(sortOrderColumnIds.size());
+        for (int i = 0; i < sortOrderColumnIds.size(); i++) {
+            sortOrderColumns.add(null);
+        }
+
+        historyTableView.getColumns().forEach(column -> {
+            int sortOrderIdx = sortOrderColumnIds.indexOf(COLUMN_ID_MAP.get(column.getId()));
+            if (sortOrderIdx >= 0) {
+                sortOrderColumns.set(sortOrderIdx, column);
+            }
+        });
+
+        historyTableView.getSortOrder().addAll(sortOrderColumns);
+    }
+
     private ContextMenu createContextMenu(TableRow<HistoryItem> row) {
         ContextMenu ctxMenu = new ContextMenu();
 
@@ -172,8 +238,30 @@ public class HistoryComponentController extends VBox implements ComponentControl
     }
 
     @Override
+    public void onVisibilityLost() {
+        Set<TableColumnConfigModel> columnConfigModels = new HashSet<>();
+        var columns = historyTableView.getColumns();
+        for (int i = 0; i < columns.size(); i++) {
+            var c = columns.get(i);
+            columnConfigModels.add(new TableColumnConfigModel(COLUMN_ID_MAP.get(c.getId()), i, c.getWidth(), c.getSortType()));
+        }
+
+        List<Integer> sortOrderList = historyTableView.getSortOrder().stream()
+                .map(TableColumnBase::getId)
+                .map(COLUMN_ID_MAP::get)
+                .toList();
+
+        var historyTableConfigProperty = ctx.getConfigRegistry().get(HistoryTableConfigProperty.class);
+        historyTableConfigProperty.setValue(new TableConfigModel(sortOrderList, columnConfigModels));
+        historyTableConfigProperty.save();
+    }
+
+    @Override
     public void onBeforeVisible() {
         historyManager.getHistoryItemsAsync()
-                .thenAccept(items -> Platform.runLater(() -> historyTableView.setItems(FXCollections.observableList(items))));
+                .thenAccept(items -> Platform.runLater(() -> {
+                    historyTableView.setItems(FXCollections.observableList(items));
+                    restoreTableViewStateFromConfig();
+                }));
     }
 }

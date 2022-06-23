@@ -6,7 +6,10 @@ import com.github.engatec.vdl.preference.property.ui.MainWindowHeightConfigPrope
 import com.github.engatec.vdl.preference.property.ui.MainWindowPosXConfigProperty;
 import com.github.engatec.vdl.preference.property.ui.MainWindowPosYConfigProperty;
 import com.github.engatec.vdl.preference.property.ui.MainWindowWidthConfigProperty;
+import com.github.engatec.vdl.ui.component.controller.ComponentController;
+import com.github.engatec.vdl.ui.data.UserDataType;
 import com.github.engatec.vdl.ui.helper.Dialogs;
+import com.github.engatec.vdl.ui.helper.StageUtils;
 import com.github.engatec.vdl.ui.stage.controller.MainController;
 import javafx.beans.property.DoubleProperty;
 import javafx.stage.Stage;
@@ -69,12 +72,15 @@ public class MainStage extends AppStage {
         return param -> new MainController(stage);
     }
 
-    /**
-     * Confirmation on app close if queue items being downloaded
-     */
     private void handleCloseRequest(WindowEvent e) {
         if (queueManager.hasItem(it -> it.getStatus() == IN_PROGRESS)) {
             Dialogs.warningWithYesNoButtons("stage.main.dialog.close.queuehasitemsinprogress", null, e::consume);
         }
+
+        StageUtils.getUserData(stage, UserDataType.CURRENT_VISIBLE_COMPONENT).ifPresent(userData -> {
+            if (userData instanceof ComponentController componentController) {
+                componentController.onVisibilityLost();
+            }
+        });
     }
 }

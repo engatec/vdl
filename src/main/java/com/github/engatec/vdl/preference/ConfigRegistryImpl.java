@@ -18,6 +18,7 @@ import com.github.engatec.vdl.preference.property.general.YoutubeDlStartupUpdate
 import com.github.engatec.vdl.preference.property.general.YtdlpStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.DownloaderConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.HistoryEntriesNumberConfigProperty;
+import com.github.engatec.vdl.preference.property.misc.HistoryTableConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
 import com.github.engatec.vdl.preference.property.ui.MainWindowHeightConfigProperty;
 import com.github.engatec.vdl.preference.property.ui.MainWindowPosXConfigProperty;
@@ -97,6 +98,7 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new DownloaderConfigProperty());
         addToRegistry(new HistoryEntriesNumberConfigProperty());
         addToRegistry(new RecentDownloadPathConfigProperty());
+        addToRegistry(new HistoryTableConfigProperty());
 
         /* UI */
         addToRegistry(new MainWindowPosXConfigProperty());

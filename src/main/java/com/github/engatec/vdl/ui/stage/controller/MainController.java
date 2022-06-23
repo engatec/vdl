@@ -18,10 +18,11 @@ import com.github.engatec.vdl.ui.component.core.ServicebarComponent;
 import com.github.engatec.vdl.ui.component.core.SidebarComponent;
 import com.github.engatec.vdl.ui.component.core.search.SearchComponent;
 import com.github.engatec.vdl.ui.component.core.subscriptions.SubscriptionsComponent;
+import com.github.engatec.vdl.ui.data.UserDataType;
+import com.github.engatec.vdl.ui.helper.StageUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -31,7 +32,6 @@ public class MainController extends StageAwareController {
     private final QueueManager queueManager = ctx.getManager(QueueManager.class);
     private final SubscriptionsManager subscriptionsManager = ctx.getManager(SubscriptionsManager.class);
 
-    @FXML private HBox rootNode;
     @FXML private StackPane navigationPane;
     @FXML private StackPane contentPane;
     @FXML private StackPane servicebarPane;
@@ -89,6 +89,9 @@ public class MainController extends StageAwareController {
 
         component.onBeforeVisible();
         contentPaneItems.add(component);
+
+        // Storing active component as user data to make it possible to call onVisibilityLost method when user closes the app
+        StageUtils.setUserData(stage, UserDataType.CURRENT_VISIBLE_COMPONENT, component);
     }
 
     private void initServiceBar() {
