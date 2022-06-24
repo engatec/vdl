@@ -7,11 +7,11 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
          <content>
-            <TableView fx:id="downloadQueueTableView" minHeight="-Infinity" minWidth="-Infinity" tableMenuButtonVisible="true">
+            <TableView fx:id="downloadQueueTableView" minHeight="-Infinity" minWidth="-Infinity">
               <columns>
                 <TableColumn fx:id="statusTableColumn" prefWidth="100.0" text="%stage.queue.table.column.status" />
                   <TableColumn fx:id="progressTableColumn" prefWidth="120.0" text="%stage.queue.table.column.progress" />

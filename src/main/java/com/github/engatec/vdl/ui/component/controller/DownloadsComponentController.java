@@ -1,11 +1,15 @@
 package com.github.engatec.vdl.ui.component.controller;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
+import com.github.engatec.vdl.preference.model.TableConfigModel;
+import com.github.engatec.vdl.preference.property.table.DownloadsTableConfigProperty;
+import com.github.engatec.vdl.ui.helper.Tables;
 import com.github.engatec.vdl.ui.scene.control.cell.ProgressBarWithPercentTableCell;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -28,6 +32,17 @@ public class DownloadsComponentController extends VBox implements ComponentContr
     private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final QueueManager queueManager = ctx.getManager(QueueManager.class);
     private final ObservableList<QueueItem> data = queueManager.getQueueItems();
+
+    // This map allows to change column field names without affecting the code as ids are used to save and restore table view state
+    private static final Map<String, Integer> COLUMN_ID_MAP = Map.of(
+            "statusTableColumn", 1,
+            "progressTableColumn", 2,
+            "titleTableColumn", 3,
+            "urlTableColumn", 4,
+            "sizeTableColumn", 5,
+            "throughputTableColumn", 6,
+            "downloadPathTableColumn", 7
+    );
 
     @FXML private TableView<QueueItem> downloadQueueTableView;
     @FXML private TableColumn<QueueItem, DownloadStatus> statusTableColumn;
@@ -71,6 +86,9 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             );
             return row;
         });
+
+        TableConfigModel tableConfigModel = ctx.getConfigRegistry().get(DownloadsTableConfigProperty.class).getValue();
+        Tables.restoreTableViewStateFromConfigModel(downloadQueueTableView, tableConfigModel, COLUMN_ID_MAP);
     }
 
     private ContextMenu createContextMenu(TableRow<QueueItem> row) {
@@ -146,5 +164,12 @@ public class DownloadsComponentController extends VBox implements ComponentContr
     private void handleRemoveAllButtonClick(ActionEvent event) {
         queueManager.removeAll();
         event.consume();
+    }
+
+    @Override
+    public void onVisibilityLost() {
+        var prop = ctx.getConfigRegistry().get(DownloadsTableConfigProperty.class);
+        prop.setValue(Tables.convertTableViewStateToConfigModel(downloadQueueTableView, COLUMN_ID_MAP));
+        prop.save();
     }
 }

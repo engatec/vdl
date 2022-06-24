@@ -1,4 +1,4 @@
-package com.github.engatec.vdl.preference.configitem.misc;
+package com.github.engatec.vdl.preference.configitem.table;
 
 import java.util.List;
 import java.util.Set;
@@ -7,14 +7,15 @@ import java.util.prefs.Preferences;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.engatec.vdl.preference.configitem.ConfigItem;
 import com.github.engatec.vdl.preference.model.TableConfigModel;
 import org.apache.commons.lang3.StringUtils;
 
-public class HistoryTableConfigItem extends MiscConfigItem<TableConfigModel> {
+public abstract class TableConfigItem extends ConfigItem<TableConfigModel> {
 
     @Override
-    protected String getName() {
-        return "history_table";
+    protected String getCategory() {
+        return "table";
     }
 
     @Override

@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.preference.property.misc;
+package com.github.engatec.vdl.preference.property.table;
 
 import com.github.engatec.vdl.preference.configitem.ConfigItem;
-import com.github.engatec.vdl.preference.configitem.misc.HistoryTableConfigItem;
+import com.github.engatec.vdl.preference.configitem.table.DownloadsTableConfigItem;
 import com.github.engatec.vdl.preference.model.TableConfigModel;
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
-public class HistoryTableConfigProperty extends ConfigProperty<SimpleObjectProperty<TableConfigModel>, TableConfigModel> {
+public class DownloadsTableConfigProperty extends ConfigProperty<SimpleObjectProperty<TableConfigModel>, TableConfigModel> {
 
-    private static final ConfigItem<TableConfigModel> CONFIG_ITEM = new HistoryTableConfigItem();
+    private static final ConfigItem<TableConfigModel> CONFIG_ITEM = new DownloadsTableConfigItem();
 
     private final SimpleObjectProperty<TableConfigModel> property = new SimpleObjectProperty<>();
 
-    public HistoryTableConfigProperty() {
+    public DownloadsTableConfigProperty() {
         restore();
     }
 
