@@ -107,7 +107,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         downloadButton.setOnAction(this::handleDownloadButtonClick);
 
         initDragAndDrop();
-        stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(urlTextField, searchButton));
+        stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(urlTextField, urlTextArea, searchButton));
     }
 
     private void initSearchControl() {
@@ -153,6 +153,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         multiSearchImageView.setOnMouseClicked(event -> {
             multiSearchActive.setValue(true);
             urlTextField.setText(StringUtils.EMPTY);
+            Platform.runLater(() -> urlTextArea.requestFocus());
             event.consume();
         });
 
@@ -176,6 +177,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         singleSearchImageView.setOnMouseClicked(event -> {
             multiSearchActive.setValue(false);
             urlTextArea.setText(StringUtils.EMPTY);
+            Platform.runLater(() -> urlTextField.requestFocus());
             event.consume();
         });
 
@@ -183,15 +185,15 @@ public class SearchComponentController extends VBox implements ComponentControll
         Platform.runLater(() -> { // Must wrap in Platform.runLater to have .scroll-bar initialized
             for (Node node : urlTextArea.lookupAll(".scroll-bar")) {
                 if (node instanceof ScrollBar scrollBar && scrollBar.getOrientation() == Orientation.VERTICAL) {
-                    scrollBar.visibleProperty().addListener((observable, oldValue, newValue) -> {
+                    scrollBar.visibleProperty().addListener((observable, oldValue, newValue) ->
                         Platform.runLater(() -> { // Must wrap in Platform.runLater to have scrollBar.getWidth() correctly calculated
                             double rightMargin = 4;
                             if (newValue) {
                                 rightMargin += scrollBar.getWidth();
                             }
                             StackPane.setMargin(singleSearchImageView, new Insets(0, rightMargin, 4, 0));
-                        });
-                    });
+                        })
+                    );
                 }
             }
         });
@@ -220,7 +222,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void handleSearchButtonClick(Event event) {
-        String url = urlTextField.getText();
+        String url = StringUtils.firstNonBlank(urlTextField.getText(), urlTextArea.getText());
         if (StringUtils.isNotBlank(url)) {
             clearSearchPane(false);
             if (isUrlBeingDownloaded(url)) {
@@ -293,6 +295,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     private void clearSearchPane(boolean clearUrlTextField) {
         if (clearUrlTextField) {
             urlTextField.clear();
+            urlTextArea.clear();
         }
         downloadButton.setVisible(false);
         selectAllCheckBox.setManaged(false);
@@ -312,8 +315,14 @@ public class SearchComponentController extends VBox implements ComponentControll
         rootNode.setOnDragDropped(e -> {
             Dragboard dragboard = e.getDragboard();
             if (searchButton.isVisible() && e.getTransferMode() == TransferMode.COPY && dragboard.hasString()) {
-                urlTextField.setText(dragboard.getString());
-                searchButton.fire();
+                Boolean multisearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getValue();
+                if (multisearchActive) {
+                    urlTextArea.appendText(dragboard.getString() + System.lineSeparator());
+                } else {
+                    urlTextField.setText(dragboard.getString());
+                    searchButton.fire();
+                }
+
                 e.setDropCompleted(true);
             }
             e.consume();
