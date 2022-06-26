@@ -22,12 +22,14 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.TextArea;
@@ -150,6 +152,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         multiSearchImageView.fitWidthProperty().bind(multiSearchImageView.fitHeightProperty());
         multiSearchImageView.setOnMouseClicked(event -> {
             multiSearchActive.setValue(true);
+            urlTextField.setText(StringUtils.EMPTY);
             event.consume();
         });
 
@@ -172,7 +175,25 @@ public class SearchComponentController extends VBox implements ComponentControll
         singleSearchImageView.fitWidthProperty().bind(multiSearchImageView.fitWidthProperty());
         singleSearchImageView.setOnMouseClicked(event -> {
             multiSearchActive.setValue(false);
+            urlTextArea.setText(StringUtils.EMPTY);
             event.consume();
+        });
+
+        // A hack to calculate singleSearchImageView margin when textarea scroll becomes visible/invisible
+        Platform.runLater(() -> { // Must wrap in Platform.runLater to have .scroll-bar initialized
+            for (Node node : urlTextArea.lookupAll(".scroll-bar")) {
+                if (node instanceof ScrollBar scrollBar && scrollBar.getOrientation() == Orientation.VERTICAL) {
+                    scrollBar.visibleProperty().addListener((observable, oldValue, newValue) -> {
+                        Platform.runLater(() -> { // Must wrap in Platform.runLater to have scrollBar.getWidth() correctly calculated
+                            double rightMargin = 4;
+                            if (newValue) {
+                                rightMargin += scrollBar.getWidth();
+                            }
+                            StackPane.setMargin(singleSearchImageView, new Insets(0, rightMargin, 4, 0));
+                        });
+                    });
+                }
+            }
         });
     }
 
