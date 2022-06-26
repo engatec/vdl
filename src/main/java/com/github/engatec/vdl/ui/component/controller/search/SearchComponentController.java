@@ -7,6 +7,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.preference.property.misc.MultiSearchConfigProperty;
 import com.github.engatec.vdl.service.DownloadableSearchService;
 import com.github.engatec.vdl.ui.component.controller.ComponentController;
 import com.github.engatec.vdl.ui.component.core.search.DownloadableItemComponent;
@@ -14,11 +15,13 @@ import com.github.engatec.vdl.ui.data.CheckBoxGroup;
 import com.github.engatec.vdl.ui.helper.Dialogs;
 import com.github.engatec.vdl.util.AppUtils;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -27,10 +30,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
@@ -50,7 +56,14 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     @FXML private Node rootNode;
 
+    @FXML private StackPane singleSearchStackPane;
     @FXML private TextField urlTextField;
+    @FXML private ImageView multiSearchImageView;
+
+    @FXML private StackPane multiSearchStackPane;
+    @FXML private TextArea urlTextArea;
+    @FXML private ImageView singleSearchImageView;
+
     @FXML private Button searchButton;
     @FXML private Button cancelButton;
 
@@ -96,13 +109,13 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void initSearchControl() {
+        initSingleSearchTextField();
+        initMultiSearchTextArea();
+
         ReadOnlyBooleanProperty searchInProgress = downloadableSearchService.runningProperty();
 
-        urlTextField.visibleProperty().bind(searchInProgress.not());
-        urlTextField.managedProperty().bind(searchInProgress.not());
         searchButton.visibleProperty().bind(searchInProgress.not());
         searchButton.managedProperty().bind(searchInProgress.not());
-
         searchProgressBar.visibleProperty().bind(searchInProgress);
         searchProgressBar.managedProperty().bind(searchInProgress);
         cancelButton.visibleProperty().bind(searchInProgress);
@@ -112,12 +125,6 @@ public class SearchComponentController extends VBox implements ComponentControll
         searchProgressBar.progressProperty().bind(downloadableSearchService.progressProperty());
         searchProgressLabel.textProperty().bind(downloadableSearchService.messageProperty());
 
-        urlTextField.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
-                handleSearchButtonClick(event);
-            }
-        });
-
         selectAllCheckBox.setManaged(false);
         selectAllCheckBox.setVisible(false);
 
@@ -125,6 +132,48 @@ public class SearchComponentController extends VBox implements ComponentControll
         MenuItem downloadAudioMenuItem = new MenuItem(ctx.getLocalizedString("download.audio"));
         downloadAudioMenuItem.setOnAction(this::handleDownloadAudioButtonClick);
         downloadButton.getItems().add(downloadAudioMenuItem);
+    }
+
+    private void initSingleSearchTextField() {
+        ReadOnlyBooleanProperty searchInProgress = downloadableSearchService.runningProperty();
+
+        var multiSearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getProperty();
+        var singleSearchActive = multiSearchActive.not();
+
+        singleSearchStackPane.visibleProperty().bind(searchInProgress.not().and(singleSearchActive));
+        singleSearchStackPane.managedProperty().bind(searchInProgress.not().and(singleSearchActive));
+
+        multiSearchImageView.fitHeightProperty().bind(Bindings.createDoubleBinding(() -> {
+            double urlTextFieldHeight = urlTextField.getHeight();
+            return urlTextFieldHeight - urlTextFieldHeight * 0.4;
+        }, urlTextField.heightProperty()));
+        multiSearchImageView.fitWidthProperty().bind(multiSearchImageView.fitHeightProperty());
+        multiSearchImageView.setOnMouseClicked(event -> {
+            multiSearchActive.setValue(true);
+            event.consume();
+        });
+
+        urlTextField.paddingProperty().bind(Bindings.createObjectBinding(() -> new Insets(4, 14 + multiSearchImageView.getFitWidth(), 4, 7), multiSearchImageView.fitWidthProperty()));
+        urlTextField.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                handleSearchButtonClick(event);
+            }
+        });
+    }
+
+    private void initMultiSearchTextArea() {
+        ReadOnlyBooleanProperty searchInProgress = downloadableSearchService.runningProperty();
+        var multiSearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getProperty();
+
+        multiSearchStackPane.visibleProperty().bind(searchInProgress.not().and(multiSearchActive));
+        multiSearchStackPane.managedProperty().bind(searchInProgress.not().and(multiSearchActive));
+
+        singleSearchImageView.fitHeightProperty().bind(multiSearchImageView.fitHeightProperty());
+        singleSearchImageView.fitWidthProperty().bind(multiSearchImageView.fitWidthProperty());
+        singleSearchImageView.setOnMouseClicked(event -> {
+            multiSearchActive.setValue(false);
+            event.consume();
+        });
     }
 
     private void initSearchService() {
@@ -252,6 +301,13 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     @Override
     public void onBeforeVisible() {
-        Platform.runLater(() -> urlTextField.requestFocus());
+        Platform.runLater(() -> {
+            Boolean multisearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getValue();
+            if (multisearchActive) {
+                urlTextArea.requestFocus();
+            } else {
+                urlTextField.requestFocus();
+            }
+        });
     }
 }
