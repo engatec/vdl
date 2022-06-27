@@ -1,11 +1,13 @@
 package com.github.engatec.vdl.ui.component.controller.search;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
+import com.github.engatec.vdl.handler.textformatter.NewLineOnUrlPasteTextFormatter;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.preference.property.misc.MultiSearchConfigProperty;
 import com.github.engatec.vdl.service.DownloadableSearchService;
@@ -181,6 +183,8 @@ public class SearchComponentController extends VBox implements ComponentControll
             event.consume();
         });
 
+        urlTextArea.setTextFormatter(new NewLineOnUrlPasteTextFormatter());
+
         // A hack to calculate singleSearchImageView margin when textarea scroll becomes visible/invisible
         Platform.runLater(() -> { // Must wrap in Platform.runLater to have .scroll-bar initialized
             for (Node node : urlTextArea.lookupAll(".scroll-bar")) {
@@ -222,22 +226,31 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void handleSearchButtonClick(Event event) {
-        String url = StringUtils.firstNonBlank(urlTextField.getText(), urlTextArea.getText());
-        if (StringUtils.isNotBlank(url)) {
+        String urlString = StringUtils.firstNonBlank(urlTextField.getText(), urlTextArea.getText());
+        if (StringUtils.isNotBlank(urlString)) {
+            List<String> urls = Arrays.stream(urlString.split("\\s"))
+                    .map(StringUtils::strip)
+                    .filter(StringUtils::isNotBlank)
+                    .toList();
+
             clearSearchPane(false);
-            if (isUrlBeingDownloaded(url)) {
-                Dialogs.infoWithYesNoButtons("stage.main.search.dialog.suchitemisbeingdownloaded", () -> startSearch(url), null);
+
+            var singleSearchActive = !ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getValue();
+            if (singleSearchActive && isUrlBeingDownloaded(urls.stream().findFirst().orElse(null))) {
+                Dialogs.infoWithYesNoButtons("stage.main.search.dialog.suchitemisbeingdownloaded", () -> startSearch(urls), null);
             } else {
-                startSearch(url);
+                startSearch(urls);
             }
         }
 
         event.consume();
     }
 
-    private void startSearch(String url) {
-        String normUrl = AppUtils.normalizeBaseUrl(url);
-        downloadableSearchService.setUrl(normUrl);
+    private void startSearch(List<String> urls) {
+        List<String> normalizedUrls = urls.stream()
+                .map(AppUtils::normalizeBaseUrl)
+                .toList();
+        downloadableSearchService.setUrls(normalizedUrls);
         downloadableSearchService.restart();
     }
 
@@ -315,8 +328,8 @@ public class SearchComponentController extends VBox implements ComponentControll
         rootNode.setOnDragDropped(e -> {
             Dragboard dragboard = e.getDragboard();
             if (searchButton.isVisible() && e.getTransferMode() == TransferMode.COPY && dragboard.hasString()) {
-                Boolean multisearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getValue();
-                if (multisearchActive) {
+                Boolean multiSearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getValue();
+                if (multiSearchActive) {
                     urlTextArea.appendText(dragboard.getString() + System.lineSeparator());
                 } else {
                     urlTextField.setText(dragboard.getString());
@@ -332,8 +345,8 @@ public class SearchComponentController extends VBox implements ComponentControll
     @Override
     public void onBeforeVisible() {
         Platform.runLater(() -> {
-            Boolean multisearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getValue();
-            if (multisearchActive) {
+            Boolean multiSearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getValue();
+            if (multiSearchActive) {
                 urlTextArea.requestFocus();
             } else {
                 urlTextField.requestFocus();

@@ -7,16 +7,17 @@ import com.github.engatec.vdl.core.AppExecutors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.service.task.CompleteVideoInfoSearchTask;
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
 public class DownloadableSearchService extends Service<List<VideoInfo>> {
 
-    private final StringProperty url = new SimpleStringProperty();
+    private final ListProperty<String> urls = new SimpleListProperty<>();
     private final ObjectProperty<BiConsumer<List<VideoInfo>, Integer>> onInfoFetchedCallback = new SimpleObjectProperty<>();
 
     public DownloadableSearchService() {
@@ -24,12 +25,12 @@ public class DownloadableSearchService extends Service<List<VideoInfo>> {
         setExecutor(ApplicationContext.getInstance().appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR));
     }
 
-    public String getUrl() {
-        return url.get();
+    public List<String> getUrls() {
+        return urls.get();
     }
 
-    public void setUrl(String url) {
-        this.url.set(url);
+    public void setUrls(List<String> urls) {
+        this.urls.set(FXCollections.observableList(urls));
     }
 
     public BiConsumer<List<VideoInfo>, Integer> getOnInfoFetchedCallback() {
@@ -42,6 +43,6 @@ public class DownloadableSearchService extends Service<List<VideoInfo>> {
 
     @Override
     protected Task<List<VideoInfo>> createTask() {
-        return new CompleteVideoInfoSearchTask(List.of(getUrl()), getOnInfoFetchedCallback());
+        return new CompleteVideoInfoSearchTask(getUrls(), getOnInfoFetchedCallback());
     }
 }

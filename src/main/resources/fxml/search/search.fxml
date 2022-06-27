@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<fx:root fx:id="rootNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="rootNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox maxWidth="1.7976931348623157E308" spacing="2.0">
          <children>
@@ -38,7 +38,7 @@
                         </ImageView>
                      </children>
                   </StackPane>
-                  <StackPane fx:id="multiSearchStackPane" alignment="BOTTOM_RIGHT" HBox.hgrow="ALWAYS">
+                  <StackPane fx:id="multiSearchStackPane" alignment="BOTTOM_RIGHT" minHeight="-Infinity" HBox.hgrow="ALWAYS">
                      <children>
                         <TextArea fx:id="urlTextArea" maxWidth="1.7976931348623157E308" prefRowCount="5" wrapText="true" />
                         <ImageView fx:id="singleSearchImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="service-btn">
