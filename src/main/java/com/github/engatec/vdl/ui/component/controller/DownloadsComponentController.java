@@ -24,6 +24,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 
@@ -94,6 +96,14 @@ public class DownloadsComponentController extends VBox implements ComponentContr
     private ContextMenu createContextMenu(TableRow<QueueItem> row) {
         ContextMenu ctxMenu = new ContextMenu();
 
+        MenuItem copyUrlMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.copyurl"));
+        copyUrlMenuItem.setOnAction(e -> {
+            var content = new ClipboardContent();
+            content.putString(row.getItem().getBaseUrl());
+            Clipboard.getSystemClipboard().setContent(content);
+            e.consume();
+        });
+
         MenuItem cancelMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.cancel"));
         cancelMenuItem.setOnAction(e -> {
             queueManager.cancelDownload(row.getItem());
@@ -136,7 +146,7 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             deleteMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() != DownloadStatus.IN_PROGRESS, newValue.statusProperty()));
         });
 
-        ctxMenu.getItems().addAll(cancelMenuItem, resumeMenuItem, retryMenuItem, deleteMenuItem);
+        ctxMenu.getItems().addAll(cancelMenuItem, resumeMenuItem, retryMenuItem, deleteMenuItem, copyUrlMenuItem);
         return ctxMenu;
     }
 
