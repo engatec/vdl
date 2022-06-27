@@ -7,7 +7,7 @@ public enum DownloadStatus {
     READY("stage.queue.status.ready"),
     SCHEDULED("stage.queue.status.scheduled"),
     IN_PROGRESS("stage.queue.status.inprogress"),
-    CANCELLED("stage.queue.status.cancelled"),
+    STOPPED("stage.queue.status.stopped"),
     FAILED("stage.queue.status.failed"),
     FINISHED("stage.queue.status.finished");
 

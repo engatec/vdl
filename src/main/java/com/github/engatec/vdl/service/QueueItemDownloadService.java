@@ -105,7 +105,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
     @Override
     public void restart() {
-        Set<DownloadStatus> restartableStates = Set.of(DownloadStatus.CANCELLED, DownloadStatus.FAILED);
+        Set<DownloadStatus> restartableStates = Set.of(DownloadStatus.STOPPED, DownloadStatus.FAILED);
         DownloadStatus status = queueItem.getStatus();
         if (!restartableStates.contains(status)) {
             String msg = String.format("Queue item must be in one of the following states: %s. Was in state %s.", restartableStates, status);
@@ -130,7 +130,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
     @Override
     protected void cancelled() {
-        updateQueueItem(DownloadStatus.CANCELLED, StringUtils.EMPTY, StringUtils.EMPTY);
+        updateQueueItem(DownloadStatus.STOPPED, StringUtils.EMPTY, StringUtils.EMPTY);
         updateProgress(0);
     }
 

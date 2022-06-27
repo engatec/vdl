@@ -130,7 +130,7 @@ public class DownloadsComponentController extends VBox implements ComponentContr
                             newValue.getStatus() == DownloadStatus.IN_PROGRESS || newValue.getStatus() == DownloadStatus.SCHEDULED,
                     newValue.statusProperty())
             );
-            resumeMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.CANCELLED, newValue.statusProperty()));
+            resumeMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.STOPPED, newValue.statusProperty()));
             retryMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.FAILED, newValue.statusProperty()));
             deleteMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() != DownloadStatus.IN_PROGRESS, newValue.statusProperty()));
         });
@@ -144,7 +144,7 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             DownloadStatus status = item.getStatus();
             if (status == DownloadStatus.READY) {
                 queueManager.startDownload(item);
-            } else if (status == DownloadStatus.CANCELLED) {
+            } else if (status == DownloadStatus.STOPPED) {
                 queueManager.resumeDownload(item);
             }
         }
