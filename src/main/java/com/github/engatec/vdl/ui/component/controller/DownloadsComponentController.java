@@ -122,6 +122,7 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             if (newValue == null) {
                 cancelMenuItem.visibleProperty().unbind();
                 resumeMenuItem.visibleProperty().unbind();
+                retryMenuItem.visibleProperty().unbind();
                 deleteMenuItem.visibleProperty().unbind();
                 return;
             }
