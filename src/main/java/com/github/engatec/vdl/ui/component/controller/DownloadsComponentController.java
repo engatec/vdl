@@ -104,7 +104,7 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             e.consume();
         });
 
-        MenuItem cancelMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.cancel"));
+        MenuItem cancelMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.stop"));
         cancelMenuItem.setOnAction(e -> {
             queueManager.cancelDownload(row.getItem());
             e.consume();
