@@ -3,6 +3,7 @@ package com.github.engatec.vdl.ui.component.controller.history;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
@@ -16,6 +17,7 @@ import com.github.engatec.vdl.ui.helper.Dialogs;
 import com.github.engatec.vdl.ui.helper.Tables;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -26,6 +28,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -102,22 +105,46 @@ public class HistoryComponentController extends VBox implements ComponentControl
         locationTableColumn.setCellValueFactory(it -> new ReadOnlyObjectWrapper<>(it.getValue().getDownloadPath()));
         dtmTableColumn.setCellValueFactory(it -> new ReadOnlyStringWrapper(it.getValue().getCreatedAt()));
 
+        var selectionModel = historyTableView.getSelectionModel();
+        selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
+
         historyTableView.setRowFactory(tableView -> {
             TableRow<HistoryItem> row = new TableRow<>();
-            ContextMenu contextMenu = createContextMenu(row);
+
+            ContextMenu singleRowContextMenu = createSingleRowContextMenu(row);
+            BooleanBinding noMultipleRowsSelected = Bindings.createBooleanBinding(() -> selectionModel.getSelectedCells().size() < 2, selectionModel.getSelectedCells());
             row.contextMenuProperty().bind(
-                    Bindings.when(row.emptyProperty().not())
-                            .then(contextMenu)
+                    Bindings.when(row.emptyProperty().not().and(noMultipleRowsSelected))
+                            .then(singleRowContextMenu)
                             .otherwise((ContextMenu) null)
             );
+
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     playFile(row.getItem().getDownloadPath());
                 }
             });
 
+            row.setOnDragDetected(event -> {
+                startFullDrag();
+                event.consume();
+            });
+
+            row.setOnMouseDragEntered(event -> {
+                selectionModel.select(row.getIndex());
+                event.consume();
+            });
+
             return row;
         });
+
+        ContextMenu multipleRowsContextMenu = createMultipleRowsContextMenu(selectionModel);
+        BooleanBinding multipleRowsSelected = Bindings.createBooleanBinding(() -> selectionModel.getSelectedCells().size() > 1, selectionModel.getSelectedCells());
+        historyTableView.contextMenuProperty().bind(
+                Bindings.when(multipleRowsSelected)
+                        .then(multipleRowsContextMenu)
+                        .otherwise((ContextMenu) null)
+        );
 
         historyTableView.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER && event.getSource() instanceof TableView<?> tv && tv.getSelectionModel().getSelectedItem() instanceof HistoryItem item) {
@@ -126,7 +153,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
         });
     }
 
-    private ContextMenu createContextMenu(TableRow<HistoryItem> row) {
+    private ContextMenu createSingleRowContextMenu(TableRow<HistoryItem> row) {
         ContextMenu ctxMenu = new ContextMenu();
 
         MenuItem play = new MenuItem(ctx.getLocalizedString("stage.history.ctxmenu.play"));
@@ -154,6 +181,27 @@ public class HistoryComponentController extends VBox implements ComponentControl
         ctxMenu.getItems().addAll(play, openFolder, copyUrl);
 
         ctxMenu.setOnShowing(event -> play.setVisible(Files.isRegularFile(row.getItem().getDownloadPath())));
+
+        return ctxMenu;
+    }
+
+    private ContextMenu createMultipleRowsContextMenu(TableView.TableViewSelectionModel<HistoryItem> selectionModel) {
+        ContextMenu ctxMenu = new ContextMenu();
+
+        var copyUrls = new MenuItem(ctx.getLocalizedString("stage.history.ctxmenu.copyurls"));
+        copyUrls.setOnAction(event -> {
+            String urls = selectionModel.getSelectedItems().stream()
+                    .map(HistoryItem::getUrl)
+                    .collect(Collectors.joining(System.lineSeparator()));
+
+            ClipboardContent content = new ClipboardContent();
+            content.putString(urls);
+            Clipboard.getSystemClipboard().setContent(content);
+
+            event.consume();
+        });
+
+        ctxMenu.getItems().addAll(copyUrls);
 
         return ctxMenu;
     }
