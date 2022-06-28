@@ -108,13 +108,20 @@ public class HistoryComponentController extends VBox implements ComponentControl
         var selectionModel = historyTableView.getSelectionModel();
         selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
 
+        ContextMenu multipleRowsContextMenu = createMultipleRowsContextMenu(selectionModel);
+        BooleanBinding multipleRowsSelected = Bindings.createBooleanBinding(() -> selectionModel.getSelectedCells().size() > 1, selectionModel.getSelectedCells());
+        historyTableView.contextMenuProperty().bind(
+                Bindings.when(multipleRowsSelected)
+                        .then(multipleRowsContextMenu)
+                        .otherwise((ContextMenu) null)
+        );
+
         historyTableView.setRowFactory(tableView -> {
             TableRow<HistoryItem> row = new TableRow<>();
 
             ContextMenu singleRowContextMenu = createSingleRowContextMenu(row);
-            BooleanBinding noMultipleRowsSelected = Bindings.createBooleanBinding(() -> selectionModel.getSelectedCells().size() < 2, selectionModel.getSelectedCells());
             row.contextMenuProperty().bind(
-                    Bindings.when(row.emptyProperty().not().and(noMultipleRowsSelected))
+                    Bindings.when(row.emptyProperty().not().and(multipleRowsSelected.not()))
                             .then(singleRowContextMenu)
                             .otherwise((ContextMenu) null)
             );
@@ -137,14 +144,6 @@ public class HistoryComponentController extends VBox implements ComponentControl
 
             return row;
         });
-
-        ContextMenu multipleRowsContextMenu = createMultipleRowsContextMenu(selectionModel);
-        BooleanBinding multipleRowsSelected = Bindings.createBooleanBinding(() -> selectionModel.getSelectedCells().size() > 1, selectionModel.getSelectedCells());
-        historyTableView.contextMenuProperty().bind(
-                Bindings.when(multipleRowsSelected)
-                        .then(multipleRowsContextMenu)
-                        .otherwise((ContextMenu) null)
-        );
 
         historyTableView.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER && event.getSource() instanceof TableView<?> tv && tv.getSelectionModel().getSelectedItem() instanceof HistoryItem item) {
