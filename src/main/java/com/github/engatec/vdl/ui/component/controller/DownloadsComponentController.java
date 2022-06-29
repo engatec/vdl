@@ -1,7 +1,9 @@
 package com.github.engatec.vdl.ui.component.controller;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
@@ -12,6 +14,7 @@ import com.github.engatec.vdl.preference.property.table.DownloadsTableConfigProp
 import com.github.engatec.vdl.ui.helper.Tables;
 import com.github.engatec.vdl.ui.scene.control.cell.ProgressBarWithPercentTableCell;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
@@ -21,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -78,14 +82,37 @@ public class DownloadsComponentController extends VBox implements ComponentContr
         stopAllBtn.setOnAction(this::handleStopAllButtonClick);
         removeAllBtn.setOnAction(this::handleRemoveAllButtonClick);
 
+        var selectionModel = downloadQueueTableView.getSelectionModel();
+        selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
+
+        ContextMenu multipleRowsContextMenu = createMultipleRowsContextMenu(selectionModel);
+        BooleanBinding multipleRowsSelected = Bindings.createBooleanBinding(() -> selectionModel.getSelectedItems().size() > 1, selectionModel.getSelectedItems());
+        downloadQueueTableView.contextMenuProperty().bind(
+                Bindings.when(multipleRowsSelected)
+                        .then(multipleRowsContextMenu)
+                        .otherwise((ContextMenu) null)
+        );
+
         downloadQueueTableView.setRowFactory(tableView -> {
             TableRow<QueueItem> row = new TableRow<>();
-            ContextMenu contextMenu = createContextMenu(row);
+
+            ContextMenu singleRowContextMenu = createSingleRowContextMenu(row, selectionModel);
             row.contextMenuProperty().bind(
-                    Bindings.when(row.emptyProperty().not())
-                            .then(contextMenu)
+                    Bindings.when(row.emptyProperty().not().and(multipleRowsSelected.not()))
+                            .then(singleRowContextMenu)
                             .otherwise((ContextMenu) null)
             );
+
+            row.setOnDragDetected(event -> {
+                startFullDrag();
+                event.consume();
+            });
+
+            row.setOnMouseDragEntered(event -> {
+                selectionModel.select(row.getIndex());
+                event.consume();
+            });
+
             return row;
         });
 
@@ -93,16 +120,51 @@ public class DownloadsComponentController extends VBox implements ComponentContr
         Tables.restoreTableViewStateFromConfigModel(downloadQueueTableView, tableConfigModel, COLUMN_ID_MAP);
     }
 
-    private ContextMenu createContextMenu(TableRow<QueueItem> row) {
-        ContextMenu ctxMenu = new ContextMenu();
+    private ContextMenu createMultipleRowsContextMenu(TableView.TableViewSelectionModel<QueueItem> selectionModel) {
+        var ctxMenu = new ContextMenu();
 
-        MenuItem copyUrlMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.copyurl"));
-        copyUrlMenuItem.setOnAction(e -> {
-            var content = new ClipboardContent();
-            content.putString(row.getItem().getBaseUrl());
-            Clipboard.getSystemClipboard().setContent(content);
+        var startSelectedMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.startselected"));
+        startSelectedMenuItem.setOnAction(e -> {
+            startItems(selectionModel.getSelectedItems());
             e.consume();
         });
+
+        var stopSelectedMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.stopselected"));
+        stopSelectedMenuItem.setOnAction(e -> {
+            stopItems(selectionModel.getSelectedItems());
+            e.consume();
+        });
+
+        var removeSelectedMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.removeselected"));
+        removeSelectedMenuItem.setOnAction(e -> {
+            List<QueueItem> itemsForRemoval = List.copyOf(selectionModel.getSelectedItems()); // Copy of the list is required as removal changes selection and leads to IndexOutOfBoundsException
+            for (QueueItem item : itemsForRemoval) {
+                queueManager.removeItem(item);
+            }
+            selectionModel.clearSelection();
+            e.consume();
+        });
+
+        var copyUrlsMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.copyurls"));
+        copyUrlsMenuItem.setOnAction(e -> {
+            String urls = selectionModel.getSelectedItems().stream()
+                    .map(QueueItem::getBaseUrl)
+                    .collect(Collectors.joining(System.lineSeparator()));
+
+            ClipboardContent content = new ClipboardContent();
+            content.putString(urls);
+            Clipboard.getSystemClipboard().setContent(content);
+
+            e.consume();
+        });
+
+        ctxMenu.getItems().addAll(startSelectedMenuItem, stopSelectedMenuItem, removeSelectedMenuItem, copyUrlsMenuItem);
+
+        return ctxMenu;
+    }
+
+    private ContextMenu createSingleRowContextMenu(TableRow<QueueItem> row, TableView.TableViewSelectionModel<QueueItem> selectionModel) {
+        ContextMenu ctxMenu = new ContextMenu();
 
         MenuItem cancelMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.stop"));
         cancelMenuItem.setOnAction(e -> {
@@ -125,6 +187,15 @@ public class DownloadsComponentController extends VBox implements ComponentContr
         MenuItem deleteMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.delete"));
         deleteMenuItem.setOnAction(e -> {
             queueManager.removeItem(row.getItem());
+            selectionModel.clearSelection();
+            e.consume();
+        });
+
+        MenuItem copyUrlMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.copyurl"));
+        copyUrlMenuItem.setOnAction(e -> {
+            var content = new ClipboardContent();
+            content.putString(row.getItem().getBaseUrl());
+            Clipboard.getSystemClipboard().setContent(content);
             e.consume();
         });
 
@@ -151,7 +222,12 @@ public class DownloadsComponentController extends VBox implements ComponentContr
     }
 
     private void handleStartAllButtonClick(ActionEvent event) {
-        for (QueueItem item : data) {
+        startItems(data);
+        event.consume();
+    }
+
+    private void startItems(List<QueueItem> items) {
+        for (QueueItem item : items) {
             DownloadStatus status = item.getStatus();
             if (status == DownloadStatus.READY) {
                 queueManager.startDownload(item);
@@ -159,17 +235,20 @@ public class DownloadsComponentController extends VBox implements ComponentContr
                 queueManager.resumeDownload(item);
             }
         }
-        event.consume();
     }
 
     private void handleStopAllButtonClick(ActionEvent event) {
-        for (QueueItem item : data) {
+        stopItems(data);
+        event.consume();
+    }
+
+    private void stopItems(List<QueueItem> items) {
+        for (QueueItem item : items) {
             DownloadStatus status = item.getStatus();
             if (status == DownloadStatus.SCHEDULED || status == DownloadStatus.IN_PROGRESS) {
                 queueManager.cancelDownload(item);
             }
         }
-        event.consume();
     }
 
     private void handleRemoveAllButtonClick(ActionEvent event) {
