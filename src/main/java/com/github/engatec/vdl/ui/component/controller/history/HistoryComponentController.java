@@ -109,7 +109,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
         selectionModel.setSelectionMode(SelectionMode.MULTIPLE);
 
         ContextMenu multipleRowsContextMenu = createMultipleRowsContextMenu(selectionModel);
-        BooleanBinding multipleRowsSelected = Bindings.createBooleanBinding(() -> selectionModel.getSelectedCells().size() > 1, selectionModel.getSelectedCells());
+        BooleanBinding multipleRowsSelected = Bindings.createBooleanBinding(() -> selectionModel.getSelectedItems().size() > 1, selectionModel.getSelectedItems());
         historyTableView.contextMenuProperty().bind(
                 Bindings.when(multipleRowsSelected)
                         .then(multipleRowsContextMenu)
