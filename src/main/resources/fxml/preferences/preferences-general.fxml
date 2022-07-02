@@ -10,7 +10,7 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<fx:root fitToWidth="true" stylesheets="@../../styles.css" type="javafx.scene.control.ScrollPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fitToWidth="true" stylesheets="@../../styles.css" type="javafx.scene.control.ScrollPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
     <VBox spacing="8.0">
         <children>
          <HBox alignment="CENTER_LEFT" spacing="8.0">
@@ -70,13 +70,22 @@
                <HBox alignment="CENTER_LEFT" spacing="8.0">
                   <children>
                      <Label text="%preferences.general.audioextraction.format" />
-                     <ComboBox fx:id="audioExtractionFormatComboBox" />
-                     <Label text="%preferences.general.audioextraction.quality">
-                        <HBox.margin>
-                           <Insets left="16.0" />
-                        </HBox.margin>
-                     </Label>
-                     <Slider fx:id="audioExtractionQualitySlider" blockIncrement="1.0" majorTickUnit="9.0" max="9.0" minorTickCount="8" snapToTicks="true" value="5.0" />
+                     <ComboBox fx:id="audioFormatComboBox" />
+                     <ComboBox fx:id="audioBitrateTypeComboBox" />
+                     <HBox fx:id="audioExtractionQualityControls" alignment="CENTER_LEFT" spacing="8.0">
+                        <children>
+                           <Label text="%preferences.general.audioextraction.quality" />
+                           <Slider fx:id="audioExtractionQualitySlider" blockIncrement="1.0" majorTickUnit="9.0" max="9.0" minorTickCount="8" snapToTicks="true" value="5.0" />
+                           <Label fx:id="audioExtractionQualityValueLabel" text="0" />
+                        </children>
+                     </HBox>
+                     <HBox fx:id="audioExtractionBitrateControls" alignment="CENTER_LEFT" spacing="8.0">
+                        <children>
+                           <Label text="%preferences.general.audioextraction.bitrate" />
+                           <Slider fx:id="audioExtractionBitrateSlider" blockIncrement="1.0" majorTickUnit="6.0" max="6.0" minorTickCount="5" snapToTicks="true" value="6.0" />
+                           <Label fx:id="audioExtractionBitrateValueLabel" text="192 kbps" />
+                        </children>
+                     </HBox>
                   </children>
                   <VBox.margin>
                      <Insets left="8.0" />

@@ -5,7 +5,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.input.ScrollEvent;
 
-public class ComboBoxRollingScrollHandler implements EventHandler<ScrollEvent> {
+public class ComboBoxMouseScrollHandler implements EventHandler<ScrollEvent> {
 
     @Override
     public void handle(ScrollEvent event) {

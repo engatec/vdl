@@ -10,7 +10,7 @@ public enum AudioFormat {
 
     public static final int BEST_QUALITY = 9;
 
-    public static AudioFormat getByString(String value) {
+    public static AudioFormat fromString(String value) {
         if (StringUtils.isBlank(value)) {
             return MP3;
         }

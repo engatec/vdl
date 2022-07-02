@@ -1,18 +1,23 @@
 package com.github.engatec.vdl.ui.stage.controller.preferences;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.github.engatec.fxcontrols.FxDirectoryChooser;
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.handler.ComboBoxRollingScrollHandler;
+import com.github.engatec.vdl.handler.ComboBoxMouseScrollHandler;
+import com.github.engatec.vdl.handler.SliderMouseScrollHandler;
 import com.github.engatec.vdl.model.AudioFormat;
+import com.github.engatec.vdl.model.BitrateType;
 import com.github.engatec.vdl.model.Language;
 import com.github.engatec.vdl.model.Resolution;
 import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.configitem.general.AutoSelectFormatConfigItem;
 import com.github.engatec.vdl.preference.property.general.AlwaysAskDownloadPathConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionBitrateConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionBitrateTypeConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionFormatConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionQualityConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AutoSearchFromClipboardConfigProperty;
@@ -24,15 +29,18 @@ import com.github.engatec.vdl.preference.property.general.LoadThumbnailsConfigPr
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
 import com.github.engatec.vdl.ui.helper.Dialogs;
 import com.github.engatec.vdl.ui.validation.InputForm;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,6 +48,16 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
 
     private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final ConfigRegistry configRegistry = ctx.getConfigRegistry();
+
+    private static final Map<Integer, Integer> MP3_BITRATE_SLIDER_MAP = Map.of(
+            0, 64,
+            1, 96,
+            2, 128,
+            3, 160,
+            4, 192,
+            5, 256,
+            6, 320
+    );
 
     @FXML private ComboBox<ComboBoxValueHolder<Language>> languageComboBox;
 
@@ -53,8 +71,16 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     @FXML private CheckBox loadThumbnailsCheckbox;
     @FXML private ComboBox<Integer> autoSelectFormatComboBox;
 
-    @FXML private ComboBox<String> audioExtractionFormatComboBox;
+    @FXML private ComboBox<String> audioFormatComboBox;
+    @FXML private ComboBox<String> audioBitrateTypeComboBox;
+
+    @FXML private HBox audioExtractionQualityControls;
     @FXML private Slider audioExtractionQualitySlider;
+    @FXML private Label audioExtractionQualityValueLabel;
+
+    @FXML private HBox audioExtractionBitrateControls;
+    @FXML private Slider audioExtractionBitrateSlider;
+    @FXML private Label audioExtractionBitrateValueLabel;
 
     @FXML
     public void initialize() {
@@ -87,7 +113,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 Dialogs.info("preferences.general.language.restartrequired", newLanguage);
             }
         });
-        languageComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
+        languageComboBox.setOnScroll(new ComboBoxMouseScrollHandler());
     }
 
     private void bindPropertyHolder() {
@@ -95,8 +121,10 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         downloadPathDirectoryChooser.pathProperty().bindBidirectional(configRegistry.get(DownloadPathConfigProperty.class).getProperty());
         autoSearchFromClipboardCheckBox.selectedProperty().bindBidirectional(configRegistry.get(AutoSearchFromClipboardConfigProperty.class).getProperty());
         autoSelectFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AutoSelectFormatConfigProperty.class).getProperty());
-        audioExtractionFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionFormatConfigProperty.class).getProperty());
+        audioFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionFormatConfigProperty.class).getProperty());
+        audioBitrateTypeComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionBitrateTypeConfigProperty.class).getProperty());
         audioExtractionQualitySlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionQualityConfigProperty.class).getProperty());
+        audioExtractionBitrateSlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionBitrateConfigProperty.class).getProperty());
         loadThumbnailsCheckbox.selectedProperty().bindBidirectional(configRegistry.get(LoadThumbnailsConfigProperty.class).getProperty());
     }
 
@@ -133,15 +161,40 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
             }
         });
 
-        autoSelectFormatComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
+        autoSelectFormatComboBox.setOnScroll(new ComboBoxMouseScrollHandler());
     }
 
     private void initAudioExtractionSettings() {
         List<String> audioFormats = Stream.of(AudioFormat.values())
                 .map(AudioFormat::toString)
                 .toList();
-        audioExtractionFormatComboBox.setItems(FXCollections.observableArrayList(audioFormats));
-        audioExtractionFormatComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
+        audioFormatComboBox.setItems(FXCollections.observableArrayList(audioFormats));
+        audioFormatComboBox.setOnScroll(new ComboBoxMouseScrollHandler());
+
+        List<String> bitrateTypes = Stream.of(BitrateType.values())
+                .map(BitrateType::toString)
+                .toList();
+        audioBitrateTypeComboBox.setItems(FXCollections.observableArrayList(bitrateTypes));
+        audioBitrateTypeComboBox.setOnScroll(new ComboBoxMouseScrollHandler());
+
+        var bitrateTypeProperty = configRegistry.get(AudioExtractionBitrateTypeConfigProperty.class).getProperty();
+        var cbrBitrateSelectedBinding = Bindings.createBooleanBinding(() -> BitrateType.fromString(bitrateTypeProperty.get()) == BitrateType.CBR, bitrateTypeProperty);
+        var mp3SelectedBinding = Bindings.createBooleanBinding(() -> AudioFormat.fromString(audioFormatComboBox.getValue()) == AudioFormat.MP3, audioFormatComboBox.valueProperty());
+        audioBitrateTypeComboBox.visibleProperty().bind(mp3SelectedBinding);
+        audioBitrateTypeComboBox.managedProperty().bind(audioBitrateTypeComboBox.visibleProperty());
+        audioExtractionBitrateControls.visibleProperty().bind(mp3SelectedBinding.and(cbrBitrateSelectedBinding));
+        audioExtractionBitrateControls.managedProperty().bind(audioExtractionBitrateControls.visibleProperty());
+        audioExtractionQualityControls.visibleProperty().bind(audioExtractionBitrateControls.visibleProperty().not());
+        audioExtractionQualityControls.managedProperty().bind(audioExtractionQualityControls.visibleProperty());
+
+        audioExtractionQualitySlider.setOnScroll(new SliderMouseScrollHandler());
+        audioExtractionQualityValueLabel.textProperty().bind(Bindings.createStringBinding(() -> String.valueOf((int) audioExtractionQualitySlider.getValue()), audioExtractionQualitySlider.valueProperty()));
+
+        audioExtractionBitrateValueLabel.textProperty().bind(Bindings.createStringBinding(() ->
+                        MP3_BITRATE_SLIDER_MAP.get(audioExtractionBitrateSlider.valueProperty().intValue()) + "kbps",
+                audioExtractionBitrateSlider.valueProperty())
+        );
+        audioExtractionBitrateSlider.setOnScroll(new SliderMouseScrollHandler());
     }
 
     private void initDownloadThreadsSettings() {
@@ -157,7 +210,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
                 Dialogs.info("preferences.general.download.threads.restartrequired");
             }
         });
-        downloadThreadsComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
+        downloadThreadsComboBox.setOnScroll(new ComboBoxMouseScrollHandler());
     }
 
     @Override

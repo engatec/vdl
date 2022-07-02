@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
-import com.github.engatec.vdl.handler.ComboBoxRollingScrollHandler;
+import com.github.engatec.vdl.handler.ComboBoxMouseScrollHandler;
 import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.preference.model.TableConfigModel;
 import com.github.engatec.vdl.preference.property.misc.HistoryEntriesNumberConfigProperty;
@@ -94,7 +94,7 @@ public class HistoryComponentController extends VBox implements ComponentControl
         });
 
         entriesNumberComboBox.valueProperty().bindBidirectional(ctx.getConfigRegistry().get(HistoryEntriesNumberConfigProperty.class).getProperty());
-        entriesNumberComboBox.setOnScroll(new ComboBoxRollingScrollHandler());
+        entriesNumberComboBox.setOnScroll(new ComboBoxMouseScrollHandler());
     }
 
     private void initHistoryTableView() {
