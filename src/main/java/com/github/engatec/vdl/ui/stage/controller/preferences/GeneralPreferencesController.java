@@ -42,6 +42,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
 
 public class GeneralPreferencesController extends ScrollPane implements InputForm {
@@ -49,7 +51,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final ConfigRegistry configRegistry = ctx.getConfigRegistry();
 
-    private static final Map<Integer, Integer> MP3_BITRATE_SLIDER_MAP = Map.of(
+    private static final BidiMap<Integer, Integer> MP3_BITRATE_SLIDER_BIDI_MAP = new DualHashBidiMap<>(Map.of(
             0, 64,
             1, 96,
             2, 128,
@@ -57,7 +59,7 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
             4, 192,
             5, 256,
             6, 320
-    );
+    ));
 
     @FXML private ComboBox<ComboBoxValueHolder<Language>> languageComboBox;
 
@@ -124,7 +126,6 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         audioFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionFormatConfigProperty.class).getProperty());
         audioBitrateTypeComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionBitrateTypeConfigProperty.class).getProperty());
         audioExtractionQualitySlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionQualityConfigProperty.class).getProperty());
-        audioExtractionBitrateSlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionBitrateConfigProperty.class).getProperty());
         loadThumbnailsCheckbox.selectedProperty().bindBidirectional(configRegistry.get(LoadThumbnailsConfigProperty.class).getProperty());
     }
 
@@ -190,11 +191,14 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         audioExtractionQualitySlider.setOnScroll(new SliderMouseScrollHandler());
         audioExtractionQualityValueLabel.textProperty().bind(Bindings.createStringBinding(() -> String.valueOf((int) audioExtractionQualitySlider.getValue()), audioExtractionQualitySlider.valueProperty()));
 
-        audioExtractionBitrateValueLabel.textProperty().bind(Bindings.createStringBinding(() ->
-                        MP3_BITRATE_SLIDER_MAP.get(audioExtractionBitrateSlider.valueProperty().intValue()) + "kbps",
+        var audioExtractionBitrateConfigProperty = configRegistry.get(AudioExtractionBitrateConfigProperty.class).getProperty();
+        audioExtractionBitrateSlider.setValue(MP3_BITRATE_SLIDER_BIDI_MAP.getKey(audioExtractionBitrateConfigProperty.getValue()));
+        audioExtractionBitrateValueLabel.textProperty().bind(Bindings.createStringBinding(() -> audioExtractionBitrateConfigProperty.getValue() + "kbps", audioExtractionBitrateConfigProperty));
+        audioExtractionBitrateSlider.setOnScroll(new SliderMouseScrollHandler());
+        audioExtractionBitrateConfigProperty.bind(Bindings.createIntegerBinding(() ->
+                        MP3_BITRATE_SLIDER_BIDI_MAP.get(audioExtractionBitrateSlider.valueProperty().intValue()),
                 audioExtractionBitrateSlider.valueProperty())
         );
-        audioExtractionBitrateSlider.setOnScroll(new SliderMouseScrollHandler());
     }
 
     private void initDownloadThreadsSettings() {
