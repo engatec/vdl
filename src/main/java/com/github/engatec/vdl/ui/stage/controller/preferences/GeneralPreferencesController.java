@@ -16,8 +16,10 @@ import com.github.engatec.vdl.model.Resolution;
 import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.configitem.general.AutoSelectFormatConfigItem;
 import com.github.engatec.vdl.preference.property.general.AlwaysAskDownloadPathConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionAddMetadataConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionBitrateConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionBitrateTypeConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionEmbedThumbnailConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionFormatConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionQualityConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AutoSearchFromClipboardConfigProperty;
@@ -84,6 +86,9 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
     @FXML private Slider audioExtractionBitrateSlider;
     @FXML private Label audioExtractionBitrateValueLabel;
 
+    @FXML private CheckBox audioExtractionAddMetadataCheckbox;
+    @FXML private CheckBox audioExtractionEmbedThumbnailCheckbox;
+
     @FXML
     public void initialize() {
         initLanguageSettings();
@@ -125,6 +130,8 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
         autoSelectFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AutoSelectFormatConfigProperty.class).getProperty());
         audioFormatComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionFormatConfigProperty.class).getProperty());
         audioBitrateTypeComboBox.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionBitrateTypeConfigProperty.class).getProperty());
+        audioExtractionAddMetadataCheckbox.selectedProperty().bindBidirectional(configRegistry.get(AudioExtractionAddMetadataConfigProperty.class).getProperty());
+        audioExtractionEmbedThumbnailCheckbox.selectedProperty().bindBidirectional(configRegistry.get(AudioExtractionEmbedThumbnailConfigProperty.class).getProperty());
         audioExtractionQualitySlider.valueProperty().bindBidirectional(configRegistry.get(AudioExtractionQualityConfigProperty.class).getProperty());
         loadThumbnailsCheckbox.selectedProperty().bindBidirectional(configRegistry.get(LoadThumbnailsConfigProperty.class).getProperty());
     }

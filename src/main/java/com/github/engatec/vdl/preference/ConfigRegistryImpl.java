@@ -5,8 +5,10 @@ import java.util.Map;
 
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AlwaysAskDownloadPathConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionAddMetadataConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionBitrateConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionBitrateTypeConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionEmbedThumbnailConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionFormatConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionQualityConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AutoSearchFromClipboardConfigProperty;
@@ -60,8 +62,10 @@ public class ConfigRegistryImpl implements ConfigRegistry {
     static {
         /* General */
         addToRegistry(new AlwaysAskDownloadPathConfigProperty());
+        addToRegistry(new AudioExtractionAddMetadataConfigProperty());
         addToRegistry(new AudioExtractionBitrateConfigProperty());
         addToRegistry(new AudioExtractionBitrateTypeConfigProperty());
+        addToRegistry(new AudioExtractionEmbedThumbnailConfigProperty());
         addToRegistry(new AudioExtractionFormatConfigProperty());
         addToRegistry(new AudioExtractionQualityConfigProperty());
         addToRegistry(new AutoSelectFormatConfigProperty());

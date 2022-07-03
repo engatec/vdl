@@ -67,30 +67,40 @@
             </VBox.margin>
             <children>
                <Label text="%preferences.general.audioextraction" />
-               <HBox alignment="CENTER_LEFT" spacing="8.0">
-                  <children>
-                     <Label text="%preferences.general.audioextraction.format" />
-                     <ComboBox fx:id="audioFormatComboBox" />
-                     <ComboBox fx:id="audioBitrateTypeComboBox" />
-                     <HBox fx:id="audioExtractionQualityControls" alignment="CENTER_LEFT" spacing="8.0">
-                        <children>
-                           <Label text="%preferences.general.audioextraction.quality" />
-                           <Slider fx:id="audioExtractionQualitySlider" blockIncrement="1.0" majorTickUnit="9.0" max="9.0" minorTickCount="8" snapToTicks="true" value="5.0" />
-                           <Label fx:id="audioExtractionQualityValueLabel" text="0" />
-                        </children>
-                     </HBox>
-                     <HBox fx:id="audioExtractionBitrateControls" alignment="CENTER_LEFT" spacing="8.0">
-                        <children>
-                           <Label text="%preferences.general.audioextraction.bitrate" />
-                           <Slider fx:id="audioExtractionBitrateSlider" blockIncrement="1.0" majorTickUnit="6.0" max="6.0" minorTickCount="5" snapToTicks="true" value="6.0" />
-                           <Label fx:id="audioExtractionBitrateValueLabel" text="192 kbps" />
-                        </children>
-                     </HBox>
-                  </children>
+               <VBox spacing="8.0">
                   <VBox.margin>
                      <Insets left="8.0" />
                   </VBox.margin>
-               </HBox>
+                  <children>
+                     <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <children>
+                           <Label text="%preferences.general.audioextraction.format" />
+                           <ComboBox fx:id="audioFormatComboBox" />
+                           <ComboBox fx:id="audioBitrateTypeComboBox" />
+                           <HBox fx:id="audioExtractionQualityControls" alignment="CENTER_LEFT" spacing="8.0">
+                              <children>
+                                 <Label text="%preferences.general.audioextraction.quality" />
+                                 <Slider fx:id="audioExtractionQualitySlider" blockIncrement="1.0" majorTickUnit="9.0" max="9.0" minorTickCount="8" snapToTicks="true" value="5.0" />
+                                 <Label fx:id="audioExtractionQualityValueLabel" text="0" />
+                              </children>
+                           </HBox>
+                           <HBox fx:id="audioExtractionBitrateControls" alignment="CENTER_LEFT" spacing="8.0">
+                              <children>
+                                 <Label text="%preferences.general.audioextraction.bitrate" />
+                                 <Slider fx:id="audioExtractionBitrateSlider" blockIncrement="1.0" majorTickUnit="6.0" max="6.0" minorTickCount="5" snapToTicks="true" value="6.0" />
+                                 <Label fx:id="audioExtractionBitrateValueLabel" text="192 kbps" />
+                              </children>
+                           </HBox>
+                        </children>
+                     </HBox>
+                     <HBox alignment="CENTER_LEFT" spacing="16.0">
+                        <children>
+                           <CheckBox fx:id="audioExtractionAddMetadataCheckbox" mnemonicParsing="false" text="%preferences.general.audioextraction.addmetadata" />
+                           <CheckBox fx:id="audioExtractionEmbedThumbnailCheckbox" mnemonicParsing="false" text="%preferences.general.audioextraction.embedthumbnail" />
+                        </children>
+                     </HBox>
+                  </children>
+               </VBox>
             </children>
          </VBox>
         </children>
