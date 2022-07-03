@@ -17,6 +17,7 @@ import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
 import com.github.engatec.vdl.handler.ComboBoxMouseScrollHandler;
 import com.github.engatec.vdl.model.AudioFormat;
+import com.github.engatec.vdl.model.BitrateType;
 import com.github.engatec.vdl.model.Format;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.Resolution;
@@ -25,6 +26,8 @@ import com.github.engatec.vdl.model.downloadable.BaseDownloadable;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
 import com.github.engatec.vdl.model.postprocessing.ExtractAudioPostprocessing;
 import com.github.engatec.vdl.preference.ConfigRegistry;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionBitrateConfigProperty;
+import com.github.engatec.vdl.preference.property.general.AudioExtractionBitrateTypeConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionFormatConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AudioExtractionQualityConfigProperty;
 import com.github.engatec.vdl.preference.property.general.AutoSelectFormatConfigProperty;
@@ -311,15 +314,23 @@ public class DownloadableItemComponentController extends HBox {
 
     public void downloadAudio(Path path) {
         ConfigRegistry configRegistry = ctx.getConfigRegistry();
-        String format = configRegistry.get(AudioExtractionFormatConfigProperty.class).getValue();
-        // Youtube-dl quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
-        int quality = Math.abs(configRegistry.get(AudioExtractionQualityConfigProperty.class).getValue() - AudioFormat.BEST_QUALITY);
+
+        AudioFormat format = AudioFormat.fromString(configRegistry.get(AudioExtractionFormatConfigProperty.class).getValue());
+        BitrateType bitrateType = BitrateType.fromString(configRegistry.get(AudioExtractionBitrateTypeConfigProperty.class).getValue());
+        String quality;
+        if (format == AudioFormat.MP3 && bitrateType == BitrateType.CBR) {
+            quality = configRegistry.get(AudioExtractionBitrateConfigProperty.class).getValue() + "K";
+        } else {
+            // Youtube-dl quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
+            quality = String.valueOf(Math.abs(configRegistry.get(AudioExtractionQualityConfigProperty.class).getValue() - AudioFormat.BEST_QUALITY));
+        }
+
         Downloadable downloadable = getDownloadable();
         downloadable.setDownloadPath(path);
         // No need to download video if user only wants to extract audio. However if formats are empty chances are this is a music only service,
         // then it might not have "bestaudio" format and "best" must be used
         downloadable.setFormatId("bestaudio" + (CollectionUtils.isEmpty(videoInfo.getFormats()) ? "/best" : ""));
-        downloadable.setPostprocessingSteps(List.of(ExtractAudioPostprocessing.newInstance(format, quality)));
+        downloadable.setPostprocessingSteps(List.of(new ExtractAudioPostprocessing(format, quality)));
         queueManager.addItem(new QueueItem(downloadable));
     }
 }
