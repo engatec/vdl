@@ -16,6 +16,6 @@ public class DownloadsComponent extends AppComponent<DownloadsComponentControlle
 
     @Override
     protected DownloadsComponentController getController() {
-        return new DownloadsComponentController();
+        return new DownloadsComponentController(stage);
     }
 }

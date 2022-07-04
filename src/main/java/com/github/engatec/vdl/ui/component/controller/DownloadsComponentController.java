@@ -8,11 +8,14 @@ import java.util.stream.Collectors;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.model.DownloadStatus;
+import com.github.engatec.vdl.model.FormattedResource;
 import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.preference.model.TableConfigModel;
 import com.github.engatec.vdl.preference.property.table.DownloadsTableConfigProperty;
+import com.github.engatec.vdl.ui.helper.Dialogs;
 import com.github.engatec.vdl.ui.helper.Tables;
 import com.github.engatec.vdl.ui.scene.control.cell.ProgressBarWithPercentTableCell;
+import com.github.engatec.vdl.util.AppUtils;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -31,9 +34,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 public class DownloadsComponentController extends VBox implements ComponentController {
+
+    private final Stage stage;
 
     private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final QueueManager queueManager = ctx.getManager(QueueManager.class);
@@ -62,6 +68,10 @@ public class DownloadsComponentController extends VBox implements ComponentContr
     @FXML private Button startAllBtn;
     @FXML private Button stopAllBtn;
     @FXML private Button removeAllBtn;
+
+    public DownloadsComponentController(Stage stage) {
+        this.stage = stage;
+    }
 
     @FXML
     public void initialize() {
@@ -145,6 +155,16 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             e.consume();
         });
 
+        var changePathMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.changepath"));
+        changePathMenuItem.setOnAction(e -> {
+            Dialogs.infoWithYesNoButtons(
+                    new FormattedResource("stage.queue.multiplepathchange.info", DownloadStatus.STOPPED.toString()),
+                    () -> AppUtils.choosePath(stage).ifPresent(newPath -> queueManager.changeDownloadPath(selectionModel.getSelectedItems(), newPath)),
+                    null
+            );
+            e.consume();
+        });
+
         var copyUrlsMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.copyurls"));
         copyUrlsMenuItem.setOnAction(e -> {
             String urls = selectionModel.getSelectedItems().stream()
@@ -158,7 +178,7 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             e.consume();
         });
 
-        ctxMenu.getItems().addAll(startSelectedMenuItem, stopSelectedMenuItem, removeSelectedMenuItem, copyUrlsMenuItem);
+        ctxMenu.getItems().addAll(startSelectedMenuItem, stopSelectedMenuItem, removeSelectedMenuItem, changePathMenuItem, copyUrlsMenuItem);
 
         return ctxMenu;
     }
@@ -191,6 +211,12 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             e.consume();
         });
 
+        MenuItem changePathMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.changepath"));
+        changePathMenuItem.setOnAction(e -> {
+            AppUtils.choosePath(stage).ifPresent(newPath -> queueManager.changeDownloadPath(List.of(row.getItem()), newPath));
+            e.consume();
+        });
+
         MenuItem copyUrlMenuItem = new MenuItem(ctx.getLocalizedString("stage.queue.table.contextmenu.copyurl"));
         copyUrlMenuItem.setOnAction(e -> {
             var content = new ClipboardContent();
@@ -205,6 +231,7 @@ public class DownloadsComponentController extends VBox implements ComponentContr
                 resumeMenuItem.visibleProperty().unbind();
                 retryMenuItem.visibleProperty().unbind();
                 deleteMenuItem.visibleProperty().unbind();
+                changePathMenuItem.visibleProperty().unbind();
                 return;
             }
 
@@ -215,9 +242,10 @@ public class DownloadsComponentController extends VBox implements ComponentContr
             resumeMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.STOPPED, newValue.statusProperty()));
             retryMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.FAILED, newValue.statusProperty()));
             deleteMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() != DownloadStatus.IN_PROGRESS, newValue.statusProperty()));
+            changePathMenuItem.visibleProperty().bind(Bindings.createBooleanBinding(() -> newValue.getStatus() == DownloadStatus.STOPPED, newValue.statusProperty()));
         });
 
-        ctxMenu.getItems().addAll(cancelMenuItem, resumeMenuItem, retryMenuItem, deleteMenuItem, copyUrlMenuItem);
+        ctxMenu.getItems().addAll(cancelMenuItem, resumeMenuItem, retryMenuItem, deleteMenuItem, changePathMenuItem, copyUrlMenuItem);
         return ctxMenu;
     }
 

@@ -39,21 +39,24 @@ public class AppUtils {
     }
 
     private static Path doResolveDownloadPath(Stage stage) {
-        ApplicationContext ctx = ApplicationContext.getInstance();
-        ConfigRegistry configRegistry = ctx.getConfigRegistry();
+        ConfigRegistry configRegistry = ApplicationContext.getInstance().getConfigRegistry();
         Path downloadPath = Paths.get(configRegistry.get(DownloadPathConfigProperty.class).getValue());
         boolean askPath = configRegistry.get(AlwaysAskDownloadPathConfigProperty.class).getValue();
         if (askPath) {
-            var directoryChooser = new DirectoryChooser();
-            File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathConfigProperty.class).getValue()).toFile();
-            if (recentDownloadPath.isDirectory()) {
-                directoryChooser.setInitialDirectory(recentDownloadPath);
-            }
-            File selectedDirectory = directoryChooser.showDialog(stage);
-            downloadPath = selectedDirectory != null ? selectedDirectory.toPath() : null;
+            downloadPath = choosePath(stage).orElse(null);
         }
 
         return downloadPath;
+    }
+
+    public static Optional<Path> choosePath(Stage stage) {
+        var directoryChooser = new DirectoryChooser();
+        File recentDownloadPath = Path.of(ApplicationContext.getInstance().getConfigRegistry().get(RecentDownloadPathConfigProperty.class).getValue()).toFile();
+        if (recentDownloadPath.isDirectory()) {
+            directoryChooser.setInitialDirectory(recentDownloadPath);
+        }
+        File selectedDirectory = directoryChooser.showDialog(stage);
+        return Optional.ofNullable(selectedDirectory).map(File::toPath);
     }
 
     /**

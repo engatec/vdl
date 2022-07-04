@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.db.mapper.QueueMapper;
 import com.github.engatec.vdl.model.QueueItem;
+import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
 import com.github.engatec.vdl.service.QueueItemDownloadService;
 import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.application.Platform;
@@ -129,12 +130,21 @@ public class QueueManager extends VdlManager {
         queueItems.clear();
     }
 
-    private void deleteTempData(List<? extends QueueItem> removedItems) {
-        for (QueueItem ri : removedItems) {
+    private void deleteTempData(List<? extends QueueItem> queueItems) {
+        for (QueueItem ri : queueItems) {
             if (ri.getStatus() != FINISHED) {
                 YouDlUtils.deleteTempFiles(ri.getDestinationsForTraversal());
             }
         }
+    }
+
+    public void changeDownloadPath(List<QueueItem> queueItems, Path newPath) {
+        ApplicationContext ctx = ApplicationContext.getInstance();
+        CompletableFuture.runAsync(() -> deleteTempData(queueItems), ctx.appExecutors().get(AppExecutors.Type.SYSTEM_EXECUTOR));
+        for (QueueItem queueItem : queueItems) {
+            queueItem.setDownloadPath(newPath);
+        }
+        ctx.getConfigRegistry().get(RecentDownloadPathConfigProperty.class).setValue(newPath.toString());
     }
 
     private void updateHistory(HistoryManager historyManager, List<? extends QueueItem> finishedItems) {
