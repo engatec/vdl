@@ -94,7 +94,7 @@ public class FormatsController {
     }
 
     private Pair<List<Video>, List<Audio>> prepareGridData() {
-        List<Format> formats = videoInfo.getFormats();
+        List<Format> formats = videoInfo.formats();
         if (CollectionUtils.isEmpty(formats)) {
             return Pair.of(List.of(), List.of());
         }

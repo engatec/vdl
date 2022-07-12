@@ -107,8 +107,8 @@ public class SubscriptionsUpdateService extends Service<Void> {
                     String formatId = YouDlUtils.createFormatByHeight(selectedVideoHeight);
 
                     var downloadable = new BaseDownloadable();
-                    downloadable.setBaseUrl(vi.getBaseUrl());
-                    downloadable.setTitle(vi.getTitle());
+                    downloadable.setBaseUrl(vi.baseUrl());
+                    downloadable.setTitle(vi.title());
                     downloadable.setFormatId(formatId);
                     downloadable.setDownloadPath(Path.of(subscription.getDownloadPath()));
                     Platform.runLater(() -> queueManager.addItem(new QueueItem(downloadable)));

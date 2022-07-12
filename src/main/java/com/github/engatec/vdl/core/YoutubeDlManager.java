@@ -48,9 +48,6 @@ public class YoutubeDlManager {
             videoInfoList = new ArrayList<>(jsonList.size());
             for (String json : jsonList) {
                 VideoInfo videoInfo = objectMapper.readValue(json, VideoInfo.class);
-                if (StringUtils.isBlank(videoInfo.getBaseUrl())) {
-                    videoInfo.setBaseUrl(videoInfo.getUrl());
-                }
                 videoInfoList.add(videoInfo);
             }
         } catch (Exception e) {

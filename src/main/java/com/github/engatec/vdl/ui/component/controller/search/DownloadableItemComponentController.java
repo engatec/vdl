@@ -126,7 +126,7 @@ public class DownloadableItemComponentController extends HBox {
             e.consume();
         });
 
-        if (CollectionUtils.isNotEmpty(videoInfo.getSubtitles())) {
+        if (CollectionUtils.isNotEmpty(videoInfo.subtitles())) {
             closedCaptionButton.setGraphic(new ImageView(Icon.SUBTITLES_SMALL.getImage()));
             closedCaptionButton.setTooltip(Tooltips.create("download.subtitles"));
             closedCaptionButton.setOnAction(e -> {
@@ -139,7 +139,7 @@ public class DownloadableItemComponentController extends HBox {
                 fileChooser.setInitialFileName("subtitles");
                 File downloadPath = fileChooser.showSaveDialog(stage);
                 if (downloadPath != null) {
-                    new SubtitlesDownloadService(videoInfo.getBaseUrl(), downloadPath.toPath()).start();
+                    new SubtitlesDownloadService(videoInfo.baseUrl(), downloadPath.toPath()).start();
                 }
                 e.consume();
             });
@@ -153,9 +153,9 @@ public class DownloadableItemComponentController extends HBox {
     }
 
     private void initLabels() {
-        titleLabel.setText(videoInfo.getTitle());
+        titleLabel.setText(videoInfo.title());
 
-        int durationSeconds = Objects.requireNonNullElse(videoInfo.getDuration(), 0);
+        int durationSeconds = Objects.requireNonNullElse(videoInfo.duration(), 0);
         String formattedDuration = durationSeconds <= 0 ? StringUtils.EMPTY : DurationFormatUtils.formatDuration(durationSeconds * 1000L, "HH:mm:ss");
         durationLabel.setText(formattedDuration);
     }
@@ -164,7 +164,7 @@ public class DownloadableItemComponentController extends HBox {
         final String noCodec = YoutubeDlAttr.NO_CODEC.getValue();
         Predicate<Format> anyCodecDefined = it -> !noCodec.equals(it.getVcodec()) || !noCodec.equals(it.getAcodec());
 
-        List<Integer> commonAvailableHeights = ListUtils.emptyIfNull(videoInfo.getFormats()).stream()
+        List<Integer> commonAvailableHeights = ListUtils.emptyIfNull(videoInfo.formats()).stream()
                 .filter(anyCodecDefined)
                 .map(Format::getHeight)
                 .filter(Objects::nonNull)
@@ -302,7 +302,7 @@ public class DownloadableItemComponentController extends HBox {
         BaseDownloadable downloadable = new BaseDownloadable();
         downloadable.setFormatId(formatsComboBox.getSelectionModel().getSelectedItem().getValue());
         downloadable.setTitle(titleLabel.getText());
-        downloadable.setBaseUrl(videoInfo.getBaseUrl());
+        downloadable.setBaseUrl(videoInfo.baseUrl());
         return downloadable;
     }
 
@@ -329,7 +329,7 @@ public class DownloadableItemComponentController extends HBox {
         downloadable.setDownloadPath(path);
         // No need to download video if user only wants to extract audio. However if formats are empty chances are this is a music only service,
         // then it might not have "bestaudio" format and "best" must be used
-        downloadable.setFormatId("bestaudio" + (CollectionUtils.isEmpty(videoInfo.getFormats()) ? "/best" : ""));
+        downloadable.setFormatId("bestaudio" + (CollectionUtils.isEmpty(videoInfo.formats()) ? "/best" : ""));
         downloadable.setPostprocessingSteps(List.of(new ExtractAudioPostprocessing(format, quality)));
         queueManager.addItem(new QueueItem(downloadable));
     }

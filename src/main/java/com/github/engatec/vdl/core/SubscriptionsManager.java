@@ -90,7 +90,7 @@ public class SubscriptionsManager extends VdlManager {
     }
 
     public String buildPlaylistItemId(VideoInfo item) {
-        return StringUtils.firstNonBlank(item.getId(), item.getUrl(), item.getTitle());
+        return StringUtils.firstNonBlank(item.id(), item.url(), item.title());
     }
 
     public void setSubscriptionsUpdateProgressListener(Consumer<Boolean> subscriptionsUpdateProgressListener) {

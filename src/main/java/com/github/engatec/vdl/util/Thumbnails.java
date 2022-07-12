@@ -25,6 +25,6 @@ public class Thumbnails {
     }
 
     public static String normalizeThumbnailUrl(VideoInfo vi, Quality quality) {
-        return YOUTUBE_PATTERN.matcher(vi.getBaseUrl()).matches() ? String.format(quality.getYoutubeUrl(), vi.getId()) : vi.getThumbnail();
+        return YOUTUBE_PATTERN.matcher(vi.baseUrl()).matches() ? String.format(quality.getYoutubeUrl(), vi.id()) : vi.thumbnail();
     }
 }

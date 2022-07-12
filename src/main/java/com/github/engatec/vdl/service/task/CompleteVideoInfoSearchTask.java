@@ -43,7 +43,7 @@ public class CompleteVideoInfoSearchTask extends VideoInfoSearchTask {
 
         perfomProgressUpdate(new ArrayList<>(completeItemsInfoList), completeItemsInfoList.size(), totalCount);
 
-        List<String> playlistVideoUrls = basicItemsInfoList.stream().map(VideoInfo::getBaseUrl).collect(Collectors.toList());
+        List<String> playlistVideoUrls = basicItemsInfoList.stream().map(VideoInfo::baseUrl).collect(Collectors.toList());
         for (List<String> urls : ListUtils.partition(playlistVideoUrls, CONCURRENT_PLAYLIST_ITEMS_FETCH_COUNT)) {
             if (Thread.interrupted()) {
                 cancel();

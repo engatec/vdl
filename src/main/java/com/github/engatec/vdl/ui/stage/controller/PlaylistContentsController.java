@@ -73,7 +73,7 @@ public class PlaylistContentsController implements InputForm {
     private void initContent() {
         ObservableList<Node> contentList = contentVBox.getChildren();
         for (VideoInfo vi : videoInfoList) {
-            var checkBox = new CheckBox(StringUtils.firstNonBlank(vi.getTitle(), vi.getId(), vi.getBaseUrl()));
+            var checkBox = new CheckBox(StringUtils.firstNonBlank(vi.title(), vi.id(), vi.baseUrl()));
             checkBox.setUserData(vi);
             checkBoxGroup.add(checkBox);
             contentList.add(checkBox);

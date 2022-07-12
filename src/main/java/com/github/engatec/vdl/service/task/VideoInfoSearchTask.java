@@ -44,7 +44,7 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
         for (VideoInfo item : items) {
             if (isCompleteVideoInfo(item)) {
                 videos.add(item);
-            } else if (StringUtils.isNotBlank(item.getId()) || StringUtils.isNotBlank(item.getExtractor())) { // Highly likely a link to a complete video info
+            } else if (StringUtils.isNotBlank(item.id()) || StringUtils.isNotBlank(item.extractor())) { // Highly likely a link to a complete video info
                 videos.add(item);
             } else {
                 playlists.add(item);
@@ -53,7 +53,7 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
 
         if (CollectionUtils.isNotEmpty(playlists)) {
             List<String> newUrls = playlists.stream()
-                    .map(VideoInfo::getBaseUrl)
+                    .map(VideoInfo::baseUrl)
                     .collect(Collectors.toList());
 
             videos.addAll(extractVideoInfo(newUrls));
@@ -63,7 +63,7 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
     }
 
     protected boolean isCompleteVideoInfo(VideoInfo item) {
-        String type = item.getType();
+        String type = item.type();
         return StringUtils.isBlank(type) || type.equals("video");
     }
 }
