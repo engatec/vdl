@@ -53,6 +53,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.github.engatec.vdl.core.AppExecutors.Type.COMMON_EXECUTOR;
+
 public class SearchComponentController extends VBox implements ComponentController {
 
     private static final Logger LOGGER = LogManager.getLogger(SearchComponentController.class);
@@ -268,39 +270,40 @@ public class SearchComponentController extends VBox implements ComponentControll
         contentUpdating.setValue(true);
         downloadButton.setVisible(true);
 
-        boolean multipleItems = downloadables.size() > 1;
-        if (multipleItems) {
-            itemsCountLabel.setText(String.valueOf(downloadables.size()));
-            selectAllCheckBox.setManaged(true);
-            selectAllCheckBox.setVisible(true);
-        }
-
+        int totalItems = downloadables.size();
         CompletableFuture.runAsync(() -> {
-            for (List<VideoInfo> partition : ListUtils.partition(downloadables, 10)) {
-                final List<DownloadableItemComponentController> controllers = new ArrayList<>();
-                for (VideoInfo downloadable : partition) {
-                    DownloadableItemComponentController controller = new DownloadableItemComponent(stage, downloadable).load();
-                    controller.setSelectable(multipleItems);
-                    controller.setSelected(true);
-                    controllers.add(controller);
-                }
-
-                Platform.runLater(() -> {
-                    for (DownloadableItemComponentController it : controllers) {
-                        ObservableList<Node> contentItems = contentNode.getChildren();
-                        if (CollectionUtils.isNotEmpty(contentItems)) {
-                            contentItems.add(new Separator());
+                    for (List<VideoInfo> partition : ListUtils.partition(downloadables, 10)) {
+                        final List<DownloadableItemComponentController> controllers = new ArrayList<>();
+                        for (VideoInfo downloadable : partition) {
+                            DownloadableItemComponentController controller = new DownloadableItemComponent(stage, downloadable).load();
+                            controller.setSelectable(totalItems > 1);
+                            controller.setSelected(true);
+                            controllers.add(controller);
                         }
-                        checkBoxGroup.add(it.getItemSelectedCheckBox());
-                        contentItems.add(it);
+
+                        Platform.runLater(() -> {
+                            for (DownloadableItemComponentController it : controllers) {
+                                ObservableList<Node> contentItems = contentNode.getChildren();
+                                if (CollectionUtils.isNotEmpty(contentItems)) {
+                                    contentItems.add(new Separator());
+                                }
+                                checkBoxGroup.add(it.getItemSelectedCheckBox());
+                                contentItems.add(it);
+                            }
+                            downloadableItemControllers.addAll(controllers);
+                            searchProgressBar.setProgress((double) downloadableItemControllers.size() / totalItems);
+                        });
                     }
-                    downloadableItemControllers.addAll(controllers);
-                    searchProgressBar.setProgress((double) downloadableItemControllers.size() / downloadables.size());
-                });
-            }
-        }).thenRun(() -> Platform.runLater(() -> {
+                }, ctx.appExecutors().get(COMMON_EXECUTOR)
+        ).thenRun(() -> Platform.runLater(() -> {
             contentUpdating.setValue(false);
             searchProgressBar.setProgress(-1);
+
+            if (totalItems > 1) {
+                itemsCountLabel.setText(String.valueOf(totalItems));
+                selectAllCheckBox.setManaged(true);
+                selectAllCheckBox.setVisible(true);
+            }
         }));
     }
 
