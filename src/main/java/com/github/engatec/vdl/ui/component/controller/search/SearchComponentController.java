@@ -1,7 +1,9 @@
 package com.github.engatec.vdl.ui.component.controller.search;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -18,7 +20,9 @@ import com.github.engatec.vdl.ui.helper.Dialogs;
 import com.github.engatec.vdl.util.AppUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -44,6 +48,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,6 +62,8 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private final Stage stage;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
+    private final BooleanProperty contentUpdating = new SimpleBooleanProperty(false);
+    private final List<DownloadableItemComponentController> downloadableItemControllers = new ArrayList<>();
 
     @FXML private Node rootNode;
 
@@ -72,7 +79,8 @@ public class SearchComponentController extends VBox implements ComponentControll
     @FXML private Button cancelButton;
 
     @FXML private ProgressBar searchProgressBar;
-    @FXML private Label searchProgressLabel;
+    @FXML private Label foundItemsLabel;
+    @FXML private Label itemsCountLabel;
 
     @FXML private CheckBox selectAllCheckBox;
     private CheckBoxGroup checkBoxGroup;
@@ -113,10 +121,10 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void initSearchControl() {
-        initSingleSearchTextField();
-        initMultiSearchTextArea();
+        BooleanBinding searchInProgress = downloadableSearchService.runningProperty().or(contentUpdating);
 
-        ReadOnlyBooleanProperty searchInProgress = downloadableSearchService.runningProperty();
+        initSingleSearchTextField(searchInProgress);
+        initMultiSearchTextArea(searchInProgress);
 
         searchButton.visibleProperty().bind(searchInProgress.not());
         searchButton.managedProperty().bind(searchInProgress.not());
@@ -124,10 +132,11 @@ public class SearchComponentController extends VBox implements ComponentControll
         searchProgressBar.managedProperty().bind(searchInProgress);
         cancelButton.visibleProperty().bind(searchInProgress);
         cancelButton.managedProperty().bind(searchInProgress);
-        searchProgressLabel.visibleProperty().bind(searchInProgress);
 
-        searchProgressBar.progressProperty().bind(downloadableSearchService.progressProperty());
-        searchProgressLabel.textProperty().bind(downloadableSearchService.messageProperty());
+        searchProgressBar.setProgress(-1);
+        foundItemsLabel.visibleProperty().bind(itemsCountLabel.visibleProperty());
+        itemsCountLabel.visibleProperty().bind(Bindings.createBooleanBinding(() -> StringUtils.isNotBlank(itemsCountLabel.getText()), itemsCountLabel.textProperty()));
+        itemsCountLabel.setText(null);
 
         selectAllCheckBox.setManaged(false);
         selectAllCheckBox.setVisible(false);
@@ -138,9 +147,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         downloadButton.getItems().add(downloadAudioMenuItem);
     }
 
-    private void initSingleSearchTextField() {
-        ReadOnlyBooleanProperty searchInProgress = downloadableSearchService.runningProperty();
-
+    private void initSingleSearchTextField(BooleanBinding searchInProgress) {
         var multiSearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getProperty();
         var singleSearchActive = multiSearchActive.not();
 
@@ -167,8 +174,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         });
     }
 
-    private void initMultiSearchTextArea() {
-        ReadOnlyBooleanProperty searchInProgress = downloadableSearchService.runningProperty();
+    private void initMultiSearchTextArea(BooleanBinding searchInProgress) {
         var multiSearchActive = ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getProperty();
 
         multiSearchStackPane.visibleProperty().bind(searchInProgress.not().and(multiSearchActive));
@@ -204,11 +210,11 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void initSearchService() {
-        downloadableSearchService.setOnInfoFetchedCallback(this::updateContentPane);
-
         downloadableSearchService.setOnSucceeded(it -> {
             var items = (List<VideoInfo>) it.getSource().getValue();
-            if (CollectionUtils.isEmpty(items)) {
+            if (CollectionUtils.isNotEmpty(items)) {
+                updateContentPane(items);
+            } else {
                 Platform.runLater(() -> Dialogs.info("video.search.notfound"));
             }
         });
@@ -258,27 +264,44 @@ public class SearchComponentController extends VBox implements ComponentControll
         return queueManager.hasItem(it -> StringUtils.equals(it.getBaseUrl(), url));
     }
 
-    private void updateContentPane(List<VideoInfo> downloadables, Integer totalItems) {
-        if (CollectionUtils.isNotEmpty(downloadables)) {
-            downloadButton.setVisible(true);
+    private void updateContentPane(List<VideoInfo> downloadables) {
+        contentUpdating.setValue(true);
+        downloadButton.setVisible(true);
 
-            if (totalItems > 1) {
-                selectAllCheckBox.setManaged(true);
-                selectAllCheckBox.setVisible(true);
-            }
+        boolean multipleItems = downloadables.size() > 1;
+        if (multipleItems) {
+            itemsCountLabel.setText(String.valueOf(downloadables.size()));
+            selectAllCheckBox.setManaged(true);
+            selectAllCheckBox.setVisible(true);
         }
 
-        for (VideoInfo downloadable : downloadables) {
-            ObservableList<Node> contentItems = contentNode.getChildren();
-            if (CollectionUtils.isNotEmpty(contentItems)) {
-                contentItems.add(new Separator());
+        CompletableFuture.runAsync(() -> {
+            for (List<VideoInfo> partition : ListUtils.partition(downloadables, 10)) {
+                final List<DownloadableItemComponentController> controllers = new ArrayList<>();
+                for (VideoInfo downloadable : partition) {
+                    DownloadableItemComponentController controller = new DownloadableItemComponent(stage, downloadable).load();
+                    controller.setSelectable(multipleItems);
+                    controller.setSelected(true);
+                    controllers.add(controller);
+                }
+
+                Platform.runLater(() -> {
+                    for (DownloadableItemComponentController it : controllers) {
+                        ObservableList<Node> contentItems = contentNode.getChildren();
+                        if (CollectionUtils.isNotEmpty(contentItems)) {
+                            contentItems.add(new Separator());
+                        }
+                        checkBoxGroup.add(it.getItemSelectedCheckBox());
+                        contentItems.add(it);
+                    }
+                    downloadableItemControllers.addAll(controllers);
+                    searchProgressBar.setProgress((double) downloadableItemControllers.size() / downloadables.size());
+                });
             }
-            DownloadableItemComponentController controller = new DownloadableItemComponent(stage, downloadable).load();
-            controller.setSelectable(totalItems > 1);
-            controller.setSelected(true);
-            checkBoxGroup.add(controller.getItemSelectedCheckBox());
-            contentItems.add(controller);
-        }
+        }).thenRun(() -> Platform.runLater(() -> {
+            contentUpdating.setValue(false);
+            searchProgressBar.setProgress(-1);
+        }));
     }
 
     private List<DownloadableItemComponentController> getSelectedItems() {
@@ -313,6 +336,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         downloadButton.setVisible(false);
         selectAllCheckBox.setManaged(false);
         selectAllCheckBox.setVisible(false);
+        itemsCountLabel.setText(null);
         contentNode.getChildren().clear();
         checkBoxGroup.clear();
     }
