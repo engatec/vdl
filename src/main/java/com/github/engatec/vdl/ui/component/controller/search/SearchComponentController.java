@@ -59,13 +59,14 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private static final Logger LOGGER = LogManager.getLogger(SearchComponentController.class);
 
+    private static final int RENDER_PARTITION_SIZE = 10;
+
     private final ApplicationContext ctx = ApplicationContext.getInstance();
     private final QueueManager queueManager = ctx.getManager(QueueManager.class);
 
     private final Stage stage;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
     private final BooleanProperty contentUpdating = new SimpleBooleanProperty(false);
-    private final List<DownloadableItemComponentController> downloadableItemControllers = new ArrayList<>();
 
     @FXML private Node rootNode;
 
@@ -230,6 +231,7 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private void handleCancelButtonClick(ActionEvent event) {
         downloadableSearchService.cancel();
+        contentUpdating.set(false);
         event.consume();
     }
 
@@ -267,17 +269,29 @@ public class SearchComponentController extends VBox implements ComponentControll
     }
 
     private void updateContentPane(List<VideoInfo> downloadables) {
-        contentUpdating.setValue(true);
+        contentUpdating.set(true);
         downloadButton.setVisible(true);
 
         int totalItems = downloadables.size();
+        if (totalItems > 1) {
+            itemsCountLabel.setText(String.valueOf(totalItems));
+            selectAllCheckBox.setManaged(true);
+            selectAllCheckBox.setVisible(true);
+            selectAllCheckBox.setSelected(true);
+        }
+
+        double progressStep = (double) RENDER_PARTITION_SIZE / totalItems;
+
         CompletableFuture.runAsync(() -> {
-                    for (List<VideoInfo> partition : ListUtils.partition(downloadables, 10)) {
+                    for (List<VideoInfo> partition : ListUtils.partition(downloadables, RENDER_PARTITION_SIZE)) {
+                        if (!contentUpdating.get()) {
+                            break;
+                        }
+
                         final List<DownloadableItemComponentController> controllers = new ArrayList<>();
                         for (VideoInfo downloadable : partition) {
                             DownloadableItemComponentController controller = new DownloadableItemComponent(stage, downloadable).load();
                             controller.setSelectable(totalItems > 1);
-                            controller.setSelected(true);
                             controllers.add(controller);
                         }
 
@@ -287,23 +301,18 @@ public class SearchComponentController extends VBox implements ComponentControll
                                 if (CollectionUtils.isNotEmpty(contentItems)) {
                                     contentItems.add(new Separator());
                                 }
+                                it.setSelected(selectAllCheckBox.isSelected());
                                 checkBoxGroup.add(it.getItemSelectedCheckBox());
                                 contentItems.add(it);
                             }
-                            downloadableItemControllers.addAll(controllers);
-                            searchProgressBar.setProgress((double) downloadableItemControllers.size() / totalItems);
+
+                            searchProgressBar.setProgress(Math.max(searchProgressBar.getProgress(), 0) + progressStep);
                         });
                     }
                 }, ctx.appExecutors().get(COMMON_EXECUTOR)
         ).thenRun(() -> Platform.runLater(() -> {
-            contentUpdating.setValue(false);
+            contentUpdating.set(false);
             searchProgressBar.setProgress(-1);
-
-            if (totalItems > 1) {
-                itemsCountLabel.setText(String.valueOf(totalItems));
-                selectAllCheckBox.setManaged(true);
-                selectAllCheckBox.setVisible(true);
-            }
         }));
     }
 

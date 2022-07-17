@@ -9,11 +9,11 @@ import com.github.engatec.vdl.core.json.SubtitlesJsonDeserializer;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Parameters explanation can be found here: https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/common.py
+ * Parameters explanation can be found here: https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/extractor/common.py
  */
 public record VideoInfo (
     String id,
-    @JsonProperty("ie_key") String extractor,
+    String extractor,
     @JsonProperty("_type") String type,
     @JsonProperty("webpage_url") String baseUrl,
     // 'url' property used by playlists as they don't have 'webpage_url'. One might think "Let's try @JsonAlias on baseUrl instead of separate url parameter"... don't!

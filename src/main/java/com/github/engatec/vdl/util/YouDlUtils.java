@@ -1,13 +1,5 @@
 package com.github.engatec.vdl.util;
 
-import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
@@ -15,17 +7,35 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+
+import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class YouDlUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(YouDlUtils.class);
 
+    private static final Set<String> playlistExtractors = Set.of(
+            "youtube:playlist", "youtube:tab", "youtube:watchlater"
+    );
+
+    public static boolean isPlaylist(VideoInfo videoInfo) {
+        return playlistExtractors.contains(videoInfo.extractor());
+    }
+
     public static String createFormatByHeight(Integer height) {
         String h = StringUtils.EMPTY;
-        if (height != null) {
+        if (height != null && height > 0) {
             h = "[height<=" + height + "]";
         }
 

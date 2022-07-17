@@ -3,13 +3,12 @@ package com.github.engatec.vdl.service.task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
 
@@ -42,28 +41,21 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
         List<VideoInfo> videos = new ArrayList<>();
 
         for (VideoInfo item : items) {
-            if (isCompleteVideoInfo(item)) {
-                videos.add(item);
-            } else if (StringUtils.isNotBlank(item.id()) || StringUtils.isNotBlank(item.extractor())) { // Highly likely a link to a complete video info
-                videos.add(item);
-            } else {
+            if (YouDlUtils.isPlaylist(item)) {
                 playlists.add(item);
+            } else {
+                videos.add(item);
             }
         }
 
         if (CollectionUtils.isNotEmpty(playlists)) {
-            List<String> newUrls = playlists.stream()
+            List<String> playlistUrls = playlists.stream()
                     .map(VideoInfo::baseUrl)
-                    .collect(Collectors.toList());
+                    .toList();
 
-            videos.addAll(extractVideoInfo(newUrls));
+            videos.addAll(extractVideoInfo(playlistUrls));
         }
 
         return videos;
-    }
-
-    protected boolean isCompleteVideoInfo(VideoInfo item) {
-        String type = item.type();
-        return StringUtils.isBlank(type) || type.equals("video");
     }
 }

@@ -3,7 +3,7 @@ package com.github.engatec.vdl.service;
 import java.util.List;
 
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.service.task.BasicVideoInfoSearchTask;
+import com.github.engatec.vdl.service.task.PlaylistInfoSearchTask;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
@@ -23,6 +23,6 @@ public class PlaylistDetailsSearchService extends Service<List<VideoInfo>> {
 
     @Override
     protected Task<List<VideoInfo>> createTask() {
-        return new BasicVideoInfoSearchTask(List.of(getUrl()));
+        return new PlaylistInfoSearchTask(List.of(getUrl()));
     }
 }
