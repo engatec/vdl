@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -33,6 +34,7 @@ import com.github.engatec.vdl.preference.property.general.AudioExtractionQuality
 import com.github.engatec.vdl.preference.property.general.AutoSelectFormatConfigProperty;
 import com.github.engatec.vdl.preference.property.general.LoadThumbnailsConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
+import com.github.engatec.vdl.service.DownloadableSearchService;
 import com.github.engatec.vdl.service.SubtitlesDownloadService;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
@@ -73,7 +75,7 @@ public class DownloadableItemComponentController extends HBox {
     private final QueueManager queueManager = ctx.getManager(QueueManager.class);
 
     private final Stage stage;
-    private final VideoInfo videoInfo;
+    private VideoInfo videoInfo;
     private String customFormat;
 
     @FXML private HBox rootHBox;
@@ -115,14 +117,31 @@ public class DownloadableItemComponentController extends HBox {
         allFormatsButton.setGraphic(new ImageView(Icon.FILTER_LIST_SMALL.getImage()));
         allFormatsButton.setTooltip(Tooltips.create("format.all"));
         allFormatsButton.setOnAction(e -> {
-            new FormatsStage(videoInfo, customFormat, formatId -> {
-                customFormat = formatId;
-                ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
-                comboBoxItems.stream().filter(it -> it.getKey().equals(CUSTOM_FORMAT_LABEL)).findFirst().ifPresent(comboBoxItems::remove);
-                ComboBoxValueHolder<String> valueHolder = new ComboBoxValueHolder<>(CUSTOM_FORMAT_LABEL, customFormat);
-                comboBoxItems.add(valueHolder);
-                formatsComboBox.getSelectionModel().select(valueHolder);
-            }).modal(stage).show();
+            if (CollectionUtils.isEmpty(videoInfo.formats())) {
+                DownloadableSearchService searchService = new DownloadableSearchService();
+                searchService.setUrls(List.of(videoInfo.baseUrl()));
+                searchService.setOnSucceeded(it -> {
+                    ListUtils.emptyIfNull((List<VideoInfo>) it.getSource().getValue()).stream()
+                            .findFirst()
+                            .ifPresentOrElse(
+                                    vi -> videoInfo = vi,
+                                    () -> Dialogs.info("formats.notfound")
+                            );
+                    showFormatStage();
+                });
+                searchService.setOnFailed(event -> {
+                    Throwable exception = event.getSource().getException();
+                    if (exception != null) {
+                        LOGGER.warn(exception.getMessage(), exception);
+                    }
+                    Dialogs.error("formats.error");
+                });
+
+                Dialogs.progress("format.fetching", stage, searchService);
+            } else {
+                showFormatStage();
+            }
+
             e.consume();
         });
 
@@ -152,6 +171,17 @@ public class DownloadableItemComponentController extends HBox {
         formatsComboBox.setOnScroll(new ComboBoxMouseScrollHandler());
     }
 
+    private void showFormatStage() {
+        new FormatsStage(videoInfo, customFormat, formatId -> {
+            customFormat = formatId;
+            ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
+            comboBoxItems.stream().filter(it -> it.key().equals(CUSTOM_FORMAT_LABEL)).findFirst().ifPresent(comboBoxItems::remove);
+            ComboBoxValueHolder<String> valueHolder = new ComboBoxValueHolder<>(CUSTOM_FORMAT_LABEL, customFormat);
+            comboBoxItems.add(valueHolder);
+            formatsComboBox.getSelectionModel().select(valueHolder);
+        }).modal(stage).show();
+    }
+
     private void initLabels() {
         titleLabel.setText(videoInfo.title());
 
@@ -172,6 +202,10 @@ public class DownloadableItemComponentController extends HBox {
                 .distinct()
                 .sorted(Comparator.reverseOrder())
                 .toList();
+
+        if (CollectionUtils.isEmpty(commonAvailableHeights)) {
+            commonAvailableHeights = Stream.of(Resolution.values()).map(Resolution::getHeight).toList();
+        }
 
         ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
         Integer autoSelectFormat = ctx.getConfigRegistry().get(AutoSelectFormatConfigProperty.class).getValue();
@@ -300,7 +334,7 @@ public class DownloadableItemComponentController extends HBox {
 
     public Downloadable getDownloadable() {
         BaseDownloadable downloadable = new BaseDownloadable();
-        downloadable.setFormatId(formatsComboBox.getSelectionModel().getSelectedItem().getValue());
+        downloadable.setFormatId(formatsComboBox.getSelectionModel().getSelectedItem().value());
         downloadable.setTitle(titleLabel.getText());
         downloadable.setBaseUrl(videoInfo.baseUrl());
         return downloadable;

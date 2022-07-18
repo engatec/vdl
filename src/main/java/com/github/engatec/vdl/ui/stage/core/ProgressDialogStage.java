@@ -20,7 +20,6 @@ public class ProgressDialogStage extends AppStage {
     protected void init() {
         super.init();
         stage.setResizable(false);
-        stage.setTitle(title);
     }
 
     @Override
@@ -30,6 +29,6 @@ public class ProgressDialogStage extends AppStage {
 
     @Override
     protected Callback<Class<?>, Object> getControllerFactory(Stage stage) {
-        return param -> new ProgressDialogController(stage, service);
+        return param -> new ProgressDialogController(stage, title, service);
     }
 }

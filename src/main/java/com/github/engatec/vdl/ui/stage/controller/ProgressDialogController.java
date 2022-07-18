@@ -6,24 +6,30 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class ProgressDialogController extends StageAwareController {
 
+    private String title;
     private Service<?> service;
 
+    @FXML private Label titleLabel;
     @FXML private Button dialogProgressCancelButton;
 
     private ProgressDialogController() {
     }
 
-    public ProgressDialogController(Stage stage, Service<?> service) {
+    public ProgressDialogController(Stage stage, String title, Service<?> service) {
         super(stage);
+        this.title = title;
         this.service = service;
     }
 
     @FXML
     public void initialize() {
+        titleLabel.setText(title);
+
         EventHandler<WorkerStateEvent> onSucceeded = service.getOnSucceeded();
         service.setOnSucceeded(event -> {
             if (onSucceeded != null) {

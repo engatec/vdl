@@ -108,13 +108,13 @@ public class GeneralPreferencesController extends ScrollPane implements InputFor
 
         Language currentLanguage = Language.getByLocaleCode(configRegistry.get(LanguageConfigProperty.class).getValue());
         languages.stream()
-                .filter(it -> it.getValue() == currentLanguage)
+                .filter(it -> it.value() == currentLanguage)
                 .findFirst()
                 .ifPresent(it -> languageComboBox.getSelectionModel().select(it));
 
         languageComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                Language newLanguage = newValue.getValue();
+                Language newLanguage = newValue.value();
                 LanguageConfigProperty languageConfigProperty = configRegistry.get(LanguageConfigProperty.class);
                 languageConfigProperty.setValue(newLanguage.getLocaleCode());
                 Dialogs.info("preferences.general.language.restartrequired", newLanguage);
