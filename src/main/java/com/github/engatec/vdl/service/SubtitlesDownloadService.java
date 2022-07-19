@@ -16,6 +16,7 @@ import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.ui.helper.Dialogs;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,10 +30,12 @@ public class SubtitlesDownloadService extends Service<Void> {
     private static final Pattern DOWNLOAD_DESTINATION_PATTERN = Pattern.compile("\\s*\\[info] Writing video subtitles to:(?<destination>.*)");
 
     private final String url;
+    private final Set<String> subtitles;
     private final Path downloadPath;
 
-    public SubtitlesDownloadService(String url, Path downloadPath) {
+    public SubtitlesDownloadService(String url, Set<String> subtitles, Path downloadPath) {
         this.url = url;
+        this.subtitles = subtitles;
         this.downloadPath = downloadPath;
     }
 
@@ -52,7 +55,7 @@ public class SubtitlesDownloadService extends Service<Void> {
             protected Void call() throws Exception {
                 List<String> command = YoutubeDlCommandBuilder.newInstance()
                         .outputPath(FilenameUtils.removeExtension(downloadPath.toString()))
-                        .writeSub(Set.of())
+                        .writeSub(SetUtils.emptyIfNull(subtitles))
                         .convertSub("srt")
                         .skipDownload()
                         .urls(List.of(url))

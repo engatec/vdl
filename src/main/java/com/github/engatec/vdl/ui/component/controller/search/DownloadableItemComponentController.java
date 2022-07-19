@@ -35,12 +35,12 @@ import com.github.engatec.vdl.preference.property.general.AutoSelectFormatConfig
 import com.github.engatec.vdl.preference.property.general.LoadThumbnailsConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
 import com.github.engatec.vdl.service.DownloadableSearchService;
-import com.github.engatec.vdl.service.SubtitlesDownloadService;
 import com.github.engatec.vdl.ui.Icon;
 import com.github.engatec.vdl.ui.data.ComboBoxValueHolder;
 import com.github.engatec.vdl.ui.helper.Dialogs;
 import com.github.engatec.vdl.ui.helper.Tooltips;
 import com.github.engatec.vdl.ui.stage.core.FormatsStage;
+import com.github.engatec.vdl.ui.stage.core.SubtitlesStage;
 import com.github.engatec.vdl.util.AppUtils;
 import com.github.engatec.vdl.util.Thumbnails;
 import com.github.engatec.vdl.util.YouDlUtils;
@@ -85,7 +85,7 @@ public class DownloadableItemComponentController extends HBox {
     @FXML private ComboBox<ComboBoxValueHolder<String>> formatsComboBox;
     @FXML private Button allFormatsButton;
     @FXML private Button audioButton;
-    @FXML private Button closedCaptionButton;
+    @FXML private Button subtitlesButton;
     @FXML private CheckBox itemSelectedCheckBox;
 
     @FXML private ImageView thumbnailImageView;
@@ -98,151 +98,21 @@ public class DownloadableItemComponentController extends HBox {
 
     @FXML
     public void initialize() {
-        initControlButtons();
-        initLabels();
-        initFormats();
         initThumbnail();
+        initLabels();
+        initFormatsDropdown();
+        initAllAvailableFormatsButton();
+        initAudioDownloadButton();
+        initSubtitlesButton();
 
-        rootHBox.setOnMouseClicked(event -> itemSelectedCheckBox.setSelected(!itemSelectedCheckBox.isSelected()));
+        adjustUiControls();
     }
 
-    private void initControlButtons() {
-        audioButton.setGraphic(new ImageView(Icon.AUDIOTRACK_SMALL.getImage()));
-        audioButton.setTooltip(Tooltips.create("download.audio"));
-        audioButton.setOnAction(e -> {
-            AppUtils.resolveDownloadPath(stage).ifPresent(this::downloadAudio);
-            e.consume();
-        });
-
-        allFormatsButton.setGraphic(new ImageView(Icon.FILTER_LIST_SMALL.getImage()));
-        allFormatsButton.setTooltip(Tooltips.create("format.all"));
-        allFormatsButton.setOnAction(e -> {
-            if (CollectionUtils.isEmpty(videoInfo.formats())) {
-                DownloadableSearchService searchService = new DownloadableSearchService();
-                searchService.setUrls(List.of(videoInfo.baseUrl()));
-                searchService.setOnSucceeded(it -> {
-                    ListUtils.emptyIfNull((List<VideoInfo>) it.getSource().getValue()).stream()
-                            .findFirst()
-                            .ifPresentOrElse(
-                                    vi -> videoInfo = vi,
-                                    () -> Dialogs.info("formats.notfound")
-                            );
-                    showFormatStage();
-                });
-                searchService.setOnFailed(event -> {
-                    Throwable exception = event.getSource().getException();
-                    if (exception != null) {
-                        LOGGER.warn(exception.getMessage(), exception);
-                    }
-                    Dialogs.error("formats.error");
-                });
-
-                Dialogs.progress("format.fetching", stage, searchService);
-            } else {
-                showFormatStage();
-            }
-
-            e.consume();
-        });
-
-        if (CollectionUtils.isNotEmpty(videoInfo.subtitles())) {
-            closedCaptionButton.setGraphic(new ImageView(Icon.SUBTITLES_SMALL.getImage()));
-            closedCaptionButton.setTooltip(Tooltips.create("download.subtitles"));
-            closedCaptionButton.setOnAction(e -> {
-                FileChooser fileChooser = new FileChooser();
-                File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathConfigProperty.class).getValue()).toFile();
-                if (recentDownloadPath.isDirectory()) {
-                    fileChooser.setInitialDirectory(recentDownloadPath);
-                }
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("*.srt", "*.srt"));
-                fileChooser.setInitialFileName("subtitles");
-                File downloadPath = fileChooser.showSaveDialog(stage);
-                if (downloadPath != null) {
-                    new SubtitlesDownloadService(videoInfo.baseUrl(), downloadPath.toPath()).start();
-                }
-                e.consume();
-            });
-        } else {
-            closedCaptionButton.setVisible(false);
-            closedCaptionButton.setManaged(false);
-        }
+    private void adjustUiControls() {
+        rootHBox.setOnMouseClicked(event -> itemSelectedCheckBox.setSelected(!itemSelectedCheckBox.isSelected()));
 
         formatsComboBox.prefHeightProperty().bind(allFormatsButton.heightProperty());
         formatsComboBox.setOnScroll(new ComboBoxMouseScrollHandler());
-    }
-
-    private void showFormatStage() {
-        new FormatsStage(videoInfo, customFormat, formatId -> {
-            customFormat = formatId;
-            ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
-            comboBoxItems.stream().filter(it -> it.key().equals(CUSTOM_FORMAT_LABEL)).findFirst().ifPresent(comboBoxItems::remove);
-            ComboBoxValueHolder<String> valueHolder = new ComboBoxValueHolder<>(CUSTOM_FORMAT_LABEL, customFormat);
-            comboBoxItems.add(valueHolder);
-            formatsComboBox.getSelectionModel().select(valueHolder);
-        }).modal(stage).show();
-    }
-
-    private void initLabels() {
-        titleLabel.setText(videoInfo.title());
-
-        int durationSeconds = Objects.requireNonNullElse(videoInfo.duration(), 0);
-        String formattedDuration = durationSeconds <= 0 ? StringUtils.EMPTY : DurationFormatUtils.formatDuration(durationSeconds * 1000L, "HH:mm:ss");
-        durationLabel.setText(formattedDuration);
-    }
-
-    private void initFormats() {
-        final String noCodec = YoutubeDlAttr.NO_CODEC.getValue();
-        Predicate<Format> anyCodecDefined = it -> !noCodec.equals(it.getVcodec()) || !noCodec.equals(it.getAcodec());
-
-        List<Integer> commonAvailableHeights = ListUtils.emptyIfNull(videoInfo.formats()).stream()
-                .filter(anyCodecDefined)
-                .map(Format::getHeight)
-                .filter(Objects::nonNull)
-                .filter(it -> it > 0) // Should never happen, just a sanity check in case there's a bug in youtube-dl
-                .distinct()
-                .sorted(Comparator.reverseOrder())
-                .toList();
-
-        if (CollectionUtils.isEmpty(commonAvailableHeights)) {
-            commonAvailableHeights = Stream.of(Resolution.values()).map(Resolution::getHeight).toList();
-        }
-
-        ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
-        Integer autoSelectFormat = ctx.getConfigRegistry().get(AutoSelectFormatConfigProperty.class).getValue();
-        ComboBoxValueHolder<String> selectedItem = null;
-        for (Integer height : commonAvailableHeights) {
-            ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), YouDlUtils.createFormatByHeight(height));
-            comboBoxItems.add(item);
-
-            if (selectedItem == null && height <= autoSelectFormat) {
-                selectedItem = item;
-            }
-        }
-
-        if (comboBoxItems.isEmpty()) {
-            comboBoxItems.add(new ComboBoxValueHolder<>(N_A_FORMAT_LABEL, YouDlUtils.createFormatByHeight(null)));
-        }
-
-        if (selectedItem == null) {
-            formatsComboBox.getSelectionModel().selectFirst();
-        } else {
-            formatsComboBox.getSelectionModel().select(selectedItem);
-        }
-
-        adjustWidth();
-    }
-
-    /**
-     * A small hack to make comboboxes the same width no matter when they get rendered
-     */
-    private void adjustWidth() {
-        ComboBoxValueHolder<String> dummyItem = new ComboBoxValueHolder<>("99999p 8K Ultra HD", StringUtils.EMPTY);
-        formatsComboBox.getItems().add(dummyItem);
-        formatsComboBox.setOnShowing(e -> {
-            ObservableList<ComboBoxValueHolder<String>> items = formatsComboBox.getItems();
-            items.remove(dummyItem);
-            formatsComboBox.setOnShowing(null);
-        });
     }
 
     private void initThumbnail() {
@@ -313,6 +183,173 @@ public class DownloadableItemComponentController extends HBox {
         }
 
         return saved;
+    }
+
+    private void initLabels() {
+        titleLabel.setText(videoInfo.title());
+
+        int durationSeconds = Objects.requireNonNullElse(videoInfo.duration(), 0);
+        String formattedDuration = durationSeconds <= 0 ? StringUtils.EMPTY : DurationFormatUtils.formatDuration(durationSeconds * 1000L, "HH:mm:ss");
+        durationLabel.setText(formattedDuration);
+    }
+
+    private void initFormatsDropdown() {
+        final String noCodec = YoutubeDlAttr.NO_CODEC.getValue();
+        Predicate<Format> anyCodecDefined = it -> !noCodec.equals(it.getVcodec()) || !noCodec.equals(it.getAcodec());
+
+        List<Integer> commonAvailableHeights = ListUtils.emptyIfNull(videoInfo.formats()).stream()
+                .filter(anyCodecDefined)
+                .map(Format::getHeight)
+                .filter(Objects::nonNull)
+                .filter(it -> it > 0) // Should never happen, just a sanity check in case there's a bug in youtube-dl
+                .distinct()
+                .sorted(Comparator.reverseOrder())
+                .toList();
+
+        if (CollectionUtils.isEmpty(commonAvailableHeights)) {
+            commonAvailableHeights = Stream.of(Resolution.values()).map(Resolution::getHeight).toList();
+        }
+
+        ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
+        comboBoxItems.clear();
+        Integer autoSelectFormat = ctx.getConfigRegistry().get(AutoSelectFormatConfigProperty.class).getValue();
+        ComboBoxValueHolder<String> selectedItem = null;
+        for (Integer height : commonAvailableHeights) {
+            ComboBoxValueHolder<String> item = new ComboBoxValueHolder<>(height + "p " + Resolution.getDescriptionByHeight(height), YouDlUtils.createFormatByHeight(height));
+            comboBoxItems.add(item);
+
+            if (selectedItem == null && height <= autoSelectFormat) {
+                selectedItem = item;
+            }
+        }
+
+        if (comboBoxItems.isEmpty()) {
+            comboBoxItems.add(new ComboBoxValueHolder<>(N_A_FORMAT_LABEL, YouDlUtils.createFormatByHeight(null)));
+        }
+
+        if (selectedItem == null) {
+            formatsComboBox.getSelectionModel().selectFirst();
+        } else {
+            formatsComboBox.getSelectionModel().select(selectedItem);
+        }
+
+        adjustWidth();
+    }
+
+    /**
+     * A small hack to make comboboxes the same width no matter when they get rendered
+     */
+    private void adjustWidth() {
+        ComboBoxValueHolder<String> dummyItem = new ComboBoxValueHolder<>("99999p 8K Ultra HD", StringUtils.EMPTY);
+        formatsComboBox.getItems().add(dummyItem);
+        formatsComboBox.setOnKeyPressed(e -> {
+            formatsComboBox.getItems().remove(dummyItem);
+            formatsComboBox.setOnKeyPressed(null);
+            formatsComboBox.setOnMouseEntered(null);
+        });
+        formatsComboBox.setOnMouseEntered(e -> {
+            formatsComboBox.getItems().remove(dummyItem);
+            formatsComboBox.setOnMouseEntered(null);
+            formatsComboBox.setOnKeyPressed(null);
+        });
+    }
+
+    private void initAllAvailableFormatsButton() {
+        allFormatsButton.setGraphic(new ImageView(Icon.FILTER_LIST_SMALL.getImage()));
+        allFormatsButton.setTooltip(Tooltips.create("format.all"));
+        allFormatsButton.setOnAction(e -> {
+            if (CollectionUtils.isEmpty(videoInfo.formats())) {
+                DownloadableSearchService searchService = new DownloadableSearchService();
+                searchService.setUrls(List.of(videoInfo.baseUrl()));
+                searchService.setOnSucceeded(it ->
+                        ListUtils.emptyIfNull((List<VideoInfo>) it.getSource().getValue()).stream()
+                                .findFirst()
+                                .ifPresentOrElse(
+                                        vi -> {
+                                            videoInfo = vi;
+                                            initFormatsDropdown();
+                                            showFormatsStage();
+                                        },
+                                        () -> Dialogs.info("formats.notfound")
+                                )
+                );
+                searchService.setOnFailed(event -> {
+                    Throwable exception = event.getSource().getException();
+                    if (exception != null) {
+                        LOGGER.warn(exception.getMessage(), exception);
+                    }
+                    Dialogs.error("formats.error");
+                });
+
+                Dialogs.progress("format.searching", stage, searchService);
+            } else {
+                showFormatsStage();
+            }
+
+            e.consume();
+        });
+    }
+
+    private void showFormatsStage() {
+        new FormatsStage(videoInfo, customFormat, formatId -> {
+            customFormat = formatId;
+            ObservableList<ComboBoxValueHolder<String>> comboBoxItems = formatsComboBox.getItems();
+            comboBoxItems.stream().filter(it -> it.key().equals(CUSTOM_FORMAT_LABEL)).findFirst().ifPresent(comboBoxItems::remove);
+            ComboBoxValueHolder<String> valueHolder = new ComboBoxValueHolder<>(CUSTOM_FORMAT_LABEL, customFormat);
+            comboBoxItems.add(valueHolder);
+            formatsComboBox.getSelectionModel().select(valueHolder);
+        }).modal(stage).show();
+    }
+
+    private void initAudioDownloadButton() {
+        audioButton.setGraphic(new ImageView(Icon.AUDIOTRACK_SMALL.getImage()));
+        audioButton.setTooltip(Tooltips.create("download.audio"));
+        audioButton.setOnAction(e -> {
+            AppUtils.resolveDownloadPath(stage).ifPresent(this::downloadAudio);
+            e.consume();
+        });
+    }
+
+    private void initSubtitlesButton() {
+        subtitlesButton.setGraphic(new ImageView(Icon.SUBTITLES_SMALL.getImage()));
+        subtitlesButton.setTooltip(Tooltips.create("subtitles"));
+        subtitlesButton.setOnAction(e -> {
+            // No formats means that video info hasn't been fully loaded, thus no subtitles either
+            if (CollectionUtils.isEmpty(videoInfo.formats())) {
+                DownloadableSearchService searchService = new DownloadableSearchService();
+                searchService.setUrls(List.of(videoInfo.baseUrl()));
+                searchService.setOnSucceeded(it ->
+                        ListUtils.emptyIfNull((List<VideoInfo>) it.getSource().getValue()).stream()
+                                .findFirst()
+                                .ifPresentOrElse(
+                                        vi -> {
+                                            videoInfo = vi;
+                                            initFormatsDropdown();
+                                            showSubtitlesStage();
+                                        },
+                                        () -> Dialogs.info("subtitles.notfound")
+                                )
+                );
+                searchService.setOnFailed(event -> {
+                    Throwable exception = event.getSource().getException();
+                    if (exception != null) {
+                        LOGGER.warn(exception.getMessage(), exception);
+                    }
+                    Dialogs.error("subtitles.error");
+                });
+
+                Dialogs.progress("subtitles.searching", stage, searchService);
+            } else if (CollectionUtils.isEmpty(videoInfo.subtitles())) {
+                Dialogs.info("subtitles.notfound");
+            } else {
+                showSubtitlesStage();
+            }
+            e.consume();
+        });
+    }
+
+    private void showSubtitlesStage() {
+        new SubtitlesStage(videoInfo).modal(stage).show();
     }
 
     public void setSelectable(boolean selectable) {

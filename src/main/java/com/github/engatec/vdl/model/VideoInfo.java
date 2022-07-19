@@ -1,7 +1,6 @@
 package com.github.engatec.vdl.model;
 
 import java.util.List;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -23,7 +22,7 @@ public record VideoInfo (
     String title,
     Integer duration,
     String thumbnail,
-    @JsonDeserialize(using = SubtitlesJsonDeserializer.class) Set<String> subtitles,
+    @JsonDeserialize(using = SubtitlesJsonDeserializer.class) List<Subtitle> subtitles,
     List<Format> formats
 ) {
     public VideoInfo {

@@ -34,7 +34,7 @@
                   <ComboBox fx:id="formatsComboBox" />
                   <Button fx:id="allFormatsButton" mnemonicParsing="false" />
                   <Button fx:id="audioButton" mnemonicParsing="false" />
-                  <Button fx:id="closedCaptionButton" mnemonicParsing="false" />
+                  <Button fx:id="subtitlesButton" mnemonicParsing="false" />
                </children>
             </HBox>
          </children>

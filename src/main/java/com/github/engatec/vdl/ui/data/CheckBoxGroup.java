@@ -60,6 +60,12 @@ public class CheckBoxGroup {
         checkBoxes.add(checkBox);
     }
 
+    public List<CheckBox> getSelected() {
+        return checkBoxes.stream()
+                .filter(CheckBox::isSelected)
+                .toList();
+    }
+
     public void clear() {
         checkBoxes.clear();
     }
