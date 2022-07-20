@@ -3,11 +3,13 @@ package com.github.engatec.vdl.ui.component.controller.search;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
+import com.github.engatec.vdl.exception.ServiceStubException;
 import com.github.engatec.vdl.handler.CopyUrlFromClipboardOnFocusChangeListener;
 import com.github.engatec.vdl.handler.textformatter.NewLineOnUrlPasteTextFormatter;
 import com.github.engatec.vdl.model.VideoInfo;
@@ -223,8 +225,9 @@ public class SearchComponentController extends VBox implements ComponentControll
         });
 
         downloadableSearchService.setOnFailed(it -> {
-            String msg = it.getSource().getException().getMessage();
-            LOGGER.warn(msg);
+            Throwable exception = Objects.requireNonNullElseGet(it.getSource().getException(), () -> new ServiceStubException(downloadableSearchService.getClass()));
+            String msg = exception.getMessage();
+            LOGGER.warn(msg, exception);
             Platform.runLater(() -> Dialogs.exception("video.search.notfound", msg));
         });
     }

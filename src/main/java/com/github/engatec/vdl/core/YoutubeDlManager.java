@@ -61,6 +61,7 @@ public class YoutubeDlManager {
             LOGGER.warn(it);
             if (CollectionUtils.isEmpty(videoInfoList)) {
                 process.destroy();
+                throw new ProcessException(it);
             }
         });
 

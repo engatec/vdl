@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlAttr;
+import com.github.engatec.vdl.exception.ServiceStubException;
 import com.github.engatec.vdl.handler.ComboBoxMouseScrollHandler;
 import com.github.engatec.vdl.model.AudioFormat;
 import com.github.engatec.vdl.model.BitrateType;
@@ -278,10 +279,8 @@ public class DownloadableItemComponentController extends HBox {
                                 )
                 );
                 searchService.setOnFailed(event -> {
-                    Throwable exception = event.getSource().getException();
-                    if (exception != null) {
-                        LOGGER.warn(exception.getMessage(), exception);
-                    }
+                    Throwable exception = Objects.requireNonNullElseGet(event.getSource().getException(), () -> new ServiceStubException(searchService.getClass()));
+                    LOGGER.warn(exception.getMessage(), exception);
                     Dialogs.error("formats.error");
                 });
 
@@ -339,10 +338,8 @@ public class DownloadableItemComponentController extends HBox {
                                 )
                 );
                 searchService.setOnFailed(event -> {
-                    Throwable exception = event.getSource().getException();
-                    if (exception != null) {
-                        LOGGER.warn(exception.getMessage(), exception);
-                    }
+                    Throwable exception = Objects.requireNonNullElseGet(event.getSource().getException(), () -> new ServiceStubException(searchService.getClass()));
+                    LOGGER.warn(exception.getMessage(), exception);
                     Dialogs.error("subtitles.error");
                 });
 
