@@ -2,7 +2,10 @@ package com.github.engatec.vdl.service.task;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.model.VideoInfo;
@@ -20,13 +23,14 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
 
     @Override
     protected List<VideoInfo> call() throws Exception {
-        return extractVideoInfo(urls);
+        return extractVideoInfo(urls, new HashSet<>());
     }
 
     /**
-     * Method to handle "inner" playlists. For example a link to a channel has been provided an the channel contains multiple playlists. Info from them must be properly extracted.
+     * @param processedUrls - this Set protects from a youtube bug when a playlist tab url is incorrect and recursively appears again and again turning this search into an infinite loop
+     *                      which eventually will crash with either StackOverflowError or OutOfMemoryError
      */
-    private List<VideoInfo> extractVideoInfo(List<String> urls) throws IOException {
+    private List<VideoInfo> extractVideoInfo(List<String> urls, Set<String> processedUrls) throws IOException {
         if (Thread.interrupted()) {
             cancel();
         }
@@ -51,9 +55,14 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
         if (CollectionUtils.isNotEmpty(playlists)) {
             List<String> playlistUrls = playlists.stream()
                     .map(VideoInfo::baseUrl)
+                    .filter(Predicate.not(processedUrls::contains))
                     .toList();
 
-            videos.addAll(extractVideoInfo(playlistUrls));
+            processedUrls.addAll(playlistUrls);
+
+            if (CollectionUtils.isNotEmpty(playlistUrls)) {
+                videos.addAll(extractVideoInfo(playlistUrls, processedUrls));
+            }
         }
 
         return videos;
