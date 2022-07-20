@@ -105,11 +105,11 @@ public class SearchComponentController extends VBox implements ComponentControll
             if (selectAllCheckBox.isVisible()) {
                 downloadsCountLabel.setText("(" + selectedCount + ")");
                 downloadButton.setGraphicTextGap(2);
+                downloadButton.setVisible(selectedCount > 0);
             } else {
                 downloadsCountLabel.setText(StringUtils.EMPTY);
                 downloadButton.setGraphicTextGap(0);
             }
-            downloadButton.setVisible(selectedCount > 0);
         });
 
         initSearchControl();
