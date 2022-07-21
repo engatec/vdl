@@ -22,6 +22,7 @@ import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuil
 import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlUpdateProcessBuilder;
 import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -51,11 +52,15 @@ public class YoutubeDlManager {
         } catch (Exception e) {
             LOGGER.error("Failed command: '{}'", String.join(StringUtils.SPACE, command));
             LOGGER.error(e.getMessage(), e);
+            process.destroy();
+            throw new ProcessException(e.getMessage());
         }
 
-        fetchProcessError(process).ifPresent(it -> {
-            LOGGER.warn(it);
-            process.destroy();
+        fetchProcessError(process).ifPresent(msg -> {
+            LOGGER.warn(msg);
+            if (CollectionUtils.isEmpty(videoInfoList)) {
+                throw new ProcessException(msg);
+            }
         });
 
         return videoInfoList;

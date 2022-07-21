@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import com.github.engatec.vdl.core.YoutubeDlManager;
+import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.concurrent.Task;
@@ -39,7 +40,12 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
             return List.of();
         }
 
-        List<VideoInfo> items = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(urls);
+        List<VideoInfo> items = List.of();
+        try {
+            items = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(urls);
+        } catch (ProcessException e) {
+            updateMessage(e.getMessage());
+        }
 
         List<VideoInfo> playlists = new ArrayList<>();
         List<VideoInfo> videos = new ArrayList<>();

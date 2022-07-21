@@ -220,7 +220,14 @@ public class SearchComponentController extends VBox implements ComponentControll
             if (CollectionUtils.isNotEmpty(items)) {
                 updateContentPane(items);
             } else {
-                Platform.runLater(() -> Dialogs.info("video.search.notfound"));
+                Platform.runLater(() -> {
+                    String errMsg = it.getSource().getMessage();
+                    if (StringUtils.isBlank(errMsg)) {
+                        Dialogs.info("video.search.notfound");
+                    } else {
+                        Dialogs.exception("video.search.notfound", errMsg);
+                    }
+                });
             }
         });
 
