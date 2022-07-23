@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -15,5 +15,5 @@ jobs:
         java-version: '17'
         distribution: 'adopt'
         cache: maven
-    - name: Install fx-controls jar to the maven repo
-      run: mvn install:install-file -Dfile=./lib/fx-controls-1.0.jar -DgroupId=com.github.engatec -DartifactId=fx-controls -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+    - name: Build with Maven
+      run: mvn clean package -Dassembly=windows
