@@ -6,24 +6,20 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AlwaysAskDownloadPathPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadPathPref;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.RecentDownloadPathPref;
-import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.preference.ConfigRegistry;
+import com.github.engatec.vdl.preference.property.general.AlwaysAskDownloadPathConfigProperty;
+import com.github.engatec.vdl.preference.property.general.DownloadPathConfigProperty;
+import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
+import com.github.engatec.vdl.ui.helper.Dialogs;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 public class AppUtils {
-
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-    public static final DateTimeFormatter DATE_TIME_FORMATTER_SQLITE = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Optional<Path> resolveDownloadPath(Stage stage) {
         Path path = doResolveDownloadPath(stage);
@@ -37,27 +33,30 @@ public class AppUtils {
             return Optional.empty();
         }
 
-        ApplicationContext.getInstance().getConfigRegistry().get(RecentDownloadPathPref.class).setValue(path.toString());
+        ApplicationContext.getInstance().getConfigRegistry().get(RecentDownloadPathConfigProperty.class).setValue(path.toString());
 
         return Optional.of(path);
     }
 
     private static Path doResolveDownloadPath(Stage stage) {
-        ApplicationContext ctx = ApplicationContext.getInstance();
-        ConfigRegistry configRegistry = ctx.getConfigRegistry();
-        Path downloadPath = Paths.get(configRegistry.get(DownloadPathPref.class).getValue());
-        boolean askPath = configRegistry.get(AlwaysAskDownloadPathPref.class).getValue();
+        ConfigRegistry configRegistry = ApplicationContext.getInstance().getConfigRegistry();
+        Path downloadPath = Paths.get(configRegistry.get(DownloadPathConfigProperty.class).getValue());
+        boolean askPath = configRegistry.get(AlwaysAskDownloadPathConfigProperty.class).getValue();
         if (askPath) {
-            var directoryChooser = new DirectoryChooser();
-            File recentDownloadPath = Path.of(ctx.getConfigRegistry().get(RecentDownloadPathPref.class).getValue()).toFile();
-            if (recentDownloadPath.isDirectory()) {
-                directoryChooser.setInitialDirectory(recentDownloadPath);
-            }
-            File selectedDirectory = directoryChooser.showDialog(stage);
-            downloadPath = selectedDirectory != null ? selectedDirectory.toPath() : null;
+            downloadPath = choosePath(stage).orElse(null);
         }
 
         return downloadPath;
+    }
+
+    public static Optional<Path> choosePath(Stage stage) {
+        var directoryChooser = new DirectoryChooser();
+        File recentDownloadPath = Path.of(ApplicationContext.getInstance().getConfigRegistry().get(RecentDownloadPathConfigProperty.class).getValue()).toFile();
+        if (recentDownloadPath.isDirectory()) {
+            directoryChooser.setInitialDirectory(recentDownloadPath);
+        }
+        File selectedDirectory = directoryChooser.showDialog(stage);
+        return Optional.ofNullable(selectedDirectory).map(File::toPath);
     }
 
     /**

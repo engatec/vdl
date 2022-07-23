@@ -10,7 +10,7 @@ import com.github.engatec.vdl.core.Engine;
 import com.github.engatec.vdl.dto.github.ReleaseDto;
 import com.github.engatec.vdl.exception.ServiceStubException;
 import com.github.engatec.vdl.model.FormattedResource;
-import com.github.engatec.vdl.ui.Dialogs;
+import com.github.engatec.vdl.ui.helper.Dialogs;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

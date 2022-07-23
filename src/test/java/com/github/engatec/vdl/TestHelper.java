@@ -10,10 +10,10 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.db.DbManager;
-import com.github.engatec.vdl.model.preferences.wrapper.general.DownloadThreadsPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.LanguagePref;
+import com.github.engatec.vdl.preference.ConfigRegistry;
+import com.github.engatec.vdl.preference.property.general.DownloadThreadsConfigProperty;
+import com.github.engatec.vdl.preference.property.general.LanguageConfigProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.Mockito;
 
@@ -33,11 +33,11 @@ public class TestHelper {
 
     public static void initTestApplicationContext() {
         ConfigRegistry configRegistryMock = Mockito.mock(ConfigRegistry.class);
-        Mockito.when(configRegistryMock.get(LanguagePref.class)).thenReturn(Mockito.mock(LanguagePref.class));
-        Mockito.when(configRegistryMock.get(LanguagePref.class).getValue()).thenReturn("en");
+        Mockito.when(configRegistryMock.get(LanguageConfigProperty.class)).thenReturn(Mockito.mock(LanguageConfigProperty.class));
+        Mockito.when(configRegistryMock.get(LanguageConfigProperty.class).getValue()).thenReturn("en");
 
-        Mockito.when(configRegistryMock.get(DownloadThreadsPref.class)).thenReturn(Mockito.mock(DownloadThreadsPref.class));
-        Mockito.when(configRegistryMock.get(DownloadThreadsPref.class).getValue()).thenReturn(3);
+        Mockito.when(configRegistryMock.get(DownloadThreadsConfigProperty.class)).thenReturn(Mockito.mock(DownloadThreadsConfigProperty.class));
+        Mockito.when(configRegistryMock.get(DownloadThreadsConfigProperty.class).getValue()).thenReturn(3);
 
         ApplicationContext.create(
                 APP_BINARIES_PATH,

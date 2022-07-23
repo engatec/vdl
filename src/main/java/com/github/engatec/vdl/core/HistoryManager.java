@@ -1,31 +1,17 @@
 package com.github.engatec.vdl.core;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.db.DbManager;
 import com.github.engatec.vdl.db.mapper.HistoryMapper;
 import com.github.engatec.vdl.model.HistoryItem;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.HistoryEntriesNumberPref;
-import com.github.engatec.vdl.util.AppUtils;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.github.engatec.vdl.preference.ConfigRegistry;
+import com.github.engatec.vdl.preference.property.misc.HistoryEntriesNumberConfigProperty;
 
 public class HistoryManager extends VdlManager {
-
-    private static final Logger LOGGER = LogManager.getLogger(HistoryManager.class);
 
     private ConfigRegistry configRegistry;
     private DbManager dbManager;
@@ -33,29 +19,19 @@ public class HistoryManager extends VdlManager {
     @Override
     public void init() {
         ApplicationContext ctx = ApplicationContext.getInstance();
-
         configRegistry = ctx.getConfigRegistry();
         dbManager = ctx.getManager(DbManager.class);
-        ExecutorService executor = ctx.appExecutors().get(AppExecutors.Type.COMMON_EXECUTOR);
-
-        // FIXME: deprecated in 1.7 For removal in 1.9
-        CompletableFuture.supplyAsync(() -> restoreFromJson(ctx.getAppDataDir().resolve("history.vdl")), executor)
-                .thenAccept(items -> {
-                    if (CollectionUtils.isNotEmpty(items)) {
-                        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items));
-                    }
-                });
     }
 
     public void addToHistory(Downloadable downloadable) {
-        if (configRegistry.get(HistoryEntriesNumberPref.class).getValue() > 0) {
+        if (configRegistry.get(HistoryEntriesNumberConfigProperty.class).getValue() > 0) {
             HistoryItem item = new HistoryItem(downloadable.getTitle(), downloadable.getBaseUrl(), downloadable.getDownloadPath());
             dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.insertHistoryItems(List.of(item)));
         }
     }
 
     public CompletableFuture<List<HistoryItem>> getHistoryItemsAsync() {
-        Integer maxHistoryItems = configRegistry.get(HistoryEntriesNumberPref.class).getValue();
+        Integer maxHistoryItems = configRegistry.get(HistoryEntriesNumberConfigProperty.class).getValue();
         if (maxHistoryItems == 0) {
             return CompletableFuture.completedFuture(List.of());
         }
@@ -63,34 +39,12 @@ public class HistoryManager extends VdlManager {
         return dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(maxHistoryItems));
     }
 
-    // FIXME: transition from JSON files to sqlite.
-    @Deprecated(since = "1.7", forRemoval = true)
-    public List<HistoryItem> restoreFromJson(Path historyFilePath) {
-        if (Files.notExists(historyFilePath)) {
-            return List.of();
-        }
-
-        List<HistoryItem> result = List.of();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            result = mapper.readValue(historyFilePath.toFile(), new TypeReference<>(){});
-            for (HistoryItem it : result) {
-                ZonedDateTime dtm = LocalDateTime.parse(it.getCreatedAt(), AppUtils.DATE_TIME_FORMATTER).atZone(ZoneId.systemDefault());
-                it.setCreatedAt(dtm.withZoneSameInstant(ZoneId.of("GMT")).format(AppUtils.DATE_TIME_FORMATTER_SQLITE));
-            }
-            Files.delete(historyFilePath);
-        } catch (IOException e) {
-            LOGGER.warn(e.getMessage());
-        }
-        return result;
-    }
-
     public void clearHistory() {
         dbManager.doQueryAsync(HistoryMapper.class, HistoryMapper::clearHistory);
     }
 
     public void stripHistory() {
-        Integer maxHistoryEntries = configRegistry.get(HistoryEntriesNumberPref.class).getValue();
+        Integer maxHistoryEntries = configRegistry.get(HistoryEntriesNumberConfigProperty.class).getValue();
         ExecutorService systemExecutor = ApplicationContext.getInstance().appExecutors().get(AppExecutors.Type.SYSTEM_EXECUTOR);
         dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.stripHistory(maxHistoryEntries), systemExecutor);
     }

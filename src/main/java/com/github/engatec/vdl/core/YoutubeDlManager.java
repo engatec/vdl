@@ -41,29 +41,25 @@ public class YoutubeDlManager {
     public List<VideoInfo> fetchDownloadableInfo(List<String> urls) throws IOException {
         var pb = new DownloadableInfoFetchProcessBuilder(urls);
         List<String> command = pb.buildCommand();
-        List<VideoInfo> videoInfoList;
+        List<VideoInfo> videoInfoList = new ArrayList<>();
         Process process = pb.buildProcess(command);
         try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             List<String> jsonList = reader.lines().toList();
-            videoInfoList = new ArrayList<>(jsonList.size());
             for (String json : jsonList) {
                 VideoInfo videoInfo = objectMapper.readValue(json, VideoInfo.class);
-                if (StringUtils.isBlank(videoInfo.getBaseUrl())) {
-                    videoInfo.setBaseUrl(videoInfo.getUrl());
-                }
                 videoInfoList.add(videoInfo);
             }
         } catch (Exception e) {
             LOGGER.error("Failed command: '{}'", String.join(StringUtils.SPACE, command));
-            fetchProcessError(process).ifPresent(LOGGER::warn);
+            LOGGER.error(e.getMessage(), e);
             process.destroy();
-            throw e;
+            throw new ProcessException(e.getMessage());
         }
 
-        fetchProcessError(process).ifPresent(it -> {
-            LOGGER.warn(it);
+        fetchProcessError(process).ifPresent(msg -> {
+            LOGGER.warn(msg);
             if (CollectionUtils.isEmpty(videoInfoList)) {
-                process.destroy();
+                throw new ProcessException(msg);
             }
         });
 

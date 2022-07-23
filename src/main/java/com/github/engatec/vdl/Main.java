@@ -9,18 +9,18 @@ import com.github.engatec.vdl.core.HistoryManager;
 import com.github.engatec.vdl.core.Janitor;
 import com.github.engatec.vdl.core.QueueManager;
 import com.github.engatec.vdl.core.SubscriptionsManager;
-import com.github.engatec.vdl.core.preferences.ConfigManager;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
-import com.github.engatec.vdl.core.preferences.ConfigRegistryImpl;
 import com.github.engatec.vdl.db.DbManager;
-import com.github.engatec.vdl.model.preferences.wrapper.general.VdlStartupUpdatesCheckPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.YoutubeDlStartupUpdatesCheckPref;
-import com.github.engatec.vdl.model.preferences.wrapper.general.YtdlpStartupUpdatesCheckPref;
+import com.github.engatec.vdl.preference.ConfigManager;
+import com.github.engatec.vdl.preference.ConfigRegistry;
+import com.github.engatec.vdl.preference.ConfigRegistryImpl;
+import com.github.engatec.vdl.preference.property.general.VdlStartupUpdatesCheckConfigProperty;
+import com.github.engatec.vdl.preference.property.general.YoutubeDlStartupUpdatesCheckConfigProperty;
+import com.github.engatec.vdl.preference.property.general.YtdlpStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.service.newversion.Updater;
 import com.github.engatec.vdl.service.newversion.VdlUpdater;
 import com.github.engatec.vdl.service.newversion.YoutubeDlUpdater;
 import com.github.engatec.vdl.service.newversion.YtDlpUpdater;
-import com.github.engatec.vdl.ui.stage.MainStage;
+import com.github.engatec.vdl.ui.stage.core.MainStage;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -79,17 +79,17 @@ public class Main extends Application {
         ConfigRegistry configRegistry = ApplicationContext.getInstance().getConfigRegistry();
         List<Updater> updaters = new ArrayList<>();
 
-        Boolean needCheckVdlUpdate = configRegistry.get(VdlStartupUpdatesCheckPref.class).getValue();
+        Boolean needCheckVdlUpdate = configRegistry.get(VdlStartupUpdatesCheckConfigProperty.class).getValue();
         if (needCheckVdlUpdate) {
             updaters.add(new VdlUpdater(stage));
         }
 
-        Boolean needCheckYoutubeDlUpdate = configRegistry.get(YoutubeDlStartupUpdatesCheckPref.class).getValue();
+        Boolean needCheckYoutubeDlUpdate = configRegistry.get(YoutubeDlStartupUpdatesCheckConfigProperty.class).getValue();
         if (needCheckYoutubeDlUpdate) {
             updaters.add(new YoutubeDlUpdater(stage));
         }
 
-        Boolean needCheckYtdlpUpdate = configRegistry.get(YtdlpStartupUpdatesCheckPref.class).getValue();
+        Boolean needCheckYtdlpUpdate = configRegistry.get(YtdlpStartupUpdatesCheckConfigProperty.class).getValue();
         if (needCheckYtdlpUpdate) {
             updaters.add(new YtDlpUpdater(stage));
         }

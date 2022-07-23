@@ -98,3 +98,7 @@
     -fx-progress-color: black;
     -fx-opacity: 0.6;
 }
+
+.text-background-color-black {
+    -fx-text-background-color: black;
+}

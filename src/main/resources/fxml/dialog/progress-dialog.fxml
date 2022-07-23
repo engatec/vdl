@@ -2,19 +2,24 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<VBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="250.0" spacing="24.0" styleClass="bg-white" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.ui.controller.stage.ProgressDialogController">
+<VBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" spacing="16.0" styleClass="bg-white" stylesheets="@../../styles.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.engatec.vdl.ui.stage.controller.ProgressDialogController">
    <children>
-      <ProgressIndicator maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS" />
+      <Label fx:id="titleLabel" text="Label" />
+      <ProgressBar prefWidth="270.0" />
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
          <children>
-            <Button fx:id="dialogProgressCancelButton" mnemonicParsing="false" text="%dialog.progress.cancel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+            <Button fx:id="dialogProgressCancelButton" mnemonicParsing="false" text="%dialog.progress.cancel" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
       </AnchorPane>
    </children>
    <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+      <Insets bottom="8.0" left="8.0" right="8.0" top="16.0" />
    </padding>
 </VBox>

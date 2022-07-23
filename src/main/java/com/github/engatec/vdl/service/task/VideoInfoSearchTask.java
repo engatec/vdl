@@ -2,14 +2,17 @@ package com.github.engatec.vdl.service.task;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import com.github.engatec.vdl.core.YoutubeDlManager;
+import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.VideoInfo;
+import com.github.engatec.vdl.util.YouDlUtils;
 import javafx.concurrent.Task;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
 
@@ -21,13 +24,14 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
 
     @Override
     protected List<VideoInfo> call() throws Exception {
-        return extractVideoInfo(urls);
+        return extractVideoInfo(urls, new HashSet<>());
     }
 
     /**
-     * Method to handle "inner" playlists. For example a link to a channel has been provided an the channel contains multiple playlists. Info from them must be properly extracted.
+     * @param processedUrls - this Set protects from a youtube bug when a playlist tab url is incorrect and recursively appears again and again turning this search into an infinite loop
+     *                      which eventually will crash with either StackOverflowError or OutOfMemoryError
      */
-    private List<VideoInfo> extractVideoInfo(List<String> urls) throws IOException {
+    private List<VideoInfo> extractVideoInfo(List<String> urls, Set<String> processedUrls) throws IOException {
         if (Thread.interrupted()) {
             cancel();
         }
@@ -36,34 +40,37 @@ public class VideoInfoSearchTask extends Task<List<VideoInfo>> {
             return List.of();
         }
 
-        List<VideoInfo> items = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(urls);
+        List<VideoInfo> items = List.of();
+        try {
+            items = YoutubeDlManager.INSTANCE.fetchDownloadableInfo(urls);
+        } catch (ProcessException e) {
+            updateMessage(e.getMessage());
+        }
 
         List<VideoInfo> playlists = new ArrayList<>();
         List<VideoInfo> videos = new ArrayList<>();
 
         for (VideoInfo item : items) {
-            if (isCompleteVideoInfo(item)) {
-                videos.add(item);
-            } else if (StringUtils.isNotBlank(item.getId()) || StringUtils.isNotBlank(item.getExtractor())) { // Highly likely a link to a complete video info
-                videos.add(item);
-            } else {
+            if (YouDlUtils.isPlaylist(item)) {
                 playlists.add(item);
+            } else {
+                videos.add(item);
             }
         }
 
         if (CollectionUtils.isNotEmpty(playlists)) {
-            List<String> newUrls = playlists.stream()
-                    .map(VideoInfo::getBaseUrl)
-                    .collect(Collectors.toList());
+            List<String> playlistUrls = playlists.stream()
+                    .map(VideoInfo::baseUrl)
+                    .filter(Predicate.not(processedUrls::contains))
+                    .toList();
 
-            videos.addAll(extractVideoInfo(newUrls));
+            processedUrls.addAll(playlistUrls);
+
+            if (CollectionUtils.isNotEmpty(playlistUrls)) {
+                videos.addAll(extractVideoInfo(playlistUrls, processedUrls));
+            }
         }
 
         return videos;
-    }
-
-    protected boolean isCompleteVideoInfo(VideoInfo item) {
-        String type = item.getType();
-        return StringUtils.isBlank(type) || type.equals("video");
     }
 }

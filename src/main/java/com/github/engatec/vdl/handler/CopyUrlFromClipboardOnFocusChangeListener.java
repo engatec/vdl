@@ -4,10 +4,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.model.preferences.wrapper.general.AutoSearchFromClipboardPref;
+import com.github.engatec.vdl.preference.ConfigRegistry;
+import com.github.engatec.vdl.preference.property.general.AutoSearchFromClipboardConfigProperty;
+import com.github.engatec.vdl.preference.property.misc.MultiSearchConfigProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import org.apache.commons.lang3.StringUtils;
@@ -15,12 +18,14 @@ import org.apache.commons.lang3.StringUtils;
 public class CopyUrlFromClipboardOnFocusChangeListener implements ChangeListener<Boolean> {
 
     private final TextField textField;
+    private final TextArea textArea;
     private final Button button;
 
     private final Clipboard systemClipboard = Clipboard.getSystemClipboard();
 
-    public CopyUrlFromClipboardOnFocusChangeListener(TextField textField, Button button) {
+    public CopyUrlFromClipboardOnFocusChangeListener(TextField textField, TextArea textArea, Button button) {
         this.textField = textField;
+        this.textArea = textArea;
         this.button = button;
     }
 
@@ -30,7 +35,8 @@ public class CopyUrlFromClipboardOnFocusChangeListener implements ChangeListener
             return;
         }
 
-        if (!ApplicationContext.getInstance().getConfigRegistry().get(AutoSearchFromClipboardPref.class).getValue()) {
+        ConfigRegistry configRegistry = ApplicationContext.getInstance().getConfigRegistry();
+        if (!configRegistry.get(AutoSearchFromClipboardConfigProperty.class).getValue()) {
             return;
         }
 
@@ -40,14 +46,19 @@ public class CopyUrlFromClipboardOnFocusChangeListener implements ChangeListener
 
         try {
             String clipboardText = systemClipboard.getString();
-            String currentUrlText = textField.getText();
-            if (StringUtils.isBlank(clipboardText) || clipboardText.equals(currentUrlText)) {
+            String currentUrlText = StringUtils.defaultString(StringUtils.firstNonBlank(textField.getText(), textArea.getText()));
+            if (StringUtils.isBlank(clipboardText) || currentUrlText.contains(clipboardText)) {
                 return;
             }
 
             URL url = new URL(clipboardText);
-            textField.setText(url.toString());
-            button.fire();
+            Boolean multiSearchActive = configRegistry.get(MultiSearchConfigProperty.class).getValue();
+            if (multiSearchActive) {
+                textArea.appendText(url + System.lineSeparator());
+            } else {
+                textField.setText(url.toString());
+                button.fire();
+            }
         } catch (MalformedURLException ignored) {
         }
     }

@@ -1,11 +1,5 @@
 package com.github.engatec.vdl.db.mapper;
 
-import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.github.engatec.vdl.TestHelper;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.db.DbManager;
@@ -13,6 +7,12 @@ import com.github.engatec.vdl.model.HistoryItem;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,15 +30,15 @@ public class HistoryMapperTest {
     void insertAndFetchHistoryItems_shouldInsertAndThenFetch() {
         String title = "insertHistoryItemsTest";
 
-        List<HistoryItem> dbResultBeforeInsert = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        List<HistoryItem> dbResultBeforeInsert = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbResultBeforeInsert)
                 .extracting(HistoryItem::getTitle)
                 .doesNotContain(title);
 
         HistoryItem item = new HistoryItem(title, "https://url", Path.of("~/Downloads/"));
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.insertHistoryItems(List.of(item))).join();
+        dbManager.doQuery(HistoryMapper.class, mapper -> mapper.insertHistoryItems(List.of(item)));
 
-        List<HistoryItem> dbResultAfterInsert = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        List<HistoryItem> dbResultAfterInsert = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbResultAfterInsert)
                 .extracting(HistoryItem::getTitle)
                 .contains(title);
@@ -55,13 +55,13 @@ public class HistoryMapperTest {
         for (int i = 0; i < count; i++) {
             items.add(new HistoryItem(String.valueOf(i), "https://url", Path.of("~/Downloads/")));
         }
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items)).join();
+        dbManager.doQuery(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items));
 
-        List<HistoryItem> dbResultBeforeClear = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        List<HistoryItem> dbResultBeforeClear = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbResultBeforeClear).hasSizeGreaterThanOrEqualTo(count);
 
-        dbManager.doQueryAsync(HistoryMapper.class, HistoryMapper::clearHistory).join();
-        List<HistoryItem> dbResultAfterClear = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        dbManager.doQuery(HistoryMapper.class, HistoryMapper::clearHistory);
+        List<HistoryItem> dbResultAfterClear = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbResultAfterClear).isEmpty();
     }
 
@@ -72,14 +72,14 @@ public class HistoryMapperTest {
         for (int i = 0; i < maxEntries * 3; i++) {
             items.add(new HistoryItem(String.valueOf(i), "https://url", Path.of("~/Downloads/")));
         }
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items)).join();
+        dbManager.doQuery(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items));
 
-        List<HistoryItem> dbResultBeforeStrip = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        List<HistoryItem> dbResultBeforeStrip = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbResultBeforeStrip).hasSizeGreaterThanOrEqualTo(maxEntries * 3);
 
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.stripHistory(maxEntries)).join();
+        dbManager.doQuery(HistoryMapper.class, mapper -> mapper.stripHistory(maxEntries));
 
-        List<HistoryItem> dbResultAfterStrip = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        List<HistoryItem> dbResultAfterStrip = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbResultAfterStrip).hasSize(maxEntries);
     }
 
@@ -96,10 +96,10 @@ public class HistoryMapperTest {
                 new HistoryItem("title", "https://url", Path.of("~/Downloads/"), thresholdDtm.minusYears(1).format(formatter))
         );
 
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items)).join();
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.stripHistory(3)).join();
+        dbManager.doQuery(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items));
+        dbManager.doQuery(HistoryMapper.class, mapper -> mapper.stripHistory(3));
 
-        List<HistoryItem> dbItems = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        List<HistoryItem> dbItems = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbItems)
                 .extracting(HistoryItem::getCreatedAt)
                 .map(it -> LocalDateTime.parse(it, formatter))
@@ -113,25 +113,25 @@ public class HistoryMapperTest {
         for (int i = 0; i < totalEntries; i++) {
             items.add(new HistoryItem(String.valueOf(i), "https://url", Path.of("~/Downloads/")));
         }
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items)).join();
+        dbManager.doQuery(HistoryMapper.class, mapper -> mapper.insertHistoryItems(items));
 
-        List<HistoryItem> dbResultBeforeStrip = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        List<HistoryItem> dbResultBeforeStrip = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbResultBeforeStrip).hasSizeGreaterThanOrEqualTo(totalEntries);
 
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.stripHistory(0)).join();
+        dbManager.doQuery(HistoryMapper.class, mapper -> mapper.stripHistory(0));
 
-        List<HistoryItem> dbResultAfterStrip = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        List<HistoryItem> dbResultAfterStrip = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbResultAfterStrip).isEmpty();
     }
 
     @Test
     void stripHistory_shouldRemainEmpty() {
-        dbManager.doQueryAsync(HistoryMapper.class, HistoryMapper::clearHistory).join();
-        List<HistoryItem> dbItems = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        dbManager.doQuery(HistoryMapper.class, HistoryMapper::clearHistory);
+        List<HistoryItem> dbItems = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbItems).isEmpty();
 
-        dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.stripHistory(0)).join();
-        dbItems = dbManager.doQueryAsync(HistoryMapper.class, mapper -> mapper.fetchHistory(null)).join();
+        dbManager.doQuery(HistoryMapper.class, mapper -> mapper.stripHistory(0));
+        dbItems = dbManager.doQuery(HistoryMapper.class, mapper -> mapper.fetchHistory(null));
         assertThat(dbItems).isEmpty();
     }
 }

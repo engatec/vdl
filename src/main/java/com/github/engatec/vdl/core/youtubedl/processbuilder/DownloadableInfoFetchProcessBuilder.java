@@ -6,11 +6,11 @@ import java.nio.file.Path;
 import java.util.List;
 
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.preferences.ConfigRegistry;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.CookiesFileLocationPref;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ReadCookiesPref;
+import com.github.engatec.vdl.preference.ConfigRegistry;
+import com.github.engatec.vdl.preference.property.youtubedl.CookiesFileLocationConfigProperty;
+import com.github.engatec.vdl.preference.property.youtubedl.ReadCookiesConfigProperty;
 import org.apache.commons.collections4.CollectionUtils;
 
 public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuilder {
@@ -36,8 +36,8 @@ public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuil
         YoutubeDlCommandHelper.setAuthenticationOptions(commandBuilder);
 
         ConfigRegistry configRegistry = ApplicationContext.getInstance().getConfigRegistry();
-        if (configRegistry.get(ReadCookiesPref.class).getValue()) {
-            String cookiesFileLocation = configRegistry.get(CookiesFileLocationPref.class).getValue();
+        if (configRegistry.get(ReadCookiesConfigProperty.class).getValue()) {
+            String cookiesFileLocation = configRegistry.get(CookiesFileLocationConfigProperty.class).getValue();
             Path cookiesPath = Path.of(cookiesFileLocation);
             if (Files.exists(cookiesPath) && Files.isReadable(cookiesPath)) {
                 commandBuilder.cookiesFile(Path.of(cookiesFileLocation));

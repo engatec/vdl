@@ -22,7 +22,7 @@ import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuil
 import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.UseConfigFilePref;
+import com.github.engatec.vdl.preference.property.youtubedl.UseConfigFileConfigProperty;
 import com.github.engatec.vdl.service.data.DownloadProgressData;
 import javafx.beans.property.DoubleProperty;
 import javafx.concurrent.Service;
@@ -105,7 +105,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
     @Override
     public void restart() {
-        Set<DownloadStatus> restartableStates = Set.of(DownloadStatus.CANCELLED, DownloadStatus.FAILED);
+        Set<DownloadStatus> restartableStates = Set.of(DownloadStatus.STOPPED, DownloadStatus.FAILED);
         DownloadStatus status = queueItem.getStatus();
         if (!restartableStates.contains(status)) {
             String msg = String.format("Queue item must be in one of the following states: %s. Was in state %s.", restartableStates, status);
@@ -130,7 +130,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
 
     @Override
     protected void cancelled() {
-        updateQueueItem(DownloadStatus.CANCELLED, StringUtils.EMPTY, StringUtils.EMPTY);
+        updateQueueItem(DownloadStatus.STOPPED, StringUtils.EMPTY, StringUtils.EMPTY);
         updateProgress(0);
     }
 
@@ -253,7 +253,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
             }
 
             private Process createDownloadProcess() throws IOException {
-                Boolean useConfigFile = ctx.getConfigRegistry().get(UseConfigFilePref.class).getValue();
+                Boolean useConfigFile = ctx.getConfigRegistry().get(UseConfigFileConfigProperty.class).getValue();
                 YoutubeDlProcessBuilder pb = useConfigFile ? new DownloadWithConfigFileProcessBuilder(queueItem) : new DownloadProcessBuilder(queueItem);
                 List<String> command = pb.buildCommand();
                 return pb.buildProcess(command);

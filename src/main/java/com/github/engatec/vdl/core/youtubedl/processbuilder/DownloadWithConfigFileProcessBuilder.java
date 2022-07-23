@@ -12,7 +12,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.model.preferences.wrapper.youtubedl.ConfigFilePathPref;
+import com.github.engatec.vdl.preference.property.youtubedl.ConfigFilePathConfigProperty;
 import org.apache.commons.lang3.StringUtils;
 
 public class DownloadWithConfigFileProcessBuilder implements YoutubeDlProcessBuilder {
@@ -27,7 +27,7 @@ public class DownloadWithConfigFileProcessBuilder implements YoutubeDlProcessBui
     @Override
     public List<String> buildCommand() {
         ApplicationContext ctx = ApplicationContext.getInstance();
-        String configLocation = ctx.getConfigRegistry().get(ConfigFilePathPref.class).getValue();
+        String configLocation = ctx.getConfigRegistry().get(ConfigFilePathConfigProperty.class).getValue();
 
         YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance().configLocation(configLocation);
 

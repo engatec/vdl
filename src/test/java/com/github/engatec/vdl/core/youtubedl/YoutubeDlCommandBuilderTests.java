@@ -6,8 +6,8 @@ import java.util.Set;
 
 import com.github.engatec.vdl.TestHelper;
 import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.model.preferences.wrapper.ConfigItemWrapper;
-import com.github.engatec.vdl.model.preferences.wrapper.misc.DownloaderPref;
+import com.github.engatec.vdl.preference.property.ConfigProperty;
+import com.github.engatec.vdl.preference.property.misc.DownloaderConfigProperty;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,10 +22,10 @@ public class YoutubeDlCommandBuilderTests {
     @BeforeAll
     static void setUp() {
         TestHelper.initTestApplicationContext();
-        mockPreference(DownloaderPref.class, 1);
+        mockPreference(DownloaderConfigProperty.class, 1);
     }
 
-    private static <V, T extends ConfigItemWrapper<?, V>> void mockPreference(Class<T> configItemClass, V value) {
+    private static <V, T extends ConfigProperty<?, V>> void mockPreference(Class<T> configItemClass, V value) {
         T prefMock = Mockito.mock(configItemClass);
         Mockito.when(ApplicationContext.getInstance().getConfigRegistry().get(configItemClass)).thenReturn(prefMock);
         Mockito.when(prefMock.getValue()).thenReturn(value);
