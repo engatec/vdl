@@ -159,6 +159,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <finalName>vdl</finalName>
                     <archive>
                         <manifest>
                             <mainClass>com.github.engatec.vdl.MainWrapper</mainClass>
