@@ -52,8 +52,6 @@
             <groupId>com.github.engatec</groupId>
             <artifactId>fx-controls</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/fx-controls-1.0.jar</systemPath>
         </dependency>
 
         <dependency>
