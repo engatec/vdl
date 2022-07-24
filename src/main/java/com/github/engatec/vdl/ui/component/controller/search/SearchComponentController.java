@@ -330,7 +330,7 @@ public class SearchComponentController extends VBox implements ComponentControll
         return contentNode.getChildren().stream()
                 .filter(it -> it instanceof DownloadableItemComponentController)
                 .map(it -> (DownloadableItemComponentController) it)
-                .filter(DownloadableItemComponentController::isSelected)
+                .filter(it -> !selectAllCheckBox.isVisible() || it.isSelected())
                 .collect(Collectors.toList());
     }
 
