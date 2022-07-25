@@ -268,12 +268,13 @@ public class DownloadableItemComponentController extends HBox {
                                 .ifPresentOrElse(
                                         vi -> {
                                             videoInfo = vi;
+                                            updateControls(vi);
+
                                             if (CollectionUtils.isEmpty(videoInfo.formats())) {
                                                 Dialogs.info("formats.notfound");
-                                                return;
+                                            } else {
+                                                showFormatsStage();
                                             }
-                                            initFormatsDropdown();
-                                            showFormatsStage();
                                         },
                                         () -> Dialogs.info("formats.notfound")
                                 )
@@ -327,12 +328,13 @@ public class DownloadableItemComponentController extends HBox {
                                 .ifPresentOrElse(
                                         vi -> {
                                             videoInfo = vi;
+                                            updateControls(vi);
+
                                             if (CollectionUtils.isEmpty(videoInfo.subtitles())) {
                                                 Dialogs.info("subtitles.notfound");
-                                                return;
+                                            } else {
+                                                showSubtitlesStage();
                                             }
-                                            initFormatsDropdown();
-                                            showSubtitlesStage();
                                         },
                                         () -> Dialogs.info("subtitles.notfound")
                                 )
@@ -355,6 +357,12 @@ public class DownloadableItemComponentController extends HBox {
 
     private void showSubtitlesStage() {
         new SubtitlesStage(videoInfo).modal(stage).show();
+    }
+
+    private void updateControls(VideoInfo vi) {
+        if (CollectionUtils.isNotEmpty(vi.formats())) {
+            initFormatsDropdown();
+        }
     }
 
     public void setSelectable(boolean selectable) {
