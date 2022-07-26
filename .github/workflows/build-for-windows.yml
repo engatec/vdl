@@ -19,8 +19,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Update youtube-dl
-        run: packaging/bin/windows/youtube-dl.exe -U
       - name: Update yt-dlp
         run: packaging/bin/windows/yt-dlp.exe -U
       - name: Install fx-controls into local Maven repository
@@ -32,13 +30,13 @@ jobs:
       - name: Create jar for update
         run: cp target/vdl-assembly-windows.jar upd_windows.jar
       - name: Create portable
-        run: jpackage --input packaging/bin/windows --name "vdl-portable-${{github.event.inputs.version}}" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.ico --type app-image --java-options "-Dapp.dir=`$APPDIR -Dapp.youtubedl=youtube-dl.exe -Dapp.ytdlp=yt-dlp.exe -Dapp.portable=true -Dapp.logPath=`$APPDIR"
+        run: jpackage --input packaging/bin/windows --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.ico --type app-image --java-options "-Dapp.dir=`$APPDIR -Dapp.youtubedl=youtube-dl.exe -Dapp.ytdlp=yt-dlp.exe -Dapp.portable=true -Dapp.logPath=`$APPDIR"
       - name: Zip portable
-        run: 7z a vdl-video-downloader-${{github.event.inputs.version}}-windows-portable.zip vdl-portable-${{github.event.inputs.version}}/*
+        run: 7z a vdl-video-downloader-${{github.event.inputs.version}}-windows-portable.zip vdl/*
       - name: Create installer
-        run: jpackage --input packaging/bin/windows --name "vdl-installer" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.ico --type msi --java-options "-Dapp.dir=`$APPDIR -Dapp.youtubedl=youtube-dl.exe -Dapp.ytdlp=yt-dlp.exe" --win-dir-chooser --win-shortcut
+        run: jpackage --input packaging/bin/windows --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.ico --type msi --java-options "-Dapp.dir=`$APPDIR -Dapp.youtubedl=youtube-dl.exe -Dapp.ytdlp=yt-dlp.exe" --win-dir-chooser --win-shortcut
       - name: Rename installer
-        run: mv vdl-installer-${{github.event.inputs.version}}.msi vdl-video-downloader-${{github.event.inputs.version}}-windows.msi
+        run: mv vdl-${{github.event.inputs.version}}.msi vdl-video-downloader-${{github.event.inputs.version}}-windows.msi
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:

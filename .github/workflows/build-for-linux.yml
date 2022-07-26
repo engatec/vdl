@@ -19,12 +19,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+      - name: Change binaries access permissions
+        run: chmod -R 777 packaging/bin/linux/
       - name: Update youtube-dl
-        run: chmod +x packaging/bin/linux/youtube-dl && packaging/bin/linux/youtube-dl -U
+        run: packaging/bin/linux/youtube-dl -U
       - name: Update yt-dlp
-        run: chmod +x packaging/bin/linux/yt-dlp && packaging/bin/linux/yt-dlp -U
-      - name: Make ffmpeg and updater executables
-        run: chmod +x packaging/bin/linux/ffmpeg && chmod +x packaging/bin/linux/updater
+        run: packaging/bin/linux/yt-dlp -U
       - name: Install fx-controls into local Maven repository
         run: mvn install:install-file -Dfile='./lib/fx-controls-1.0.jar' -DgroupId='com.github.engatec' -DartifactId='fx-controls' -Dversion='1.0' -Dpackaging='jar' -DgeneratePom='true'
       - name: Build with Maven
@@ -34,13 +34,13 @@ jobs:
       - name: Create jar for update
         run: cp target/vdl-assembly-linux.jar upd_linux.jar
       - name: Create portable
-        run: jpackage --input packaging/bin/linux --name "vdl-portable-${{github.event.inputs.version}}" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type app-image --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp -Dapp.portable=true -Dapp.logPath=\$APPDIR"
+        run: jpackage --input packaging/bin/linux --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type app-image --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp -Dapp.portable=true -Dapp.logPath=\$APPDIR"
       - name: Compress portable
-        run: tar -czvf vdl-video-downloader-${{github.event.inputs.version}}-linux-portable.tar.gz vdl-portable-${{github.event.inputs.version}}
+        run: tar -czvf vdl-video-downloader-${{github.event.inputs.version}}-linux-portable.tar.gz vdl/
       - name: Create installer
-        run: jpackage --input packaging/bin/linux --name "vdl-installer" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type deb --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp" --linux-shortcut
+        run: jpackage --input packaging/bin/linux --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type deb --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp" --linux-shortcut
       - name: Rename installer
-        run: mv vdl-installer_${{github.event.inputs.version}}*.deb vdl-video-downloader-${{github.event.inputs.version}}-linux.deb
+        run: mv vdl_${{github.event.inputs.version}}*.deb vdl-video-downloader-${{github.event.inputs.version}}-linux.deb
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
