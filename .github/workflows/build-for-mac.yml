@@ -1,0 +1,47 @@
+name: Build for mac
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'App version'
+        required: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Change binaries access permissions
+        run: chmod -R 777 packaging/bin/mac/
+      - name: Update youtube-dl
+        run: packaging/bin/mac/youtube-dl -U
+      - name: Update yt-dlp
+        run: packaging/bin/mac/yt-dlp -U
+      - name: Install fx-controls into local Maven repository
+        run: mvn install:install-file -Dfile='./lib/fx-controls-1.0.jar' -DgroupId='com.github.engatec' -DartifactId='fx-controls' -Dversion='1.0' -Dpackaging='jar' -DgeneratePom='true'
+      - name: Build with Maven
+        run: mvn clean package -Dassembly=mac
+      - name: Copy vdl.jar to binaries folder
+        run: cp target/vdl-assembly-mac.jar packaging/bin/mac/vdl.jar
+      - name: Create jar for update
+        run: cp target/vdl-assembly-mac.jar upd_mac.jar
+      - name: Create installer
+        run: jpackage --input packaging/bin/mac --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.icns --type dmg --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp"
+      - name: Rename installer
+        run: mv vdl-${{github.event.inputs.version}}*.dmg vdl-video-downloader-${{github.event.inputs.version}}-mac.dmg
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: vdl_mac_package
+          path: |
+            upd_mac.jar
+            vdl-video-downloader-${{github.event.inputs.version}}-mac.dmg
+          retention-days: 1

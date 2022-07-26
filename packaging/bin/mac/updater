@@ -1,0 +1,9 @@
+#!/bin/bash
+
+while [ -f ./vdl.jar.new ]
+do
+    rm -f vdl.jar
+    mv -f vdl.jar.new vdl.jar
+    chmod 755 vdl.jar
+    sleep 1
+done
