@@ -26,7 +26,7 @@ public class YouDlUtils {
     private static final Logger LOGGER = LogManager.getLogger(YouDlUtils.class);
 
     private static final Set<String> playlistExtractors = Set.of(
-            "youtube:playlist", "youtube:tab", "youtube:watchlater"
+            "youtube:favorites", "youtube:history", "youtube:playlist", "youtube:recommended", "youtube:subscriptions", "youtube:tab", "youtube:watchlater"
     );
 
     public static boolean isPlaylist(VideoInfo videoInfo) {
