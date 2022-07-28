@@ -15,3 +15,7 @@ Create subscriptions and don't miss anything from your favorite channels.
 
 ## Installation
 [Download](https://github.com/engatec/vdl/releases) installer or portable version for your operating system and run it.  
+
+## FAQ
+### How to Fix “App Is Damaged and Can’t Be Opened” on Mac?
+Run `sudo xattr -cr "/Applications/vdl.app"` command which should do the trick.
