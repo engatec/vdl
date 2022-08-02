@@ -6,7 +6,7 @@
 
     <groupId>com.github.engatec</groupId>
     <artifactId>vdl</artifactId>
-    <version>1.9</version>
+    <version>1.9.1</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
