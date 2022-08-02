@@ -3,7 +3,7 @@ package com.github.engatec.vdl.service.task;
 import java.util.List;
 
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.util.YouDlUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 public class PlaylistInfoSearchTask extends VideoInfoSearchTask {
 
@@ -15,7 +15,7 @@ public class PlaylistInfoSearchTask extends VideoInfoSearchTask {
     protected List<VideoInfo> call() throws Exception {
         List<VideoInfo> foundItems = super.call();
         return foundItems.stream()
-                .filter(YouDlUtils::isPlaylist)
+                .filter(it -> CollectionUtils.isEmpty(it.formats())) // FIXME: A bit hacky solution. If formats have been found then it's not a playlist
                 .toList();
     }
 }
