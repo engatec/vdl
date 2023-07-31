@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <fx:root fx:id="rootNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <StackPane alignment="TOP_LEFT" maxWidth="1.7976931348623157E308">
+      <VBox maxWidth="1.7976931348623157E308" spacing="2.0">
          <children>
             <HBox fx:id="searchPane" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0">
                <children>
@@ -54,27 +54,23 @@
                   <Button fx:id="searchButton" mnemonicParsing="false" styleClass="control-btn" text="%search" />
                </children>
             </HBox>
-            <VBox fx:id="progressPane" maxWidth="1.7976931348623157E308" spacing="2.0">
+            <HBox fx:id="progressPane" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0">
                <children>
-                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0">
-                     <children>
-                        <ProgressBar fx:id="searchProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="control-btn" text="%cancel" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="4.0">
-                     <VBox.margin>
-                        <Insets left="4.0" />
-                     </VBox.margin>
-                     <children>
-                        <Label fx:id="foundItemsLabel" text="%stage.main.search.playlist.founditems" />
-                        <Label fx:id="itemsCountLabel" text="42" />
-                     </children>
-                  </HBox>
+                  <ProgressBar fx:id="searchProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="control-btn" text="%cancel" />
                </children>
-            </VBox>
+            </HBox>
+            <HBox fx:id="searchMetadataPane" alignment="CENTER_LEFT" spacing="4.0">
+               <VBox.margin>
+                  <Insets left="4.0" />
+               </VBox.margin>
+               <children>
+                  <Label fx:id="foundItemsLabel" text="%stage.main.search.playlist.founditems" />
+                  <Label fx:id="itemsCountLabel" text="42" />
+               </children>
+            </HBox>
          </children>
-      </StackPane>
+      </VBox>
       <VBox fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" VBox.vgrow="ALWAYS">
          <children>
             <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%checkbox.selectall" />

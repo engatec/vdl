@@ -78,7 +78,8 @@ public class SearchComponentController extends VBox implements ComponentControll
     @FXML private Node rootNode;
 
     @FXML private HBox searchPane;
-    @FXML private VBox progressPane;
+    @FXML private HBox progressPane;
+    @FXML private HBox searchMetadataPane;
     @FXML private VBox contentPane;
     @FXML private AnchorPane actionButtonPane;
 
@@ -96,7 +97,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     @FXML private Button cancelButton;
 
     @FXML private ProgressBar searchProgressBar;
-    @FXML private Label foundItemsLabel;
+
     @FXML private Label itemsCountLabel;
 
     @FXML private CheckBox selectAllCheckBox;
@@ -115,6 +116,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     public void initialize() {
         initSearchPane();
         initProgressPane();
+        initSearchMetadataPane();
         initContentPane();
         initActionButtonPane();
         initDragAndDrop();
@@ -244,12 +246,8 @@ public class SearchComponentController extends VBox implements ComponentControll
         progressPane.visibleProperty().addListener((observable, oldValue, newValue) -> {
             if (Boolean.TRUE.equals(newValue)) {
                 searchProgressBar.setProgress(-1);
-                itemsCountLabel.setText(null);
             }
         });
-
-        foundItemsLabel.visibleProperty().bind(itemsCountLabel.visibleProperty());
-        itemsCountLabel.visibleProperty().bind(Bindings.createBooleanBinding(() -> StringUtils.isNotBlank(itemsCountLabel.getText()), itemsCountLabel.textProperty()));
 
         cancelButton.setOnAction(this::handleCancelButtonClick);
     }
@@ -262,6 +260,13 @@ public class SearchComponentController extends VBox implements ComponentControll
             contentPaneStateProperty.set(AppContentState.SHOWING);
         }
         event.consume();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void initSearchMetadataPane() {
+        searchMetadataPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> StringUtils.isNotBlank(itemsCountLabel.getText()), itemsCountLabel.textProperty()));
+        itemsCountLabel.setText(null);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
