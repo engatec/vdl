@@ -17,9 +17,9 @@
 <?import javafx.scene.layout.VBox?>
 <fx:root fx:id="rootNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" stylesheets="@../../styles.css" type="VBox" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox maxWidth="1.7976931348623157E308" spacing="2.0">
+      <StackPane alignment="TOP_LEFT" maxWidth="1.7976931348623157E308">
          <children>
-            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0">
+            <HBox fx:id="searchPane" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0">
                <children>
                   <StackPane fx:id="singleSearchStackPane" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                      <children>
@@ -28,7 +28,7 @@
                               <Insets bottom="4.0" left="7.0" right="7.0" top="4.0" />
                            </padding>
                         </TextField>
-                        <ImageView fx:id="multiSearchImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" styleClass="service-btn">
+                        <ImageView fx:id="searchExpandImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" styleClass="service-btn">
                            <image>
                               <Image url="@../../assets/icons/expand_24dp.png" />
                            </image>
@@ -41,7 +41,7 @@
                   <StackPane fx:id="multiSearchStackPane" alignment="BOTTOM_RIGHT" minHeight="-Infinity" HBox.hgrow="ALWAYS">
                      <children>
                         <TextArea fx:id="urlTextArea" maxWidth="1.7976931348623157E308" prefRowCount="5" wrapText="true" />
-                        <ImageView fx:id="singleSearchImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="service-btn">
+                        <ImageView fx:id="searchCollapseImageView" fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true" styleClass="service-btn">
                            <image>
                               <Image url="@../../assets/icons/collapse_24dp.png" />
                            </image>
@@ -51,36 +51,47 @@
                         </ImageView>
                      </children>
                   </StackPane>
-                  <ProgressBar fx:id="searchProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
                   <Button fx:id="searchButton" mnemonicParsing="false" styleClass="control-btn" text="%search" />
-                  <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="control-btn" text="%cancel" />
                </children>
             </HBox>
-            <HBox alignment="CENTER_LEFT" spacing="4.0">
-               <VBox.margin>
-                  <Insets left="4.0" />
-               </VBox.margin>
+            <VBox fx:id="progressPane" maxWidth="1.7976931348623157E308" spacing="2.0">
                <children>
-                  <Label fx:id="foundItemsLabel" text="%stage.main.search.playlist.founditems" />
-                  <Label fx:id="itemsCountLabel" text="42" />
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0">
+                     <children>
+                        <ProgressBar fx:id="searchProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="control-btn" text="%cancel" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="4.0">
+                     <VBox.margin>
+                        <Insets left="4.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label fx:id="foundItemsLabel" text="%stage.main.search.playlist.founditems" />
+                        <Label fx:id="itemsCountLabel" text="42" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
+            </VBox>
          </children>
-      </VBox>
-      <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%checkbox.selectall">
+      </StackPane>
+      <VBox fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0">
+         <children>
+            <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%checkbox.selectall" />
+            <ScrollPane fitToWidth="true" styleClass="no-border">
+               <content>
+                  <VBox fx:id="contentNode" />
+               </content>
+               <padding>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+               </padding>
+            </ScrollPane>
+         </children>
          <VBox.margin>
-            <Insets top="16.0" />
+            <Insets />
          </VBox.margin>
-      </CheckBox>
-      <ScrollPane fitToWidth="true" styleClass="no-border" VBox.vgrow="ALWAYS">
-         <content>
-            <VBox fx:id="contentNode" />
-         </content>
-         <padding>
-            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-         </padding>
-      </ScrollPane>
-      <AnchorPane>
+      </VBox>
+      <AnchorPane fx:id="actionButtonPane">
          <children>
             <SplitMenuButton fx:id="downloadButton" alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="2.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" styleClass="control-btn-big" text="%download" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <graphic>
