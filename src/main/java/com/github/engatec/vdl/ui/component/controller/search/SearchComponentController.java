@@ -117,13 +117,9 @@ public class SearchComponentController extends VBox implements ComponentControll
         initProgressPane();
         initContentPane();
         initActionButtonPane();
-
-
-        initControls();
+        initDragAndDrop();
         initSearchService();
 
-
-        initDragAndDrop();
         stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(urlTextField, urlTextArea, searchButton));
     }
 
@@ -131,12 +127,10 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private void initSearchPane() {
         searchPane.managedProperty().bind(searchPane.visibleProperty());
-        searchPane.visibleProperty().addListener((observable, oldValue, newValue) -> {
-            if (Boolean.FALSE.equals(newValue)) {
-                urlTextField.clear();
-                urlTextArea.clear();
-            }
-        });
+        searchPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+            AppContentState state = contentPaneStateProperty.get();
+            return state == AppContentState.EMPTY || state == AppContentState.SHOWING;
+        }, contentPaneStateProperty));
 
         initSingleSearchField();
         initMultiSearchField();
@@ -243,6 +237,16 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private void initProgressPane() {
         progressPane.managedProperty().bind(progressPane.visibleProperty());
+        progressPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+            AppContentState state = contentPaneStateProperty.get();
+            return state == AppContentState.SEARCHING || state == AppContentState.RENDERING;
+        }, contentPaneStateProperty));
+        progressPane.visibleProperty().addListener((observable, oldValue, newValue) -> {
+            if (Boolean.TRUE.equals(newValue)) {
+                searchProgressBar.setProgress(-1);
+                itemsCountLabel.setText(null);
+            }
+        });
 
         foundItemsLabel.visibleProperty().bind(itemsCountLabel.visibleProperty());
         itemsCountLabel.visibleProperty().bind(Bindings.createBooleanBinding(() -> StringUtils.isNotBlank(itemsCountLabel.getText()), itemsCountLabel.textProperty()));
@@ -265,11 +269,10 @@ public class SearchComponentController extends VBox implements ComponentControll
     private void initContentPane() {
         initCheckboxes();
 
-        contentPane.visibleProperty().addListener((observable, oldValue, newValue) -> {
-            if (Boolean.FALSE.equals(newValue)) {
-                selectAllCheckBox.setVisible(false);
-            }
-        });
+        contentPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+            AppContentState state = contentPaneStateProperty.get();
+            return state == AppContentState.RENDERING || state == AppContentState.SHOWING;
+        }, contentPaneStateProperty));
     }
 
     private void initCheckboxes() {
@@ -291,6 +294,11 @@ public class SearchComponentController extends VBox implements ComponentControll
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initActionButtonPane() {
+        actionButtonPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+            AppContentState state = contentPaneStateProperty.get();
+            return state == AppContentState.RENDERING || state == AppContentState.SHOWING;
+        }, contentPaneStateProperty));
+
         downloadButton.setOnAction(this::handleDownloadButtonClick);
 
         MenuItem downloadAudioMenuItem = new MenuItem(ctx.getLocalizedString("download.audio"));
@@ -324,37 +332,6 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void initControls() {
-
-
-
-        contentPaneStateProperty.addListener((observable, oldValue, newValue) -> {
-            switch (newValue) {
-                case EMPTY -> {
-                    searchButton.setVisible(true);
-                    searchProgressBar.setVisible(false);
-                    cancelButton.setVisible(false);
-                    itemsCountLabel.setText(null);
-                    selectAllCheckBox.setVisible(false);
-                    contentNode.getChildren().clear();
-                    checkBoxGroup.clear();
-                    downloadButton.setVisible(false);
-                }
-                case SEARCHING -> {
-                    searchProgressBar.setProgress(-1);
-                    selectAllCheckBox.setVisible(false);
-                    itemsCountLabel.setText(null);
-                    contentNode.getChildren().clear();
-                    checkBoxGroup.clear();
-                }
-                case RENDERING -> {
-                }
-                case SHOWING -> {
-                }
-            }
-        });
-    }
-
     private void initSearchService() {
         downloadableSearchService.setOnSucceeded(it -> {
             var items = (List<VideoInfo>) it.getSource().getValue();
@@ -369,6 +346,7 @@ public class SearchComponentController extends VBox implements ComponentControll
                         Dialogs.exception("video.search.notfound", errMsg);
                     }
                 });
+                contentPaneStateProperty.set(AppContentState.EMPTY);
             }
         });
 
@@ -377,6 +355,7 @@ public class SearchComponentController extends VBox implements ComponentControll
             String msg = exception.getMessage();
             LOGGER.warn(msg, exception);
             Platform.runLater(() -> Dialogs.exception("video.search.notfound", msg));
+            contentPaneStateProperty.set(AppContentState.EMPTY);
         });
     }
 
@@ -422,10 +401,6 @@ public class SearchComponentController extends VBox implements ComponentControll
                 }, ctx.appExecutors().get(COMMON_EXECUTOR)
         ).thenRun(() -> Platform.runLater(() -> contentPaneStateProperty.set(AppContentState.SHOWING)));
     }
-
-
-
-
 
     private void initDragAndDrop() {
         rootNode.setOnDragOver(e -> {

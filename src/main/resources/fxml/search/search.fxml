@@ -75,7 +75,7 @@
             </VBox>
          </children>
       </StackPane>
-      <VBox fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0">
+      <VBox fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" VBox.vgrow="ALWAYS">
          <children>
             <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%checkbox.selectall" />
             <ScrollPane fitToWidth="true" styleClass="no-border">
