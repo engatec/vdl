@@ -75,7 +75,7 @@
          <children>
             <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%checkbox.selectall">
                <VBox.margin>
-                  <Insets />
+                  <Insets top="16.0" />
                </VBox.margin></CheckBox>
             <ScrollPane fitToWidth="true" styleClass="no-border">
                <content>
@@ -89,9 +89,6 @@
          <VBox.margin>
             <Insets />
          </VBox.margin>
-         <padding>
-            <Insets top="16.0" />
-         </padding>
       </VBox>
       <AnchorPane fx:id="actionButtonPane">
          <children>
