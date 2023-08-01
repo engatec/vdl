@@ -133,17 +133,27 @@ public class SearchComponentController extends VBox implements ComponentControll
             case EMPTY -> {
                 searchPane.setVisible(true);
                 progressPane.setVisible(false);
-                itemsCountLabel.setText(null); // TODO: add context?
                 contentPane.setVisible(false);
                 actionButtonPane.setVisible(false);
+
+                itemsCountLabel.setText(null); // TODO: add context?
+                urlTextField.clear();
+                urlTextArea.clear();
+                selectAllCheckBox.setVisible(false);
+                contentNode.getChildren().clear();
+                checkBoxGroup.clear();
             }
             case SEARCHING -> {
                 searchPane.setVisible(false);
                 progressPane.setVisible(true);
-                searchProgressBar.setProgress(-1);
-                itemsCountLabel.setText(null); // TODO: add context?
                 contentPane.setVisible(false);
                 actionButtonPane.setVisible(false);
+
+                searchProgressBar.setProgress(-1);
+                itemsCountLabel.setText(null); // TODO: add context?
+                selectAllCheckBox.setVisible(false);
+                contentNode.getChildren().clear();
+                checkBoxGroup.clear();
             }
             case RENDERING -> {
                 searchPane.setVisible(false);
