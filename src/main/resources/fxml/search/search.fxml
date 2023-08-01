@@ -73,7 +73,10 @@
       </VBox>
       <VBox fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" VBox.vgrow="ALWAYS">
          <children>
-            <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%checkbox.selectall" />
+            <CheckBox fx:id="selectAllCheckBox" mnemonicParsing="false" text="%checkbox.selectall">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></CheckBox>
             <ScrollPane fitToWidth="true" styleClass="no-border">
                <content>
                   <VBox fx:id="contentNode" />
@@ -86,6 +89,9 @@
          <VBox.margin>
             <Insets />
          </VBox.margin>
+         <padding>
+            <Insets top="16.0" />
+         </padding>
       </VBox>
       <AnchorPane fx:id="actionButtonPane">
          <children>

@@ -73,7 +73,7 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private final Stage stage;
     private final DownloadableSearchService downloadableSearchService = new DownloadableSearchService();
-    private final ObjectProperty<AppContentState> contentPaneStateProperty = new SimpleObjectProperty<>(AppContentState.EMPTY);
+    private final ObjectProperty<AppContentState> contentPaneStateProperty = new SimpleObjectProperty<>();
 
     @FXML private Node rootNode;
 
@@ -123,16 +123,47 @@ public class SearchComponentController extends VBox implements ComponentControll
         initSearchService();
 
         stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(urlTextField, urlTextArea, searchButton));
+
+        changeState(AppContentState.EMPTY);
+    }
+
+    private void changeState(AppContentState newState) {
+        contentPaneStateProperty.set(newState);
+        switch (newState) {
+            case EMPTY -> {
+                searchPane.setVisible(true);
+                progressPane.setVisible(false);
+                itemsCountLabel.setText(null); // TODO: add context?
+                contentPane.setVisible(false);
+                actionButtonPane.setVisible(false);
+            }
+            case SEARCHING -> {
+                searchPane.setVisible(false);
+                progressPane.setVisible(true);
+                searchProgressBar.setProgress(-1);
+                itemsCountLabel.setText(null); // TODO: add context?
+                contentPane.setVisible(false);
+                actionButtonPane.setVisible(false);
+            }
+            case RENDERING -> {
+                searchPane.setVisible(false);
+                progressPane.setVisible(true);
+                contentPane.setVisible(true);
+                actionButtonPane.setVisible(true);
+            }
+            case SHOWING -> {
+                searchPane.setVisible(true);
+                progressPane.setVisible(false);
+                contentPane.setVisible(true);
+                actionButtonPane.setVisible(true);
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initSearchPane() {
         searchPane.managedProperty().bind(searchPane.visibleProperty());
-        searchPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
-            AppContentState state = contentPaneStateProperty.get();
-            return state == AppContentState.EMPTY || state == AppContentState.SHOWING;
-        }, contentPaneStateProperty));
 
         initSingleSearchField();
         initMultiSearchField();
@@ -205,7 +236,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     private void handleSearchButtonClick(Event event) {
         String urlString = StringUtils.firstNonBlank(urlTextField.getText(), urlTextArea.getText());
         if (StringUtils.isNotBlank(urlString)) {
-            contentPaneStateProperty.set(AppContentState.SEARCHING);
+            changeState(AppContentState.SEARCHING);
 
             List<String> urls = Arrays.stream(urlString.split("\\s"))
                     .map(StringUtils::strip)
@@ -239,25 +270,15 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private void initProgressPane() {
         progressPane.managedProperty().bind(progressPane.visibleProperty());
-        progressPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
-            AppContentState state = contentPaneStateProperty.get();
-            return state == AppContentState.SEARCHING || state == AppContentState.RENDERING;
-        }, contentPaneStateProperty));
-        progressPane.visibleProperty().addListener((observable, oldValue, newValue) -> {
-            if (Boolean.TRUE.equals(newValue)) {
-                searchProgressBar.setProgress(-1);
-            }
-        });
-
         cancelButton.setOnAction(this::handleCancelButtonClick);
     }
 
     private void handleCancelButtonClick(ActionEvent event) {
         downloadableSearchService.cancel();
         if (CollectionUtils.isEmpty(contentNode.getChildren())) {
-            contentPaneStateProperty.set(AppContentState.EMPTY);
+            changeState(AppContentState.EMPTY);
         } else {
-            contentPaneStateProperty.set(AppContentState.SHOWING);
+            changeState(AppContentState.SHOWING);
         }
         event.consume();
     }
@@ -266,18 +287,12 @@ public class SearchComponentController extends VBox implements ComponentControll
 
     private void initSearchMetadataPane() {
         searchMetadataPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> StringUtils.isNotBlank(itemsCountLabel.getText()), itemsCountLabel.textProperty()));
-        itemsCountLabel.setText(null);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initContentPane() {
         initCheckboxes();
-
-        contentPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
-            AppContentState state = contentPaneStateProperty.get();
-            return state == AppContentState.RENDERING || state == AppContentState.SHOWING;
-        }, contentPaneStateProperty));
     }
 
     private void initCheckboxes() {
@@ -299,11 +314,6 @@ public class SearchComponentController extends VBox implements ComponentControll
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private void initActionButtonPane() {
-        actionButtonPane.visibleProperty().bind(Bindings.createBooleanBinding(() -> {
-            AppContentState state = contentPaneStateProperty.get();
-            return state == AppContentState.RENDERING || state == AppContentState.SHOWING;
-        }, contentPaneStateProperty));
-
         downloadButton.setOnAction(this::handleDownloadButtonClick);
 
         MenuItem downloadAudioMenuItem = new MenuItem(ctx.getLocalizedString("download.audio"));
@@ -314,7 +324,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     private void handleDownloadButtonClick(ActionEvent e) {
         AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
             getSelectedItems().forEach(it -> it.download(path));
-            contentPaneStateProperty.set(AppContentState.EMPTY);
+            changeState(AppContentState.EMPTY);
         });
         e.consume();
     }
@@ -322,7 +332,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     private void handleDownloadAudioButtonClick(ActionEvent e) {
         AppUtils.resolveDownloadPath(stage).ifPresent(path -> {
             getSelectedItems().forEach(it -> it.downloadAudio(path));
-            contentPaneStateProperty.set(AppContentState.EMPTY);
+            changeState(AppContentState.EMPTY);
         });
         e.consume();
     }
@@ -351,7 +361,7 @@ public class SearchComponentController extends VBox implements ComponentControll
                         Dialogs.exception("video.search.notfound", errMsg);
                     }
                 });
-                contentPaneStateProperty.set(AppContentState.EMPTY);
+                changeState(AppContentState.EMPTY);
             }
         });
 
@@ -360,12 +370,12 @@ public class SearchComponentController extends VBox implements ComponentControll
             String msg = exception.getMessage();
             LOGGER.warn(msg, exception);
             Platform.runLater(() -> Dialogs.exception("video.search.notfound", msg));
-            contentPaneStateProperty.set(AppContentState.EMPTY);
+            changeState(AppContentState.EMPTY);
         });
     }
 
     private void updateContentPane(List<VideoInfo> downloadables) {
-        contentPaneStateProperty.set(AppContentState.RENDERING);
+        changeState(AppContentState.RENDERING);
 
         int totalItems = downloadables.size();
         if (totalItems > 1) {
@@ -404,7 +414,7 @@ public class SearchComponentController extends VBox implements ComponentControll
                         });
                     }
                 }, ctx.appExecutors().get(COMMON_EXECUTOR)
-        ).thenRun(() -> Platform.runLater(() -> contentPaneStateProperty.set(AppContentState.SHOWING)));
+        ).thenRun(() -> Platform.runLater(() -> changeState(AppContentState.SHOWING)));
     }
 
     private void initDragAndDrop() {
