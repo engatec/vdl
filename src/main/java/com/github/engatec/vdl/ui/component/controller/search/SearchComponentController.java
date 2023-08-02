@@ -63,7 +63,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     private static final Logger LOGGER = LogManager.getLogger(SearchComponentController.class);
 
     private enum AppContentState {
-        EMPTY, SEARCHING, RENDERING, SHOWING
+        EMPTY, SEARCHING, NOT_FOUND, RENDERING, SHOWING
     }
 
     private static final int RENDER_PARTITION_SIZE = 10;
@@ -119,51 +119,9 @@ public class SearchComponentController extends VBox implements ComponentControll
         initActionButtonPane();
         initDragAndDrop();
         initSearchService();
+        initStates();
 
         stage.focusedProperty().addListener(new CopyUrlFromClipboardOnFocusChangeListener(urlTextField, urlTextArea, searchButton));
-
-        contentPaneStateProperty.addListener((observable, oldValue, newValue) -> {
-            switch (newValue) {
-                case EMPTY -> {
-                    searchPane.setVisible(true);
-                    progressPane.setVisible(false);
-                    contentPane.setVisible(false);
-                    actionButtonPane.setVisible(false);
-
-                    itemsCountLabel.setText(null); // TODO: add context?
-                    urlTextField.clear();
-                    urlTextArea.clear();
-                    selectAllCheckBox.setVisible(false);
-                    contentNode.getChildren().clear();
-                    checkBoxGroup.clear();
-                }
-                case SEARCHING -> {
-                    searchPane.setVisible(false);
-                    progressPane.setVisible(true);
-                    contentPane.setVisible(false);
-                    actionButtonPane.setVisible(false);
-
-                    searchProgressBar.setProgress(-1);
-                    itemsCountLabel.setText(null); // TODO: add context?
-                    selectAllCheckBox.setVisible(false);
-                    contentNode.getChildren().clear();
-                    checkBoxGroup.clear();
-                }
-                case RENDERING -> {
-                    searchPane.setVisible(false);
-                    progressPane.setVisible(true);
-                    contentPane.setVisible(true);
-                    actionButtonPane.setVisible(true);
-                }
-                case SHOWING -> {
-                    searchPane.setVisible(true);
-                    progressPane.setVisible(false);
-                    contentPane.setVisible(true);
-                    actionButtonPane.setVisible(true);
-                }
-            }
-        });
-        contentPaneStateProperty.set(AppContentState.EMPTY);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,7 +241,7 @@ public class SearchComponentController extends VBox implements ComponentControll
     private void handleCancelButtonClick(ActionEvent event) {
         downloadableSearchService.cancel();
         if (CollectionUtils.isEmpty(contentNode.getChildren())) {
-            contentPaneStateProperty.set(AppContentState.EMPTY);
+            contentPaneStateProperty.set(AppContentState.NOT_FOUND);
         } else {
             contentPaneStateProperty.set(AppContentState.SHOWING);
         }
@@ -368,7 +326,7 @@ public class SearchComponentController extends VBox implements ComponentControll
                         Dialogs.exception("video.search.notfound", errMsg);
                     }
                 });
-                contentPaneStateProperty.set(AppContentState.EMPTY);
+                contentPaneStateProperty.set(AppContentState.NOT_FOUND);
             }
         });
 
@@ -377,7 +335,7 @@ public class SearchComponentController extends VBox implements ComponentControll
             String msg = exception.getMessage();
             LOGGER.warn(msg, exception);
             Platform.runLater(() -> Dialogs.exception("video.search.notfound", msg));
-            contentPaneStateProperty.set(AppContentState.EMPTY);
+            contentPaneStateProperty.set(AppContentState.NOT_FOUND);
         });
     }
 
@@ -422,6 +380,42 @@ public class SearchComponentController extends VBox implements ComponentControll
                     }
                 }, ctx.appExecutors().get(COMMON_EXECUTOR)
         ).thenRun(() -> Platform.runLater(() -> contentPaneStateProperty.set(AppContentState.SHOWING)));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void initStates() {
+        var emptyState = Bindings.createBooleanBinding(() -> contentPaneStateProperty.get() == AppContentState.EMPTY, contentPaneStateProperty);
+        var searchingState = Bindings.createBooleanBinding(() -> contentPaneStateProperty.get() == AppContentState.SEARCHING, contentPaneStateProperty);
+        var notFoundState = Bindings.createBooleanBinding(() -> contentPaneStateProperty.get() == AppContentState.NOT_FOUND, contentPaneStateProperty);
+        var renderingState = Bindings.createBooleanBinding(() -> contentPaneStateProperty.get() == AppContentState.RENDERING, contentPaneStateProperty);
+        var showingState = Bindings.createBooleanBinding(() -> contentPaneStateProperty.get() == AppContentState.SHOWING, contentPaneStateProperty);
+
+        searchPane.visibleProperty().bind(emptyState.or(notFoundState).or(showingState));
+        progressPane.visibleProperty().bind(searchingState.or(renderingState));
+        contentPane.visibleProperty().bind(renderingState.or(showingState));
+        actionButtonPane.visibleProperty().bind(renderingState.or(showingState));
+
+        contentPaneStateProperty.addListener((observable, oldValue, newValue) -> {
+            switch (newValue) {
+                case EMPTY -> {
+                    itemsCountLabel.setText(null);
+                    urlTextField.clear();
+                    urlTextArea.clear();
+                    selectAllCheckBox.setVisible(false);
+                    contentNode.getChildren().clear();
+                    checkBoxGroup.clear();
+                }
+                case SEARCHING -> {
+                    searchProgressBar.setProgress(-1);
+                    itemsCountLabel.setText(null);
+                    selectAllCheckBox.setVisible(false);
+                    contentNode.getChildren().clear();
+                    checkBoxGroup.clear();
+                }
+            }
+        });
+        contentPaneStateProperty.set(AppContentState.EMPTY);
     }
 
     private void initDragAndDrop() {
