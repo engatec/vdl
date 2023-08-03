@@ -34,7 +34,7 @@ jobs:
       - name: Create jar for update
         run: cp target/vdl-assembly-linux.jar upd_linux.jar
       - name: Create portable
-        run: jpackage --input packaging/bin/linux --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type app-image --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp -Dapp.portable=true -Dapp.logPath=\$APPDIR"
+        run: jpackage --input packaging/bin/linux --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type app-image --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp -Dapp.portable=true -Dapp.logPath=\$APPDIR -Djavafx.cachedir=\$APPDIR\cache"
       - name: Compress portable
         run: tar -czvf vdl-video-downloader-${{github.event.inputs.version}}-linux-portable.tar.gz vdl/
       - name: Create installer
