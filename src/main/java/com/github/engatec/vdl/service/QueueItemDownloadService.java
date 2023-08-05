@@ -50,9 +50,10 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     private static final String GROUP_DESTINATION = "destination";
 
     private static final Pattern DOWNLOAD_PROGRESS_PATTERN = Pattern.compile(
-            "\\s*\\[download]\\s+" +
-                    "(?<progress>\\d+\\.?\\d*)%\\s+" +
-                    "of\\s+(?<size>.+)\\s+" +
+            "\\s*\\[download].*?" +
+                    "(?<progress>\\d+\\.?\\d*)%.*?" +
+                    "of.*?(?<size>\\d+.+?)\\s+" +
+                    "(in.*)?" +
                     "at\\s+(?<throughput>.+?)\\s+" +
                     ".*"
     );
