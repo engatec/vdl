@@ -48,7 +48,7 @@ public class YoutubeDlCommandHelper {
 
     public static void setOutputPath(YoutubeDlCommandBuilder commandBuilder, Downloadable downloadable) {
         String outputTemplate = configRegistry.get(OutputTemplateConfigProperty.class).getValue();
-        String prefixedTemplate = updateOutputTemplateWithDownloadId(outputTemplate);
+        String prefixedTemplate = updateOutputTemplateWithDownloadId(outputTemplate, downloadable);
         commandBuilder.outputPath(downloadable.getDownloadPath().resolve(prefixedTemplate).toString());
     }
 

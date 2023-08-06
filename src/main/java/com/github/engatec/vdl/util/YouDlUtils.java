@@ -16,10 +16,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.model.QueueItem;
 import com.github.engatec.vdl.model.VideoInfo;
-import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
-import org.apache.commons.io.FilenameUtils;
+import com.github.engatec.vdl.model.downloadable.Downloadable;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -56,10 +55,6 @@ public class YouDlUtils {
 
     public static void deleteTempFiles(Path downloadPath, String downloadId) {
         deleteTempFiles(downloadPath, downloadId, 0);
-        Boolean subtitlesEnabled = ApplicationContext.getInstance().getConfigRegistry().get(WriteSubtitlesConfigProperty.class).getValue();
-        if (subtitlesEnabled) {
-            deleteSubtitles(downloadId);
-        }
     }
 
     private static void deleteTempFiles(Path downloadPath, String downloadId, int attempt) {
@@ -88,30 +83,29 @@ public class YouDlUtils {
         }
     }
 
-    public static void deleteSubtitles(String downloadId) {
-        if (StringUtils.isBlank(downloadId)) {
-            return;
+    public static String updateOutputTemplateWithDownloadId(String outputTemplate, Downloadable downloadable) {
+        String downloadId = null;
+        if (downloadable instanceof QueueItem queueItem) {
+            downloadId = queueItem.getDestinationsForTraversal().stream()
+                    .map(YouDlUtils::extractDownloadId)
+                    .filter(StringUtils::isNotBlank)
+                    .findFirst()
+                    .orElse(null);
         }
 
-        try {
-            Path normalizedPath = Path.of(StringUtils.strip(downloadId));
-            boolean deleted = Files.deleteIfExists(normalizedPath);
-            if (!deleted) {
-                Path convertedPath = Path.of(FilenameUtils.removeExtension(StringUtils.strip(downloadId)) + ".srt");
-                Files.deleteIfExists(convertedPath);
-            }
-        } catch (IOException e) {
-            LOGGER.warn(e.getMessage(), e);
+        if (StringUtils.isBlank(downloadId)) {
+            downloadId = generateDownloadId();
         }
+
+        return downloadId + outputTemplate;
     }
 
-    public static String updateOutputTemplateWithDownloadId(String outputTemplate) {
+    private static String generateDownloadId() {
         LocalDate today = LocalDate.now();
         String day = StringUtils.leftPad(String.valueOf(today.getDayOfMonth()), 2, '0');
         String month = StringUtils.leftPad(String.valueOf(today.getMonthValue()), 2, '0');
         String rNum = StringUtils.leftPad(String.valueOf(RandomUtils.nextInt(0, 1000000)), 6, '0');
-        String prefix = "DID" + day + month + rNum + "_";
-        return prefix + outputTemplate;
+        return "DID" + day + month + rNum + "_";
     }
 
     public static String extractDownloadId(String path) {
