@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.github.engatec.vdl.util.YouDlUtils.updateOutputTemplateWithDownloadId;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.strip;
 
@@ -47,7 +48,8 @@ public class YoutubeDlCommandHelper {
 
     public static void setOutputPath(YoutubeDlCommandBuilder commandBuilder, Downloadable downloadable) {
         String outputTemplate = configRegistry.get(OutputTemplateConfigProperty.class).getValue();
-        commandBuilder.outputPath(downloadable.getDownloadPath().resolve(outputTemplate).toString());
+        String prefixedTemplate = updateOutputTemplateWithDownloadId(outputTemplate);
+        commandBuilder.outputPath(downloadable.getDownloadPath().resolve(prefixedTemplate).toString());
     }
 
     public static void setGeneralOptions(YoutubeDlCommandBuilder commandBuilder) {

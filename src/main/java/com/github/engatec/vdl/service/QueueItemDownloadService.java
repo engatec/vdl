@@ -1,9 +1,7 @@
 package com.github.engatec.vdl.service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -202,7 +200,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
             protected DownloadProgressData call() throws Exception {
                 Process process = createDownloadProcess();
                 addProcess(process);
-                try (var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), ctx.getSystemCharset()))) {
+                try (var reader = process.inputReader()) {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
                         if (Thread.interrupted()) {
                             cancel();

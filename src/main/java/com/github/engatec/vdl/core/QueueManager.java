@@ -1,9 +1,7 @@
 package com.github.engatec.vdl.core;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,6 +74,7 @@ public class QueueManager extends VdlManager {
                             List<Long> ids = removedItems.stream().map(QueueItem::getId).toList();
                             dbManager.doQueryAsync(QueueMapper.class, mapper -> mapper.deleteQueueItems(ids));
 
+                            updatePath(removedItems);
                             updateHistory(ctx.getManager(HistoryManager.class), removedItems);
                             deleteTempData(removedItems);
                         },
@@ -133,7 +132,11 @@ public class QueueManager extends VdlManager {
     private void deleteTempData(List<? extends QueueItem> queueItems) {
         for (QueueItem ri : queueItems) {
             if (ri.getStatus() != FINISHED) {
-                YouDlUtils.deleteTempFiles(ri.getDestinationsForTraversal());
+                ri.getDestinationsForTraversal().stream()
+                        .map(YouDlUtils::extractDownloadId)
+                        .filter(StringUtils::isNotBlank)
+                        .findFirst()
+                        .ifPresent(downloadId -> YouDlUtils.deleteTempFiles(ri.getDownloadPath(), downloadId));
             }
         }
     }
@@ -147,18 +150,30 @@ public class QueueManager extends VdlManager {
         ctx.getConfigRegistry().get(RecentDownloadPathConfigProperty.class).setValue(newPath.toString());
     }
 
-    private void updateHistory(HistoryManager historyManager, List<? extends QueueItem> finishedItems) {
+    /**
+     * Non-ascii symbols can cause reported output path and actual output path to be different.
+     * The method ensures DownloadPath of the QueueItem is the same as the actual path.
+     */
+    private void updatePath(List<? extends QueueItem> finishedItems) {
         for (QueueItem fi : finishedItems) {
             if (fi.getStatus() != FINISHED) {
                 continue;
             }
 
             fi.getDestinationsForTraversal().stream()
-                    .map(StringUtils::strip)
-                    .map(Path::of)
-                    .filter(Files::exists)
-                    .max(Comparator.comparing(it -> it.toFile().length()))
+                    .map(YouDlUtils::extractDownloadId)
+                    .filter(StringUtils::isNotBlank)
+                    .findFirst()
+                    .flatMap(downloadId -> YouDlUtils.normalizePath(fi.getDownloadPath(), downloadId))
                     .ifPresent(fi::setDownloadPath);
+        }
+    }
+
+    private void updateHistory(HistoryManager historyManager, List<? extends QueueItem> finishedItems) {
+        for (QueueItem fi : finishedItems) {
+            if (fi.getStatus() != FINISHED) {
+                continue;
+            }
 
             historyManager.addToHistory(fi);
         }

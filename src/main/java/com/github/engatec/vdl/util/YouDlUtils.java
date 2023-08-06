@@ -1,22 +1,26 @@
 package com.github.engatec.vdl.util;
 
 import java.io.IOException;
-import java.nio.file.DirectoryNotEmptyException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.util.Collection;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.model.VideoInfo;
 import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,6 +28,9 @@ import org.apache.logging.log4j.Logger;
 public class YouDlUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(YouDlUtils.class);
+
+    private static final String GROUP_DOWNLOAD_ID = "downloadId";
+    private static final Pattern PATH_PATTERN = Pattern.compile(".*(?<downloadId>DID\\d{4}\\d{6}_).*");
 
     private static final Set<String> playlistExtractors = Set.of(
             "youtube:favorites", "youtube:history", "youtube:playlist", "youtube:recommended", "youtube:subscriptions", "youtube:tab", "youtube:watchlater"
@@ -47,74 +54,99 @@ public class YouDlUtils {
                 .toString();
     }
 
-    public static void deleteTempFiles(Collection<? extends String> paths) {
+    public static void deleteTempFiles(Path downloadPath, String downloadId) {
+        deleteTempFiles(downloadPath, downloadId, 0);
         Boolean subtitlesEnabled = ApplicationContext.getInstance().getConfigRegistry().get(WriteSubtitlesConfigProperty.class).getValue();
-        for (String path : CollectionUtils.emptyIfNull(paths)) {
-            deleteTempFiles(path, 0);
-            if (subtitlesEnabled) {
-                deleteSubtitles(path);
-            }
+        if (subtitlesEnabled) {
+            deleteSubtitles(downloadId);
         }
     }
 
-    public static void deleteTempFiles(String path, int attempt) {
-        if (StringUtils.isBlank(path) || attempt > 5) {
+    private static void deleteTempFiles(Path downloadPath, String downloadId, int attempt) {
+        if (StringUtils.isBlank(downloadId) || attempt > 5) {
             return;
         }
 
-        String normalizedPath = StringUtils.strip(path);
-        String partFilePath = StringUtils.appendIfMissing(normalizedPath, ".part");
-        try {
-            // Try to delete both (temp and normal) as the download can be finished by the time this code executes.
-            // Also need to check if deletion actually happened. If not there's a chance that the filename contains rubbish symbols and special treatment is required.
-            boolean deleted = Files.deleteIfExists(Path.of(partFilePath)) || Files.deleteIfExists(Path.of(normalizedPath));
-            if (!deleted) {
-                String regex = "[^A-Za-zА-Яа-я0-9.]";
-                Path tempFilePath = Path.of(normalizedPath);
-                String normalizedNameNoRubbishSymbols = tempFilePath.getFileName().toString().replaceAll(regex, StringUtils.EMPTY);
-                String partFileNameNoRubbishSymbols = StringUtils.appendIfMissing(normalizedNameNoRubbishSymbols, ".part");
-                try (Stream<Path> files = Files.list(tempFilePath.getParent())) {
-                    Optional<Path> foundTempFileOptional = files
-                            .filter(Files::isRegularFile)
-                            .filter(it -> {
-                                String s = it.getFileName().toString().replaceAll(regex, StringUtils.EMPTY);
-                                return s.equals(normalizedNameNoRubbishSymbols) || s.equals(partFileNameNoRubbishSymbols);
-                            })
-                            .findFirst();
-                    if (foundTempFileOptional.isPresent()) {
-                        Files.deleteIfExists(foundTempFileOptional.get());
-                    }
-                }
-            }
-        } catch (InvalidPathException e) {
-            LOGGER.warn("Invalid path '{}'", normalizedPath);
-        } catch (DirectoryNotEmptyException e) {
-            LOGGER.warn("File expected, got directory instead. '{}'", normalizedPath);
-        } catch (IOException e) {
-            LOGGER.warn("Couldn't delete file '{}', retrying in 1 second", path);
+        try (Stream<Path> files = Files.list(downloadPath)) {
+            files.filter(Files::isRegularFile)
+                    .filter(it -> it.getFileName().toString().startsWith(downloadId))
+                    .forEach(currentPath -> {
+                        try {
+                            Files.deleteIfExists(currentPath);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
+        } catch (IOException | UncheckedIOException e) {
+            LOGGER.warn("Couldn't delete file with download id '{}' because of error '{}', retrying in 1 second", downloadId, e.getMessage());
             try { // In some cases file is not released by the system even if the process using it is terminated. Do a few attempts to wait and delete again
                 TimeUnit.SECONDS.sleep(1);
-                deleteTempFiles(path, attempt + 1);
+                deleteTempFiles(downloadPath, downloadId, attempt + 1);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             }
         }
     }
 
-    public static void deleteSubtitles(String path) {
-        if (StringUtils.isBlank(path)) {
+    public static void deleteSubtitles(String downloadId) {
+        if (StringUtils.isBlank(downloadId)) {
             return;
         }
 
         try {
-            Path normalizedPath = Path.of(StringUtils.strip(path));
+            Path normalizedPath = Path.of(StringUtils.strip(downloadId));
             boolean deleted = Files.deleteIfExists(normalizedPath);
             if (!deleted) {
-                Path convertedPath = Path.of(FilenameUtils.removeExtension(StringUtils.strip(path)) + ".srt");
+                Path convertedPath = Path.of(FilenameUtils.removeExtension(StringUtils.strip(downloadId)) + ".srt");
                 Files.deleteIfExists(convertedPath);
             }
         } catch (IOException e) {
             LOGGER.warn(e.getMessage(), e);
         }
+    }
+
+    public static String updateOutputTemplateWithDownloadId(String outputTemplate) {
+        LocalDate today = LocalDate.now();
+        String day = StringUtils.leftPad(String.valueOf(today.getDayOfMonth()), 2, '0');
+        String month = StringUtils.leftPad(String.valueOf(today.getMonthValue()), 2, '0');
+        String rNum = StringUtils.leftPad(String.valueOf(RandomUtils.nextInt(0, 1000000)), 6, '0');
+        String prefix = "DID" + day + month + rNum + "_";
+        return prefix + outputTemplate;
+    }
+
+    public static String extractDownloadId(String path) {
+        Matcher matcher = PATH_PATTERN.matcher(path);
+        return matcher.matches() ? matcher.group(GROUP_DOWNLOAD_ID) : null;
+    }
+
+    public static Optional<Path> normalizePath(Path downloadPath, String downloadId) {
+        List<Path> normalizedPaths = List.of();
+        try (Stream<Path> files = Files.list(downloadPath)) {
+            normalizedPaths = files
+                    .filter(Files::isRegularFile)
+                    .filter(it -> it.getFileName().toString().startsWith(downloadId))
+                    .map(currentPath -> {
+                        String normalizedFilename = StringUtils.substringAfter(currentPath.getFileName().toString(), downloadId);
+                        try {
+                            return Files.move(currentPath, currentPath.resolveSibling(normalizedFilename));
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    })
+                    .collect(Collectors.toList());
+        } catch (IOException | UncheckedIOException e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+
+        if (normalizedPaths.isEmpty()) {
+            LOGGER.warn("No file was renamed in path '{}' for downloadId '{}'", downloadPath, downloadId);
+        }
+
+        if (normalizedPaths.size() > 1) {
+            LOGGER.warn("Multiple files were renamed in path '{}' for downloadId '{}'", downloadPath, downloadId);
+        }
+
+        return normalizedPaths.stream()
+                .max(Comparator.comparing(it -> it.toFile().length()));
     }
 }
