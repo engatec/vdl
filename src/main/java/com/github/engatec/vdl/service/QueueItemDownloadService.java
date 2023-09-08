@@ -2,7 +2,6 @@ package com.github.engatec.vdl.service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -131,6 +130,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
     protected void cancelled() {
         updateQueueItem(DownloadStatus.STOPPED, StringUtils.EMPTY, StringUtils.EMPTY);
         updateProgress(0);
+        terminateProcessses();
     }
 
     @Override
@@ -138,10 +138,18 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
         updateQueueItem(DownloadStatus.FAILED, null, StringUtils.EMPTY);
         updateProgress(0);
         LOGGER.error(getException().getMessage());
+        terminateProcessses();
     }
 
     private void addProcess(Process process) {
         processes.add(process);
+    }
+
+    private void terminateProcessses() {
+        for (Process p : processes) {
+            p.descendants().forEach(ProcessHandle::destroy);
+            p.destroy();
+        }
     }
 
     /**
@@ -204,17 +212,7 @@ public class QueueItemDownloadService extends Service<DownloadProgressData> {
                     reader.lines().filter(StringUtils::isNotBlank).forEach(it -> {
                         if (Thread.interrupted()) {
                             cancel();
-                        }
-
-                        if (isCancelled()) {
-                            try {
-                                reader.close();
-                            } catch (IOException e) {
-                                LOGGER.warn("Couldn't close input stream", e);
-                                throw new UncheckedIOException(e);
-                            } finally {
-                                process.destroy();
-                            }
+                            return;
                         }
 
                         Matcher progressMatcher = DOWNLOAD_PROGRESS_PATTERN.matcher(it);
