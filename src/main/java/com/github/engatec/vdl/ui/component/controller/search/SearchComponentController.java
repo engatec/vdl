@@ -210,7 +210,11 @@ public class SearchComponentController extends VBox implements ComponentControll
 
             var singleSearchActive = !ctx.getConfigRegistry().get(MultiSearchConfigProperty.class).getValue();
             if (singleSearchActive && isUrlBeingDownloaded(urls.stream().findFirst().orElse(null))) {
-                Dialogs.infoWithYesNoButtons("stage.main.search.dialog.suchitemisbeingdownloaded", () -> startSearch(urls), null);
+                Dialogs.infoWithYesNoButtons(
+                        "stage.main.search.dialog.suchitemisbeingdownloaded",
+                        () -> startSearch(urls),
+                        () -> contentStateProperty.set(ContentState.EMPTY)
+                );
             } else {
                 startSearch(urls);
             }
