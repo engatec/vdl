@@ -6,7 +6,6 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.Engine;
 import com.github.engatec.vdl.core.YoutubeDlManager;
 import com.github.engatec.vdl.service.newversion.VdlUpdater;
-import com.github.engatec.vdl.service.newversion.YoutubeDlUpdater;
 import com.github.engatec.vdl.service.newversion.YtDlpUpdater;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
@@ -30,11 +29,6 @@ public class AboutController extends StageAwareController {
     @FXML private Button vdlUpdateBtn;
     @FXML private ProgressIndicator vdlUpdateProgress;
 
-    @FXML private Label youtubeDlVersionLabel;
-    @FXML private ProgressIndicator youtubeDlVersionProgress;
-    @FXML private Button youtubeDlUpdateBtn;
-    @FXML private ProgressIndicator youtubeDlUpdateProgress;
-
     @FXML private Label ytdlpVersionLabel;
     @FXML private ProgressIndicator ytdlpVersionProgress;
     @FXML private Button ytdlpUpdateBtn;
@@ -54,11 +48,6 @@ public class AboutController extends StageAwareController {
         vdlVersionLabel.setText(String.format(ctx.getLocalizedString("stage.about.label.version.vdl"), ctx.getAppVersion()));
         initializeButtonProgressProperty(vdlUpdateProgress, vdlUpdateBtn);
         vdlUpdateBtn.setOnAction(this::handleVdlUpdateButtonClick);
-
-        setYoutubeDlVersionLabel();
-        initializeButtonProgressProperty(youtubeDlUpdateProgress, youtubeDlUpdateBtn);
-        initializeVersionProgressProperty(youtubeDlVersionProgress, youtubeDlUpdateBtn);
-        youtubeDlUpdateBtn.setOnAction(this::handleYoutubeDlUpdateButtonClick);
 
         setYtdlpVersionLabel();
         initializeButtonProgressProperty(ytDlpUpdateProgress, ytdlpUpdateBtn);
@@ -86,17 +75,6 @@ public class AboutController extends StageAwareController {
         progress.maxHeightProperty().bind(nodeHeightProperty);
     }
 
-    private void setYoutubeDlVersionLabel() {
-        CompletableFuture.runAsync(() -> {
-            String v = StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getCurrentVersion(Engine.YOUTUBE_DL), UNKNOWN_VERSION);
-            String label = ctx.getLocalizedString("stage.about.label.version.youtubedl") + " " + v;
-            Platform.runLater(() -> {
-                youtubeDlVersionProgress.setVisible(false);
-                youtubeDlVersionLabel.setText(label);
-            });
-        });
-    }
-
     private void setYtdlpVersionLabel() {
         CompletableFuture.runAsync(() -> {
             String v = StringUtils.defaultIfBlank(YoutubeDlManager.INSTANCE.getCurrentVersion(Engine.YT_DLP), UNKNOWN_VERSION);
@@ -113,18 +91,6 @@ public class AboutController extends StageAwareController {
         VdlUpdater vdlUpdater = new VdlUpdater(stage);
         vdlUpdater.setOnComplete(() -> vdlUpdateBtn.setVisible(true));
         vdlUpdater.update();
-        event.consume();
-    }
-
-    private void handleYoutubeDlUpdateButtonClick(ActionEvent event) {
-        youtubeDlUpdateBtn.setVisible(false);
-        YoutubeDlUpdater youtubeDlUpdater = new YoutubeDlUpdater(stage);
-        youtubeDlUpdater.setOnSucceeded(v -> {
-            String label = ctx.getLocalizedString("stage.about.label.version.youtubedl") + " " + v;
-            youtubeDlVersionLabel.setText(label);
-        });
-        youtubeDlUpdater.setOnComplete(() -> youtubeDlUpdateBtn.setVisible(true));
-        youtubeDlUpdater.update();
         event.consume();
     }
 

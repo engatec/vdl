@@ -42,7 +42,6 @@ import com.github.engatec.vdl.preference.property.general.DownloadThreadsConfigP
 import com.github.engatec.vdl.preference.property.general.LanguageConfigProperty;
 import com.github.engatec.vdl.preference.property.general.LoadThumbnailsConfigProperty;
 import com.github.engatec.vdl.preference.property.general.VdlStartupUpdatesCheckConfigProperty;
-import com.github.engatec.vdl.preference.property.general.YoutubeDlStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.preference.property.general.YtdlpStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.DownloaderConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.HistoryEntriesNumberConfigProperty;
@@ -74,11 +73,10 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new LanguageConfigProperty());
         addToRegistry(new DownloadThreadsConfigProperty());
         addToRegistry(new VdlStartupUpdatesCheckConfigProperty());
-        addToRegistry(new YoutubeDlStartupUpdatesCheckConfigProperty());
         addToRegistry(new YtdlpStartupUpdatesCheckConfigProperty());
         addToRegistry(new LoadThumbnailsConfigProperty());
 
-        /* YoutubeDl / YtDlp */
+        /* Engine */
         addToRegistry(new ConfigFilePathConfigProperty());
         addToRegistry(new OutputTemplateConfigProperty());
         addToRegistry(new MarkWatchedConfigProperty());

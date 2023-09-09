@@ -4,18 +4,13 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
-<fx:root stylesheets="@../../styles.css" type="javafx.scene.control.ScrollPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-    <VBox spacing="8.0">
+<fx:root stylesheets="@../../styles.css" type="javafx.scene.control.ScrollPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox spacing="16.0">
         <children>
          <CheckBox fx:id="vdlStartupUpdatesCheckBox" mnemonicParsing="false" text="%preferences.general.vdl.update.check" wrapText="true">
             <VBox.margin>
                <Insets top="8.0" />
             </VBox.margin></CheckBox>
-         <CheckBox fx:id="youtubeDlStartupUpdatesCheckBox" mnemonicParsing="false" text="%preferences.general.youtubedl.update.check" wrapText="true">
-            <VBox.margin>
-               <Insets bottom="8.0" top="8.0" />
-            </VBox.margin>
-         </CheckBox>
          <CheckBox fx:id="ytdlpStartupUpdatesCheckBox" mnemonicParsing="false" text="%preferences.general.ytdlp.update.check" wrapText="true">
             <VBox.margin>
                <Insets bottom="8.0" />

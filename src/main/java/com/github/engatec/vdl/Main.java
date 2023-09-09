@@ -14,11 +14,9 @@ import com.github.engatec.vdl.preference.ConfigManager;
 import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.preference.ConfigRegistryImpl;
 import com.github.engatec.vdl.preference.property.general.VdlStartupUpdatesCheckConfigProperty;
-import com.github.engatec.vdl.preference.property.general.YoutubeDlStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.preference.property.general.YtdlpStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.service.newversion.Updater;
 import com.github.engatec.vdl.service.newversion.VdlUpdater;
-import com.github.engatec.vdl.service.newversion.YoutubeDlUpdater;
 import com.github.engatec.vdl.service.newversion.YtDlpUpdater;
 import com.github.engatec.vdl.ui.stage.core.MainStage;
 import javafx.application.Application;
@@ -82,11 +80,6 @@ public class Main extends Application {
         Boolean needCheckVdlUpdate = configRegistry.get(VdlStartupUpdatesCheckConfigProperty.class).getValue();
         if (needCheckVdlUpdate) {
             updaters.add(new VdlUpdater(stage));
-        }
-
-        Boolean needCheckYoutubeDlUpdate = configRegistry.get(YoutubeDlStartupUpdatesCheckConfigProperty.class).getValue();
-        if (needCheckYoutubeDlUpdate) {
-            updaters.add(new YoutubeDlUpdater(stage));
         }
 
         Boolean needCheckYtdlpUpdate = configRegistry.get(YtdlpStartupUpdatesCheckConfigProperty.class).getValue();

@@ -7,16 +7,6 @@ import org.apache.commons.lang3.SystemUtils;
 
 public enum Engine {
 
-    YOUTUBE_DL(1, "youtube-dl") {
-        @Override
-        public String resolveFileName() {
-            return StringUtils.defaultIfBlank(
-                    System.getProperty("app.youtubedl"),
-                    SystemUtils.IS_OS_WINDOWS ? "youtube-dl.exe" : "youtube-dl" // If app.youtubedl is not set, assume default name
-            );
-        }
-    },
-
     YT_DLP(2, "yt-dlp") {
         @Override
         public String resolveFileName() {
