@@ -30,11 +30,11 @@ jobs:
       - name: Create jar for update
         run: cp target/vdl-assembly-windows.jar upd_windows.jar
       - name: Create portable
-        run: jpackage --input packaging/bin/windows --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.ico --type app-image --java-options "-Dapp.dir=`$APPDIR -Dapp.youtubedl=youtube-dl.exe -Dapp.ytdlp=yt-dlp.exe -Dapp.portable=true -Dapp.logPath=`$APPDIR -Djavafx.cachedir=`$APPDIR\cache"
+        run: jpackage --input packaging/bin/windows --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.ico --type app-image --java-options "-Dapp.dir=`$APPDIR -Dapp.ytdlp=yt-dlp.exe -Dapp.portable=true -Dapp.logPath=`$APPDIR -Djavafx.cachedir=`$APPDIR\cache"
       - name: Zip portable
         run: 7z a vdl-video-downloader-${{github.event.inputs.version}}-windows-portable.zip vdl/*
       - name: Create installer
-        run: jpackage --input packaging/bin/windows --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.ico --type msi --java-options "-Dapp.dir=`$APPDIR -Dapp.youtubedl=youtube-dl.exe -Dapp.ytdlp=yt-dlp.exe" --win-dir-chooser --win-shortcut
+        run: jpackage --input packaging/bin/windows --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.ico --type msi --java-options "-Dapp.dir=`$APPDIR -Dapp.ytdlp=yt-dlp.exe" --win-dir-chooser --win-shortcut
       - name: Rename installer
         run: mv vdl-${{github.event.inputs.version}}.msi vdl-video-downloader-${{github.event.inputs.version}}-windows.msi
       - name: Upload Artifact

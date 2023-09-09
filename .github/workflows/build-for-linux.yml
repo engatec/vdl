@@ -21,8 +21,6 @@ jobs:
           cache: maven
       - name: Change binaries access permissions
         run: chmod -R 777 packaging/bin/linux/
-      - name: Update youtube-dl
-        run: packaging/bin/linux/youtube-dl -U
       - name: Update yt-dlp
         run: packaging/bin/linux/yt-dlp -U
       - name: Install fx-controls into local Maven repository
@@ -34,11 +32,11 @@ jobs:
       - name: Create jar for update
         run: cp target/vdl-assembly-linux.jar upd_linux.jar
       - name: Create portable
-        run: jpackage --input packaging/bin/linux --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type app-image --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp -Dapp.portable=true -Dapp.logPath=\$APPDIR -Djavafx.cachedir=\$APPDIR\cache"
+        run: jpackage --input packaging/bin/linux --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type app-image --java-options "-Dapp.dir=\$APPDIR -Dapp.ytdlp=yt-dlp -Dapp.portable=true -Dapp.logPath=\$APPDIR -Djavafx.cachedir=\$APPDIR\cache"
       - name: Compress portable
         run: tar -czvf vdl-video-downloader-${{github.event.inputs.version}}-linux-portable.tar.gz vdl/
       - name: Create installer
-        run: jpackage --input packaging/bin/linux --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type deb --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp" --linux-shortcut
+        run: jpackage --input packaging/bin/linux --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.png --type deb --java-options "-Dapp.dir=\$APPDIR -Dapp.ytdlp=yt-dlp" --linux-shortcut
       - name: Rename installer
         run: mv vdl_${{github.event.inputs.version}}*.deb vdl-video-downloader-${{github.event.inputs.version}}-linux.deb
       - name: Upload Artifact

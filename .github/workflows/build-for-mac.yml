@@ -21,8 +21,6 @@ jobs:
           cache: maven
       - name: Change binaries access permissions
         run: chmod -R 777 packaging/bin/mac/
-      - name: Update youtube-dl
-        run: packaging/bin/mac/youtube-dl -U
       - name: Update yt-dlp
         run: packaging/bin/mac/yt-dlp -U
       - name: Install fx-controls into local Maven repository
@@ -34,7 +32,7 @@ jobs:
       - name: Create jar for update
         run: cp target/vdl-assembly-mac.jar upd_mac.jar
       - name: Create installer
-        run: jpackage --input packaging/bin/mac --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.icns --type dmg --java-options "-Dapp.dir=\$APPDIR -Dapp.youtubedl=youtube-dl -Dapp.ytdlp=yt-dlp"
+        run: jpackage --input packaging/bin/mac --name "vdl" --app-version ${{github.event.inputs.version}} --main-jar vdl.jar --main-class com.github.engatec.vdl.MainWrapper --icon packaging/icons/icon.icns --type dmg --java-options "-Dapp.dir=\$APPDIR -Dapp.ytdlp=yt-dlp"
       - name: Rename installer
         run: mv vdl-${{github.event.inputs.version}}*.dmg vdl-video-downloader-${{github.event.inputs.version}}-mac.dmg
       - name: Upload Artifact
