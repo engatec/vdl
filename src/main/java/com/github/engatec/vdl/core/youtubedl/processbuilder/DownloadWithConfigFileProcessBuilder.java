@@ -12,7 +12,7 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
 import com.github.engatec.vdl.model.downloadable.Downloadable;
-import com.github.engatec.vdl.preference.property.youtubedl.ConfigFilePathConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.ConfigFilePathConfigProperty;
 import org.apache.commons.lang3.StringUtils;
 
 public class DownloadWithConfigFileProcessBuilder implements YoutubeDlProcessBuilder {

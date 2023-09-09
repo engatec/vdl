@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.preference.property.youtubedl;
+package com.github.engatec.vdl.preference.property.engine;
 
 import com.github.engatec.vdl.preference.configitem.ConfigItem;
-import com.github.engatec.vdl.preference.configitem.youtubedl.NoContinueConfigItem;
+import com.github.engatec.vdl.preference.configitem.youtubedl.MarkWatchedConfigItem;
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class NoContinueConfigProperty extends ConfigProperty<BooleanProperty, Boolean> {
+public class MarkWatchedConfigProperty extends ConfigProperty<BooleanProperty, Boolean> {
 
-    private static final ConfigItem<Boolean> CONFIG_ITEM = new NoContinueConfigItem();
+    private static final ConfigItem<Boolean> CONFIG_ITEM = new MarkWatchedConfigItem();
 
     private final BooleanProperty property = new SimpleBooleanProperty();
 
-    public NoContinueConfigProperty() {
+    public MarkWatchedConfigProperty() {
         restore();
     }
 

@@ -1,20 +1,19 @@
-package com.github.engatec.vdl.preference.property.youtubedl;
+package com.github.engatec.vdl.preference.property.engine;
 
 import com.github.engatec.vdl.preference.configitem.ConfigItem;
-import com.github.engatec.vdl.preference.configitem.youtubedl.ProxyEnabledConfigItem;
+import com.github.engatec.vdl.preference.configitem.youtubedl.ReadCookiesConfigItem;
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class ProxyEnabledConfigProperty extends ConfigProperty<BooleanProperty, Boolean> {
+public class ReadCookiesConfigProperty extends ConfigProperty<BooleanProperty, Boolean> {
 
-    private static final ConfigItem<Boolean> CONFIG_ITEM = new ProxyEnabledConfigItem();
+    private static final ConfigItem<Boolean> CONFIG_ITEM = new ReadCookiesConfigItem();
 
     private final BooleanProperty property = new SimpleBooleanProperty();
 
-    public ProxyEnabledConfigProperty() {
+    public ReadCookiesConfigProperty() {
         restore();
-        property.addListener((observable, oldValue, newValue) -> save());
     }
 
     @Override

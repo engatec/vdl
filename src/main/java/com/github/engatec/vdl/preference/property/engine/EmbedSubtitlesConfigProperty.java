@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.preference.property.youtubedl;
+package com.github.engatec.vdl.preference.property.engine;
 
 import com.github.engatec.vdl.preference.configitem.ConfigItem;
-import com.github.engatec.vdl.preference.configitem.youtubedl.MarkWatchedConfigItem;
+import com.github.engatec.vdl.preference.configitem.youtubedl.EmbedSubtitlesConfigItem;
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class MarkWatchedConfigProperty extends ConfigProperty<BooleanProperty, Boolean> {
+public class EmbedSubtitlesConfigProperty extends ConfigProperty<BooleanProperty, Boolean> {
 
-    private static final ConfigItem<Boolean> CONFIG_ITEM = new MarkWatchedConfigItem();
+    private static final ConfigItem<Boolean> CONFIG_ITEM = new EmbedSubtitlesConfigItem();
 
     private final BooleanProperty property = new SimpleBooleanProperty();
 
-    public MarkWatchedConfigProperty() {
+    public EmbedSubtitlesConfigProperty() {
         restore();
     }
 

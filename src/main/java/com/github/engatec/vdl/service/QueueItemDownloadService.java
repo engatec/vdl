@@ -19,7 +19,7 @@ import com.github.engatec.vdl.core.youtubedl.processbuilder.YoutubeDlProcessBuil
 import com.github.engatec.vdl.exception.ProcessException;
 import com.github.engatec.vdl.model.DownloadStatus;
 import com.github.engatec.vdl.model.QueueItem;
-import com.github.engatec.vdl.preference.property.youtubedl.UseConfigFileConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.UseConfigFileConfigProperty;
 import com.github.engatec.vdl.service.data.DownloadProgressData;
 import javafx.beans.property.DoubleProperty;
 import javafx.concurrent.Service;

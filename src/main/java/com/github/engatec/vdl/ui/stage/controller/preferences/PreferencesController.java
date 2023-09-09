@@ -5,9 +5,9 @@ import java.util.List;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.preference.ConfigRegistry;
 import com.github.engatec.vdl.ui.preference.Category;
+import com.github.engatec.vdl.ui.preference.EngineCategory;
 import com.github.engatec.vdl.ui.preference.GeneralCategory;
 import com.github.engatec.vdl.ui.preference.UpdatesCategory;
-import com.github.engatec.vdl.ui.preference.YoutubeDlCategory;
 import com.github.engatec.vdl.ui.stage.controller.StageAwareController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -47,7 +47,7 @@ public class PreferencesController extends StageAwareController {
 
         List<TreeItem<Category>> categories = List.of(
                 createGeneral(),
-                createYoutubeDl(),
+                createEngine(),
                 createUpdates()
         );
         TreeItem<Category> root = createRoot();
@@ -72,8 +72,8 @@ public class PreferencesController extends StageAwareController {
         return new TreeItem<>(new GeneralCategory(ctx.getLocalizedString("preferences.category.general")));
     }
 
-    private TreeItem<Category> createYoutubeDl() {
-        return new TreeItem<>(new YoutubeDlCategory(ctx.getLocalizedString("preferences.category.youtubedl_ytdlp")));
+    private TreeItem<Category> createEngine() {
+        return new TreeItem<>(new EngineCategory(ctx.getLocalizedString("preferences.category.engine")));
     }
 
     private TreeItem<Category> createUpdates() {

@@ -18,7 +18,7 @@
         <children>
             <HBox alignment="BASELINE_LEFT" spacing="8.0">
                 <children>
-                    <Label styleClass="preferences-category-title" text="%preferences.youtubedl.general.title" />
+                    <Label styleClass="preferences-category-title" text="%preferences.engine.general.title" />
                     <Separator HBox.hgrow="ALWAYS" />
                 </children>
             </HBox>
@@ -29,25 +29,25 @@
                 <children>
                <HBox alignment="CENTER_LEFT" spacing="4.0">
                   <children>
-                     <Label fx:id="outputTemplateLabel" text="%preferences.youtubedl.general.outputtemplate" />
+                     <Label fx:id="outputTemplateLabel" text="%preferences.engine.general.outputtemplate" />
                      <FxTextField fx:id="outputTemplateTextField" HBox.hgrow="ALWAYS" />
                   </children>
                </HBox>
-                    <CheckBox fx:id="markWatchedCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.general.markwatched.label" wrapText="true" />
-                    <CheckBox fx:id="noMTimeCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nomtime.label" wrapText="true">
+                    <CheckBox fx:id="markWatchedCheckbox" mnemonicParsing="false" text="%preferences.engine.general.markwatched.label" wrapText="true" />
+                    <CheckBox fx:id="noMTimeCheckBox" mnemonicParsing="false" text="%preferences.engine.nomtime.label" wrapText="true">
                         <VBox.margin>
                             <Insets />
                         </VBox.margin>
                     </CheckBox>
-                    <CheckBox fx:id="noContinueCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.nocontinue.checkbox" wrapText="true" />
-                    <CheckBox fx:id="noPartCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.nopart.checkbox" wrapText="true" />
-                    <CheckBox fx:id="readCookiesCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.cookies.read.checkbox" />
+                    <CheckBox fx:id="noContinueCheckbox" mnemonicParsing="false" text="%preferences.engine.nocontinue.checkbox" wrapText="true" />
+                    <CheckBox fx:id="noPartCheckBox" mnemonicParsing="false" text="%preferences.engine.nopart.checkbox" wrapText="true" />
+                    <CheckBox fx:id="readCookiesCheckbox" mnemonicParsing="false" text="%preferences.engine.cookies.read.checkbox" />
                     <FxFileChooser fx:id="cookiesFileChooser">
                   <VBox.margin>
                      <Insets left="8.0" />
                   </VBox.margin>
                </FxFileChooser>
-                    <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.youtubedl.configfile.checkbox" wrapText="true" />
+                    <CheckBox fx:id="useConfigFileCheckBox" mnemonicParsing="false" text="%preferences.engine.configfile.checkbox" wrapText="true" />
                     <FxFileChooser fx:id="configFileChooser">
                         <VBox.margin>
                             <Insets left="8.0" />
@@ -57,7 +57,7 @@
             </VBox>
          <HBox alignment="BASELINE_LEFT" spacing="8.0">
             <children>
-               <Label styleClass="preferences-category-title" text="%preferences.youtubedl.subtitles.title" />
+               <Label styleClass="preferences-category-title" text="%preferences.engine.subtitles.title" />
                <Separator HBox.hgrow="ALWAYS" />
             </children>
          </HBox>
@@ -66,11 +66,11 @@
                <Insets bottom="8.0" left="12.0" right="4.0" top="4.0" />
             </padding>
             <children>
-               <CheckBox fx:id="writeSubtitlesCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.subtitles.download" wrapText="true" />
-               <CheckBox fx:id="embedSubtitlesCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.subtitles.embed" wrapText="true" />
+               <CheckBox fx:id="writeSubtitlesCheckbox" mnemonicParsing="false" text="%preferences.engine.subtitles.download" wrapText="true" />
+               <CheckBox fx:id="embedSubtitlesCheckbox" mnemonicParsing="false" text="%preferences.engine.subtitles.embed" wrapText="true" />
                <HBox alignment="BASELINE_LEFT" spacing="4.0">
                   <children>
-                     <Label fx:id="subtitlesLanguagesLabel" minHeight="-Infinity" minWidth="-Infinity" text="%preferences.youtubedl.subtitles.languages" />
+                     <Label fx:id="subtitlesLanguagesLabel" minHeight="-Infinity" minWidth="-Infinity" text="%preferences.engine.subtitles.languages" />
                      <FxTextField fx:id="subtitlesLanguagesTextField" HBox.hgrow="ALWAYS" />
                   </children>
                </HBox>
@@ -78,7 +78,7 @@
          </VBox>
          <HBox alignment="BASELINE_LEFT" spacing="8.0">
             <children>
-               <Label styleClass="preferences-category-title" text="%preferences.youtubedl.download.title" />
+               <Label styleClass="preferences-category-title" text="%preferences.engine.download.title" />
                <Separator HBox.hgrow="ALWAYS" />
             </children>
          </HBox>
@@ -89,7 +89,7 @@
             <children>
                <HBox alignment="BASELINE_LEFT" spacing="4.0">
                   <children>
-                     <Label minHeight="-Infinity" minWidth="-Infinity" text="%preferences.youtubedl.download.ratelimit" />
+                     <Label minHeight="-Infinity" minWidth="-Infinity" text="%preferences.engine.download.ratelimit" />
                      <FxTextField fx:id="rateLimitTextField" HBox.hgrow="ALWAYS" />
                   </children>
                </HBox>
@@ -97,7 +97,7 @@
          </VBox>
             <HBox alignment="BASELINE_LEFT" spacing="8.0">
                 <children>
-                    <Label styleClass="preferences-category-title" text="%preferences.youtubedl.network.title" />
+                    <Label styleClass="preferences-category-title" text="%preferences.engine.network.title" />
                     <Separator HBox.hgrow="ALWAYS" />
                 </children>
                 <VBox.margin>
@@ -117,18 +117,18 @@
                             <RowConstraints valignment="BASELINE" vgrow="NEVER" />
                         </rowConstraints>
                         <children>
-                            <Label text="%preferences.youtubedl.network.proxy.label" />
+                            <Label text="%preferences.engine.network.proxy.label" />
                             <FxTextField fx:id="proxyUrlTextField" GridPane.columnIndex="1" />
-                            <Label text="%preferences.youtubedl.network.socket.timeout.label" GridPane.rowIndex="1" />
+                            <Label text="%preferences.engine.network.socket.timeout.label" GridPane.rowIndex="1" />
                             <FxTextField fx:id="socketTimoutTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                            <Label text="%preferences.youtubedl.network.sourceaddress.label" GridPane.rowIndex="2" />
+                            <Label text="%preferences.engine.network.sourceaddress.label" GridPane.rowIndex="2" />
                             <FxTextField fx:id="sourceAddressTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         </children>
                     </GridPane>
                     <HBox spacing="12.0">
                         <children>
-                            <CheckBox fx:id="forceIpV4CheckBox" mnemonicParsing="false" text="%preferences.youtubedl.network.forceipv4.label" />
-                            <CheckBox fx:id="forceIpV6CheckBox" mnemonicParsing="false" text="%preferences.youtubedl.network.forceipv6.label" />
+                            <CheckBox fx:id="forceIpV4CheckBox" mnemonicParsing="false" text="%preferences.engine.network.forceipv4.label" />
+                            <CheckBox fx:id="forceIpV6CheckBox" mnemonicParsing="false" text="%preferences.engine.network.forceipv6.label" />
                         </children>
                         <VBox.margin>
                             <Insets />
@@ -141,7 +141,7 @@
             </VBox>
             <HBox alignment="BASELINE_LEFT" spacing="8.0">
                 <children>
-                    <Label styleClass="preferences-category-title" text="%preferences.youtubedl.authentication.title" />
+                    <Label styleClass="preferences-category-title" text="%preferences.engine.authentication.title" />
                     <Separator HBox.hgrow="ALWAYS" />
                 </children>
                 <VBox.margin>
@@ -162,17 +162,17 @@
                             <RowConstraints valignment="BASELINE" vgrow="NEVER" />
                         </rowConstraints>
                         <children>
-                            <Label text="%preferences.youtubedl.authentication.username.label" />
+                            <Label text="%preferences.engine.authentication.username.label" />
                             <FxTextField fx:id="usernameTextField" GridPane.columnIndex="1" />
-                            <Label text="%preferences.youtubedl.authentication.password.label" GridPane.rowIndex="1" />
+                            <Label text="%preferences.engine.authentication.password.label" GridPane.rowIndex="1" />
                             <FxTextField fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                            <Label text="%preferences.youtubedl.authentication.twofactor.label" GridPane.rowIndex="2" />
+                            <Label text="%preferences.engine.authentication.twofactor.label" GridPane.rowIndex="2" />
                             <TextField fx:id="twoFactorTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                            <Label text="%preferences.youtubedl.authentication.videopassword.label" GridPane.rowIndex="3" />
+                            <Label text="%preferences.engine.authentication.videopassword.label" GridPane.rowIndex="3" />
                             <FxTextField fx:id="videoPasswordTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         </children>
                     </GridPane>
-                    <CheckBox fx:id="netrcCheckbox" mnemonicParsing="false" text="%preferences.youtubedl.authentication.netrc.label">
+                    <CheckBox fx:id="netrcCheckbox" mnemonicParsing="false" text="%preferences.engine.authentication.netrc.label">
                         <VBox.margin>
                             <Insets />
                         </VBox.margin>

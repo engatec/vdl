@@ -9,8 +9,8 @@ import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandBuilder;
 import com.github.engatec.vdl.core.youtubedl.YoutubeDlCommandHelper;
 import com.github.engatec.vdl.preference.ConfigRegistry;
-import com.github.engatec.vdl.preference.property.youtubedl.CookiesFileLocationConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.ReadCookiesConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.CookiesFileLocationConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.ReadCookiesConfigProperty;
 import org.apache.commons.collections4.CollectionUtils;
 
 public class DownloadableInfoFetchProcessBuilder implements YoutubeDlProcessBuilder {

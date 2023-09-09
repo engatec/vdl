@@ -1,19 +1,25 @@
-package com.github.engatec.vdl.preference.property.youtubedl;
+package com.github.engatec.vdl.preference.property.engine;
 
 import com.github.engatec.vdl.preference.configitem.ConfigItem;
-import com.github.engatec.vdl.preference.configitem.youtubedl.ProxyUrlConfigItem;
+import com.github.engatec.vdl.preference.configitem.youtubedl.RateLimitConfigItem;
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import org.apache.commons.lang3.StringUtils;
 
-public class ProxyUrlConfigProperty extends ConfigProperty<StringProperty, String> {
+public class RateLimitConfigProperty extends ConfigProperty<StringProperty, String> {
 
-    private static final ConfigItem<String> CONFIG_ITEM = new ProxyUrlConfigItem();
+    private static final ConfigItem<String> CONFIG_ITEM = new RateLimitConfigItem();
 
     private final StringProperty property = new SimpleStringProperty();
 
-    public ProxyUrlConfigProperty() {
+    public RateLimitConfigProperty() {
         restore();
+        property.addListener((observable, oldValue, newValue) -> {
+            if (StringUtils.isBlank(newValue)) {
+                setValue(RateLimitConfigItem.DEFAULT);
+            }
+        });
     }
 
     @Override

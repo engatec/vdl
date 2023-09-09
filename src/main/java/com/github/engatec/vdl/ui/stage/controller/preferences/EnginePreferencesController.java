@@ -7,29 +7,29 @@ import com.github.engatec.vdl.handler.textformatter.IntegerTextFormatter;
 import com.github.engatec.vdl.handler.textformatter.NotBlankTextFormatter;
 import com.github.engatec.vdl.handler.textformatter.RegexTextFormatter;
 import com.github.engatec.vdl.preference.ConfigRegistry;
-import com.github.engatec.vdl.preference.property.youtubedl.AuthPasswordConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.AuthUsernameConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.ConfigFilePathConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.CookiesFileLocationConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.EmbedSubtitlesConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.ForceIpV4ConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.ForceIpV6ConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.MarkWatchedConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.NetrcConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.NoContinueConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.NoMTimeConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.NoPartConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.OutputTemplateConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.PreferredSubtitlesConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.ProxyUrlConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.RateLimitConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.ReadCookiesConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.SocketTimeoutConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.SourceAddressConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.TwoFactorCodeConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.UseConfigFileConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.VideoPasswordConfigProperty;
-import com.github.engatec.vdl.preference.property.youtubedl.WriteSubtitlesConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.AuthPasswordConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.AuthUsernameConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.ConfigFilePathConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.CookiesFileLocationConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.EmbedSubtitlesConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.ForceIpV4ConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.ForceIpV6ConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.MarkWatchedConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.NetrcConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.NoContinueConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.NoMTimeConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.NoPartConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.OutputTemplateConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.PreferredSubtitlesConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.ProxyUrlConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.RateLimitConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.ReadCookiesConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.SocketTimeoutConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.SourceAddressConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.TwoFactorCodeConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.UseConfigFileConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.VideoPasswordConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.WriteSubtitlesConfigProperty;
 import com.github.engatec.vdl.ui.helper.SvgIcons;
 import com.github.engatec.vdl.ui.validation.InputForm;
 import javafx.beans.binding.BooleanBinding;
@@ -44,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
-public class YoutubedlPreferencesController extends ScrollPane implements InputForm {
+public class EnginePreferencesController extends ScrollPane implements InputForm {
 
     private final ApplicationContext ctx = ApplicationContext.getInstance();
 
@@ -81,7 +81,7 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
 
     @FXML private FxTextField rateLimitTextField;
 
-    public YoutubedlPreferencesController() {
+    public EnginePreferencesController() {
     }
 
     @FXML
@@ -99,7 +99,7 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     private void initGeneralSettings() {
         outputTemplateTextField.setTextFormatter(new NotBlankTextFormatter());
 
-        markWatchedCheckbox.setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.general.markwatched.tooltip"));
+        markWatchedCheckbox.setGraphic(SvgIcons.infoWithTooltip("preferences.engine.general.markwatched.tooltip"));
         markWatchedCheckbox.setContentDisplay(ContentDisplay.RIGHT);
 
         cookiesFileChooser.setButtonText(ctx.getLocalizedString("button.filechoose"));
@@ -112,23 +112,23 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
         subtitlesLanguagesLabel.disableProperty().bind(noNeedDownloadSubtitlesBinding);
         subtitlesLanguagesTextField.disableProperty().bind(noNeedDownloadSubtitlesBinding);
 
-        subtitlesLanguagesTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.subtitles.languages.hint"));
+        subtitlesLanguagesTextField.setHint(ctx.getLocalizedString("preferences.engine.subtitles.languages.hint"));
     }
 
     private void initDownloadSettings() {
         rateLimitTextField.setTextFormatter(RegexTextFormatter.of("^(0|[1-9][0-9]{0,9}[KkMmGg]?)$"));
-        rateLimitTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.download.ratelimit.hint"));
+        rateLimitTextField.setHint(ctx.getLocalizedString("preferences.engine.download.ratelimit.hint"));
     }
 
     private void initNetworkSettings() {
         proxyUrlTextField.textProperty().addListener((observable, oldValue, newValue) -> proxyUrlTextField.clearError());
-        proxyUrlTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.network.proxy.hint"));
+        proxyUrlTextField.setHint(ctx.getLocalizedString("preferences.engine.network.proxy.hint"));
 
         socketTimoutTextField.setTextFormatter(new IntegerTextFormatter());
-        socketTimoutTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.network.socket.timeout.hint"));
+        socketTimoutTextField.setHint(ctx.getLocalizedString("preferences.engine.network.socket.timeout.hint"));
 
         sourceAddressTextField.textProperty().addListener((observable, oldValue, newValue) -> sourceAddressTextField.clearError());
-        sourceAddressTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.network.sourceaddress.hint"));
+        sourceAddressTextField.setHint(ctx.getLocalizedString("preferences.engine.network.sourceaddress.hint"));
 
         forceIpV4CheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if (BooleanUtils.isTrue(newValue)) {
@@ -145,11 +145,11 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
     private void initAuthenticationSettings() {
         usernameTextField.textProperty().addListener((observable, oldValue, newValue) -> usernameTextField.clearError());
         passwordTextField.textProperty().addListener((observable, oldValue, newValue) -> passwordTextField.clearError());
-        videoPasswordTextField.setHint(ctx.getLocalizedString("preferences.youtubedl.authentication.videopassword.hint"));
+        videoPasswordTextField.setHint(ctx.getLocalizedString("preferences.engine.authentication.videopassword.hint"));
     }
 
     private void initConfigFileSettings() {
-        useConfigFileCheckBox.setGraphic(SvgIcons.infoWithTooltip("preferences.youtubedl.configfile.tooltip"));
+        useConfigFileCheckBox.setGraphic(SvgIcons.infoWithTooltip("preferences.engine.configfile.tooltip"));
         useConfigFileCheckBox.setContentDisplay(ContentDisplay.RIGHT);
 
         configFileChooser.setButtonText(ctx.getLocalizedString("button.filechoose"));
@@ -195,24 +195,24 @@ public class YoutubedlPreferencesController extends ScrollPane implements InputF
 
         String proxyUrl = proxyUrlTextField.getText();
         if (StringUtils.isNotBlank(proxyUrl) && !new UrlValidator(new String[] {"http", "https", "socks4", "socks5"}).isValid(proxyUrl)) {
-            proxyUrlTextField.setError(ctx.getLocalizedString("preferences.youtubedl.network.proxy.error"));
+            proxyUrlTextField.setError(ctx.getLocalizedString("preferences.engine.network.proxy.error"));
             hasErrors = true;
         }
 
         String sourceAddressText = sourceAddressTextField.getText();
         InetAddressValidator ipValidator = InetAddressValidator.getInstance();
         if (StringUtils.isNotBlank(sourceAddressText) && !(ipValidator.isValidInet4Address(sourceAddressText) || ipValidator.isValidInet6Address(sourceAddressText))) {
-            sourceAddressTextField.setError(ctx.getLocalizedString("preferences.youtubedl.network.sourceaddress.error"));
+            sourceAddressTextField.setError(ctx.getLocalizedString("preferences.engine.network.sourceaddress.error"));
             hasErrors = true;
         }
 
         if (StringUtils.isBlank(usernameTextField.getText()) && StringUtils.isNotBlank(passwordTextField.getText())) {
-            usernameTextField.setError(ctx.getLocalizedString("preferences.youtubedl.authentication.username.error"));
+            usernameTextField.setError(ctx.getLocalizedString("preferences.engine.authentication.username.error"));
             hasErrors = true;
         }
 
         if (StringUtils.isBlank(passwordTextField.getText()) && StringUtils.isNotBlank(usernameTextField.getText())) {
-            passwordTextField.setError(ctx.getLocalizedString("preferences.youtubedl.authentication.password.error"));
+            passwordTextField.setError(ctx.getLocalizedString("preferences.engine.authentication.password.error"));
             hasErrors = true;
         }
 

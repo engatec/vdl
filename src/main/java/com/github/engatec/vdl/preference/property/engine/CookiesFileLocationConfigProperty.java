@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.preference.property.youtubedl;
+package com.github.engatec.vdl.preference.property.engine;
 
 import com.github.engatec.vdl.preference.configitem.ConfigItem;
-import com.github.engatec.vdl.preference.configitem.youtubedl.SocketTimeoutConfigItem;
+import com.github.engatec.vdl.preference.configitem.youtubedl.CookiesFileLocationConfigItem;
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class SocketTimeoutConfigProperty extends ConfigProperty<StringProperty, String> {
+public class CookiesFileLocationConfigProperty extends ConfigProperty<StringProperty, String> {
 
-    private static final ConfigItem<String> CONFIG_ITEM = new SocketTimeoutConfigItem();
+    private static final ConfigItem<String> CONFIG_ITEM = new CookiesFileLocationConfigItem();
 
     private final StringProperty property = new SimpleStringProperty();
 
-    public SocketTimeoutConfigProperty() {
+    public CookiesFileLocationConfigProperty() {
         restore();
     }
 

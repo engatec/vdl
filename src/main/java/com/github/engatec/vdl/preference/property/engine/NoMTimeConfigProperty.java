@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.preference.property.youtubedl;
+package com.github.engatec.vdl.preference.property.engine;
 
 import com.github.engatec.vdl.preference.configitem.ConfigItem;
-import com.github.engatec.vdl.preference.configitem.youtubedl.ForceIpV4ConfigItem;
+import com.github.engatec.vdl.preference.configitem.youtubedl.NoMTimeConfigItem;
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class ForceIpV4ConfigProperty extends ConfigProperty<BooleanProperty, Boolean> {
+public class NoMTimeConfigProperty extends ConfigProperty<BooleanProperty, Boolean> {
 
-    private static final ConfigItem<Boolean> CONFIG_ITEM = new ForceIpV4ConfigItem();
+    private static final ConfigItem<Boolean> CONFIG_ITEM = new NoMTimeConfigItem();
 
     private final BooleanProperty property = new SimpleBooleanProperty();
 
-    public ForceIpV4ConfigProperty() {
+    public NoMTimeConfigProperty() {
         restore();
     }
 

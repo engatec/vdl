@@ -1,18 +1,18 @@
-package com.github.engatec.vdl.preference.property.youtubedl;
+package com.github.engatec.vdl.preference.property.engine;
 
 import com.github.engatec.vdl.preference.configitem.ConfigItem;
-import com.github.engatec.vdl.preference.configitem.youtubedl.AuthUsernameConfigItem;
+import com.github.engatec.vdl.preference.configitem.youtubedl.ConfigFilePathConfigItem;
 import com.github.engatec.vdl.preference.property.ConfigProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class AuthUsernameConfigProperty extends ConfigProperty<StringProperty, String> {
+public class ConfigFilePathConfigProperty extends ConfigProperty<StringProperty, String> {
 
-    private static final ConfigItem<String> CONFIG_ITEM = new AuthUsernameConfigItem();
+    private static final ConfigItem<String> CONFIG_ITEM = new ConfigFilePathConfigItem();
 
     private final StringProperty property = new SimpleStringProperty();
 
-    public AuthUsernameConfigProperty() {
+    public ConfigFilePathConfigProperty() {
         restore();
     }
 
