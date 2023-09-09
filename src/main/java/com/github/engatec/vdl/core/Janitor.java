@@ -1,12 +1,20 @@
 package com.github.engatec.vdl.core;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.github.engatec.vdl.preference.ConfigManager;
 
 public class Janitor {
 
-    private static final Logger LOGGER = LogManager.getLogger(Janitor.class);
-
     public static void cleanUp() {
+        removeObsoleteProperties();
+    }
+
+    private static void removeObsoleteProperties() {
+        try {
+            ConfigManager cm = ConfigManager.INSTANCE;
+            cm.remove("general.youtube_dl_startup_updates_check");
+            cm.flush();
+        } catch (Throwable t) {
+            // Catch and do nothing. Janitor must not cause app failure under any circumstances
+        }
     }
 }
