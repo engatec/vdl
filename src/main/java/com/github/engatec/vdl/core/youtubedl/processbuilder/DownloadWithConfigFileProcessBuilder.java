@@ -35,7 +35,7 @@ public class DownloadWithConfigFileProcessBuilder implements YoutubeDlProcessBui
         try (Stream<String> lines = Files.lines(Path.of(configLocation))) {
             configFile = lines.map(it -> StringUtils.substringBefore(it, "#")).filter(StringUtils::isNotBlank).collect(Collectors.joining(StringUtils.SPACE));
         } catch (Exception ignored) {
-            // Couldn't open config file. Youtube-dl will show the error
+            // Couldn't open config file. Yt-dlp will show the error
         }
 
         if (!configFile.contains("-f ") && !configFile.contains("--format ")) {

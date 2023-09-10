@@ -202,7 +202,7 @@ public class DownloadableItemComponentController extends HBox {
                 .filter(anyCodecDefined)
                 .map(Format::getHeight)
                 .filter(Objects::nonNull)
-                .filter(it -> it > 0) // Should never happen, just a sanity check in case there's a bug in youtube-dl
+                .filter(it -> it > 0) // Should never happen, just a sanity check in case there's a bug in yt-dlp
                 .distinct()
                 .sorted(Comparator.reverseOrder())
                 .toList();
@@ -405,7 +405,7 @@ public class DownloadableItemComponentController extends HBox {
         if (format == AudioFormat.MP3 && bitrateType == BitrateType.CBR) {
             quality = configRegistry.get(AudioExtractionBitrateConfigProperty.class).getValue() + "K";
         } else {
-            // Youtube-dl quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
+            // Yt-dlp quality goes from 9 (worst) to 0 (best), thus needs adjusting to VDLs 0 (worst) - 9 (best)
             quality = String.valueOf(Math.abs(configRegistry.get(AudioExtractionQualityConfigProperty.class).getValue() - AudioFormat.BEST_QUALITY));
         }
 
