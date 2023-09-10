@@ -1,5 +1,5 @@
 # VDL - Video Downloader
-A cross-platform GUI for [youtube-dl](https://ytdl-org.github.io/youtube-dl/index.html) and [yt-dlp](https://github.com/yt-dlp/yt-dlp).
+A cross-platform GUI for [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 
 Download videos from youtube.com and many more sites.
 ![pic1](https://user-images.githubusercontent.com/6572208/149672268-6558d127-264a-4a14-a0ea-3b080ce78eba.png)
