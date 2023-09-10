@@ -261,6 +261,8 @@ public class DownloadsComponentController extends VBox implements ComponentContr
                 queueManager.startDownload(item);
             } else if (status == DownloadStatus.STOPPED) {
                 queueManager.resumeDownload(item);
+            } else if (status == DownloadStatus.FAILED) {
+                queueManager.retryDownload(item);
             }
         }
     }
