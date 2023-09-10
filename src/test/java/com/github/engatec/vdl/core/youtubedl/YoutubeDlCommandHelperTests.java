@@ -29,7 +29,6 @@ import com.github.engatec.vdl.preference.property.engine.SourceAddressConfigProp
 import com.github.engatec.vdl.preference.property.engine.TwoFactorCodeConfigProperty;
 import com.github.engatec.vdl.preference.property.engine.VideoPasswordConfigProperty;
 import com.github.engatec.vdl.preference.property.engine.WriteSubtitlesConfigProperty;
-import com.github.engatec.vdl.preference.property.misc.DownloaderConfigProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +47,6 @@ public class YoutubeDlCommandHelperTests {
     @BeforeAll
     static void setUp() {
         TestHelper.initTestApplicationContext();
-        mockPreference(DownloaderConfigProperty.class, 1);
     }
 
     private static <V, T extends ConfigProperty<?, V>> void mockPreference(Class<T> configItemClass, V value) {

@@ -9,7 +9,7 @@ public class ComboBoxMouseScrollHandler implements EventHandler<ScrollEvent> {
 
     @Override
     public void handle(ScrollEvent event) {
-        if (event.getSource() instanceof ComboBox src) {
+        if (event.getSource() instanceof ComboBox<?> src) {
             SingleSelectionModel<?> selectionModel = src.getSelectionModel();
             if (event.getDeltaY() < 0) {
                 selectionModel.selectNext();

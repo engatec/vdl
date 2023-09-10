@@ -43,7 +43,6 @@ import com.github.engatec.vdl.preference.property.general.LanguageConfigProperty
 import com.github.engatec.vdl.preference.property.general.LoadThumbnailsConfigProperty;
 import com.github.engatec.vdl.preference.property.general.VdlStartupUpdatesCheckConfigProperty;
 import com.github.engatec.vdl.preference.property.general.YtdlpStartupUpdatesCheckConfigProperty;
-import com.github.engatec.vdl.preference.property.misc.DownloaderConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.HistoryEntriesNumberConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.MultiSearchConfigProperty;
 import com.github.engatec.vdl.preference.property.misc.RecentDownloadPathConfigProperty;
@@ -103,7 +102,6 @@ public class ConfigRegistryImpl implements ConfigRegistry {
         addToRegistry(new PreferredSubtitlesConfigProperty());
 
         /* Misc */
-        addToRegistry(new DownloaderConfigProperty());
         addToRegistry(new HistoryEntriesNumberConfigProperty());
         addToRegistry(new MultiSearchConfigProperty());
         addToRegistry(new RecentDownloadPathConfigProperty());

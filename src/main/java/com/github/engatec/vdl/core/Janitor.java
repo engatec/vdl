@@ -12,6 +12,7 @@ public class Janitor {
         try {
             ConfigManager cm = ConfigManager.INSTANCE;
             cm.remove("general.youtube_dl_startup_updates_check");
+            cm.remove("misc.downloader");
             cm.flush();
         } catch (Throwable t) {
             // Catch and do nothing. Janitor must not cause app failure under any circumstances
