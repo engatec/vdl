@@ -3,6 +3,7 @@ package com.github.engatec.vdl.core.youtubedl;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.github.engatec.vdl.TestHelper;
 import com.github.engatec.vdl.core.ApplicationContext;
@@ -66,6 +67,16 @@ public class YoutubeDlCommandHelperTests {
         assertThat(command).contains(value, atIndex(2));
     }
 
+    private List<String> buildCommandGeneric(Consumer<YoutubeDlCommandBuilder> propertiesSetter) {
+        YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
+        propertiesSetter.accept(commandBuilder);
+        List<String> commandList = commandBuilder.buildAsList();
+        return commandList.stream()
+                .filter(it -> !it.equals("--compat-options"))
+                .filter(it -> !it.equals("all"))
+                .toList();
+    }
+
     @Nested
     @DisplayName("General options")
     class GeneralOptionsTests {
@@ -81,9 +92,7 @@ public class YoutubeDlCommandHelperTests {
         }
 
         private List<String> buildCommand() {
-            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
-            YoutubeDlCommandHelper.setGeneralOptions(commandBuilder);
-            return commandBuilder.buildAsList();
+            return buildCommandGeneric(YoutubeDlCommandHelper::setGeneralOptions);
         }
 
         @Test
@@ -157,9 +166,7 @@ public class YoutubeDlCommandHelperTests {
         }
 
         private List<String> buildCommand() {
-            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
-            YoutubeDlCommandHelper.setSubtitlesOptions(commandBuilder);
-            return commandBuilder.buildAsList();
+            return buildCommandGeneric(YoutubeDlCommandHelper::setSubtitlesOptions);
         }
 
         @Test
@@ -211,9 +218,7 @@ public class YoutubeDlCommandHelperTests {
         }
 
         private List<String> buildCommand() {
-            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
-            YoutubeDlCommandHelper.setDownloadOptions(commandBuilder);
-            return commandBuilder.buildAsList();
+            return buildCommandGeneric(YoutubeDlCommandHelper::setDownloadOptions);
         }
 
         @ParameterizedTest
@@ -247,9 +252,7 @@ public class YoutubeDlCommandHelperTests {
         }
 
         private List<String> buildCommand() {
-            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
-            YoutubeDlCommandHelper.setNetworkOptions(commandBuilder);
-            return commandBuilder.buildAsList();
+            return buildCommandGeneric(YoutubeDlCommandHelper::setNetworkOptions);
         }
 
         @Test
@@ -336,9 +339,7 @@ public class YoutubeDlCommandHelperTests {
         }
 
         private List<String> buildCommand() {
-            YoutubeDlCommandBuilder commandBuilder = YoutubeDlCommandBuilder.newInstance();
-            YoutubeDlCommandHelper.setAuthenticationOptions(commandBuilder);
-            return commandBuilder.buildAsList();
+            return buildCommandGeneric(YoutubeDlCommandHelper::setAuthenticationOptions);
         }
 
         @Test

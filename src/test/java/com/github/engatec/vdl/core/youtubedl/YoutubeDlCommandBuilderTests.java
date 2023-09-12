@@ -21,14 +21,20 @@ public class YoutubeDlCommandBuilderTests {
     }
 
     private void doAssertions(List<String> command, String key) {
-        assertThat(command).hasSize(2);
-        assertThat(command).contains(key, atIndex(1));
+        assertThat(command).hasSize(4);
+        assertThat(command)
+                .contains("--compat-options", atIndex(1))
+                .contains("all", atIndex(2))
+                .contains(key, atIndex(3));
     }
 
     private void doAssertions(List<String> command, String key, String value) {
-        assertThat(command).hasSize(3);
-        assertThat(command).contains(key, atIndex(1));
-        assertThat(command).contains(value, atIndex(2));
+        assertThat(command).hasSize(5);
+        assertThat(command)
+                .contains("--compat-options", atIndex(1))
+                .contains("all", atIndex(2))
+                .contains(key, atIndex(3))
+                .contains(value, atIndex(4));
     }
 
     @Nested
@@ -129,7 +135,7 @@ public class YoutubeDlCommandBuilderTests {
         void shouldCreateWriteSubWithSubLang() {
             List<String> command = YoutubeDlCommandBuilder.newInstance().writeSub(Set.of("en", "ru")).buildAsList();
             assertThat(command)
-                    .hasSize(4)
+                    .hasSize(6)
                     .containsAll(List.of("--write-sub", "--sub-lang"))
                     .containsAnyOf("en,ru", "ru,en"); // Since set is passed, can't be sure what order is going to be when joining the elements
         }
@@ -138,7 +144,7 @@ public class YoutubeDlCommandBuilderTests {
         void shouldCreateWriteSubAndAllSubsWithoutSubLang() {
             List<String> command = YoutubeDlCommandBuilder.newInstance().writeSub(Set.of()).buildAsList();
             assertThat(command)
-                    .hasSize(3)
+                    .hasSize(5)
                     .contains("--write-sub", "--all-subs");
         }
 
