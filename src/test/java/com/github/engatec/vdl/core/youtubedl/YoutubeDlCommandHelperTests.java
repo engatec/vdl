@@ -1,44 +1,20 @@
 package com.github.engatec.vdl.core.youtubedl;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.function.Consumer;
-
 import com.github.engatec.vdl.TestHelper;
 import com.github.engatec.vdl.core.ApplicationContext;
 import com.github.engatec.vdl.preference.configitem.youtubedl.RateLimitConfigItem;
 import com.github.engatec.vdl.preference.property.ConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.AuthPasswordConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.AuthUsernameConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.CookiesFileLocationConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.EmbedSubtitlesConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.ForceIpV4ConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.ForceIpV6ConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.MarkWatchedConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.NetrcConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.NoContinueConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.NoMTimeConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.NoPartConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.PreferredSubtitlesConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.ProxyEnabledConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.ProxyUrlConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.RateLimitConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.ReadCookiesConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.SocketTimeoutConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.SourceAddressConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.TwoFactorCodeConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.VideoPasswordConfigProperty;
-import com.github.engatec.vdl.preference.property.engine.WriteSubtitlesConfigProperty;
+import com.github.engatec.vdl.preference.property.engine.*;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
@@ -73,7 +49,7 @@ public class YoutubeDlCommandHelperTests {
         List<String> commandList = commandBuilder.buildAsList();
         return commandList.stream()
                 .filter(it -> !it.equals("--compat-options"))
-                .filter(it -> !it.equals("all"))
+                .filter(it -> !it.equals("all,-allow-unsafe-ext"))
                 .toList();
     }
 
