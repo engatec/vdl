@@ -1,14 +1,14 @@
 package com.github.engatec.vdl.core.youtubedl;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Set;
-
 import com.github.engatec.vdl.TestHelper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
@@ -24,7 +24,7 @@ public class YoutubeDlCommandBuilderTests {
         assertThat(command).hasSize(4);
         assertThat(command)
                 .contains("--compat-options", atIndex(1))
-                .contains("all", atIndex(2))
+                .contains("all,-allow-unsafe-ext", atIndex(2))
                 .contains(key, atIndex(3));
     }
 
@@ -32,7 +32,7 @@ public class YoutubeDlCommandBuilderTests {
         assertThat(command).hasSize(5);
         assertThat(command)
                 .contains("--compat-options", atIndex(1))
-                .contains("all", atIndex(2))
+                .contains("all,-allow-unsafe-ext", atIndex(2))
                 .contains(key, atIndex(3))
                 .contains(value, atIndex(4));
     }
