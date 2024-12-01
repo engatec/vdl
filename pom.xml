@@ -6,7 +6,7 @@
 
     <groupId>com.github.engatec</groupId>
     <artifactId>vdl</artifactId>
-    <version>1.9.3</version>
+    <version>1.9.4</version>
 
     <properties>
         <java.version>21</java.version>

@@ -1,15 +1,15 @@
 package com.github.engatec.vdl.core.youtubedl;
 
+import com.github.engatec.vdl.core.ApplicationContext;
+import com.github.engatec.vdl.core.Engine;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
-import com.github.engatec.vdl.core.ApplicationContext;
-import com.github.engatec.vdl.core.Engine;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 public class YoutubeDlCommandBuilder {
 
@@ -28,7 +28,7 @@ public class YoutubeDlCommandBuilder {
         o.commandList.add(ApplicationContext.getInstance().getDownloaderPath(engine).toString());
         if (engine == Engine.YT_DLP) {
             o.commandList.add("--compat-options");
-            o.commandList.add("all");
+            o.commandList.add("all,-allow-unsafe-ext");
         }
         return o;
     }
